@@ -4547,7 +4547,7 @@ double processVariable(char variable[DIM]){
 				}
 			}
 			vari[lth] = '\0';
-			if (g == strlen(va) && strlen(variable) == g&&j == g){
+			if (g == strlen(va) && strlen(variable) == g&&j == g&&g!=0){
 				valid = 1; validVar = 1;
 				int gh = l;
 				while (vari[gh] != '\n'){
