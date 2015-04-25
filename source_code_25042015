@@ -73,9 +73,9 @@ int variableValidator(char variable[DIM]);
 double binaryToDecimal(char binary[DIM]);
 double octalToDecimal(char octal[DIM]);
 double hexadecimalToDecimal(char hexadecimal[DIM]);
-void decimalToBinary(double decimal, char path[DIM]);
-void decimalToOctal(double decimal, char path[DIM]);
-void decimalToHexadecimal(double decimal, char path[DIM]);
+void decimalToBinary(double decimal, char path[DIM], int bp);
+void decimalToOctal(double decimal, char path[DIM], int op);
+void decimalToHexadecimal(double decimal, char path[DIM], int hp);
 double multi(double multip);
 double quo(double quotient);
 double numericalSystems(char numSystem[DIM]);
@@ -1545,22 +1545,67 @@ int main(){
 							var = 0;
 						}
 					}
-					char dP[DIM] = "";
-					int dp = -1;
-					if ((arithTrig[0] == 'd' || arithTrig[0] == 'D') && (arithTrig[1] == 'p' || arithTrig[1] == 'P')){
-						i = 2;
-						while (arithTrig[i] != 'd'&&arithTrig[i] != 'D'&&arithTrig[i] != '\0'){
-							dP[i - 2] = arithTrig[i];
-							i++;
+					char dP[DIM] = "", bP[DIM] = "", oP[DIM] = "", hP[DIM] = "";
+					int dp = -1, bp = -1, op = -1, hp = -1;
+					while (arithTrig[0] == 'd' &&arithTrig[1] == 'p' || arithTrig[0] == 'b' &&arithTrig[1] == 'p' || arithTrig[0] == 'o' &&arithTrig[1] == 'p' || arithTrig[0] == 'h' &&arithTrig[1] == 'p')  {
+						if (arithTrig[0] == 'd' &&arithTrig[1] == 'p'){
+							i = 2;
+							while (arithTrig[i] != 'd'&&arithTrig[i] != '\0'){
+								dP[i - 2] = arithTrig[i];
+								i++;
+							}
+							dP[i - 2] = '\0';
+							dp = initialProcessor(dP, result);
+							i = i + 2;
+							int b = 0;
+							for (b = 0; arithTrig[b] != '\0'; b++){
+								arithTrig[b] = arithTrig[b + i];
+							}
 						}
-						dP[i - 2] = '\0';
-						dp = initialProcessor(dP, result);
-						i = i + 2;
-						int b = 0;
-						for (b = 0; arithTrig[b] != '\0'; b++){
-							arithTrig[b] = arithTrig[b + i];
+						if (arithTrig[0] == 'b' &&arithTrig[1] == 'p'){
+							i = 2;
+							while (arithTrig[i] != 'b'&&arithTrig[i] != '\0'){
+								bP[i - 2] = arithTrig[i];
+								i++;
+							}
+							bP[i - 2] = '\0';
+							bp = initialProcessor(bP, result);
+							i = i + 2;
+							int b = 0;
+							for (b = 0; arithTrig[b] != '\0'; b++){
+								arithTrig[b] = arithTrig[b + i];
+							}
+						}
+						if (arithTrig[0] == 'o' &&arithTrig[1] == 'p'){
+							i = 2;
+							while (arithTrig[i] != 'o'&&arithTrig[i] != '\0'){
+								oP[i - 2] = arithTrig[i];
+								i++;
+							}
+							oP[i - 2] = '\0';
+							op = initialProcessor(oP, result);
+							i = i + 2;
+							int b = 0;
+							for (b = 0; arithTrig[b] != '\0'; b++){
+								arithTrig[b] = arithTrig[b + i];
+							}
+						}
+						if (arithTrig[0] == 'h' &&arithTrig[1] == 'p'){
+							i = 2;
+							while (arithTrig[i] != 'h'&&arithTrig[i] != '\0'){
+								hP[i - 2] = arithTrig[i];
+								i++;
+							}
+							hP[i - 2] = '\0';
+							hp = initialProcessor(hP, result);
+							i = i + 2;
+							int b = 0;
+							for (b = 0; arithTrig[b] != '\0'; b++){
+								arithTrig[b] = arithTrig[b + i];
+							}
 						}
 					}
+
 					for (i = 0; arithTrig[i] != '\0'; i++){
 						if (arithTrig[i] == 'a'&&arithTrig[i + 1] == 'n'&&arithTrig[i + 2] == 's'){
 							arithTrig[i] = 'r'; arithTrig[i + 1] = 'e'; arithTrig[i + 2] = 's';
@@ -1628,7 +1673,7 @@ int main(){
 									while (letterVariables(paTrig[u]) == 1){
 										u++;
 									}
-									if (paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'){
+									if (paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != '('){
 										arithTrig[u] = '*';
 										for (u; paTrig[u] != '\0'; u++){
 											arithTrig[u + 1] = paTrig[u];
@@ -1765,7 +1810,7 @@ int main(){
 								}
 								if (dp > -1){
 									ans[rf] = result;
-									sprintf(dP, "#%d=%%.%df\n", re, dp);
+									sprintf(dP, "#%d=%%.%df\n", rf, dp);
 									printf(dP, result);
 									if (fout != NULL){
 										fclose(fout);
@@ -1781,11 +1826,13 @@ int main(){
 								open = fopen("numSystems.txt", "r");
 								char numSys[DIM] = "";
 								int numeriSys = 0;
-								if (open != NULL){
-									fgets(numSys, 10, open);
-									numeriSys = atoi(numSys);
-									fclose(open);
-									if (numeriSys == 1){
+								if (open != NULL || bp != -1 || op != -1 || hp != -1){
+									if (open != NULL){
+										fgets(numSys, 10, open);
+										numeriSys = atoi(numSys);
+										fclose(open);
+									}
+									if (numeriSys == 1 || bp != -1 || op != -1 || hp != -1){
 										char syst[DIM] = "";
 										sprintf(syst, "%G", result);
 										if (syst[0] == '1'&&syst[1] == '.'&&syst[2] == '#'&&syst[3] == 'I'&&syst[4] == 'N'&&syst[5] == 'F'){
@@ -1821,9 +1868,9 @@ int main(){
 													}
 												}
 												result = initialProcessor(Value, 0);
-												decimalToBinary(result, path);
-												decimalToOctal(result, path);
-												decimalToHexadecimal(result, path);
+												decimalToBinary(result, path, bp);
+												decimalToOctal(result, path, op);
+												decimalToHexadecimal(result, path, hp);
 											}
 										}
 									}
@@ -2093,32 +2140,37 @@ double initialProcessor(char arithTrig[DIM], double result){
 			s = 0;
 		}
 	}
-	s = 0;
-	for (s; paTrig[s] != '\0'; s++){
 
-		if (verifyLetter(paTrig[s]) == 1 && firstLetterVariable(paTrig[s]) == 0){
-			while (verifyLetter(paTrig[s]) == 1){
-				s++;
+	int u = 0;
+	for (u = 0; arithTrig[u] != '\0'; u++){
+		paTrig[u] = arithTrig[u];
+	}
+	paTrig[u] = '\0';
+	u = 0;
+	for (u; paTrig[u] != '\0'; u++){
+		if (verifyLetter(paTrig[u]) == 1 && firstLetterVariable(paTrig[u]) == 0){
+			while (verifyLetter(paTrig[u]) == 1){
+				u++;
 			}
 		}
 		else{
-			if (firstLetterVariable(paTrig[s]) == 1 && (firstLetterVariable(paTrig[s] - 1) == 0 || s == 0 && paTrig[1] != 'i')){
-				s++;
-				while (letterVariables(paTrig[s]) == 1){
-					s++;
+			if (firstLetterVariable(paTrig[u]) == 1 && (firstLetterVariable(paTrig[u] - 1) == 0 || u == 0 && paTrig[1] != 'i')){
+				u++;
+				while (letterVariables(paTrig[u]) == 1){
+					u++;
 				}
-				if (paTrig[s] != '*'&&paTrig[s] != '+'&&paTrig[s] != '-'&&paTrig[s] != '/'&&paTrig[s] != '^'&&paTrig[s] != '!'){
-					arithTrig[s] = '*';
-					for (s; paTrig[s] != '\0'; s++){
-						arithTrig[s + 1] = paTrig[s];
+				if (paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != '('){
+					arithTrig[u] = '*';
+					for (u; paTrig[u] != '\0'; u++){
+						arithTrig[u + 1] = paTrig[u];
 					}
-					arithTrig[s + 1] = '\0';
-					s = 0;
-					for (s = 0; arithTrig[s] != '\0'; s++){
-						paTrig[s] = arithTrig[s];
+					arithTrig[u + 1] = '\0';
+					u = 0;
+					for (u = 0; arithTrig[u] != '\0'; u++){
+						paTrig[u] = arithTrig[u];
 					}
-					paTrig[s] = '\0';
-					s = 0;
+					paTrig[u] = '\0';
+					u = 0;
 				}
 			}
 		}
@@ -2774,7 +2826,7 @@ double arithSolver(char trigon1[DIM], double result){
 			var = processVariable(number2);
 			if (var != 0){ ampl[n] = var; if (sign == 1){ sign = 0; ampl[n] = ampl[n] * -1; } }
 		}
-		if (number2[1] == 'f' || number2[1] == 'h' || number2[1] == 'j' || number2[1] == 'k' || number2[1] == 'm' || number2[1] == 'n' || number2[1] == 'o' || number2[1] == 'p' || number2[1] == 'u' || number2[1] == 'w' || number2[1] == 'v' || number2[1] == 'y' || number2[1] == 'z' || number2[1] == 'G' || number2[1] == 'I' || number2[1] == 'J' || number2[1] == 'K' || number2[1] == 'L' || number2[1] == 'M' || number2[1] == 'N' || number2[1] == 'Q' || number2[1] == 'R' || number2[1] == 'S' || number2[1] == 'T' || number2[1] == 'U' || number2[1] == 'V' || number2[1] == 'X' || number2[1] == 'Y' || number2[1] == 'Z'){
+		if (number2[1] == 'f' || number2[1] == 'h' || number2[1] == 'j' || number2[1] == 'k' || number2[1] == 'm' || number2[1] == 'n' || number2[1] == 'o' || number2[1] == 'p' &&number2[2] != 'i' || number2[1] == 'u' || number2[1] == 'w' || number2[1] == 'v' || number2[1] == 'y' || number2[1] == 'z' || number2[1] == 'G' || number2[1] == 'I' || number2[1] == 'J' || number2[1] == 'K' || number2[1] == 'L' || number2[1] == 'M' || number2[1] == 'N' || number2[1] == 'Q' || number2[1] == 'R' || number2[1] == 'S' || number2[1] == 'T' || number2[1] == 'U' || number2[1] == 'V' || number2[1] == 'X' || number2[1] == 'Y' || number2[1] == 'Z'){
 			if (number2[0] == '_'){
 				for (j = 0; number2[j + 1] != '\0'; j++){
 					number2[j] = number2[j + 1];
@@ -3970,20 +4022,64 @@ int processTxt(char path[DIM], int re){
 					}
 				}
 
-				char dP[DIM] = "";
-				int dp = -1;
-				if ((arith[0] == 'd' || arith[0] == 'D') && (arith[1] == 'p' || arith[1] == 'P')){
-					i = 2;
-					while (arith[i] != 'd'&&arith[i] != 'D'){
-						dP[i - 2] = arith[i];
-						i++;
+				char dP[DIM] = "", bP[DIM] = "", oP[DIM] = "", hP[DIM] = "";
+				int dp = -1, bp = -1, op = -1, hp = -1;
+				while (arith[0] == 'd' &&arith[1] == 'p' || arith[0] == 'b' &&arith[1] == 'p' || arith[0] == 'o' &&arith[1] == 'p' || arith[0] == 'h' &&arith[1] == 'p')  {
+					if (arith[0] == 'd' &&arith[1] == 'p'){
+						i = 2;
+						while (arith[i] != 'd'&&arith[i] != '\0'){
+							dP[i - 2] = arith[i];
+							i++;
+						}
+						dP[i - 2] = '\0';
+						dp = initialProcessor(dP, result);
+						i = i + 2;
+						int b = 0;
+						for (b = 0; arith[b] != '\0'; b++){
+							arith[b] = arith[b + i];
+						}
 					}
-					dP[i - 2] = '\0';
-					dp = initialProcessor(dP, result);
-					i = i + 2;
-					int b = 0;
-					for (b = 0; arith[b] != '\0'; b++){
-						arith[b] = arith[b + i];
+					if (arith[0] == 'b' &&arith[1] == 'p'){
+						i = 2;
+						while (arith[i] != 'b'&&arith[i] != '\0'){
+							bP[i - 2] = arith[i];
+							i++;
+						}
+						bP[i - 2] = '\0';
+						bp = initialProcessor(bP, result);
+						i = i + 2;
+						int b = 0;
+						for (b = 0; arith[b] != '\0'; b++){
+							arith[b] = arith[b + i];
+						}
+					}
+					if (arith[0] == 'o' &&arith[1] == 'p'){
+						i = 2;
+						while (arith[i] != 'o'&&arith[i] != '\0'){
+							oP[i - 2] = arith[i];
+							i++;
+						}
+						oP[i - 2] = '\0';
+						op = initialProcessor(oP, result);
+						i = i + 2;
+						int b = 0;
+						for (b = 0; arith[b] != '\0'; b++){
+							arith[b] = arith[b + i];
+						}
+					}
+					if (arith[0] == 'h' &&arith[1] == 'p'){
+						i = 2;
+						while (arith[i] != 'h'&&arith[i] != '\0'){
+							hP[i - 2] = arith[i];
+							i++;
+						}
+						hP[i - 2] = '\0';
+						hp = initialProcessor(hP, result);
+						i = i + 2;
+						int b = 0;
+						for (b = 0; arith[b] != '\0'; b++){
+							arith[b] = arith[b + i];
+						}
 					}
 				}
 				d = f + 1;
@@ -4052,7 +4148,7 @@ int processTxt(char path[DIM], int re){
 								while (letterVariables(paTrig[u]) == 1){
 									u++;
 								}
-								if (paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'){
+								if (paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != '('){
 									arith[u] = '*';
 									for (u; paTrig[u] != '\0'; u++){
 										arith[u + 1] = paTrig[u];
@@ -4171,12 +4267,14 @@ int processTxt(char path[DIM], int re){
 							re1++;
 						}
 						fclose(fin);
-						if ((open = fopen("numSystems.txt", "r")) != NULL){
+						if ((open = fopen("numSystems.txt", "r")) != NULL || bp != -1 || op != -1 || hp != -1){
 							char numSys[DIM] = "";
 							int numeriSys = 0;
-							fgets(numSys, 10, open);
-							numeriSys = atoi(numSys);
-							if (numeriSys == 1){
+							if (open != NULL){
+								fgets(numSys, 10, open);
+								numeriSys = atoi(numSys);
+							}
+							if (numeriSys == 1 || bp != -1 || op != -1 || hp != -1){
 								char syst[DIM] = "";
 								sprintf(syst, "%G", result);
 								if (syst[0] == '1'&&syst[1] == '.'&&syst[2] == '#'&&syst[3] == 'I'&&syst[4] == 'N'&&syst[5] == 'F'){
@@ -4206,13 +4304,15 @@ int processTxt(char path[DIM], int re){
 											}
 										}
 										result = initialProcessor(Value, 0);
-										decimalToBinary(result, path);
-										decimalToOctal(result, path);
-										decimalToHexadecimal(result, path);
+										decimalToBinary(result, path, bp);
+										decimalToOctal(result, path, op);
+										decimalToHexadecimal(result, path, hp);
 									}
 								}
 							}
-							fclose(open);
+							if (open != NULL){
+								fclose(open);
+							}
 						}
 
 						if ((open = fopen("siPrefixes.txt", "r")) != NULL){
@@ -4547,7 +4647,7 @@ double processVariable(char variable[DIM]){
 				}
 			}
 			vari[lth] = '\0';
-			if (g == strlen(va) && strlen(variable) == g&&j == g&&g!=0){
+			if (g == strlen(va) && strlen(variable) == g&&j == g&&g != 0){
 				valid = 1; validVar = 1;
 				int gh = l;
 				while (vari[gh] != '\n'){
@@ -4654,7 +4754,7 @@ void variableController(char variable[DIM], double result){
 }
 
 int variableValidator(char variable[DIM]){
-	int validate = 0, i = 0, h = -1, abc = 0, j = 0, k = 0,sD=0;
+	int validate = 0, i = 0, h = -1, abc = 0, j = 0, k = 0, sD = 0;
 	char variableT[DIM], varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
 	double arith = 0, func = 0;
 	for (k = 0; variable[k] != '\0'; k++){
@@ -4676,7 +4776,7 @@ int variableValidator(char variable[DIM]){
 	abc = strlen(variable);
 	valid = 0;
 	for (i = 0; variable[i] != '\0'; i++){
-		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd' )){
+		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')){
 			if (variable[i] == 's'){
 				revariable[i] = 'p';
 			}
@@ -4707,7 +4807,7 @@ int variableValidator(char variable[DIM]){
 			h = 1;
 		}
 		else{
-			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'x' || variable[i] == 'b'||variable[i]=='D'){
+			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'x' || variable[i] == 'b' || variable[i] == 'D'){
 				if (variable[i] == 'i'){
 					revariable[i] = 'o';
 				}
@@ -4722,7 +4822,7 @@ int variableValidator(char variable[DIM]){
 				}
 				if (variable[i] == 'D'){
 					revariable[i] = 'T';
-						sD = 1;
+					sD = 1;
 				}
 				h = 1;
 			}
@@ -4743,7 +4843,7 @@ int variableValidator(char variable[DIM]){
 					h = 1;
 				}
 				else{
-					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C'  || variable[i] == 'E' || variable[i] == 'F' || variable[i] == 'P'){
+					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'F' || variable[i] == 'P'){
 						if (variable[i] == 'A'){
 							revariable[i] = 'Q';
 						}
@@ -4804,7 +4904,7 @@ int variableValidator(char variable[DIM]){
 	func = functionProcessor(variableT, 0.3, 1.0, 0);
 	variable[abc] = '\0';
 	processVariable(variable);
-	if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0&&sD==0){
+	if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0 && sD == 0){
 		processVariable(revariable);
 		if (valid == 0){
 			i = 0;
@@ -4814,7 +4914,7 @@ int variableValidator(char variable[DIM]){
 			}
 			var1 = NULL;
 			while (var1 == NULL&&i < 100){
-				var1 = fopen("varRenomeadas.txt", "a+");
+				var1 = fopen("renamedVar.txt", "a+");
 				i++;
 			}
 			if (i < 100){
@@ -4826,7 +4926,7 @@ int variableValidator(char variable[DIM]){
 		}
 	}
 	else{
-		if (h == 1 && valid == 0 && (arith != 0 || func != 0 || prefix != 0||sD!=0)){
+		if (h == 1 && valid == 0 && (arith != 0 || func != 0 || prefix != 0 || sD != 0)){
 			h = 2;
 			sD = 0;
 		}
@@ -5168,7 +5268,7 @@ double hexadecimalToDecimal(char hexadecimal[DIM]){
 	return decimal;
 }
 
-void decimalToBinary(double decimal, char path[DIM]){
+void decimalToBinary(double decimal, char path[DIM], int bp){
 	FILE *open = NULL;
 	int i = 0, j = 0, rest = 0, h = 0, res = 0, ct = 0, cou, c = 0;
 	double decimal1 = 0, quotient = 2, quotient1 = 2, mult = 0, mul = 0, decimal2 = 0;
@@ -5188,7 +5288,7 @@ void decimalToBinary(double decimal, char path[DIM]){
 			decimal = decimal*-1;
 		}
 	}
-	if (sN1 <= 5 && sN1 >= -4 || decimal == 0){
+	if (sN1 <= 5 && sN1 >= -4 || decimal == 0 || bp != -1){
 		decimal1 = decimal;
 		if (decimal < 0){
 			c = 0;
@@ -5221,10 +5321,10 @@ void decimalToBinary(double decimal, char path[DIM]){
 		}
 		binary2[j] = '\0';
 		mult = multi(decimal);
-		if (mult < 0){
+		if (mult < 0 && bp != 0){
 			mult = mult*-1;
 		}
-		if (mult > 0){
+		if (mult > 0 && bp != 0){
 			i = 0;
 			cou = 0;
 			while (binary2[i] != '\0'){ i++; }
@@ -5237,7 +5337,7 @@ void decimalToBinary(double decimal, char path[DIM]){
 				mult = multi(mult);
 				i++;
 			}
-			while (cou < 20){
+			while (cou < 20 && bp == -1 || cou < bp - 1){
 				mult = mult * 2;
 				res = quo(mult);
 				binary2[i] = res + '0';
@@ -5257,7 +5357,7 @@ void decimalToBinary(double decimal, char path[DIM]){
 		while (open == NULL){
 			open = fopen(path, "a+");
 		}
-		if (multi(decimal) == 0){
+		if (multi(decimal) == 0 || bp == 0){
 			if (decimal >= 0){
 				fprintf(open, "In binary=%s\n", binary2);
 				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
@@ -5491,7 +5591,7 @@ void decimalToBinary(double decimal, char path[DIM]){
 	}
 }
 
-void decimalToOctal(double decimal, char path[DIM]){
+void decimalToOctal(double decimal, char path[DIM], int op){
 	FILE *open = NULL;
 	char octal[DIM] = "", octal2[DIM] = "", octalexp[DIM] = "";
 	double quotient, quotient1, decimal1, decimal2 = 0, mult, sN = 0, sN1 = 0, sN2 = 0;
@@ -5511,7 +5611,7 @@ void decimalToOctal(double decimal, char path[DIM]){
 			decimal = decimal*-1;
 		}
 	}
-	if (sN1 <= 5 && sN1 >= -4 || decimal == 0){
+	if (sN1 <= 5 && sN1 >= -4 || decimal == 0 || op != -1){
 		if (decimal < 0){
 			c = 0;
 			decimal1 = decimal1*-1;
@@ -5543,10 +5643,10 @@ void decimalToOctal(double decimal, char path[DIM]){
 		}
 		octal2[j] = '\0';
 		mult = multi(decimal);
-		if (mult < 0){
+		if (mult < 0 && op != 0){
 			mult = mult*-1;
 		}
-		if (mult > 0){
+		if (mult > 0 && op != 0){
 			i = 0;
 			cou = 0;
 			while (octal2[i] != '\0'){ i++; }
@@ -5559,7 +5659,7 @@ void decimalToOctal(double decimal, char path[DIM]){
 				mult = multi(mult);
 				i++;
 			}
-			while (cou < 20){
+			while (cou < 20 && op == -1 || cou < op - 1){
 				mult = mult * 8;
 				res = quo(mult);
 				octal2[i] = res + '0';
@@ -5579,7 +5679,7 @@ void decimalToOctal(double decimal, char path[DIM]){
 		while (open == NULL){
 			open = fopen(path, "a+");
 		}
-		if (multi(decimal) == 0){
+		if (multi(decimal) == 0 || op == 0){
 			if (decimal >= 0){
 				fprintf(open, "In octal=%s\n", octal2);
 				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
@@ -5814,7 +5914,7 @@ void decimalToOctal(double decimal, char path[DIM]){
 	}
 }
 
-void decimalToHexadecimal(double decimal, char path[DIM]){
+void decimalToHexadecimal(double decimal, char path[DIM], int hp){
 	FILE *open = NULL;
 	char hexadecimal[DIM] = "", hexadecimal2[DIM] = "", hexadecimalexp[DIM] = "";
 	double decimal1 = decimal, decimal2 = 0, quotient = 16, quotient1 = 16, mult, sN = 0, sN1 = 0, sN2 = 0;
@@ -5833,7 +5933,7 @@ void decimalToHexadecimal(double decimal, char path[DIM]){
 			decimal = decimal*-1;
 		}
 	}
-	if (sN1 <= 5 && sN1 >= -4 || decimal == 0){
+	if (sN1 <= 5 && sN1 >= -4 || decimal == 0 || hp != -1){
 		if (decimal < 0){
 			c = 0;
 			decimal1 = decimal1*-1;
@@ -5912,10 +6012,10 @@ void decimalToHexadecimal(double decimal, char path[DIM]){
 		hexadecimal2[j] = '\0';
 
 		mult = multi(decimal);
-		if (mult < 0){
+		if (mult < 0 && hp != 0){
 			mult = mult*-1;
 		}
-		if (mult > 0){
+		if (mult > 0 && hp != 0){
 			i = 0;
 			cou = 0;
 			while (hexadecimal2[i] != '\0'){ i++; }
@@ -5950,7 +6050,7 @@ void decimalToHexadecimal(double decimal, char path[DIM]){
 				mult = multi(mult);
 				i++;
 			}
-			while (cou < 20){
+			while (cou < 20 && hp == -1 || cou < hp - 1){
 				mult = mult * 16;
 				res = quo(mult);
 				if (res < 10){
@@ -5990,7 +6090,7 @@ void decimalToHexadecimal(double decimal, char path[DIM]){
 			}
 		}
 		open = fopen(path, "a+");
-		if (multi(decimal) == 0){
+		if (multi(decimal) == 0 || hp == 0){
 			if (decimal >= 0){
 				fprintf(open, "In hexadecimal=%s\n", hexadecimal2);
 				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
@@ -7177,6 +7277,7 @@ int dataVerifier(char data[DIM], double result){
 	char validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_";
 	char numsysData[DIM] = "";
 	if (synTest == 0){
+		decision = 1;
 		synTest = 1;
 		for (w = 0; data[w] != '\0'; w++){
 			if ((data[w] == 'B' || data[w] == 'O' || data[w] == 'H') && (w == 0 || data[w - 1] == '+' || data[w - 1] == '-' || data[w - 1] == '*' || data[w - 1] == '/' || data[w - 1] == '^' || data[w - 1] == '(')){
@@ -7201,8 +7302,10 @@ int dataVerifier(char data[DIM], double result){
 
 					if (t != strlen(numsysData))	{
 						decision = 0;
+						puts("\nBinary number entered with errors.\n");
 						return decision;
 					}
+
 
 				}
 
@@ -7224,8 +7327,10 @@ int dataVerifier(char data[DIM], double result){
 					}
 					if (t != strlen(numsysData))	{
 						decision = 0;
+						puts("\nOctal number entered with errors.\n");
 						return decision;
 					}
+
 				}
 
 
@@ -7247,13 +7352,16 @@ int dataVerifier(char data[DIM], double result){
 					}
 					if (t != strlen(numsysData))	{
 						decision = 0;
+						puts("\nHexadecimal number entered with errors.\n");
 						return decision;
 					}
+
 				}
 
 			}
 
 		}
+
 	}
 	for (d = 0; data[d] != '\0'; d++){
 		g = 0; nDot = 0;
@@ -7275,6 +7383,7 @@ int dataVerifier(char data[DIM], double result){
 	for (re = 0; data[re] != '\0'; re++){
 		if (data[re] == '_'&&data[re - 1] == '_'){
 			decision = 0;
+			puts("\nYou don't need to enter \"__\", please use only a symbol \"_\" to represent negative values.\n");
 			return decision;
 		}
 		for (fr = 0; validChars[fr] != '\0'; fr++){
@@ -7285,6 +7394,7 @@ int dataVerifier(char data[DIM], double result){
 	}
 	if (cChars != re){
 		decision = 0;
+		puts("\nYou entered invalid characters.\n");
 		return decision;
 	}
 	if ((data[0] == '+' || data[0] == '-' || data[0] == '*' || data[0] == 'x' || data[0] == '/' || data[0] == '^') && (data[1] == '0'&&data[2] == '\0')){
@@ -7332,6 +7442,7 @@ int dataVerifier(char data[DIM], double result){
 		text[v] = '\0';
 		decision = dataVerifier(text, result);
 		if (decision == 0){
+			puts("\nYou entered invalid values.\n");
 			return decision;
 		}
 	}
@@ -7339,6 +7450,7 @@ int dataVerifier(char data[DIM], double result){
 	for (i = 0; data[i] != '\0'; i++){
 		if (data[i] == '"' || data[i] == '%' || data[i] == '&' || data[i] == '"' || data[i] == '=' || data[i] == '?' || data[i] == '@' || data[i] == '£' || data[i] == '§' || data[i] == '\'' || data[i] == '€' || data[i] == '¨' || data[i] == '´' || data[i] == '`' || data[i] == 'ª' || data[i] == 'º' || data[i] == '~' || data[i] == ',' || data[i] == ';' || data[i] == ':' || data[i] == '«' || data[i] == '»'){
 			decision = 0;
+			puts("6");
 			return decision;
 		}
 
@@ -7352,6 +7464,7 @@ int dataVerifier(char data[DIM], double result){
 			kl++;
 			if (data[i + 1] == '+' || data[i + 1] == '-' || data[i + 1] == '*' || data[i + 1] == 'x' || data[i + 1] == '/' || data[i + 1] == '^' || data[i + 1] == '!'){
 				decision = 0;
+				puts("\nYou entered an arithmetic symbol next to \"(\".\n");
 				return decision;
 			}
 		}
@@ -7359,6 +7472,7 @@ int dataVerifier(char data[DIM], double result){
 			kr++;
 			if (data[i - 1] == '+' || data[i - 1] == '-' || data[i - 1] == '*' || data[i - 1] == 'x' || data[i - 1] == '/' || data[i - 1] == '^'){
 				decision = 0;
+				puts("\nYou entered an arithmetic symbol previous to \")\".\n");
 				return decision;
 			}
 		}
@@ -7411,6 +7525,7 @@ int dataVerifier(char data[DIM], double result){
 					}
 					if (k != 2){
 						decision = 0;
+						puts("\nNumber of \"bs\" for advanced logarithmic function can't be different of 2.\n");
 						return decision;
 					}
 				}
@@ -7435,6 +7550,7 @@ int dataVerifier(char data[DIM], double result){
 					}
 					if (k != 2){
 						decision = 0;
+						puts("\nNumber of \"Ds\" for advanced root function couldn't be different of 2.\n");
 						return decision;
 					}
 				}
@@ -7475,6 +7591,7 @@ int dataVerifier(char data[DIM], double result){
 			}
 			else{
 				if (strlen(function) > 0){
+					puts("\nInvalid function entered.\n");
 					decision = 0;
 				}
 				return decision;
@@ -7515,13 +7632,6 @@ int dataVerifier(char data[DIM], double result){
 				processVariable(variable);
 				if (validVar == 1){
 					decision = 1;
-				}
-				else{
-					decision = 0;
-					if (variable[0] == 'B' || variable[0] == 'O' || variable[0] == 'H' || variable[0] == 'P'){
-						decision = 1;
-					}
-					return decision;
 				}
 			}
 		}
