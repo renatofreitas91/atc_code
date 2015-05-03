@@ -7344,7 +7344,7 @@ int dataVerifier(char data[DIM], double result){
 				double funcF = functionProcessor(varValidator, 2, 7, 12);
 				if (funcF != 0.5){
 					if (validVar == 0){
-						if (varValidator[0] == 'B' || varValidator[0] == 'O' || varValidator[0] == 'H' || varValidator[0] == 'P' || varValidator[0] == 'e' || varValidator[0] == 'p'&&varValidator[1] == 'i'){
+						if (varValidator[0] == 'E' || varValidator[0] == 'B' || varValidator[0] == 'O' || varValidator[0] == 'H' || varValidator[0] == 'P' || varValidator[0] == 'e' || varValidator[0] == 'p'&&varValidator[1] == 'i'){
 							if (initialProcessor(varValidator, 0) != 0){
 								decision = 1;
 							}
