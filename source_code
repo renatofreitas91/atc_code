@@ -123,7 +123,7 @@ In the Advanced Trigonometry Calculator.cpp's file:
 
 double ans[DIM], values[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0;
 char integral[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "";
-int Mode = 0, valid = 0, validVar = 0, count = 2, synTest = 0;
+int Mode = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0;
 
 
 int main(){
@@ -132,9 +132,9 @@ int main(){
 	char exit[DIM] = "", res, variable[DIM] = "", path[DIM] = "history.txt", varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm", varToRename[DIM];
 	double result = 0, result1 = 0;
 	applySettings(Colors);
-	system("title Advanced Trigonometry Calculator v1.7.9");
+	system("title Advanced Trigonometry Calculator v1.8.0");
 	continu = about();
-	system("title Advanced Trigonometry Calculator v1.7.9                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v1.8.0                                                             ==) Enter data (==              ");
 	if (continu == 1){
 		do{
 			char trigData[DIM] = "";
@@ -204,6 +204,7 @@ int main(){
 					}
 
 					if (arithTrig[0] != '\0'){
+						command = 1;
 						processTxt(arithTrig, rf);
 						printf("\n==> Your file was succesfully processed! <==\n\n");
 						fprintf(fout, "\n==> Your file was succesfully processed! <==\n\n");
@@ -1728,6 +1729,297 @@ int main(){
 						}
 
 					}
+
+					needAst = 1;
+					while (needAst == 1){
+						needAst = 0;
+						for (i = 0; arithTrig[i] != '\0'; i++){
+							if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 1){
+								if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b'){
+									while (verifyLetter(arithTrig[i]) == 1){
+										i--;
+									}
+									i++;
+									int lo = 0;
+									char func[DIM] = "";
+									while (verifyLetter(arithTrig[i]) == 1 && arithTrig[i] != 'b'&&arithTrig[i] != 'D'){
+										func[lo] = arithTrig[i];
+										lo++; i++;
+									}
+									func[lo] = arithTrig[i]; lo++;
+									func[lo] = arithTrig[i]; lo++;
+									func[lo] = '?'; lo++;
+									func[lo] = '\0';
+									if (functionProcessor(func, 0, 0, 0) == 0.5){
+										i = i + 2;
+									}
+								}
+							}
+							if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 1){
+
+
+								j = i;
+								i = strlen(arithTrig);
+								while (i > j){
+									arithTrig[i] = arithTrig[i - 1];
+									i--;
+								}
+								arithTrig[i] = '*';
+								j = j + 3;
+								i = strlen(arithTrig);
+								while (i > j){
+									arithTrig[i] = arithTrig[i - 1];
+									i--;
+								}
+								arithTrig[i] = '*';
+
+							}
+						}
+
+						for (i = 0; arithTrig[i] != '\0'; i++){
+							if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 1){
+								if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b'){
+									while (verifyLetter(arithTrig[i]) == 1){
+										i--;
+									}
+									i++;
+									int lo = 0;
+									char func[DIM] = "";
+									while (verifyLetter(arithTrig[i]) == 1 && arithTrig[i] != 'b'&&arithTrig[i] != 'D'){
+										func[lo] = arithTrig[i];
+										lo++; i++;
+									}
+									func[lo] = arithTrig[i]; lo++;
+									func[lo] = arithTrig[i]; lo++;
+									func[lo] = '?'; lo++;
+									func[lo] = '\0';
+									if (functionProcessor(func, 0, 0, 0) == 0.5){
+										i = i + 2;
+									}
+								}
+							}
+
+							if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 1){
+								needAst = 1;
+							}
+						}
+					}
+
+
+					i = 0;
+					j = 0; k = 0; sd = 0;
+					for (k = 0; arithTrig[k] != '\0'; k++){
+						for (i = 0; varLetters[i] != '\0'; i++){
+							if (arithTrig[k] == varLetters[i]){
+								varToRename[j] = arithTrig[k];
+								j++;
+								break;
+							}
+						}
+						if (j > 0 && arithTrig[k] != varLetters[i] && arithTrig[k] != '\0'){
+							varToRename[j] = '\0';
+							varRename[0] = '\0';
+							variableRenamer(varToRename);
+							varToRename[0] = '\0';
+							sd = k - j;
+							j = 0;
+							while (varRename[j] != '\0'){
+								arithTrig[sd] = varRename[j];
+								j++; sd++;
+							}
+							j = 0;
+						}
+
+					}
+
+					needAst = 1;
+					int mark = 0, mark1 = 0, napier = 0, n = 0, m = 0;
+					float isFunc = 0;
+					char functionP[DIM] = "";
+					while (needAst == 1){
+						valRenamedVar = 0;
+						for (i = mark1; arithTrig[i] != '\0'; i++){
+							if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) == 1 && needAst == 1){
+								if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b'){
+									while (verifyLetter(arithTrig[i]) == 1){
+										i--;
+									}
+									i++;
+									int lo = 0;
+									char func[DIM] = "";
+									while (verifyLetter(arithTrig[i]) == 1 && arithTrig[i] != 'b'&&arithTrig[i] != 'D'){
+										func[lo] = arithTrig[i];
+										lo++; i++;
+									}
+									func[lo] = arithTrig[i]; lo++;
+									func[lo] = arithTrig[i]; lo++;
+									func[lo] = '?'; lo++;
+									func[lo] = '\0';
+									if (functionProcessor(func, 0, 0, 0) == 0.5){
+										i = i + 2;
+									}
+								}
+							}
+							if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) == 1 && needAst == 1){
+								mark1 = i + 1;
+								j = i;
+								i = strlen(arithTrig);
+								int p = j;
+								while (verifyLetter(arithTrig[p]) == 1){
+									p--;
+								}
+								if (j != p){
+									p++;
+
+									char function[DIM] = "";
+
+									int y = 0;
+									while (verifyLetter(arithTrig[p]) == 1){
+										function[y] = arithTrig[p];
+										p++; y++;
+
+									}
+									function[y] = '?'; function[y + 1] = '\0';
+									isFunc = functionProcessor(function, 0, 0, 0);
+									if (isFunc == 0.5){
+										break;
+									}
+									else{
+										function[y] = '\0';
+										valRenamedVar = 0;
+
+										n = 0, m = 0;
+										m = 0;
+										for (n = 0; function[n] != '\0'; n++){
+											while (function[n] != 'e'&&function[n] != '\0'){
+												functionP[m] = function[n];
+												n++; m++;
+											}
+
+											functionP[m] = '\0';
+											valRenamedVar = 0;
+											variableRenamer(functionP);
+											if (valRenamedVar == 1){
+												isFunc = 0;
+												break;
+											}
+											else{
+												functionP[m] = function[n];
+												napier = 1;
+												m++;
+											}
+										}
+										if (valRenamedVar == 1){
+											isFunc = 0;
+										}
+
+									}
+
+								}
+								if (isFunc == 0 && napier == 0){
+									while (i > j){
+										arithTrig[i] = arithTrig[i - 1];
+										i--;
+									}
+									arithTrig[i] = '*';
+									j = j + 2;
+									i = strlen(arithTrig);
+									while (i > j){
+										arithTrig[i] = arithTrig[i - 1];
+										i--;
+									}
+									arithTrig[i] = '*';
+
+								}
+								if (napier == 1){
+									n = 0; m = 0;
+									for (n = 0; arithTrig[n] != '\0'; n++){
+
+										if (arithTrig[n] == functionP[m]){
+											m = 0;
+											while (arithTrig[n] == functionP[m]){
+												n++; m++;
+											}
+											int z = strlen(arithTrig), nj = n, nc = 0;
+											nc = z;
+
+											while (nj < nc){
+												arithTrig[nc] = arithTrig[nc - 1];
+												nc--;
+											}
+
+											arithTrig[nj] = '*';
+											z = strlen(arithTrig);
+											nj = n + 2;
+											while (nj < z){
+												arithTrig[z] = arithTrig[z - 1];
+												z--;
+											}
+											if (arithTrig[z] != '\0'){
+												arithTrig[z] = '*';
+											}
+										}
+									}
+								}
+							}
+						}
+						for (i = mark; arithTrig[i] != '\0'; i++){
+							needAst = 0;
+							if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) == 1){
+								if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b'){
+									while (verifyLetter(arithTrig[i]) == 1){
+										i--;
+									}
+									i++;
+									int lo = 0;
+									char func[DIM] = "";
+									while (verifyLetter(arithTrig[i]) == 1 && arithTrig[i] != 'b'&&arithTrig[i] != 'D'){
+										func[lo] = arithTrig[i];
+										lo++; i++;
+									}
+									func[lo] = arithTrig[i]; lo++;
+									func[lo] = arithTrig[i]; lo++;
+									func[lo] = '?'; lo++;
+									func[lo] = '\0';
+									if (functionProcessor(func, 0, 0, 0) == 0.5){
+										i = i + 2;
+									}
+								}
+							}
+							if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1]) == 1){
+								mark = i + 1;
+								needAst = 1;
+							}
+						}
+					}
+
+					i = 0;
+					j = 0; k = 0; sd = 0;
+					for (k = 0; arithTrig[k] != '\0'; k++){
+						for (i = 0; varLetters[i] != '\0'; i++){
+							if (arithTrig[k] == varLetters[i]){
+								varToRename[j] = arithTrig[k];
+								j++;
+								break;
+							}
+						}
+						if (j > 0 && arithTrig[k] != varLetters[i] && arithTrig[k] != '\0'){
+							varToRename[j] = '\0';
+							varRename[0] = '\0';
+							variableRenamer(varToRename);
+							varToRename[0] = '\0';
+							sd = k - j;
+							j = 0;
+							while (varRename[j] != '\0'){
+								arithTrig[sd] = varRename[j];
+								j++; sd++;
+							}
+							j = 0;
+						}
+
+					}
+
+
 					res = arithTrig[0];
 
 					if (res == '+' || res == '-' || res == '/' || res == '*' || res == 'x' || res == '^'){
@@ -1867,7 +2159,7 @@ int main(){
 						flushall();
 						if (cleanhistory == 0){
 							if (arithTrig[0] != '\0'&&verify == 1){
-								system("title Advanced Trigonometry Calculator v1.7.9                                                            ==) Calculating... (==              ");
+								system("title Advanced Trigonometry Calculator v1.8.0                                                            ==) Calculating... (==              ");
 								result = initialProcessor(arithTrig, result);
 							}
 						}
@@ -2004,7 +2296,7 @@ int main(){
 								}
 								fputs("\n", fout);
 								fclose(fout);
-								system("title Advanced Trigonometry Calculator v1.7.9                                                      ==) Calculated, you can enter more data (==              ");
+								system("title Advanced Trigonometry Calculator v1.8.0                                                      ==) Calculated, you can enter more data (==              ");
 							}
 							else{
 								printf("\nError in syntax.\n\n");
@@ -2014,7 +2306,7 @@ int main(){
 								}
 								fprintf(fout, "\nError in syntax.\n\n");
 								fclose(fout);
-								system("title Advanced Trigonometry Calculator v1.7.9                                                             ==) Enter data (==              ");
+								system("title Advanced Trigonometry Calculator v1.8.0                                                             ==) Enter data (==              ");
 							}
 						}
 					}
@@ -2030,7 +2322,7 @@ int main(){
 }
 
 int about(){
-	system("title Advanced Trigonometry Calculator v1.7.9");
+	system("title Advanced Trigonometry Calculator v1.8.0");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
@@ -2039,8 +2331,8 @@ int about(){
 	char exit[DIM] = "";
 	int i, continu = 1;
 	puts("\n\n\n\n");
-	printf("                    %c   %c%c%c%c  %c   %c   %c   %c   %c  %c%c%c  %c%c%c%c%c %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                   %c %c  %c   %c %c   %c  %c %c  %c%c  %c %c   %c %c     %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                   %c%c%c  %c%c%c%c  %c   %c  %c%c%c  %c   %c  %c%c%c  %c%c%c%c%c %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                  %c   %c %c   %c %c   %c %c   %c %c%c  %c %c   %c %c     %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("                  %c%c%c%c%c %c   %c %c   %c %c%c%c%c%c %c %c %c %c     %c%c%c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("                  %c   %c %c   %c  %c %c  %c   %c %c  %c%c %c   %c %c     %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("                  %c   %c %c%c%c%c    %c   %c   %c %c   %c  %c%c%c  %c%c%c%c%c %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
@@ -2051,17 +2343,17 @@ int about(){
 	printf("        %c   %c   %c   %c   %c   %c %c   %c %c  %c%c %c   %c %c   %c %c       %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("        %c   %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c   %c  %c%c%c  %c   %c %c%c%c%c%c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("             %c%c%c    %c   %c      %c%c%c  %c   %c %c       %c   %c%c%c%c%c  %c%c%c  %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("            %c   %c  %c %c  %c     %c   %c %c   %c %c      %c %c    %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("             %c%c%c   %c%c%c  %c      %c%c%c  %c   %c %c      %c%c%c  %c%c%c%c%c  %c%c%c  %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("            %c     %c%c%c%c%c %c     %c     %c   %c %c     %c%c%c%c%c   %c   %c   %c %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("                                      %c%c   %c%c%c%c%c    %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                                     %c %c       %c   %c   %c\n", 177, 177, 177, 177, 177);
-	printf("                             %c   %c  %c  %c      %c     %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                              %c %c      %c     %c         %c\n", 177, 177, 177, 177, 177);
-	printf("                               %c       %c %c   %c   %c  %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                                      %c%c    %c%c%c     %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                                     %c %c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177);
+	printf("                             %c   %c  %c  %c    %c%c%c    %c   %c \n", 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                              %c %c      %c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177);
+	printf("                               %c       %c %c  %c%c%c  %c  %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n              To know how to use this application please enter \"about\"\n\n");
 	printf("     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS");
 	gets(exit);
@@ -2110,13 +2402,13 @@ int about(){
 		int Window = 3, Dimensions = 2;
 		applySettings(Window);
 		applySettings(Dimensions);
-		system("title Advanced Trigonometry Calculator v1.7.9                                                             ==) Enter data (==              ");
+		system("title Advanced Trigonometry Calculator v1.8.0                                                             ==) Enter data (==              ");
 	}
 	return continu;
 }
 
 void about2(){
-	system("title Advanced Trigonometry Calculator v1.7.9");
+	system("title Advanced Trigonometry Calculator v1.8.0");
 	system("MODE con cols=150 lines=250");
 	system("cls");
 	FILE *open = NULL;
@@ -2133,7 +2425,7 @@ void about2(){
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v1.7.9                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v1.8.0                                                             ==) Enter data (==              ");
 
 }
 
@@ -2198,7 +2490,6 @@ double initialProcessor(char arithTrig[DIM], double result){
 		}
 	}
 
-
 	char paTrig[DIM] = "";
 	for (s = 0; arithTrig[s] != '\0'; s++){
 		paTrig[s] = arithTrig[s];
@@ -2239,6 +2530,7 @@ double initialProcessor(char arithTrig[DIM], double result){
 			s = 0;
 		}
 	}
+
 	int u = 0;
 	for (u = 0; arithTrig[u] != '\0'; u++){
 		paTrig[u] = arithTrig[u];
@@ -2275,7 +2567,6 @@ double initialProcessor(char arithTrig[DIM], double result){
 				u = 0;
 			}
 		}
-
 
 	}
 	s = 0;
@@ -2331,7 +2622,7 @@ double initialProcessor(char arithTrig[DIM], double result){
 	}
 	s = 0;
 	for (s; paTrig[s] != '\0'; s++){
-		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'p' || paTrig[s] == 'e' || verifyLetter(paTrig[s]) == 1) && (paTrig[s - 1] == ')')){
+		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'p' || paTrig[s] == 'e' || verifyLetter(paTrig[s]) == 1 && paTrig[s] != 'b'&&paTrig[s] != 'D') && (paTrig[s - 1] == ')')){
 			arithTrig[s] = '*';
 			for (s; paTrig[s] != '\0'; s++){
 				arithTrig[s + 1] = paTrig[s];
@@ -2380,7 +2671,7 @@ double initialProcessor(char arithTrig[DIM], double result){
 	}
 	s = 0;
 	for (s; paTrig[s] != '\0'; s++){
-		if ((paTrig[s - 2] == 'r'&&paTrig[s - 1] == 'e'&&paTrig[s] == 's'&&paTrig[s + 2] != '('&&paTrig[s + 1] != '!') && (paTrig[s + 1] != '+'&&paTrig[s + 1] != '-'&&paTrig[s + 1] != '*'&&paTrig[s + 1] != '/'&&paTrig[s + 1] != '^'&&paTrig[s + 1] != ')'&&paTrig[s + 1] != 'b')){
+		if ((paTrig[s - 2] == 'r'&&paTrig[s - 1] == 'e'&&paTrig[s] == 's'&&paTrig[s + 2] != '('&&paTrig[s + 1] != '!'&&verifyLetter(paTrig[s + 1]) == 0) && (paTrig[s + 1] != '+'&&paTrig[s + 1] != '-'&&paTrig[s + 1] != '*'&&paTrig[s + 1] != '/'&&paTrig[s + 1] != '^'&&paTrig[s + 1] != ')'&&paTrig[s + 1] != 'b')){
 			s++;
 			arithTrig[s] = '*';
 			for (s; paTrig[s] != '\0'; s++){
@@ -4126,7 +4417,7 @@ int processTxt(char path[DIM], int re){
 						var = 0;
 					}
 				}
-
+				v = 0;
 				char dP[DIM] = "", bP[DIM] = "", oP[DIM] = "", hP[DIM] = "";
 				int dp = -1, bp = -1, op = -1, hp = -1;
 				while (arith[0] == 'd' &&arith[1] == 'p' || arith[0] == 'b' &&arith[1] == 'p' || arith[0] == 'o' &&arith[1] == 'p' || arith[0] == 'h' &&arith[1] == 'p')  {
@@ -4198,6 +4489,7 @@ int processTxt(char path[DIM], int re){
 				if (strlen(arith) > 0){
 					arith[i] = '+'; arith[i + 1] = '0'; arith[i + 2] = '\0';
 				}
+
 				int needAst = 1;
 
 				while (needAst == 1){
@@ -4301,6 +4593,295 @@ int processTxt(char path[DIM], int re){
 					}
 					if (j > 0 && arith[k] != varLetters[i] && arith[k] != '\0'){
 						varToRename[j] = '\0';
+						variableRenamer(varToRename);
+						varToRename[0] = '\0';
+						sd = k - j;
+						j = 0;
+						while (varRename[j] != '\0'){
+							arith[sd] = varRename[j];
+							j++; sd++;
+						}
+						j = 0;
+					}
+
+				}
+				needAst = 1;
+				while (needAst == 1){
+					needAst = 0;
+					for (i = 0; arith[i] != '\0'; i++){
+						if (verifyLetter(arith[i - 1]) == 1 && arith[i] == 'p'&& arith[i + 1] == 'i'&&verifyLetter(arith[i + 2]) == 1){
+							if (arith[i - 1] == 'D' || arith[i - 1] == 'b'){
+								while (verifyLetter(arith[i]) == 1){
+									i--;
+								}
+								i++;
+								int lo = 0;
+								char func[DIM] = "";
+								while (verifyLetter(arith[i]) == 1 && arith[i] != 'b'&&arith[i] != 'D'){
+									func[lo] = arith[i];
+									lo++; i++;
+								}
+								func[lo] = arith[i]; lo++;
+								func[lo] = arith[i]; lo++;
+								func[lo] = '?'; lo++;
+								func[lo] = '\0';
+								if (functionProcessor(func, 0, 0, 0) == 0.5){
+									i = i + 2;
+								}
+							}
+						}
+						if (verifyLetter(arith[i - 1]) == 1 && arith[i] == 'p'&& arith[i + 1] == 'i'&&verifyLetter(arith[i + 2]) == 1){
+
+
+							j = i;
+							i = strlen(arith);
+							while (i > j){
+								arith[i] = arith[i - 1];
+								i--;
+							}
+							arith[i] = '*';
+							j = j + 3;
+							i = strlen(arith);
+							while (i > j){
+								arith[i] = arith[i - 1];
+								i--;
+							}
+							arith[i] = '*';
+
+						}
+					}
+
+					for (i = 0; arith[i] != '\0'; i++){
+						if (verifyLetter(arith[i - 1]) == 1 && arith[i] == 'p'&& arith[i + 1] == 'i'&&verifyLetter(arith[i + 2]) == 1){
+							if (arith[i - 1] == 'D' || arith[i - 1] == 'b'){
+								while (verifyLetter(arith[i]) == 1){
+									i--;
+								}
+								i++;
+								int lo = 0;
+								char func[DIM] = "";
+								while (verifyLetter(arith[i]) == 1 && arith[i] != 'b'&&arith[i] != 'D'){
+									func[lo] = arith[i];
+									lo++; i++;
+								}
+								func[lo] = arith[i]; lo++;
+								func[lo] = arith[i]; lo++;
+								func[lo] = '?'; lo++;
+								func[lo] = '\0';
+								if (functionProcessor(func, 0, 0, 0) == 0.5){
+									i = i + 2;
+								}
+							}
+						}
+
+
+						if (verifyLetter(arith[i - 1]) == 1 && arith[i] == 'p'&& arith[i + 1] == 'i'&&verifyLetter(arith[i + 2]) == 1){
+							needAst = 1;
+						}
+					}
+				}
+
+
+				i = 0;
+				j = 0; k = 0; sd = 0;
+				for (k = 0; arith[k] != '\0'; k++){
+					for (i = 0; varLetters[i] != '\0'; i++){
+						if (arith[k] == varLetters[i]){
+							varToRename[j] = arith[k];
+							j++;
+							break;
+						}
+					}
+					if (j > 0 && arith[k] != varLetters[i] && arith[k] != '\0'){
+						varToRename[j] = '\0';
+						varRename[0] = '\0';
+						variableRenamer(varToRename);
+						varToRename[0] = '\0';
+						sd = k - j;
+						j = 0;
+						while (varRename[j] != '\0'){
+							arith[sd] = varRename[j];
+							j++; sd++;
+						}
+						j = 0;
+					}
+
+				}
+
+				needAst = 1;
+				int mark = 0, mark1 = 0, napier = 0, n = 0, m = 0;
+				float isFunc = 0;
+				char functionP[DIM] = "";
+				while (needAst == 1){
+					valRenamedVar = 0;
+					for (i = mark1; arith[i] != '\0'; i++){
+						if (verifyLetter(arith[i - 1]) == 1 && arith[i] == 'e'&& verifyLetter(arith[i + 1]) == 1 && needAst == 1){
+							if (arith[i - 1] == 'D' || arith[i - 1] == 'b'){
+								while (verifyLetter(arith[i]) == 1){
+									i--;
+								}
+								i++;
+								int lo = 0;
+								char func[DIM] = "";
+								while (verifyLetter(arith[i]) == 1 && arith[i] != 'b'&&arith[i] != 'D'){
+									func[lo] = arith[i];
+									lo++; i++;
+								}
+								func[lo] = arith[i]; lo++;
+								func[lo] = arith[i]; lo++;
+								func[lo] = '?'; lo++;
+								func[lo] = '\0';
+								if (functionProcessor(func, 0, 0, 0) == 0.5){
+									i = i + 2;
+								}
+							}
+						}
+						if (verifyLetter(arith[i - 1]) == 1 && arith[i] == 'e'&& verifyLetter(arith[i + 1]) == 1 && needAst == 1){
+							mark1 = i + 1;
+							j = i;
+							i = strlen(arith);
+							int p = j;
+							while (verifyLetter(arith[p]) == 1){
+								p--;
+							}
+							if (j != p){
+								p++;
+
+								char function[DIM] = "";
+
+								int y = 0;
+								while (verifyLetter(arith[p]) == 1){
+									function[y] = arith[p];
+									p++; y++;
+
+								}
+								function[y] = '?'; function[y + 1] = '\0';
+								isFunc = functionProcessor(function, 0, 0, 0);
+								if (isFunc == 0.5){
+									break;
+								}
+								else{
+									function[y] = '\0';
+									valRenamedVar = 0;
+
+									n = 0, m = 0;
+									m = 0;
+									for (n = 0; function[n] != '\0'; n++){
+										while (function[n] != 'e'&&function[n] != '\0'){
+											functionP[m] = function[n];
+											n++; m++;
+										}
+
+										functionP[m] = '\0';
+										valRenamedVar = 0;
+										variableRenamer(functionP);
+										if (valRenamedVar == 1){
+											isFunc = 0;
+											break;
+										}
+										else{
+											functionP[m] = function[n];
+											napier = 1;
+											m++;
+										}
+									}
+									if (valRenamedVar == 1){
+										isFunc = 0;
+									}
+
+								}
+
+							}
+							if (isFunc == 0 && napier == 0){
+								while (i > j){
+									arith[i] = arith[i - 1];
+									i--;
+								}
+								arith[i] = '*';
+								j = j + 2;
+								i = strlen(arith);
+								while (i > j){
+									arith[i] = arith[i - 1];
+									i--;
+								}
+								arith[i] = '*';
+
+							}
+							if (napier == 1){
+								n = 0; m = 0;
+								for (n = 0; arith[n] != '\0'; n++){
+
+									if (arith[n] == functionP[m]){
+										m = 0;
+										while (arith[n] == functionP[m]){
+											n++; m++;
+										}
+										int z = strlen(arith), nj = n, nc = 0;
+										nc = z;
+
+										while (nj < nc){
+											arith[nc] = arith[nc - 1];
+											nc--;
+										}
+
+										arith[nj] = '*';
+										z = strlen(arith);
+										nj = n + 2;
+										while (nj < z){
+											arith[z] = arith[z - 1];
+											z--;
+										}
+										if (arith[z] != '\0'){
+											arith[z] = '*';
+										}
+									}
+								}
+							}
+						}
+					}
+					for (i = mark; arith[i] != '\0'; i++){
+						needAst = 0;
+						if (verifyLetter(arith[i - 1]) == 1 && arith[i] == 'e'&& verifyLetter(arith[i + 1]) == 1){
+							if (arith[i - 1] == 'D' || arith[i - 1] == 'b'){
+								while (verifyLetter(arith[i]) == 1){
+									i--;
+								}
+								i++;
+								int lo = 0;
+								char func[DIM] = "";
+								while (verifyLetter(arith[i]) == 1 && arith[i] != 'b'&&arith[i] != 'D'){
+									func[lo] = arith[i];
+									lo++; i++;
+								}
+								func[lo] = arith[i]; lo++;
+								func[lo] = arith[i]; lo++;
+								func[lo] = '?'; lo++;
+								func[lo] = '\0';
+								if (functionProcessor(func, 0, 0, 0) == 0.5){
+									i = i + 2;
+								}
+							}
+						}
+						if (verifyLetter(arith[i - 1]) == 1 && arith[i] == 'e'&&verifyLetter(arith[i + 1]) == 1){
+							mark = i + 1;
+							needAst = 1;
+						}
+					}
+				}
+
+				i = 0;
+				j = 0; k = 0; sd = 0;
+				for (k = 0; arith[k] != '\0'; k++){
+					for (i = 0; varLetters[i] != '\0'; i++){
+						if (arith[k] == varLetters[i]){
+							varToRename[j] = arith[k];
+							j++;
+							break;
+						}
+					}
+					if (j > 0 && arith[k] != varLetters[i] && arith[k] != '\0'){
+						varToRename[j] = '\0';
+						varRename[0] = '\0';
 						variableRenamer(varToRename);
 						varToRename[0] = '\0';
 						sd = k - j;
@@ -7664,6 +8245,7 @@ int dataVerifier(char data[DIM], double result){
 		}
 		if (nDot > 1){
 			decision = 0;
+			puts("\nYou entered more than one dot on the entered value.\n");
 			return decision;
 		}
 	}
@@ -7686,6 +8268,7 @@ int dataVerifier(char data[DIM], double result){
 	}
 	if ((data[0] == '+' || data[0] == '-' || data[0] == '*' || data[0] == 'x' || data[0] == '/' || data[0] == '^') && (data[1] == '0'&&data[2] == '\0')){
 		decision = 0;
+		puts("\nYou are trying relate the previous expression with zero (0).\n");
 		return decision;
 	}
 	for (i = 0; data[i] != '\0'; i++){
@@ -7737,7 +8320,7 @@ int dataVerifier(char data[DIM], double result){
 	for (i = 0; data[i] != '\0'; i++){
 		if (data[i] == '"' || data[i] == '%' || data[i] == '&' || data[i] == '"' || data[i] == '=' || data[i] == '?' || data[i] == '@' || data[i] == '£' || data[i] == '§' || data[i] == '\'' || data[i] == '€' || data[i] == '¨' || data[i] == '´' || data[i] == '`' || data[i] == 'ª' || data[i] == 'º' || data[i] == '~' || data[i] == ',' || data[i] == ';' || data[i] == ':' || data[i] == '«' || data[i] == '»'){
 			decision = 0;
-			puts("6");
+			puts("\nYou entered invalid characters.\n");
 			return decision;
 		}
 
@@ -7948,6 +8531,7 @@ void variableRenamer(char variable[DIM]){
 				}
 				if (strlen(variable) == j){
 					if (variable[j] == '\0'&&vari[i] == ' '){
+						valRenamedVar = 1;
 						i++;
 						j = 0;
 						while (vari[i] != '\n'&&vari[i] != '\0'){
