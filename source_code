@@ -115,6 +115,7 @@ void printTimer(int hours, int minutes, int seconds);
 int letterVariables(char letter);
 int firstLetterVariable(char letter);
 int verifyLetter(char letter);
+bool IsPreviousToWindowsVista();
 
 In the Advanced Trigonometry Calculator.cpp's file:
 
@@ -127,14 +128,15 @@ int Mode = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0
 
 
 int main(){
+
 	FILE *fout = NULL, *fclean, *open;
 	int s = 0, tD = 0, command = 0, continu = 1, i = 0, g = 0, txt, cleanhistory = 0, Colors = 1, Dimensions = 2, Window = 3, var = 0, space = 0, j = 0, year = 0, v = 0, r = 0, rf = 0;
 	char exit[DIM] = "", res, variable[DIM] = "", path[DIM] = "history.txt", varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm", varToRename[DIM];
 	double result = 0, result1 = 0;
 	applySettings(Colors);
-	system("title Advanced Trigonometry Calculator v1.8.0");
+	system("title Advanced Trigonometry Calculator v1.8.1");
 	continu = about();
-	system("title Advanced Trigonometry Calculator v1.8.0                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v1.8.1                                                             ==) Enter data (==              ");
 	if (continu == 1){
 		do{
 			char trigData[DIM] = "";
@@ -265,6 +267,65 @@ int main(){
 					}
 				}
 				i = 0;
+				if (arithTrig[i] == 't'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'r'&&arithTrig[i + 3] == 'm'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 8] == 's'&&arithTrig[i + 9] == 'e'&&arithTrig[i + 10] == 's'&&arithTrig[i + 11] == 's'&&arithTrig[i + 12] == 'a'&&arithTrig[i + 13] == 'o'&&arithTrig[i + 16] == '\0' || arithTrig[i] == 'l'&&arithTrig[i + 1] == 'o' && arithTrig[i + 2] == 'g' && arithTrig[i + 3] == 'o'&&arithTrig[i + 4] == 'f'&&arithTrig[i + 5] == 'f'&&arithTrig[i + 8] == '\0'){
+					continu = 0;
+					command = 1;
+					if (IsPreviousToWindowsVista() == true){
+						system("C:\\WINDOWS\\System32\\shutdown -l");
+					}
+					else{
+						system("C:\\WINDOWS\\System32\\shutdown /l");
+					}
+				}
+				if (arithTrig[i] == 'u'&&arithTrig[i + 1] == 'p'&&arithTrig[i + 2] == 'd'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 8] == '\0' || arithTrig[i] == 'a'&&arithTrig[i + 1] == 't' && arithTrig[i + 2] == 'u' && arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 'l'&&arithTrig[i + 5] == 'i'&&arithTrig[i + 6] == 'z'&&arithTrig[i + 7] == 'a'&&arithTrig[i + 8] == 'r'&&arithTrig[i + 11] == '\0'){
+					command = 1;
+					puts(" ");
+					ShellExecute(NULL, _T("open"), _T("Download Advanced Trigonometry Calculator.url"), NULL, NULL, SW_SHOW);
+				}
+				if (arithTrig[i] == 'u'&&arithTrig[i + 1] == 's'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 'r'&&arithTrig[i + 4] == 'g'&&arithTrig[i + 5] == 'u'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'd'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 11] == '\0' || arithTrig[i] == 'm'&&arithTrig[i + 1] == 'a' && arithTrig[i + 2] == 'n' || arithTrig[i + 3] == 'u'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'l'&&arithTrig[i + 8] == '\0'){
+					command = 1;
+					puts(" ");
+					ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator - User Guide.pdf"), NULL, NULL, SW_SHOW);
+				}
+				if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'u'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 'p'&&arithTrig[i + 4] == 'e'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'd'&&arithTrig[i + 7] == 'e'&&arithTrig[i + 8] == 'r'&&arithTrig[i + 11] == '\0' || arithTrig[i] == 's'&&arithTrig[i + 1] == 'l' && arithTrig[i + 2] == 'e' || arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'p'&&arithTrig[i + 7] == '\0'){
+					command = 1;
+					puts(" ");
+					ShellExecute(NULL, _T("runas"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"powercfg -hibernate off\""), NULL, SW_SHOW);
+					Sleep(5000);
+					system("C:\\WINDOWS\\System32\\Rundll32.exe powrprof.dll,SetSuspendState Sleep");
+				}
+				if (arithTrig[i] == 'b'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'o'&&arithTrig[i + 3] == 'q'&&arithTrig[i + 4] == 'u'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 10] == '\0' || arithTrig[i] == 'l'&&arithTrig[i + 1] == 'o' && arithTrig[i + 2] == 'c' || arithTrig[i + 3] == 'k'&&arithTrig[i + 6] == '\0'){
+					command = 1;
+					puts(" ");
+					system("C:\\WINDOWS\\System32\\Rundll32.exe User32.dll,LockWorkStation");
+				}
+				if (arithTrig[i] == 'h'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'b'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'r'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 10] == '\0' || arithTrig[i] == 'h'&&arithTrig[i + 1] == 'i' && arithTrig[i + 2] == 'b' || arithTrig[i + 3] == 'e'&& arithTrig[i + 4] == 'r'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 't'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 11] == '\0'){
+					command = 1;
+					puts(" ");
+					ShellExecute(NULL, _T("runas"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"powercfg -hibernate on\""), NULL, SW_SHOW);
+					Sleep(5000);
+					system("C:\\WINDOWS\\System32\\rundll32.exe PowrProf.dll,SetSuspendState Hibernate");
+				}
+				if (arithTrig[i] == 'e'&&arithTrig[i + 1] == 'n'&&arithTrig[i + 2] == 'c'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'r'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 10] == '\0' || arithTrig[i] == 's'&&arithTrig[i + 1] == 'h' && arithTrig[i + 2] == 'u' || arithTrig[i + 3] == 't'&& arithTrig[i + 4] == 'd'&&arithTrig[i + 5] == 'o'&&arithTrig[i + 6] == 'w'&&arithTrig[i + 7] == 'n'&&arithTrig[i + 10] == '\0'){
+					continu = 0;
+					command = 1;
+					if (IsPreviousToWindowsVista() == true){
+						system("C:\\WINDOWS\\System32\\shutdown -s");
+					}
+					else{
+						system("C:\\WINDOWS\\System32\\shutdown /s");
+					}
+				}
+				if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'n'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'c'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'a'&&arithTrig[i + 8] == 'r' &&arithTrig[i + 11] == '\0' || arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e' && arithTrig[i + 2] == 's' || arithTrig[i + 3] == 't'&& arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 't'&&arithTrig[i + 9] == '\0'){
+					continu = 0;
+					command = 1;
+					if (IsPreviousToWindowsVista() == true){
+						system("C:\\WINDOWS\\System32\\shutdown -r");
+					}
+					else{
+						system("C:\\WINDOWS\\System32\\shutdown /r");
+					}
+				}
 				if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'r'&&arithTrig[i + 6] == '\0' || (arithTrig[i] == 'e' || arithTrig[i] == 'E') && arithTrig[i + 1] == 'x'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 't'&&arithTrig[i + 6] == '\0'){
 					continu = 0;
 					fprintf(fout, "\n");
@@ -814,6 +875,240 @@ int main(){
 					}
 					arithTrig[0] = '\0'; command = 1;
 				}
+
+				if (arithTrig[i] == 't'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'm'&&arithTrig[i + 3] == 'p'&&arithTrig[i + 4] == 'o'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'z'&&arithTrig[i + 8] == 'a'&&arithTrig[i + 9] == 'd'&&arithTrig[i + 10] == 'o'&&arithTrig[i + 11] == 'r'&&arithTrig[i + 12] == '(' || arithTrig[i] == 't'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'm'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'r'&&arithTrig[i + 5] == '('){
+					if (arithTrig[i + 12] == '('){
+						i = i + 13;
+					}
+					else{
+						if (arithTrig[i + 5] == '('){
+							i = i + 6;
+
+						}
+					}
+					int t = i, p = 0;
+					for (t; arithTrig[t] != '\0'; t++){
+						if (arithTrig[t] == ')'){
+							p++;
+						}
+					}
+					if (p != 1){
+						printf("\n\n==> You need to terminate the expression with ')' character. <==\n\n");
+					}
+					else{
+						char time[DIM] = "", expression[DIM] = "";
+						t = 0;
+						int b = i;
+						while (arithTrig[b] != ')'){
+							expression[t] = arithTrig[b];
+							b++; t++;
+						}
+						expression[t] = '\0';
+						b = 0;
+						int sep = 0;
+						for (t = 0; expression[t] != '\0'; t++){
+							if (expression[t] == ':' || expression[t] == '0' || expression[t] == '1' || expression[t] == '2' || expression[t] == '3' || expression[t] == '4' || expression[t] == '5' || expression[t] == '6' || expression[t] == '7' || expression[t] == '8' || expression[t] == '9') {
+								b++;
+								if (expression[t] == ':'){
+									sep++;
+								}
+							}
+						}
+						if (b == strlen(expression) && sep == 2){
+							t = 0;
+							while (arithTrig[i] != ':'&&arithTrig[i] != ')') {
+								time[t] = arithTrig[i];
+								t++; i++;
+							}
+							i++;
+							time[t] = '\0';
+							int hours = initialProcessor(time, result);
+							t = 0;
+							while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+								time[t] = arithTrig[i];
+								t++; i++;
+							}
+							time[t] = '\0';
+							i++;
+							int minutes = initialProcessor(time, result);
+							t = 0;
+							while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+								time[t] = arithTrig[i];
+								t++; i++;
+							}
+							time[t] = '\0';
+							int seconds = initialProcessor(time, result);
+							clock_t start, end, syn1, syn2;
+							int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
+							int timeActual = 50, timepass = 0, time2syn = 0;
+							start = clock();
+							if (totalTime > 0){
+								while (timeActual > 0){
+
+									end = clock();
+									timePassed = (end - start) / CLOCKS_PER_SEC;
+									if (timePassed == 0){
+										syn1 = clock();
+										while (timepass == timePassed){
+											end = clock();
+											timePassed = (end - start) / CLOCKS_PER_SEC;
+											Sleep(1);
+										}
+										syn2 = clock();
+										time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
+									}
+									else{
+										Sleep(time2syn - 50);
+										while (timepass == timePassed){
+											end = clock();
+											timePassed = (end - start) / CLOCKS_PER_SEC;
+											Sleep(3);
+										}
+									}
+									timeActual = totalTime - timePassed;
+									int thours = timeActual / 3600;
+									int tminutes = (timeActual % 3600) / 60;
+									int tseconds = (timeActual % 3600) % 60;
+									timepass = timePassed;
+									printTimer(thours, tminutes, tseconds);
+								}
+							}
+							i = 0;
+							Sleep(400);
+							while (i < 25){
+								Beep(777, 400);
+								Sleep(400);
+								i++;
+							}
+						}
+						else{
+							printf("\n==> Your expression has syntax errors. <==\n\n");
+						}
+					}
+					arithTrig[0] = '\0'; command = 1;
+				}
+
+
+				if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'l'&&arithTrig[i + 3] == 'o'&&arithTrig[i + 4] == 'g'&&arithTrig[i + 5] == 'i'&&arithTrig[i + 6] == 'o'&&arithTrig[i + 7] == '(' || arithTrig[i] == 'c'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'o'&&arithTrig[i + 3] == 'c'&&arithTrig[i + 4] == 'k'&&arithTrig[i + 5] == '('){
+					if (arithTrig[i + 7] == '('){
+						i = i + 8;
+					}
+					else{
+						if (arithTrig[i + 5] == '('){
+							i = i + 6;
+
+						}
+					}
+					int t = i, p = 0;
+					for (t; arithTrig[t] != '\0'; t++){
+						if (arithTrig[t] == ')'){
+							p++;
+						}
+					}
+					if (p != 1){
+						printf("\n\n==> You need to terminate the expression with ')' character. <==\n\n");
+					}
+					else{
+						char timE[DIM] = "", expression[DIM] = "";
+						t = 0;
+						int b = i;
+						while (arithTrig[b] != ')'){
+							expression[t] = arithTrig[b];
+							b++; t++;
+						}
+						expression[t] = '\0';
+						b = 0;
+						int sep = 0;
+						for (t = 0; expression[t] != '\0'; t++){
+							if (expression[t] == ':' || expression[t] == '0' || expression[t] == '1' || expression[t] == '2' || expression[t] == '3' || expression[t] == '4' || expression[t] == '5' || expression[t] == '6' || expression[t] == '7' || expression[t] == '8' || expression[t] == '9') {
+								b++;
+								if (expression[t] == ':'){
+									sep++;
+								}
+							}
+						}
+						if (b == strlen(expression) && sep == 2){
+							t = 0;
+							while (arithTrig[i] != ':'&&arithTrig[i] != ')') {
+								timE[t] = arithTrig[i];
+								t++; i++;
+							}
+							i++;
+							timE[t] = '\0';
+							int hours = initialProcessor(timE, result);
+							t = 0;
+							while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+								timE[t] = arithTrig[i];
+								t++; i++;
+							}
+							timE[t] = '\0';
+							i++;
+							int minutes = initialProcessor(timE, result);
+							t = 0;
+							while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+								timE[t] = arithTrig[i];
+								t++; i++;
+							}
+							timE[t] = '\0';
+							int seconds = initialProcessor(timE, result);
+							clock_t start, end, syn1, syn2;
+							int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
+							int timeActual = 50, timepass = 0, time2syn = 0;
+							start = clock();
+							if (totalTime > 0){
+								while (timeActual > 0){
+
+									end = clock();
+									timePassed = (end - start) / CLOCKS_PER_SEC;
+									if (timePassed == 0){
+										syn1 = clock();
+										while (timepass == timePassed){
+											end = clock();
+											timePassed = (end - start) / CLOCKS_PER_SEC;
+											Sleep(1);
+										}
+										syn2 = clock();
+										time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
+									}
+									else{
+										Sleep(time2syn - 50);
+										while (timepass == timePassed){
+											end = clock();
+											timePassed = (end - start) / CLOCKS_PER_SEC;
+											Sleep(3);
+										}
+									}
+									timeActual = totalTime - timePassed;
+									int thours = timeActual / 3600;
+									int tminutes = (timeActual % 3600) / 60;
+									int tseconds = (timeActual % 3600) % 60;
+									if (tseconds == -1){ tseconds = 0; }
+									timepass = timePassed;
+									time_t hour;
+									time(&hour);
+									char *tim;
+									tim = ctime(&hour);
+									tim[24] = '\0';
+									char hou[3] = { tim[11], tim[12], '\0' };
+									int Hours = atoi(hou);
+									char min[3] = { tim[14], tim[15], '\0' };
+									int Minutes = atoi(min);
+									char sec[3] = { tim[17], tim[18], '\0' };
+									int Seconds = atoi(sec);
+									printTimer(Hours, Minutes, Seconds);
+									printf("\n\n%02d:%02d:%02d\n\n", thours, tminutes, tseconds);
+								}
+							}
+
+						}
+						else{
+							printf("\n==> Your expression has syntax errors. <==\n\n");
+						}
+					}
+					arithTrig[0] = '\0'; command = 1;
+				}
+
+
 				if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'p'&&arithTrig[i + 3] == 'r'&&arithTrig[i + 4] == 'e'&&arithTrig[i + 5] == 'f'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'x'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 9] == 's'&&arithTrig[i + 12] == '\0' || arithTrig[i] == 'p'&&arithTrig[i + 1] == 'r'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 'f'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'x'&&arithTrig[i + 6] == 'o'&&arithTrig[i + 7] == 's'&&arithTrig[i + 8] == 's'&&arithTrig[i + 9] == 'i'&&arithTrig[i + 12] == '\0'){
 					arithTrig[0] = '\0'; command = 1;
 					printf("\n==> Configuration of SI prefixes response <==\n\n");
@@ -2159,7 +2454,7 @@ int main(){
 						flushall();
 						if (cleanhistory == 0){
 							if (arithTrig[0] != '\0'&&verify == 1){
-								system("title Advanced Trigonometry Calculator v1.8.0                                                            ==) Calculating... (==              ");
+								system("title Advanced Trigonometry Calculator v1.8.1                                                            ==) Calculating... (==              ");
 								result = initialProcessor(arithTrig, result);
 							}
 						}
@@ -2296,7 +2591,7 @@ int main(){
 								}
 								fputs("\n", fout);
 								fclose(fout);
-								system("title Advanced Trigonometry Calculator v1.8.0                                                      ==) Calculated, you can enter more data (==              ");
+								system("title Advanced Trigonometry Calculator v1.8.1                                                      ==) Calculated, you can enter more data (==              ");
 							}
 							else{
 								printf("\nError in syntax.\n\n");
@@ -2306,7 +2601,7 @@ int main(){
 								}
 								fprintf(fout, "\nError in syntax.\n\n");
 								fclose(fout);
-								system("title Advanced Trigonometry Calculator v1.8.0                                                             ==) Enter data (==              ");
+								system("title Advanced Trigonometry Calculator v1.8.1                                                             ==) Enter data (==              ");
 							}
 						}
 					}
@@ -2322,7 +2617,7 @@ int main(){
 }
 
 int about(){
-	system("title Advanced Trigonometry Calculator v1.8.0");
+	system("title Advanced Trigonometry Calculator v1.8.1");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
@@ -2349,13 +2644,13 @@ int about(){
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("                                      %c%c    %c%c%c     %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                                     %c %c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177);
-	printf("                             %c   %c  %c  %c    %c%c%c    %c   %c \n", 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                              %c %c      %c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177);
-	printf("                               %c       %c %c  %c%c%c  %c  %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n              To know how to use this application please enter \"about\"\n\n");
-	printf("     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS");
+	printf("                                     %c%c    %c%c%c      %c%c\n", 177, 177, 177, 177, 177, 177, 177);
+	printf("                                    %c %c   %c   %c    %c %c\n", 177, 177, 177, 177, 177, 177);
+	printf("                             %c   %c %c  %c    %c%c%c    %c  %c \n", 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                              %c %c     %c   %c   %c      %c\n", 177, 177, 177, 177, 177, 177);
+	printf("                               %c      %c %c  %c%c%c  %c    %c\n", 177, 177, 177, 177, 177, 177, 177, 177);
+	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n            To know how to use this application please enter \"user guide\"\n\n");
+	printf("     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS\n\n");
 	gets(exit);
 	for (i = 0; exit[i] != '\0'; i++){
 		if (exit[i] == 'A'){
@@ -2392,9 +2687,12 @@ int about(){
 	for (i = 0; exit[i] != '\0'; i++){
 		if (exit[i] == 's'&&exit[i + 1] == 'o'&&exit[i + 2] == 'b'&&exit[i + 3] == 'r'&&exit[i + 4] == 'e' || exit[i] == 'a'&&exit[i + 1] == 'b'&&exit[i + 2] == 'o'&&exit[i + 3] == 'u'&&exit[i + 4] == 't'){
 			about2();
-			continu = 3;
+		}
+		if (exit[i] == 'u'&&exit[i + 1] == 's'&&exit[i + 2] == 'e'&&exit[i + 3] == 'r'&&exit[i + 4] == ' '&&exit[i + 5] == 'g'&&exit[i + 6] == 'u'&&exit[i + 7] == 'i'&&exit[i + 8] == 'd'&&exit[i + 9] == 'e' || exit[i] == 'm'&&exit[i + 1] == 'a' && exit[i + 2] == 'n' || exit[i + 3] == 'u'&&exit[i + 4] == 'a'&&exit[i + 5] == 'l'){
+			ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator - User Guide.pdf"), NULL, NULL, SW_SHOW);
 		}
 	}
+
 	if (continu == 1){
 		system("cls");
 	}
@@ -2402,14 +2700,14 @@ int about(){
 		int Window = 3, Dimensions = 2;
 		applySettings(Window);
 		applySettings(Dimensions);
-		system("title Advanced Trigonometry Calculator v1.8.0                                                             ==) Enter data (==              ");
+		system("title Advanced Trigonometry Calculator v1.8.1                                                             ==) Enter data (==              ");
 	}
 	return continu;
 }
 
 void about2(){
-	system("title Advanced Trigonometry Calculator v1.8.0");
-	system("MODE con cols=150 lines=250");
+	system("title Advanced Trigonometry Calculator v1.8.1");
+	system("MODE con cols=150 lines=270");
 	system("cls");
 	FILE *open = NULL;
 	char about[15000] = "";
@@ -2425,7 +2723,7 @@ void about2(){
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v1.8.0                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v1.8.1                                                             ==) Enter data (==              ");
 
 }
 
@@ -9065,3 +9363,23 @@ int verifyLetter(char letter){
 	}
 	return 0;
 }
+
+bool IsPreviousToWindowsVista()
+{
+	bool previousToVista = false;
+
+	OSVERSIONINFOEX osversion;
+	ZeroMemory(&osversion, sizeof(OSVERSIONINFOEX));
+	osversion.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	if (GetVersionEx((OSVERSIONINFO*)&osversion))
+	{
+		const DWORD VistaVersion = 6;
+		if ((osversion.dwPlatformId == VER_PLATFORM_WIN32_NT) && (osversion.dwMajorVersion < VistaVersion))
+		{
+			previousToVista = true;
+		}
+	}
+
+	return previousToVista;
+}
+
