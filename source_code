@@ -30,7 +30,6 @@ In the stdafx.h's file:
 #include <time.h>
 #include "resource.h"
 #include <boost/math/special_functions/erf.hpp>
-#include <boost/math/special_functions/round.hpp>
 #define DIM 5000
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -137,6 +136,7 @@ void toMultiply(char expression[DIM],double result);
 int verifyPrefix(char prefix[DIM]);
 int firstLetterFunction(char letter);
 void manageExpression(char arithTrig[DIM],double result1,int verify);
+void openTxt();
 
 In the Advanced Trigonometry Calculator.cpp's file:
 
@@ -229,8 +229,9 @@ int main(){
 					if (arithTrig[0] != '\0'){
 						command = 1;
 						processTxt(arithTrig, rf);
-						printf("\n==> Your file was succesfully processed! <==\n\n");
-						fprintf(fout, "\n==> Your file was succesfully processed! <==\n\n");
+						printf("\n==> Close the file with the answers to continue. <==\n\n");
+						fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
+						openTxt();
 						arithTrig[0] = '\0';
 					}
 				}
@@ -1652,8 +1653,9 @@ int main(){
 							fgets(readPath, DIM, readPred);
 							fclose(readPred);
 							processTxt(readPath, rf);
-							printf("\n==> Your file was successfully processed! <==\n\n");
-							fprintf(fout, "\n==> Your file was successfully processed! <==\n\n");
+							printf("\n==> Close the file with the answers to continue. <==\n\n");
+							fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
+							openTxt();
 						}
 					}
 					else{
@@ -1674,8 +1676,9 @@ int main(){
 							pathNameToPath(paName);
 							if (strlen(pathNAme) != 0){
 								processTxt(pathNAme, rf);
-								printf("\n==> Your file was successfully processed! <==\n\n");
-								fprintf(fout, "\n==> Your file was successfully processed! <==\n\n");
+								printf("\n==> Close the file with the answers to continue. <==\n\n");
+								fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
+								openTxt();
 							}
 
 						}
@@ -4958,12 +4961,12 @@ int processTxt(char path[DIM], int re){
 			i++;
 		}
 	}
-	using namespace std;
-
-	std::string s = string(path);
-	std::wstring stemp = std::wstring(s.begin(), s.end());
-	LPCWSTR sw = stemp.c_str();
-	ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
+	int h;
+	for (h = 0; path[h] != '\0'; h++){
+		expressionF[h] = path[h];
+	}
+	expressionF[h] = '\0';
+	if (fin != NULL){ fclose(fin); }if (fout != NULL){ fclose(fout); }if (open != NULL){ fclose(open); } if (read != NULL){ fclose(read); }
 	return 0;
 }
 
@@ -5217,95 +5220,96 @@ double rt(double radicand, double degree, int sig){
 double processVariable(char variable[DIM]){
 	validVar = 0;
 	FILE *open = NULL;
-	int i, g, h, y, l = 0, lth = 0;
+	int i, g, h, y, l = 0, lth = 0, cou = 0;
 	double varValue = 0;
 	char vari[DIM] = "", va[DIM] = "", value[DIM] = "";
 	char *pointer;
 	i = 0;
 	open = fopen("variables.txt", "a+");
-	while (open == NULL){
+	while (open == NULL&&cou < 10){
 		open = fopen("variables.txt", "a+");
-		Sleep(100);
+		cou++;
 	}
-	i = 0;
-	for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
-	vari[i] = '\0';
-	lth = strlen(vari);
-	fclose(open);
-	i = 0;
-	for (i = 0; vari[i] != '\0'; i++){
-		g = 0;
-		int j = i;
-		while (vari[j] != ' '&&vari[j] != '\0'){
-			j++;
-		}
-		j = j - i;
-		if (vari[i] == variable[g] && (i == 0 || vari[i - 1] == '\n')){
-			while (vari[i] == variable[g]){
-				if (vari[i] == variable[g]){
-					va[g] = vari[i];
-				}i++; g++;
+	if (cou < 10){
+		i = 0;
+		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+		vari[i] = '\0';
+		lth = strlen(vari);
+		fclose(open);
+		i = 0;
+		for (i = 0; vari[i] != '\0'; i++){
+			g = 0;
+			int j = i;
+			while (vari[j] != ' '&&vari[j] != '\0'){
+				j++;
 			}
-			if (vari[i] != ' '){
-				while (vari[i] != ' '){
-					va[g] = vari[i];
-					g++; i++;
+			j = j - i;
+			if (vari[i] == variable[g] && (i == 0 || vari[i - 1] == '\n')){
+				while (vari[i] == variable[g]){
+					if (vari[i] == variable[g]){
+						va[g] = vari[i];
+					}i++; g++;
+				}
+				if (vari[i] != ' '){
+					while (vari[i] != ' '){
+						va[g] = vari[i];
+						g++; i++;
+					}
+				}
+				va[g] = '\0';
+			}
+			l = i;
+			g = 0;
+			for (y = 0; va[y] != '\0'; y++){
+				if (va[y] == variable[y]){
+					g++;
 				}
 			}
-			va[g] = '\0';
-		}
-		l = i;
-		g = 0;
-		for (y = 0; va[y] != '\0'; y++){
-			if (va[y] == variable[y]){
-				g++;
-			}
-		}
-		vari[lth] = '\0';
-		if (g == strlen(va) && strlen(variable) == g&&j == g&&g != 0){
-			int space = 0;
-			valid = 1; validVar = 1;
-			int gh = l;
-			while (vari[gh] != '\n'){
-				gh++;
-			}
-			h = gh;
-			gh = l + 1;
-			y = 0;
-			for (gh; gh < h; gh++){
-				value[y] = vari[gh];
-				if (value[y] == ' '){
-					space = 1;
+			vari[lth] = '\0';
+			if (g == strlen(va) && strlen(variable) == g&&j == g&&g != 0){
+				int space = 0;
+				valid = 1; validVar = 1;
+				int gh = l;
+				while (vari[gh] != '\n'){
+					gh++;
 				}
-				y++;
-			}
-			value[y] = '\0';
-			if (space == 0){
-				resultR = strtod(value, &pointer);
-			}
-			else{
-				char real[DIM] = "", imag[DIM] = "";
+				h = gh;
+				gh = l + 1;
 				y = 0;
-				while (value[y] != ' '){
-					real[y] = value[y];
+				for (gh; gh < h; gh++){
+					value[y] = vari[gh];
+					if (value[y] == ' '){
+						space = 1;
+					}
 					y++;
 				}
-				real[y] = '\0';
-				y++;
-				gh = 0;
-				while (value[y] != '\0'){
-					imag[gh] = value[y];
-					y++; gh++;
+				value[y] = '\0';
+				if (space == 0){
+					resultR = strtod(value, &pointer);
 				}
-				imag[gh] = '\0';
-				resultR = strtod(real, &pointer);
-				resultI = strtod(imag, &pointer);
-				varValue = resultR;
+				else{
+					char real[DIM] = "", imag[DIM] = "";
+					y = 0;
+					while (value[y] != ' '){
+						real[y] = value[y];
+						y++;
+					}
+					real[y] = '\0';
+					y++;
+					gh = 0;
+					while (value[y] != '\0'){
+						imag[gh] = value[y];
+						y++; gh++;
+					}
+					imag[gh] = '\0';
+					resultR = strtod(real, &pointer);
+					resultI = strtod(imag, &pointer);
+					varValue = resultR;
+				}
+				break;
 			}
-			break;
 		}
 	}
-	fclose(open);
 	return varValue;
 }
 
@@ -10318,4 +10322,10 @@ void manageExpression(char arithTrig[DIM], double result1, int verify){
 		expressionF[i] = arithTrig[i];
 	}
 	expressionF[i] = '\0';
+}
+
+void openTxt(){
+	char openFile[DIM] = "";
+	sprintf(openFile, "notepad.exe %s", expressionF);
+	system(openFile);
 }
