@@ -9263,63 +9263,65 @@ void complex_atan(double x, double y){
 }
 
 void round_complex(){
-	FILE *open;
-	open = fopen("numSystems.txt", "r");
-	char numSys[DIM] = "";
-	int numeriSys = 0;
-	if (open != NULL){
-		fgets(numSys, 10, open);
-		numeriSys = atoi(numSys);
-		fclose(open);
-	}
+	if (resultI != 0){
+		FILE *open;
+		open = fopen("numSystems.txt", "r");
+		char numSys[DIM] = "";
+		int numeriSys = 0;
+		if (open != NULL){
+			fgets(numSys, 10, open);
+			numeriSys = atoi(numSys);
+			fclose(open);
+		}
 
-	double norm = sqrt(pow(resultR, 2.0) + pow(resultI, 2.0));
-	char response[DIM] = "";
-	char *ty;
+		double norm = sqrt(pow(resultR, 2.0) + pow(resultI, 2.0));
+		char response[DIM] = "";
+		char *ty;
 
-	if (numeriSys == 1){
-		sprintf(response, "%G", norm);
-		norm = strtod(response, &ty);
-		sprintf(response, "%G", resultI);
-		resultI = strtod(response, &ty);
-		sprintf(response, "%G", resultR);
-		resultR = strtod(response, &ty);
-		if (norm == abs(resultI)){
-			sprintf(response, "0", resultR);
-		}
-		else{
-			sprintf(response, "%G", resultR);
-		}
-		resultR = strtod(response, &ty);
-		if (norm == abs(resultR)){
-			sprintf(response, "0", resultI);
-		}
-		else{
+		if (numeriSys == 1){
+			sprintf(response, "%G", norm);
+			norm = strtod(response, &ty);
 			sprintf(response, "%G", resultI);
-		}
-	}
-	else{
-		sprintf(response, "%.400f", norm);
-		norm = strtod(response, &ty);
-		sprintf(response, "%.400f", resultI);
-		resultI = strtod(response, &ty);
-		sprintf(response, "%.400f", resultR);
-		resultR = strtod(response, &ty);
-		if (norm == abs(resultI)){
-			sprintf(response, "0", resultR);
-		}
-		else{
-			sprintf(response, "%.400f", resultR);
-		}
-		resultR = strtod(response, &ty);
-		if (norm == abs(resultR)){
-			sprintf(response, "0", resultI);
+			resultI = strtod(response, &ty);
+			sprintf(response, "%G", resultR);
+			resultR = strtod(response, &ty);
+			if (norm == abs(resultI)){
+				sprintf(response, "0", resultR);
+			}
+			else{
+				sprintf(response, "%G", resultR);
+			}
+			resultR = strtod(response, &ty);
+			if (norm == abs(resultR)){
+				sprintf(response, "0", resultI);
+			}
+			else{
+				sprintf(response, "%G", resultI);
+			}
 		}
 		else{
+			sprintf(response, "%.400f", norm);
+			norm = strtod(response, &ty);
 			sprintf(response, "%.400f", resultI);
+			resultI = strtod(response, &ty);
+			sprintf(response, "%.400f", resultR);
+			resultR = strtod(response, &ty);
+			if (norm == abs(resultI)){
+				sprintf(response, "0", resultR);
+			}
+			else{
+				sprintf(response, "%.400f", resultR);
+			}
+			resultR = strtod(response, &ty);
+			if (norm == abs(resultR)){
+				sprintf(response, "0", resultI);
+			}
+			else{
+				sprintf(response, "%.400f", resultI);
+			}
 		}
+		resultI = strtod(response, &ty);
 	}
-	resultI = strtod(response, &ty);
 }
 
 void renamer(char expression[DIM]){
