@@ -299,10 +299,15 @@ int main(){
 						system("C:\\WINDOWS\\System32\\shutdown /l");
 					}
 				}
+				if (arithTrig[i] == 'u'&&arithTrig[i + 1] == 'p'&&arithTrig[i + 2] == 'd'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 6] == 'p'&&arithTrig[i + 7] == 'o'&&arithTrig[i + 8] == 'r'&&arithTrig[i + 9] == 't'&&arithTrig[i + 10] == 'a'&&arithTrig[i + 11] == 'b'&&arithTrig[i + 12] == 'l'&&arithTrig[i + 13] == 'e'&&arithTrig[i + 16] == '\0'){
+					command = 1;
+					puts(" ");
+					ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Advanced%20Trigonometry%20Calculator.zip/download\""), NULL, SW_SHOW);
+				}
 				if (arithTrig[i] == 'u'&&arithTrig[i + 1] == 'p'&&arithTrig[i + 2] == 'd'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 8] == '\0' || arithTrig[i] == 'a'&&arithTrig[i + 1] == 't' && arithTrig[i + 2] == 'u' && arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 'l'&&arithTrig[i + 5] == 'i'&&arithTrig[i + 6] == 'z'&&arithTrig[i + 7] == 'a'&&arithTrig[i + 8] == 'r'&&arithTrig[i + 11] == '\0'){
 					command = 1;
 					puts(" ");
-					ShellExecute(NULL, _T("open"), _T("Download Advanced Trigonometry Calculator.url"), NULL, NULL, SW_SHOW);
+					ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator.exe/download\""), NULL, SW_SHOW);
 				}
 				if (arithTrig[i] == 'u'&&arithTrig[i + 1] == 's'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 'r'&&arithTrig[i + 4] == 'g'&&arithTrig[i + 5] == 'u'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'd'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 11] == '\0' || arithTrig[i] == 'm'&&arithTrig[i + 1] == 'a' && arithTrig[i + 2] == 'n' && arithTrig[i + 3] == 'u'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'l'&&arithTrig[i + 8] == '\0'){
 					command = 1;
@@ -1996,24 +2001,40 @@ int main(){
 									if (result1 > 0 && result2 > 0){
 										printf("#%d=%G+%Gi\n", rf, result1, result2);
 									}
-									if (result1 > 0 && result2 < 0){
-										printf("#%d=%G%Gi\n", rf, result1, result2);
+									else{
+										if (result1 > 0 && result2 < 0){
+											printf("#%d=%G%Gi\n", rf, result1, result2);
+										}
+										else{
+											if (result1 < 0 && result2 > 0){
+												printf("#%d=%G+%Gi\n", rf, result1, result2);
+											}
+											else{
+												if (result1 < 0 && result2 < 0){
+													printf("#%d=%G%Gi\n", rf, result1, result2);
+												}
+												else{
+													if (result1 == 0 && result2 == 0){
+														printf("#%d=%G\n", rf, result1);
+													}
+													else{
+														if (result1 == 0 && result2 != 0){
+															printf("#%d=%Gi\n", rf, result2);
+														}
+														else{
+															if (result1 != 0 && result2 == 0){
+																printf("#%d=%G\n", rf, result1);
+															}
+															else{
+																printf("#%d=%G+%Gi\n", rf, result1, result2);
+															}
+														}
+													}
+												}
+											}
+										}
 									}
-									if (result1 < 0 && result2 > 0){
-										printf("#%d=%G+%Gi\n", rf, result1, result2);
-									}
-									if (result1 < 0 && result2 < 0){
-										printf("#%d=%G%Gi\n", rf, result1, result2);
-									}
-									if (result1 == 0 && result2 == 0){
-										printf("#%d=%G\n", rf, result1);
-									}
-									if (result1 == 0 && result2 != 0){
-										printf("#%d=%Gi\n", rf, result2);
-									}
-									if (result1 != 0 && result2 == 0){
-										printf("#%d=%G\n", rf, result1);
-									}
+
 
 									if (fout != NULL){
 										fclose(fout);
@@ -2025,24 +2046,40 @@ int main(){
 									if (result1 > 0 && result2 > 0){
 										fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
 									}
-									if (result1 > 0 && result2 < 0){
-										fprintf(fout, "#%d=%G%Gi\n", rf, result1, result2);
+									else{
+										if (result1 > 0 && result2 < 0){
+											fprintf(fout, "#%d=%G%Gi\n", rf, result1, result2);
+										}
+										else{
+											if (result1 < 0 && result2 > 0){
+												fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
+											}
+											else{
+												if (result1 < 0 && result2 < 0){
+													fprintf(fout, "#%d=%G%Gi\n", rf, result1, result2);
+												}
+												else{
+													if (result1 == 0 && result2 == 0){
+														fprintf(fout, "#%d=%G\n", rf, result1);
+													}
+													else{
+														if (result1 == 0 && result2 != 0){
+															fprintf(fout, "#%d=%Gi\n", rf, result2);
+														}
+														else{
+															if (result1 != 0 && result2 == 0){
+																fprintf(fout, "#%d=%G\n", rf, result1);
+															}
+															else{
+																fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
+															}
+														}
+													}
+												}
+											}
+										}
 									}
-									if (result1 < 0 && result2 > 0){
-										fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
-									}
-									if (result1 < 0 && result2 < 0){
-										fprintf(fout, "#%d=%G%Gi\n", rf, result1, result2);
-									}
-									if (result1 == 0 && result2 == 0){
-										fprintf(fout, "#%d=%G\n", rf, result1);
-									}
-									if (result1 == 0 && result2 != 0){
-										fprintf(fout, "#%d=%Gi\n", rf, result2);
-									}
-									if (result1 != 0 && result2 == 0){
-										fprintf(fout, "#%d=%G\n", rf, result1);
-									}
+
 									fclose(fout);
 									rf++;
 								}
@@ -2854,6 +2891,7 @@ double initialProcessor(char arithTrig[DIM], double result){
 			}
 		}
 	}
+
 	a = 0;
 	int fr;
 	so = 0;
@@ -2876,11 +2914,11 @@ double initialProcessor(char arithTrig[DIM], double result){
 					exponentiation(triArith[so], triArithI[so], asdf, asdfI, sig[so]);
 					asdf = resultR;
 					asdfI = resultI;
-					triArith[so + 1] = 1;
-					triArith[so] = 1;
+					triArith[so + 1] = 0;
+					triArith[so] = 0;
 					triArithI[so + 1] = 0;
 					triArithI[so] = 0;
-					arTrig[so] = '*';
+					arTrig[so] = '+';
 					so--;
 					a = 2;
 				}
@@ -2901,8 +2939,8 @@ double initialProcessor(char arithTrig[DIM], double result){
 								exponentiation(triArith[so], triArithI[so], asdf, asdfI, sig[so]);
 								asdf = resultR;
 								asdfI = resultI;
-								triArith[so] = 1; triArithI[so] = 0;
-								arTrig[so] = '*';
+								triArith[so] = 0; triArithI[so] = 0;
+								arTrig[so] = '+';
 								so--;
 
 								if (arTrig[so] != '^'){
@@ -2933,8 +2971,8 @@ double initialProcessor(char arithTrig[DIM], double result){
 					}
 					exponentiation(triArith[sa], triArithI[sa], triArith[so + 1], triArithI[so + 1], sig[sa]);
 					triArith[sa] = resultR; triArithI[sa] = resultI;
-					triArith[so + 1] = 1; triArithI[so + 1] = 0;
-					arTrig[so] = '*';
+					triArith[so + 1] = 0; triArithI[so + 1] = 0;
+					arTrig[so] = '+';
 					so = so + 1;
 				}
 			}
@@ -3317,11 +3355,11 @@ double arithSolver(char trigon1[DIM], double result){
 					exponentiation(ampl[so], amplI[so], asdf, asdfI, sig[so]);
 					asdf = resultR;
 					asdfI = resultI;
-					ampl[so + 1] = 1;
+					ampl[so + 1] = 0;
 					ampl[so] = 1;
 					amplI[so + 1] = 0;
 					amplI[so] = 0;
-					amp[so] = '*';
+					amp[so] = '+';
 					so--;
 					a = 2;
 				}
@@ -3341,9 +3379,9 @@ double arithSolver(char trigon1[DIM], double result){
 								exponentiation(ampl[so], amplI[so], asdf, asdfI, sig[so]);
 								asdf = resultR;
 								asdfI = resultI;
-								ampl[so] = 1;
+								ampl[so] = 0;
 								amplI[so] = 0;
-								amp[so] = '*';
+								amp[so] = '+';
 								so--;
 
 								if (amp[so] != '^'){
@@ -3374,9 +3412,9 @@ double arithSolver(char trigon1[DIM], double result){
 					exponentiation(ampl[sa], amplI[sa], ampl[so + 1], amplI[so + 1], sig[sa]);
 					ampl[sa] = resultR;
 					amplI[sa] = resultI;
-					ampl[so + 1] = 1;
+					ampl[so + 1] = 0;
 					amplI[so + 1] = 0;
-					amp[so] = '*';
+					amp[so] = '+';
 					so++;
 				}
 			}
@@ -4366,7 +4404,7 @@ void Clock(int a)
 int processTxt(char path[DIM], int re){
 	double result = 0, result1 = 0, result2 = 0, anstxt[DIM], anstxtI[DIM];
 	FILE *fin = NULL, *fout = NULL, *open = NULL, *read = NULL;
-	char addBar[DIM] = "", arith[DIM] = "", res, sendFunc[DIM] = "", resp[30] = "_answers.txt", varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm", varToRename[DIM];
+	char addBar[DIM] = "", arith[DIM] = "", res, sendFunc[DIM] = "", resp[30] = "_answers.txt", varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
 	int tD = 0, i, j, cP = 0, k, d, e, f, space = 0, v = 0, l = 0, m = 0, re1 = 0;
 	i = 0;
 	while (i < re){
@@ -4792,23 +4830,38 @@ int processTxt(char path[DIM], int re){
 							if (result1 > 0 && result2 > 0){
 								fprintf(fin, "#%d=%G+%Gi\n", re1, result1, result2);
 							}
-							if (result1 > 0 && result2 < 0){
-								fprintf(fin, "#%d=%G%Gi\n", re1, result1, result2);
-							}
-							if (result1 < 0 && result2 > 0){
-								fprintf(fin, "#%d=%G+%Gi\n", re1, result1, result2);
-							}
-							if (result1 < 0 && result2 < 0){
-								fprintf(fin, "#%d=%G%Gi\n", re1, result1, result2);
-							}
-							if (result1 == 0 && result2 == 0){
-								fprintf(fin, "#%d=%G\n", re1, result1);
-							}
-							if (result1 == 0 && result2 != 0){
-								fprintf(fin, "#%d=%Gi\n", re1, result2);
-							}
-							if (result1 != 0 && result2 == 0){
-								fprintf(fin, "#%d=%G\n", re1, result1);
+							else{
+								if (result1 > 0 && result2 < 0){
+									fprintf(fin, "#%d=%G%Gi\n", re1, result1, result2);
+								}
+								else{
+									if (result1 < 0 && result2 > 0){
+										fprintf(fin, "#%d=%G+%Gi\n", re1, result1, result2);
+									}
+									else{
+										if (result1 < 0 && result2 < 0){
+											fprintf(fin, "#%d=%G%Gi\n", re1, result1, result2);
+										}
+										else{
+											if (result1 == 0 && result2 == 0){
+												fprintf(fin, "#%d=%G\n", re1, result1);
+											}
+											else{
+												if (result1 == 0 && result2 != 0){
+													fprintf(fin, "#%d=%Gi\n", re1, result2);
+												}
+												else{
+													if (result1 != 0 && result2 == 0){
+														fprintf(fin, "#%d=%G\n", re1, result1);
+													}
+													else{
+														fprintf(fin, "#%d=%G+%Gi\n", re1, result1, result2);
+													}
+												}
+											}
+										}
+									}
+								}
 							}
 							re1++;
 						}
@@ -4820,30 +4873,45 @@ int processTxt(char path[DIM], int re){
 								sprintf(dP, "#%d=%%.%df+%%.%dfi\n", re1, dp, dp);
 								fprintf(fin, dP, result1, result2);
 							}
-							if (result1 > 0 && result2 < 0){
-								sprintf(dP, "#%d=%%.%df%%.%dfi\n", re1, dp, dp);
-								fprintf(fin, dP, result1, result2);
-							}
-							if (result1 < 0 && result2 > 0){
-								sprintf(dP, "#%d = %%.%df+%%.%dfi\n", re1, dp, dp);
-								fprintf(fin, dP, result1, result2);
-							}
-							if (result1 < 0 && result2 < 0){
-								sprintf(dP, "#%d=%%.%df%%.%dfi\n", re1, dp, dp);
-								fprintf(fin, dP, result1, result2);
-							}
-							if (result1 == 0 && result2 == 0){
-								sprintf(dP, "#%d=%%.%df\n", re1, dp);
-								fprintf(fin, dP, result1);
-							}
-
-							if (result1 == 0 && result2 != 0){
-								sprintf(dP, "#%d=%%.%dfi\n", re1, dp);
-								fprintf(fin, dP, result2);
-							}
-							if (result1 != 0 && result2 == 0){
-								sprintf(dP, "#%d=%%.%df\n", re1, dp);
-								fprintf(fin, dP, result1);
+							else{
+								if (result1 > 0 && result2 < 0){
+									sprintf(dP, "#%d=%%.%df%%.%dfi\n", re1, dp, dp);
+									fprintf(fin, dP, result1, result2);
+								}
+								else{
+									if (result1 < 0 && result2 > 0){
+										sprintf(dP, "#%d = %%.%df+%%.%dfi\n", re1, dp, dp);
+										fprintf(fin, dP, result1, result2);
+									}
+									else{
+										if (result1 < 0 && result2 < 0){
+											sprintf(dP, "#%d=%%.%df%%.%dfi\n", re1, dp, dp);
+											fprintf(fin, dP, result1, result2);
+										}
+										else{
+											if (result1 == 0 && result2 == 0){
+												sprintf(dP, "#%d=%%.%df\n", re1, dp);
+												fprintf(fin, dP, result1);
+											}
+											else{
+												if (result1 == 0 && result2 != 0){
+													sprintf(dP, "#%d=%%.%dfi\n", re1, dp);
+													fprintf(fin, dP, result2);
+												}
+												else{
+													if (result1 != 0 && result2 == 0){
+														sprintf(dP, "#%d=%%.%df\n", re1, dp);
+														fprintf(fin, dP, result1);
+													}
+													else{
+														sprintf(dP, "#%d=%%.%df+%%.%dfi\n", re1, dp, dp);
+														fprintf(fin, dP, result1, result2);
+													}
+												}
+											}
+										}
+									}
+								}
 							}
 							re1++;
 						}
@@ -9275,7 +9343,7 @@ void complex_atan(double x, double y){
 }
 
 void round_complex(){
-	if (resultI != 0){
+	if (resultR >= -DBL_MAX&&resultR <= DBL_MAX&&resultI >= -DBL_MAX&&resultI <= DBL_MAX){
 		FILE *open;
 		open = fopen("numSystems.txt", "r");
 		char numSys[DIM] = "";
@@ -9335,6 +9403,7 @@ void round_complex(){
 		resultI = strtod(response, &ty);
 	}
 }
+
 
 void renamer(char expression[DIM]){
 	char varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm", varToRename[DIM] = "";
