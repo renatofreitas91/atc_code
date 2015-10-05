@@ -132,11 +132,13 @@ void complex_atan(double x, double y);
 void round_complex();
 void renamer(char expression[DIM]);
 void variableToMultiply(char expression[DIM]);
-void toMultiply(char expression[DIM],double result);
+void toMultiply(char expression[DIM], double result);
 int verifyPrefix(char prefix[DIM]);
 int firstLetterFunction(char letter);
-void manageExpression(char arithTrig[DIM],double result1,int verify);
+void manageExpression(char arithTrig[DIM], double result1, int verify);
 void openTxt();
+void cls();
+void wait(int seconds);
 
 In the Advanced Trigonometry Calculator.cpp's file:
 
@@ -155,9 +157,9 @@ int main(){
 	char exit[DIM] = "", res, variable[DIM] = "", path[DIM] = "history.txt", varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
 	double result = 0, result1 = 0, result2 = 0;
 	applySettings(Colors);
-	system("title Advanced Trigonometry Calculator v1.8.3");
+	system("title Advanced Trigonometry Calculator v1.8.4");
 	continu = about();
-	system("title Advanced Trigonometry Calculator v1.8.3                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v1.8.4                                                             ==) Enter data (==              ");
 	if (continu == 1){
 		do{
 			char trigData[DIM] = "";
@@ -299,6 +301,11 @@ int main(){
 						system("C:\\WINDOWS\\System32\\shutdown /l");
 					}
 				}
+				if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'u'&&arithTrig[i + 2] == 'n'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'c'&&arithTrig[i + 8] == '\0'){
+					command = 1;
+					puts(" ");
+					ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator EN.exe"), NULL, NULL, SW_SHOW);
+				}
 				if (arithTrig[i] == 'u'&&arithTrig[i + 1] == 'p'&&arithTrig[i + 2] == 'd'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 6] == 'p'&&arithTrig[i + 7] == 'o'&&arithTrig[i + 8] == 'r'&&arithTrig[i + 9] == 't'&&arithTrig[i + 10] == 'a'&&arithTrig[i + 11] == 'b'&&arithTrig[i + 12] == 'l'&&arithTrig[i + 13] == 'e'&&arithTrig[i + 16] == '\0'){
 					command = 1;
 					puts(" ");
@@ -359,13 +366,13 @@ int main(){
 					command = 1;
 				}
 				if (arithTrig[i] == 'l'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'm'&&arithTrig[i + 3] == 'p'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] != 'h'&&arithTrig[i + 8] == '\0' || arithTrig[i] == 'c'&&arithTrig[i + 1] == 'l' && (arithTrig[i + 2] == 'e' || arithTrig[i + 2] == 'E') && arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 'n'&&arithTrig[i + 5] != 'h'&&arithTrig[i + 7] == '\0'){
-					system("cls"); command = 1;
+					cls(); command = 1;
 					arithTrig[0] = '\0';
 					fprintf(fout, "\n");
 				}
 				if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'o'&&arithTrig[i + 2] == 'b'&&arithTrig[i + 3] == 'r' && (arithTrig[i + 4] == 'e' || arithTrig[i + 4] == 'E') && arithTrig[i + 7] == '\0' || arithTrig[i] == 'a'&&arithTrig[i + 1] == 'b'&&arithTrig[i + 2] == 'o'&&arithTrig[i + 3] == 'u'&&arithTrig[i + 4] == 't'&&arithTrig[i + 7] == '\0'){
 					arithTrig[0] = '\0'; command = 1;
-					system("cls");
+					cls();
 					about2();
 					fprintf(fout, "\n");
 				}
@@ -1110,6 +1117,16 @@ int main(){
 							clock_t start, end, syn1, syn2;
 							int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
 							int timeActual = 50, timepass = 0, time2syn = 0;
+							int sec = 0;
+							char seco[3] = "";
+							char *tim;
+							time_t hour1;
+							time(&hour1);
+							tim = ctime(&hour1);
+							tim[24] = '\0';
+							seco[0] = tim[17]; seco[1] = tim[18]; seco[2] = '\0';
+							sec = atoi(seco);
+							wait(sec);
 							start = clock();
 							if (totalTime > 0){
 								while (timeActual > 0){
@@ -1965,7 +1982,7 @@ int main(){
 						flushall();
 						if (cleanhistory == 0){
 							if (arithTrig[0] != '\0'&&verify == 1){
-								system("title Advanced Trigonometry Calculator v1.8.3                                                            ==) Calculating... (==              ");
+								system("title Advanced Trigonometry Calculator v1.8.4                                                            ==) Calculating... (==              ");
 								result = initialProcessor(arithTrig, result);
 							}
 						}
@@ -2237,7 +2254,7 @@ int main(){
 								}
 								fputs("\n", fout);
 								fclose(fout);
-								system("title Advanced Trigonometry Calculator v1.8.3                                                      ==) Calculated, you can enter more data (==              ");
+								system("title Advanced Trigonometry Calculator v1.8.4                                                      ==) Calculated, you can enter more data (==              ");
 							}
 							else{
 								printf("\nError in syntax.\n\n");
@@ -2247,7 +2264,7 @@ int main(){
 								}
 								fprintf(fout, "\nError in syntax.\n\n");
 								fclose(fout);
-								system("title Advanced Trigonometry Calculator v1.8.3                                                             ==) Enter data (==              ");
+								system("title Advanced Trigonometry Calculator v1.8.4                                                             ==) Enter data (==              ");
 							}
 						}
 					}
@@ -2263,7 +2280,7 @@ int main(){
 }
 
 int about(){
-	system("title Advanced Trigonometry Calculator v1.8.3");
+	system("title Advanced Trigonometry Calculator v1.8.4");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
@@ -2290,11 +2307,11 @@ int about(){
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("                                     %c%c    %c%c%c    %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                                    %c %c   %c   %c       %c\n", 177, 177, 177, 177, 177);
+	printf("                                     %c%c    %c%c%c    %c   %c\n", 177, 177, 177, 177, 177, 177, 177);
+	printf("                                    %c %c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177);
 	printf("                             %c   %c %c  %c    %c%c%c    %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("                              %c %c     %c   %c   %c       %c\n", 177, 177, 177, 177, 177, 177);
-	printf("                               %c      %c %c  %c%c%c  %c %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                               %c      %c %c  %c%c%c  %c     %c\n", 177, 177, 177, 177, 177, 177, 177, 177);
 
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n            To know how to use this application please enter \"user guide\"\n\n");
 	printf("     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS\n\n");
@@ -2341,21 +2358,21 @@ int about(){
 	}
 
 	if (continu == 1){
-		system("cls");
+		cls();
 	}
 	if (continu == 1){
 		int Window = 3, Dimensions = 2;
 		applySettings(Window);
 		applySettings(Dimensions);
-		system("title Advanced Trigonometry Calculator v1.8.3                                                             ==) Enter data (==              ");
+		system("title Advanced Trigonometry Calculator v1.8.4                                                             ==) Enter data (==              ");
 	}
 	return continu;
 }
 
 void about2(){
-	system("title Advanced Trigonometry Calculator v1.8.3");
+	system("title Advanced Trigonometry Calculator v1.8.4");
 	system("MODE con cols=150 lines=270");
-	system("cls");
+	cls();
 	FILE *open = NULL;
 	char about[15000] = "";
 	int i;
@@ -2370,7 +2387,7 @@ void about2(){
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v1.8.3                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v1.8.4                                                             ==) Enter data (==              ");
 
 }
 
@@ -8944,151 +8961,151 @@ void division(double numR, double numI, double denR, double denI){
 }
 
 void printTimer(int hours, int minutes, int seconds){
-	system("cls");
+	cls();
 	puts("\n");
 	char tiIn[DIM] = "";
 	int i = 0, j = 0;
 	sprintf(tiIn, "%02d:%02d:%02d\n", hours, minutes, seconds);
-	printf(" %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176,176,176);
-	printf(" %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 176,176,219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219,176,176);
-	printf(" %c%c%c%c                                           %c%c%c%c\n", 176,176,219, 219,219,219,176,176);
+	printf(" %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176);
+	printf(" %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 176, 176, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 176, 176);
+	printf(" %c%c%c%c                                                         %c%c%c%c\n", 176, 176, 219, 219, 219, 219, 176, 176);
 
 	while (j < 5){
-		printf(" %c%c%c%c  ", 176,176,219, 219);
+		printf(" %c%c%c%c  ", 176, 176, 219, 219);
 		for (i = 0; tiIn[i] != '\0'; i++){
 			if (tiIn[i] == '\n'){
-				printf(" %c%c%c%c \n",219,219,176,176);
+				printf(" %c%c%c%c \n", 219, 219, 176, 176);
 			}
 
 			if (tiIn[i] == ':'){
 				if (j == 0 || j == 4 || j == 2){
-					printf("  ");
+					printf("   ");
 				}
 				if (j == 1 || j == 3){
-					printf("%c ", 219);
+					printf("%c%c ", 219, 219);
 				}
 			}
 
 			if (tiIn[i] == '0'){
 				if (j == 0 || j == 4){
-					printf("%c%c%c%c%c ", 219, 219, 219, 219, 219);
+					printf("%c%c%c%c%c%c%c ", 219, 219, 219, 219, 219, 219, 219);
 				}
 				if (j == 1 || j == 3){
-					printf("%c   %c ", 219, 219);
+					printf("%c%c   %c%c ", 219, 219, 219, 219);
 				}
 				if (j == 2){
-					printf("%c%c%c%c%c ", 219, 176, 176, 176, 219);
+					printf("%c%c%c%c%c%c%c ", 219, 219, 176, 176, 176, 219, 219);
 
 				}
 			}
 			if (tiIn[i] == '1'){
 				if (j == 0 || j == 2 || j == 4){
-					printf("%c%c%c%c%c ", 176, 176, 176, 176, 219);
+					printf("%c%c%c%c%c%c%c ", 176, 176, 176, 176, 176, 219, 219);
 				}
 				else{
-					printf("%c   %c ", 176, 219);
+					printf("%c%c   %c%c ", 176, 176, 219, 219);
 				}
 
 			}
 			if (tiIn[i] == '2'){
 				if (j == 0 || j == 2 || j == 4){
-					printf("%c%c%c%c%c ", 219, 219, 219, 219, 219);
+					printf("%c%c%c%c%c%c%c ", 219, 219, 219, 219, 219, 219, 219);
 				}
 				if (j == 1){
-					printf("%c   %c ", 176, 219);
+					printf("%c%c   %c%c ", 176, 176, 219, 219);
 				}
 				if (j == 3){
-					printf("%c   %c ", 219, 176);
+					printf("%c%c   %c%c ", 219, 219, 176, 176);
 				}
 
 			}
 			if (tiIn[i] == '3'){
 				if (j == 0 || j == 4 || j == 2){
-					printf("%c%c%c%c%c ", 219, 219, 219, 219, 219);
+					printf("%c%c%c%c%c%c%c ", 219, 219, 219, 219, 219, 219, 219);
 				}
 				if (j == 1 || j == 3){
-					printf("%c   %c ", 176, 219);
+					printf("%c%c   %c%c ", 176, 176, 219, 219);
 				}
 
 			}
 			if (tiIn[i] == '4'){
 				if (j == 0){
-					printf("%c%c%c%c%c ", 219, 176, 176, 176, 219);
+					printf("%c%c%c%c%c%c%c ", 219, 219, 176, 176, 176, 219, 219);
 				}
 				if (j == 1){
-					printf("%c   %c ", 219, 219);
+					printf("%c%c   %c%c ", 219, 219, 219, 219);
 				}
 				if (j == 2){
-					printf("%c%c%c%c%c ", 219, 219, 219, 219, 219);
+					printf("%c%c%c%c%c%c%c ", 219, 219, 219, 219, 219, 219, 219);
 				}
 				if (j == 3){
-					printf("%c   %c ", 176, 219);
+					printf("%c%c   %c%c ", 176, 176, 219, 219);
 				}
 				if (j == 4){
-					printf("%c%c%c%c%c ", 176, 176, 176, 176, 219);
+					printf("%c%c%c%c%c%c%c ", 176, 176, 176, 176, 176, 219, 219);
 				}
 
 			}
 			if (tiIn[i] == '5'){
 				if (j == 0 || j == 2 || j == 4){
-					printf("%c%c%c%c%c ", 219, 219, 219, 219, 219);
+					printf("%c%c%c%c%c%c%c ", 219, 219, 219, 219, 219, 219, 219);
 				}
 				if (j == 1){
-					printf("%c   %c ", 219, 176);
+					printf("%c%c   %c%c ", 219, 219, 176, 176);
 				}
 				if (j == 3){
-					printf("%c   %c ", 176, 219);
+					printf("%c%c   %c%c ", 176, 176, 219, 219);
 				}
 
 			}
 			if (tiIn[i] == '6'){
 				if (j == 0 || j == 2 || j == 4){
-					printf("%c%c%c%c%c ", 219, 219, 219, 219, 219);
+					printf("%c%c%c%c%c%c%c ", 219, 219, 219, 219, 219, 219, 219);
 				}
 				if (j == 1){
-					printf("%c   %c ", 219, 176);
+					printf("%c%c   %c%c ", 219, 219, 176, 176);
 				}
 
 				if (j == 3){
-					printf("%c   %c ", 219, 219);
+					printf("%c%c   %c%c ", 219, 219, 219, 219);
 				}
 
 			}
 			if (tiIn[i] == '7'){
 				if (j == 0){
-					printf("%c%c%c%c%c ", 219, 219, 219, 219, 219);
+					printf("%c%c%c%c%c%c%c ", 219, 219, 219, 219, 219, 219, 219);
 				}
 				if (j == 2){
-					printf("%c%c%c%c%c ", 176, 176, 176, 176, 219);
+					printf("%c%c%c%c%c%c%c ", 176, 176, 176, 176, 176, 219, 219);
 				}
 				if (j == 1 || j == 3){
-					printf("%c   %c ", 176, 219);
+					printf("%c%c   %c%c ", 176, 176, 219, 219);
 				}
 				if (j == 4){
-					printf("%c%c%c%c%c ", 176, 176, 176, 176, 219);
+					printf("%c%c%c%c%c%c%c ", 176, 176, 176, 176, 176, 219, 219);
 				}
 
 
 			}
 			if (tiIn[i] == '8'){
 				if (j == 0 || j == 4 || j == 2){
-					printf("%c%c%c%c%c ", 219, 219, 219, 219, 219);
+					printf("%c%c%c%c%c%c%c ", 219, 219, 219, 219, 219, 219, 219);
 				}
 				if (j == 1 || j == 3){
-					printf("%c   %c ", 219, 219);
+					printf("%c%c   %c%c ", 219, 219, 219, 219);
 				}
 
 
 			}
 			if (tiIn[i] == '9'){
 				if (j == 0 || j == 2 || j == 4){
-					printf("%c%c%c%c%c ", 219, 219, 219, 219, 219);
+					printf("%c%c%c%c%c%c%c ", 219, 219, 219, 219, 219, 219, 219);
 				}
 				if (j == 1){
-					printf("%c   %c ", 219, 219);
+					printf("%c%c   %c%c ", 219, 219, 219, 219);
 				}
 				if (j == 3){
-					printf("%c   %c ", 176, 219);
+					printf("%c%c   %c%c ", 176, 176, 219, 219);
 				}
 
 			}
@@ -9096,9 +9113,9 @@ void printTimer(int hours, int minutes, int seconds){
 		}
 		j++;
 	}
-	printf(" %c%c%c%c                                           %c%c%c%c\n", 176,176,219, 219, 219, 219,176,176);
-	printf(" %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 176,176,219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219,219,219,219,176,176);
-	printf(" %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 176,176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176,176);
+	printf(" %c%c%c%c                                                         %c%c%c%c\n", 176, 176, 219, 219, 219, 219, 176, 176);
+	printf(" %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 176, 176, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 176, 176);
+	printf(" %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176);
 	puts(" ");
 }
 
@@ -10418,4 +10435,82 @@ void openTxt(){
 	char openFile[DIM] = "";
 	sprintf(openFile, "notepad.exe %s", expressionF);
 	system(openFile);
+}
+
+void cls()
+{
+	HANDLE hConsole;
+
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	COORD coordScreen = { 0, 0 };    // home for the cursor 
+	DWORD cCharsWritten;
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	DWORD dwConSize;
+
+	// Get the number of character cells in the current buffer. 
+
+	if (!GetConsoleScreenBufferInfo(hConsole, &csbi))
+	{
+		return;
+	}
+
+	dwConSize = csbi.dwSize.X * csbi.dwSize.Y;
+
+	// Fill the entire screen with blanks.
+
+	if (!FillConsoleOutputCharacter(hConsole,        // Handle to console screen buffer 
+		(TCHAR) ' ',     // Character to write to the buffer
+		dwConSize,       // Number of cells to write 
+		coordScreen,     // Coordinates of first cell 
+		&cCharsWritten))// Receive number of characters written
+	{
+		return;
+	}
+
+	// Get the current text attribute.
+
+	if (!GetConsoleScreenBufferInfo(hConsole, &csbi))
+	{
+		return;
+	}
+
+	// Set the buffer's attributes accordingly.
+
+	if (!FillConsoleOutputAttribute(hConsole,         // Handle to console screen buffer 
+		csbi.wAttributes, // Character attributes to use
+		dwConSize,        // Number of cells to set attribute 
+		coordScreen,      // Coordinates of first cell 
+		&cCharsWritten)) // Receive number of characters written
+	{
+		return;
+	}
+
+	// Put the cursor at its home coordinates.
+
+	SetConsoleCursorPosition(hConsole, coordScreen);
+}
+
+void wait(int seconds){
+	int sec = 0;
+	char seco[3] = "";
+	char *tim;
+	time_t hour1;
+	time(&hour1);
+	tim = ctime(&hour1);
+	tim[24] = '\0';
+	seco[0] = tim[17]; seco[1] = tim[18]; seco[2] = '\0';
+	sec = atoi(seco);
+	if (seconds == sec){
+		while (seconds == sec){
+			char *tim;
+			time_t hour1;
+			time(&hour1);
+			tim = ctime(&hour1);
+			tim[24] = '\0';
+			seco[0] = tim[17]; seco[1] = tim[18]; seco[2] = '\0';
+			sec = atoi(seco);
+			Sleep(1);
+		}
+	}
 }
