@@ -139,6 +139,8 @@ void manageExpression(char arithTrig[DIM], double result1, int verify);
 void openTxt();
 void cls();
 void wait(int seconds);
+void on_start();
+
 
 In the Advanced Trigonometry Calculator.cpp's file:
 
@@ -152,10 +154,12 @@ int Mode = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0
 
 
 int main(){
+
 	FILE *fout = NULL, *fclean, *open;
 	int tD = 0, s = 0, command = 0, continu = 1, i = 0, g = 0, txt, cleanhistory = 0, Colors = 1, Dimensions = 2, Window = 3, var = 0, space = 0, j = 0, year = 0, v = 0, rf = 0, r = 0;
 	char exit[DIM] = "", res, variable[DIM] = "", path[DIM] = "history.txt", varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
 	double result = 0, result1 = 0, result2 = 0;
+	on_start();
 	applySettings(Colors);
 	system("title Advanced Trigonometry Calculator v1.8.4");
 	continu = about();
@@ -300,6 +304,29 @@ int main(){
 					else{
 						system("C:\\WINDOWS\\System32\\shutdown /l");
 					}
+				}
+				if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'a'&&arithTrig[i + 6] == 'l'&&arithTrig[i + 7] == 'l'&&arithTrig[i + 10] == '\0'){
+					command = 1;
+					puts(" ");
+					FILE *start;
+					start = fopen("onStart.txt", "w");
+					fprintf(start, "resetall");
+					fclose(start);
+					printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
+				}
+				if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 's'&&arithTrig[i + 6] == 'e'&&arithTrig[i + 7] == 't'&&arithTrig[i + 8] == 't'&&arithTrig[i + 9] == 'i'&&arithTrig[i + 10] == 'n'&&arithTrig[i + 11] == 'g'&&arithTrig[i + 12] == 's'&&arithTrig[i + 15] == '\0'){
+					command = 1;
+					puts(" ");
+					FILE *start;
+					start = fopen("onStart.txt", "w");
+					fprintf(start, "resetsettings");
+					fclose(start);
+					printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
+				}
+				if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 't'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 't'&&arithTrig[i + 7] == 'a'&&arithTrig[i + 8] == 't'&&arithTrig[i + 9] == 'c'&&arithTrig[i + 12] == '\0'){
+					command = 1;
+					continu = 0;
+					ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator EN.exe"), NULL, NULL, SW_SHOW);
 				}
 				if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'u'&&arithTrig[i + 2] == 'n'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'c'&&arithTrig[i + 8] == '\0'){
 					command = 1;
@@ -2371,7 +2398,7 @@ int about(){
 
 void about2(){
 	system("title Advanced Trigonometry Calculator v1.8.4");
-	system("MODE con cols=150 lines=270");
+	system("MODE con cols=150 lines=280");
 	cls();
 	FILE *open = NULL;
 	char about[15000] = "";
@@ -10513,4 +10540,30 @@ void wait(int seconds){
 			Sleep(1);
 		}
 	}
+}
+
+void on_start(){
+	FILE *open;
+	char onStart[100] = "";
+	int Colors = 1, Dimensions = 2, Window = 3;
+	open = fopen("onStart.txt", "r");
+	if (open != NULL){
+		fgets(onStart, 100, open);
+		fclose(open);
+		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 'a'&&onStart[6] == 'l'&&onStart[7] == 'l'&&onStart[8] == '\0'){
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del history.txt&del variables.txt&del renamedVar.txt&del pathName.txt&del predefinedTxt.txt&del calendar.txt&del numSystems.txt&del siPrefixes.txt&del actualTime.txt&del colors.txt&del dimensions.txt&del window.txt&del mode.txt&del onStart.txt\""), NULL, SW_SHOW);
+			Sleep(500);
+			applySettings(Colors);
+			applySettings(Window);
+			applySettings(Dimensions);
+		}
+		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 's'&&onStart[6] == 'e'&&onStart[7] == 't'&&onStart[8] == 't'&&onStart[9] == 'i'&&onStart[10] == 'n'&&onStart[11] == 'g'&&onStart[12] == 's'&&onStart[13] == '\0'){
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del numSystems.txt&del siPrefixes.txt&del actualTime.txt&del colors.txt&del dimensions.txt&del window.txt&del mode.txt&del onStart.txt\""), NULL, SW_SHOW);
+			Sleep(500);
+			applySettings(Colors);
+			applySettings(Window);
+			applySettings(Dimensions);
+		}
+	}
+
 }
