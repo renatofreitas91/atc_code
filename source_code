@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 In the stdafx.h's file:
 
+
 #pragma once
 
 #include "targetver.h"
@@ -140,7 +141,7 @@ void openTxt();
 void cls();
 void wait(int seconds);
 void on_start();
-
+int datePreciser(double day, double month, double year, double dayS, double monthS, double yearS);
 
 In the Advanced Trigonometry Calculator.cpp's file:
 
@@ -312,6 +313,13 @@ int main(){
 					else{
 						system("C:\\WINDOWS\\System32\\shutdown /l");
 					}
+				}
+				if (arithTrig[i] == 'h'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 't'&&arithTrig[i + 4] == 'o'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 'y'&&arithTrig[i + 9] == '\0'){
+					command = 1;
+					puts(" ");
+					printf("\n==> Close the history to continue. <==\n\n");
+					system("notepad.exe history.txt");
+
 				}
 				if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'a'&&arithTrig[i + 6] == 'l'&&arithTrig[i + 7] == 'l'&&arithTrig[i + 10] == '\0'){
 					command = 1;
@@ -1243,7 +1251,7 @@ int main(){
 					char Day[DIM] = "", Month[DIM] = "", Year[DIM] = "";
 					double plusYears = 0;
 					int r = 0;
-					double day = 0, day1 = 0, month = 0, month1 = 0, year = 0, year1 = 0;
+					double day = 0, day1 = 0, day1S = 0, month = 0, month1 = 0, month1S = 0, year = 0, year1 = 0, year1S = 0, dayS = 0, monthS = 0, yearS = 0;
 					if (arithTrig[i + 9] == '(' || arithTrig[i + 9] == '[' || arithTrig[i + 9] == '{'){
 						i = i + 10;
 					}
@@ -1278,6 +1286,7 @@ int main(){
 							if (arithTrig[i] == '-'){
 								Day[r] = '+'; Day[r + 1] = '0'; Day[r + 2] = '\0';
 								day = initialProcessor(Day, 0);
+								dayS = day;
 								r = 0;
 								i++;
 								char Day[DIM] = "";
@@ -1287,10 +1296,12 @@ int main(){
 								}
 								Day[r] = '+'; Day[r + 1] = '0'; Day[r + 2] = '\0';
 								day1 = initialProcessor(Day, 0);
+								day1S = day1;
 							}
 							else{
 								Day[r] = '+'; Day[r + 1] = '0'; Day[r + 2] = '\0';
 								day = initialProcessor(Day, 0);
+
 							}
 						}
 
@@ -1310,6 +1321,7 @@ int main(){
 							if (arithTrig[i] == '-'){
 								Month[r] = '+'; Month[r + 1] = '0'; Month[r + 2] = '\0';
 								month = initialProcessor(Month, 0);
+								monthS = month;
 								r = 0;
 								i++;
 								char Month[DIM] = "";
@@ -1319,10 +1331,12 @@ int main(){
 								}
 								Month[r] = '+'; Month[r + 1] = '0'; Month[r + 2] = '\0';
 								month1 = initialProcessor(Month, 0);
+								month1S = month1;
 							}
 							else{
 								Month[r] = '+'; Month[r + 1] = '0'; Month[r + 2] = '\0';
 								month = initialProcessor(Month, 0);
+
 							}
 						}
 						if ((arithTrig[i] == 'y' || arithTrig[i] == 'a') && year == 0){
@@ -1341,6 +1355,7 @@ int main(){
 							if (arithTrig[i] == '-'){
 								Year[r] = '+'; Year[r + 1] = '0'; Year[r + 2] = '\0';
 								year = initialProcessor(Year, 0);
+								yearS = year;
 								r = 0;
 								i++;
 								char Year[DIM] = "";
@@ -1350,18 +1365,19 @@ int main(){
 								}
 								Year[r] = '+'; Year[r + 1] = '0'; Year[r + 2] = '\0';
 								year1 = initialProcessor(Year, 0);
+								year1S = year1;
 
 							}
 							else{
 								Year[r] = '+'; Year[r + 1] = '0'; Year[r + 2] = '\0';
 								year = initialProcessor(Year, 0);
+
 							}
 						}
 						if (arithTrig[i] != 'd'&&arithTrig[i] != 'm'&&arithTrig[i] != 'y'&&arithTrig[i] != 'a'){
 							i++;
 						}
 					}
-
 					if (day1 == 0){
 						if (month > 12){
 							plusYears = qu(month, 12);
@@ -1372,35 +1388,9 @@ int main(){
 							month = 12;
 							year--;
 						}
-						if (((qu(re(year, 4), 1) == 0 && qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month > 2){
-							day++;
-						}
 
 
-						while (day > 4000){
-							if (day >= 365 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0)){
-								year++;
-								day = day - 365;
-							}
-							else{
-								if (day >= 366 && qu(re(year, 4), 1) == 0 && qu(re(year, 100), 1) != 0 || day >= 366 && qu(re(year, 400), 1) == 0){
-									year++;
-									day = day - 366;
-								}
-								else{
-									if (day >= 365){
-										year++;
-										day = day - 365;
-									}
-								}
-							}
-						}
-
-
-
-
-
-						while (day >= 29 && (qu(re(year, 4), 1) == 0 && (qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day >= 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day >= 31 || day >= 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
+						while (day > 29 && (qu(re(year, 4), 1) == 0 && (qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day > 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day > 31 || day > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
 
 							if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){
 								day = day - 31;
@@ -1437,37 +1427,11 @@ int main(){
 
 						}
 					}
-
 					else{
-						while (day1 > 4000){
-							if (day1 >= 365 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0)){
-								year--;
-								day1 = day1 - 365;
 
-							}
-							else{
-								if (day1 >= 366 && qu(re(year, 4), 1) == 0 && qu(re(year, 100), 1) != 0 || day1 >= 366 && qu(re(year, 400), 1) == 0){
-									year--;
-									day1 = day1 - 366;
-								}
-								else{
-									if (day1 >= 365){
-										year--;
-										day1 = day1 - 365;
 
-									}
-								}
-							}
-						}
-
-						month--;
-						if (month == 0){
-							month = 12;
-							year--;
-						}
-						while (day1 > 0) {
-
-							if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){
+						while (day1 > 29 && (qu(re(year, 4), 1) == 0 && (qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day1 > 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31 || day1 > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
+							if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31){
 								day1 = day1 - 31;
 
 
@@ -1475,27 +1439,33 @@ int main(){
 							else{
 								if (month == 2){
 									if (qu(re(year, 4), 1) == 0){
-										if (qu(re(year, 400), 1) == 0){
+										if (qu(re(year, 400), 1) == 0 && day1 > 29){
 											day1 = day1 - 29;
 										}
 										else{
-											if (qu(re(year, 100), 1) == 0){
+											if (qu(re(year, 100), 1) == 0 && day1 > 28){
 												day1 = day1 - 28;
 											}
 											else{
-												day1 = day1 - 29;
+												if (day1 > 29){
+													day1 = day1 - 29;
+												}
 											}
 										}
 									}
 									else{
-										day1 = day1 - 28;
+										if (day1 > 28){
+											day1 = day1 - 28;
+										}
 									}
 
 								}
 
 
 								else{
-									day1 = day1 - 30;
+									if (day1 > 30){
+										day1 = day1 - 30;
+									}
 								}
 
 							}
@@ -1506,49 +1476,48 @@ int main(){
 							}
 
 						}
-						month++;
-						if (month == 13){
-							year++;
-							month = 1;
-						}
+
 
 						day = day - day1;
+						if (day < 0){
+							month--;
+							int sumDay = 0;
 
 
-						while (day >= 29 && ((qu(re(year, 4), 1) == 0 && qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day >= 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day >= 31 || day >= 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
-
-							if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){
-								day = day - 31;
+							if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31){
+								sumDay = 31;
 
 							}
 							else{
 								if (month == 2){
-									if ((qu(re(year, 4), 1) == 0 && qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0){
-										day = day - 29;
-
+									if (qu(re(year, 4), 1) == 0){
+										if (qu(re(year, 400), 1) == 0){
+											sumDay = 29;
+										}
+										else{
+											if (qu(re(year, 100), 1) == 0){
+												sumDay = 28;
+											}
+											else{
+												sumDay = 29;
+											}
+										}
 									}
 									else{
-										day = day - 28;
-
+										sumDay = 28;
 									}
 
 								}
 
 
 								else{
-									day = day - 30;
-
+									sumDay = 30;
 								}
 
 							}
 
-							month++;
-							if (month > 12){
-								year++;
-								month = qu(re(month, 12), 1);
-							}
 
-
+							day = sumDay + day;
 						}
 
 						year = year - year1;
@@ -1575,10 +1544,7 @@ int main(){
 							}
 						}
 
-
-
-
-
+						day = day - datePreciser(day + day1S, month + month1S, year + year1S, dayS, monthS, yearS);
 
 
 					}
@@ -1589,7 +1555,7 @@ int main(){
 					int montH = initialProcessor(tim, 0);
 					sprintf(tim, "%G", year);
 					int yeaR = initialProcessor(tim, 0);
-
+					printf("\ny%dm%dd%d=\n", yeaR, montH, daY);
 					if (daY < 1 || daY>31){
 						printf("\nError entering the day.\n ==> In a month, the days only vary between 1 and 31.\n\n");
 						fprintf(fout, "\nError entering the day.\n ==> In a month, the days only vary between 1 and 31.\n\n");
@@ -1887,11 +1853,6 @@ int main(){
 
 							}
 
-
-							cal = fopen(path, "a+");
-							fprintf(cal, "\n");
-							fprintf(cal, "%s\n\n", calendar);
-							fclose(cal);
 							for (s = 0; calendar[s] != '\0'; s++){
 								if (calendar[s] == 's'&&calendar[s + 3] == 'd'&&calendar[s + 4] == 'o'){
 									calendar[s + 1] = 'a';
@@ -10648,4 +10609,77 @@ void on_start(){
 		}
 	}
 
+}
+
+int datePreciser(double day, double month, double year, double dayS, double monthS, double yearS){
+	int plusYears = 0, k = 10, count = -1, flag = 1;
+	double dayF = day, monthF = month, yearF = year, dayFF = day;
+
+	while (day != dayS&&k > 0){
+		day = dayF; month = monthF; year = yearF;
+		if (month > 12){
+			plusYears = qu(month, 12);
+			year = year + plusYears;
+			month = qu(re(month, 12), 1);
+		}
+		if (month == 0){
+			month = 12;
+			year--;
+		}
+
+
+		while (day > 29 && (qu(re(year, 4), 1) == 0 && (qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day > 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day > 31 || day > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
+
+			if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){
+				day = day - 31;
+
+			}
+			else{
+				if (month == 2){
+					if ((qu(re(year, 4), 1) == 0 && qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0){
+						day = day - 29;
+
+					}
+					else{
+						day = day - 28;
+
+					}
+
+				}
+
+
+				else{
+					day = day - 30;
+
+				}
+
+			}
+
+			month++;
+			if (month > 12){
+				year++;
+				month = qu(re(month, 12), 1);
+			}
+
+
+		}
+		if (flag == 1){
+			dayF--;
+		}
+		if (flag == 2){
+			dayF++;
+		}
+		k--;
+		count++;
+		if (k == 0 && flag == 1){
+			count = -1;
+			k = 10;
+			dayF = dayFF;
+			flag = 2;
+		}
+	}
+	if (flag == 2){
+		count = count*-1;
+	}
+	return count;
 }
