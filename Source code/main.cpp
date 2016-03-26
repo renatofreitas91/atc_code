@@ -595,7 +595,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 			if ((data[i - 1] == 'O' || data[i - 1] == 'H' || data[i - 1] == 'B') && data[i] == '_'){
 				data[i] = '-';
 			}
-			if (data[i] != '1'&&data[i] != '2'&&data[i] != '3'&&data[i] != '4'&&data[i] != '5'&&data[i] != '6'&&data[i] != '7'&&data[i] != '8'&&data[i] != '9'&&data[i] != '0'&&data[i] != '.'&&data[i] != '_'&&data[i] != '!'&&data[i] != 'A'&&data[i] != 'B'&&data[i] != 'C' && data[i] != 'D' && (data[i - 1] == 't' && data[i + 1] == '(') && data[i] != 'E'&&data[i] != 'F'&&data[i] != 'O'&&data[i] != 'H'){
+			if (data[i] != '1'&&data[i] != '2'&&data[i] != '3'&&data[i] != '4'&&data[i] != '5'&&data[i] != '6'&&data[i] != '7'&&data[i] != '8'&&data[i] != '9'&&data[i] != '0'&&data[i] != '.'&&data[i] != '_'&&data[i] != '!'&&data[i] != 'A'&&data[i] != 'B'&&data[i] != 'C' && data[i] != 'D' && (data[i - 1] == 't' && data[i + 1] == '(') && data[i] != 'E'&&data[i] != 'F'&&data[i] != 'O'&&data[i] != 'H'&&data[i] != '('&&data[i] != ')'){
 				text[v] = data[i];
 				v++;
 				i++;
