@@ -2,6 +2,8 @@
 
 #include "stdafx.h"
 
+char calendarStr[DIM] = "";
+
 void Clock(int a)
 {
 	FILE *fout;
@@ -232,93 +234,97 @@ void Clock(int a)
 }
 
 void Calendar(char yearCalendar[DIM], int year){
+	calendarStr[0] = '\0';
+	char string[DIM] = "";
 	FILE *open;
 	int w = 0;
 	char m30[DIM] = "  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30", m31[DIM] = "  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31", m29[DIM] = "  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29", m28[DIM] = "  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28", weekdays[DIM] = " Mo Tu We Th Fr Sa Su Mo Tu We Th Fr Sa Su Mo Tu We Th Fr Sa Su Mo Tu We Th Fr Sa Su Mo Tu We Th Fr Sa Su Mo Tu";
 	open = fopen(yearCalendar, "w");
-	fprintf(open, "____________________________________________________________________________________________________________________________\n\n                                                            %d\n\n____________________________________________________________________________________________________________________________\n", year);
-	fprintf(open, "           |\n           |%s\n           |\n___________|________________________________________________________________________________________________________________\n           |\n", weekdays);
-	fprintf(open, " January   |");
-	fclose(open);
+	sprintf(string, "____________________________________________________________________________________________________________________________\n\n                                                            %d\n\n____________________________________________________________________________________________________________________________\n", year);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, "           |\n           |%s\n           |\n___________|________________________________________________________________________________________________________________\n           |\n", weekdays);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, " January   |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 1, year, yearCalendar);
-	open = fopen(yearCalendar, "a+");
-	fprintf(open, "%s\n", m31);
-	fprintf(open, " February  |");
-	fclose(open);
+	sprintf(string, "%s\n", m31);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, " February  |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 2, year, yearCalendar);
-	open = fopen(yearCalendar, "a+");
 	if (year % 4 == 0){
 		if (year % 100 == 0 && year % 400 != 0){
-			fprintf(open, "%s\n", m28);
-			fclose(open);
+			sprintf(string, "%s\n", m28);
+			sprintf(calendarStr, "%s%s", calendarStr, string);
 		}
 		else{
-			fprintf(open, "%s\n", m29);
-			fclose(open);
+			sprintf(string, "%s\n", m29);
+			sprintf(calendarStr, "%s%s", calendarStr, string);
 		}
 	}
 	else{
-		fprintf(open, "%s\n", m28);
-		fclose(open);
+		sprintf(string, "%s\n", m28);
+		sprintf(calendarStr, "%s%s", calendarStr, string);
 	}
-	open = fopen(yearCalendar, "a+");
-	fprintf(open, " March     |");
-	fclose(open);
+	sprintf(string, " March     |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 3, year, yearCalendar);
-	open = fopen(yearCalendar, "a+");
-	fprintf(open, "%s\n", m31);
-	fprintf(open, " April     |");
-	fclose(open);
+	sprintf(string, "%s\n", m31);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, " April     |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 4, year, yearCalendar);
-	open = fopen(yearCalendar, "a+");
-	fprintf(open, "%s\n", m30);
-	fprintf(open, " May       |");
-	fclose(open);
+	sprintf(string, "%s\n", m30);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, " May       |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 5, year, yearCalendar);
-	open = fopen(yearCalendar, "a+");
-	fprintf(open, "%s\n", m31);
-	fprintf(open, " June      |");
-	fclose(open);
+	sprintf(string, "%s\n", m31);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, " June      |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 6, year, yearCalendar);
-	open = fopen(yearCalendar, "a+");
-	fprintf(open, "%s\n", m30);
-	fprintf(open, " July      |");
-	fclose(open);
+	sprintf(string, "%s\n", m30);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, " July      |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 7, year, yearCalendar);
-	open = fopen(yearCalendar, "a+");
-	fprintf(open, "%s\n", m31);
-	fprintf(open, " August    |");
-	fclose(open);
+	sprintf(string, "%s\n", m31);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, " August    |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 8, year, yearCalendar);
 	open = fopen(yearCalendar, "a+");
-	fprintf(open, "%s\n", m31);
-	fprintf(open, " September |");
-	fclose(open);
+	sprintf(string, "%s\n", m31);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, " September |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 9, year, yearCalendar);
-	open = fopen(yearCalendar, "a+");
-	fprintf(open, "%s\n", m30);
-	fprintf(open, " October   |");
-	fclose(open);
+	sprintf(string, "%s\n", m30);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, " October   |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 10, year, yearCalendar);
-	open = fopen(yearCalendar, "a+");
-	fprintf(open, "%s\n", m31);
-	fprintf(open, " November  |");
-	fclose(open);
+	sprintf(string, "%s\n", m31);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, " November  |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 11, year, yearCalendar);
-	open = fopen(yearCalendar, "a+");
-	fprintf(open, "%s\n", m30);
-	fprintf(open, " December  |");
-	fclose(open);
+	sprintf(string, "%s\n", m30);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, " December  |");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
 	DayofWeek(1, 12, year, yearCalendar);
-	open = fopen(yearCalendar, "a+");
-	fprintf(open, "%s\n", m31);
-	fprintf(open, "           |\n___________|________________________________________________________________________________________________________________");
+	sprintf(string, "%s\n", m31);
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	sprintf(string, "           |\n___________|________________________________________________________________________________________________________________");
+	sprintf(calendarStr, "%s%s", calendarStr, string);
+	fprintf(open, "%s", calendarStr);
 	fclose(open);
 }
 
 void DayofWeek(int d, int m, int y, char calendar[DIM]){
-	FILE *open;
-	open = fopen(calendar, "a+");
+	char string[DIM] = "";
 	int h;
 	h = ((int)(d + floor((((m + 1) * 26) / 10)*1.000) + y + floor((y / 4)*1.0000) + 6 * floor((y / 100)*1.0000) + floor((y / 400)*1.0000)) % 7);
 	if (m < 3){
@@ -332,30 +338,29 @@ void DayofWeek(int d, int m, int y, char calendar[DIM]){
 		h = ((int)(d + floor((((m + 1) * 26) / 10)*1.000) + (y)+floor(((y) / 4)*1.0000) + 6 * floor(((y) / 100)*1.0000) + floor(((y) / 400)*1.0000)) % 7);
 	}
 	if (h == 3){
-		printf("   ");
-		fprintf(open, "   ");
+		sprintf(string, "   ");
+		sprintf(calendarStr, "%s%s", calendarStr, string);
 	}
 	if (h == 4){
-		printf("      ");
-		fprintf(open, "      ");
+		sprintf(string, "      ");
+		sprintf(calendarStr, "%s%s", calendarStr, string);
 	}
 	if (h == 5){
-		printf("         ");
-		fprintf(open, "         ");
+		sprintf(string, "         ");
+		sprintf(calendarStr, "%s%s", calendarStr, string);
 	}
 	if (h == 6){
-		printf("            ");
-		fprintf(open, "            ");
+		sprintf(string, "            ");
+		sprintf(calendarStr, "%s%s", calendarStr, string);
 	}
 	if (h == 0){
-		printf("               ");
-		fprintf(open, "               ");
+		sprintf(string, "               ");
+		sprintf(calendarStr, "%s%s", calendarStr, string);
 	}
 	if (h == 1){
-		printf("                  ");
-		fprintf(open, "                  ");
+		sprintf(string, "                  ");
+		sprintf(calendarStr, "%s%s", calendarStr, string);
 	}
-	fclose(open);
 }
 
 void printTimer(int hours, int minutes, int seconds){

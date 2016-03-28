@@ -1121,7 +1121,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 	int i = 0, var = 0, j = 0, n = 0, count = 0, opt = 0, l = 0, p = 0, v1, va, cn = 0, s, rad = 1, jg = 1, gon = 0, tri = 0, co = 0, trigono = 0, paren = 1, pare = 0, parent = 0, e = 0, f = 0, kl = 0, ar = 0, deg = 0, type = 0, g = 0;
 	char trig[DIM] = "0", base[DIM], number[DIM] = "0", number1[DIM] = "0", number2[DIM] = "0", op[DIM] = "0", signal = '*', numb[DIM] = "0", sig = '0', point = '0', cieNot[DIM] = "0", arg[DIM] = "0", amp[DIM] = "0", trigon1[DIM] = "0", ex[DIM] = "", eX[DIM] = "", trig1[DIM] = "", function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res";
 	double num = 0, v[DIM], vI[DIM], argu[DIM], ampl[DIM], exp = 1, result1 = 0, baLog = 0, dgrt = 0, result2 = resultI, dgrt2 = 0;
-	char userFunc[DIM] = "", atcFunc[DIM] = "";
+	char userFunc[DIM] = "", atcFunc[DIM] = "", funcU[DIM] = "";
 	sprintf(function, "%s%s", function, usRFuncTrans);
 	for (i = 0; trigon[i] != '?'&&trigon[i] != '\0'; i++){
 		atcFunc[i] = trigon[i];
@@ -1156,26 +1156,24 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			}
 
 		}
-	}
+		int hi = 0;
+		for (hi = 0; atcFunc[hi] != '\0'; hi++){
+			funcU[hi] = atcFunc[hi];
+		}
+		funcU[hi] = '\0';
+		FILE *open = NULL;
 
-	char funcU[DIM] = "";
-	int hi = 0;
-	for (hi = 0; atcFunc[hi] != '\0'; hi++){
-		funcU[hi] = atcFunc[hi];
-	}
-	funcU[hi] = '\0';
-	FILE *open = NULL;
-
-	TCHAR NPath[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, NPath);
-	char directory[MAX_PATH] = "";
-	wcstombs(directory, NPath, wcslen(NPath) + 1);
-	char comm[300] = "";
-	sprintf(userFunc, "%s\\User functions\\%s.txt", directory, atcFunc);
-	open = fopen(userFunc, "r");
-	if (open != NULL){
-		fclose(open);
-		sprintf(function, "%s,atc_%s", function, atcFunc);
+		TCHAR NPath[MAX_PATH];
+		GetCurrentDirectory(MAX_PATH, NPath);
+		char directory[MAX_PATH] = "";
+		wcstombs(directory, NPath, wcslen(NPath) + 1);
+		char comm[300] = "";
+		sprintf(userFunc, "%s\\User functions\\%s.txt", directory, atcFunc);
+		open = fopen(userFunc, "r");
+		if (open != NULL){
+			fclose(open);
+			sprintf(function, "%s,atc_%s", function, atcFunc);
+		}
 	}
 	for (i = 0; trigon[i] != '\0'; i++){
 		if (trigon[i] == '?'){
@@ -1192,7 +1190,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		}
 	}
 	if (Mode == 0){
-		opt = applySettings(4);
+		opt = modeId;
 		if (opt == 3){
 			deg = 0;
 			rad = 0;

@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "atc_functions.h"
 
+int modeId = 2;
 void colors(){
 	FILE *open;
 	char bGround = ' ', cTxt = ' ', express[DIM] = "color 73", value[DIM] = "";
@@ -148,6 +149,7 @@ int applySettings(int toDo){
 		else{
 			fgets(opt, 2, open);
 			option = atoi(opt);
+			modeId = option;
 		}
 		return option;
 	}
@@ -167,6 +169,7 @@ void mode(){
 	}
 	open = fopen("mode.txt", "w");
 	fprintf(open, "%d", option);
+	modeId = option;
 	fclose(open);
 }
 

@@ -1525,7 +1525,6 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 
 	if (arithTrig[i] == 'c'&&arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'l'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'n'&&arithTrig[i + 5] == 'd'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r' && (arithTrig[i + 8] == '(' || arithTrig[i + 8] == '+') || arithTrig[i] == 'c'&&arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'l'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'n'&&arithTrig[i + 5] == 'd'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 8] == 'i'&&arithTrig[i + 9] == 'o' && (arithTrig[i + 10] == '(' || arithTrig[i + 10] == '+')) {
-		FILE *cal = NULL;
 		char ye[100], calendar[DIM];
 		int k = 0;
 		int p = 0, countR = 0, countL = 0;
@@ -1605,11 +1604,9 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 
 			if (year > 1759){
 				Calendar("calendar.txt", year);
-				while (cal == NULL){
-					cal = fopen("calendar.txt", "r");
+				for (s = 0; calendarStr[s] != '\0'; s++){
+					calendar[s] = calendarStr[s];
 				}
-				for (s = 0; (calendar[s] = fgetc(cal)) != EOF; s++);
-				fclose(cal);
 				calendar[s] = '\0';
 				char cald[DIM] = "";
 				int yu = 0, liN = 0, liR = 0;
@@ -1680,13 +1677,12 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 				calendar[s] = '\0';
 				printf("\n");
 				printf("%s\n\n", calendar);
-				cal = NULL;
-				while (cal == NULL){
-					cal = fopen("calendar.txt", "r");
+
+				for (s = 0; calendarStr[s] != '\0'; s++){
+					calendar[s] = calendarStr[s];
 				}
-				for (s = 0; (calendar[s] = fgetc(cal)) != EOF; s++);
-				fclose(cal);
 				calendar[s] = '\0';
+
 				fprintf(fout, "\n");
 				fprintf(fout, "%s\n\n", calendar);
 			}
@@ -1695,10 +1691,6 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 				printf("Please enter years after 1759\n\n");
 				fprintf(fout, "\n");
 				fprintf(fout, "Please enter years after 1759\n\n");
-				cal = fopen(path, "a+");
-				fprintf(cal, "\n");
-				fprintf(cal, "Please enter years after 1759\n\n");
-				fclose(cal);
 			}
 		}
 	}
