@@ -684,7 +684,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						fgets(actualTime, 10, open);
 						fclose(open);
 						nactualTime = atoi(actualTime);
-						if (nactualTime == 1){
+						if (nactualTime == 1 && isFromMain == 1){
 							puts("");
 							Clock(1);
 						}
