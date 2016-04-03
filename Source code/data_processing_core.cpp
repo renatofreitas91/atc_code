@@ -1369,7 +1369,7 @@ void toMultiply(char expression[DIM], double result1, double result2){
 								}
 								if (expression[i] != '+'&&expression[i] != '-'&&expression[i] != '*'&&expression[i] != '/'&&expression[i] != '^'&&expression[i] != '\0'){
 									j--;
-									if (expression[i - 2] != '+'&&expression[i - 2] != '-'&&expression[i - 2] != '*'&&expression[i - 2] != '/'&&expression[i - 2] != '^'){
+									if ((expression[i - 2] != '+'&&expression[i - 2] != '-'&&expression[i - 2] != '*'&&expression[i - 2] != '/'&&expression[i - 2] != '^') && expression[i - 1] != '*'){
 										value[j] = '*';
 										value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
 										j++;

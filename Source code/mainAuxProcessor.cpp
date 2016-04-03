@@ -3,13 +3,14 @@
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain){
 
 	int txt = 0, command = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0;
-	char variable[DIM] = "", getVarName[DIM] = "", getVar[DIM] = "";
+	char variable[DIM] = "", getVarName[DIM] = "", getVar[DIM] = "",savefTrig[DIM]="";
 	cleanhistory = 0;
 	txt = 0;
 	valid = 1;
 	continu = 1;
 	validVar = 1;
 	str = 0;
+	sprintf(savefTrig, "%s", fTrig);
 	if (arithTrig[0] == 'g'&&arithTrig[1] == 'e'&&arithTrig[2] == 't'&&arithTrig[3] == '('){
 		i = 4;
 		for (i = 4; arithTrig[i] != '\0'; i++){
@@ -68,9 +69,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				run_del_space = 0;
 			}
 		}
-		fTrig[i] = arithTrig[i];
 	}
-	fTrig[i] = '\0';
 	if (txt == 1){
 		int p = 0;
 		char pathName[DIM] = "";
@@ -212,7 +211,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 					}
 				}
 			}
-			fprintf(fout, ">%s\n", fTrig);
+			fprintf(fout, ">%s\n", savefTrig);
 			command = commands(arithTrig, path, result1, result2);
 			fclose(fout);
 			fout = NULL;
@@ -355,14 +354,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		arithTrig[i] = '\0';
 		synTest = 0;
 		verify = dataVerifier(arithTrig, result1, result2, isFromMain, verify);
-	}
-	for (s = 0; arithTrig[s] != '\0'; s++){
-		if ((arithTrig[s] == '+' || arithTrig[s] == '-' || arithTrig[s] == '*' || arithTrig[s] == '/' || arithTrig[s] == '^') && (arithTrig[s + 1] == '+' || arithTrig[s + 1] == '-'&&arithTrig[s - 2] != '1'&&arithTrig[s - 1] != '0' || arithTrig[s + 1] == '*' || arithTrig[s + 1] == '/' || arithTrig[s + 1] == '^' || arithTrig[s + 1] == '!')){
-			verify = 0;
-		}
-	}
-	if (arithTrig[s - 1] == '+' || arithTrig[s - 1] == '-' || arithTrig[s - 1] == '*' || arithTrig[s - 1] == '/' || arithTrig[s - 1] == '^'){
-		verify = 0;
 	}
 
 	int kg = 0, kc = 0;

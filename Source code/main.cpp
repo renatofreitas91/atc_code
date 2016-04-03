@@ -427,7 +427,25 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 			}
 
 		}
-
+		w = strlen(data) - 4;
+		if ((data[w - 1] == '+' || data[w - 1] == '-' || data[w - 1] == '*' || data[w - 1] == '/' || data[w - 1] == '^') && data[w] == '+'&&data[w + 1] == '0'&&data[w + 2] == '+'&&data[w + 3] == '0'&&data[w + 4] == '\0'){
+			verify = 0;
+			if (comment == 1){
+				puts("\nYour expression is terminating with an arithmetic symbol.\n");
+			}
+			decision = 0;
+			return decision;
+		}
+		for (w = 0; data[w] != '\0'; w++){
+			if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && (data[w + 1] == '+' || data[w + 1] == '-'&&data[w - 2] != '1'&&data[w - 1] != '0' || data[w + 1] == '*' || data[w + 1] == '/' || data[w + 1] == '^' || data[w + 1] == '!')){
+				verify = 0;
+				if (comment == 1){
+					puts("\nYour expression has consecutive arithmetic symbols.\n");
+				}
+				decision = 0;
+				return decision;
+			}
+		}
 	}
 	int u = 0, p = 0;
 	u = 0;
