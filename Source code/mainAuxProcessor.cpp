@@ -1,9 +1,8 @@
 #include "stdafx.h"
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain){
-
 	int txt = 0, command = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0;
-	char variable[DIM] = "", getVarName[DIM] = "", getVar[DIM] = "",savefTrig[DIM]="";
+	char variable[DIM] = "", getVarName[DIM] = "", getVar[DIM] = "", savefTrig[DIM] = "";
 	cleanhistory = 0;
 	txt = 0;
 	valid = 1;
@@ -107,10 +106,6 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			arithTrig[0] = '\0';
 		}
 	}
-
-
-
-
 
 	if (str == 1){
 		str = 0;
@@ -506,51 +501,50 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					if (dp > -1){
 						ans[rf] = result1;
 						ansI[rf] = resultFI;
-						if (isFromMain == 1){
-							if (result1 > 0 && result2 > 0){
-								sprintf(dP, "#%d=%%.%df+%%.%dfi\n", rf, dp, dp);
-								if (isFromMain == 1){
-									printf(dP, result1, result2);
-								}
-							}
-							if (result1 > 0 && result2 < 0){
-								sprintf(dP, "#%d=%%.%df%%.%dfi\n", rf, dp, dp);
-								if (isFromMain == 1){
-									printf(dP, result1, result2);
-								}
-							}
-							if (result1 < 0 && result2 > 0){
-								sprintf(dP, "#%d = %%.%df+%%.%dfi\n", rf, dp, dp);
-								if (isFromMain == 1){
-									printf(dP, result1, result2);
-								}
-							}
-							if (result1 < 0 && result2 < 0){
-								sprintf(dP, "#%d=%%.%df%%.%dfi\n", rf, dp, dp);
-								if (isFromMain == 1){
-									printf(dP, result1, result2);
-								}
-							}
-							if (result1 == 0 && result2 == 0){
-								sprintf(dP, "#%d=%%.%df\n", rf, dp);
-								if (isFromMain == 1){
-									printf(dP, result1);
-								}
-							}
-
-							if (result1 == 0 && result2 != 0){
-								sprintf(dP, "#%d=%%.%dfi\n", rf, dp);
-								if (isFromMain == 1){
-									printf(dP, result2);
-								}
-							}
-							if (result1 != 0 && result2 == 0){
-								sprintf(dP, "#%d=%%.%df\n", rf, dp);
-								if (isFromMain == 1){
-									printf(dP, result1);
-								}
+						if (result1 > 0 && result2 > 0){
+							sprintf(dP, "#%d=%%.%df+%%.%dfi\n", rf, dp, dp);
+							if (isFromMain == 1){
+								printf(dP, result1, result2);
 							}
 						}
+						if (result1 > 0 && result2 < 0){
+							sprintf(dP, "#%d=%%.%df%%.%dfi\n", rf, dp, dp);
+							if (isFromMain == 1){
+								printf(dP, result1, result2);
+							}
+						}
+						if (result1 < 0 && result2 > 0){
+							sprintf(dP, "#%d = %%.%df+%%.%dfi\n", rf, dp, dp);
+							if (isFromMain == 1){
+								printf(dP, result1, result2);
+							}
+						}
+						if (result1 < 0 && result2 < 0){
+							sprintf(dP, "#%d=%%.%df%%.%dfi\n", rf, dp, dp);
+							if (isFromMain == 1){
+								printf(dP, result1, result2);
+							}
+						}
+						if (result1 == 0 && result2 == 0){
+							sprintf(dP, "#%d=%%.%df\n", rf, dp);
+							if (isFromMain == 1){
+								printf(dP, result1);
+							}
+						}
+
+						if (result1 == 0 && result2 != 0){
+							sprintf(dP, "#%d=%%.%dfi\n", rf, dp);
+							if (isFromMain == 1){
+								printf(dP, result2);
+							}
+						}
+						if (result1 != 0 && result2 == 0){
+							sprintf(dP, "#%d=%%.%df\n", rf, dp);
+							if (isFromMain == 1){
+								printf(dP, result1);
+							}
+						}
+
 
 						if (fout != NULL){
 							fclose(fout);

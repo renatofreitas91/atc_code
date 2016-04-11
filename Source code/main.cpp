@@ -72,6 +72,7 @@ int main(){
 					}
 				}
 				arithTrig[i] = '\0';
+				sprintf(fTrig, "%s", arithTrig);
 				main_core(arithTrig, fTrig, fout, path, result1, result2, 1);
 				if (verified == 1){
 					result1 = resultR;
