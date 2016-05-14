@@ -17,7 +17,7 @@
 #include <math.h>
 #include <dirent.h> 
 extern double resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
-extern int modeId, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified;
+extern int Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified;
 extern char calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
 double functionProcessor(char trigon[DIM], double result, double amplitude, double res);
 double initialProcessor(char arithTrig[DIM], double result);
@@ -51,7 +51,7 @@ int verifyPrefix(char prefix[DIM]);
 void manageExpression(char arithTrig[DIM], double result1, double result2, int verify);
 int searchExtension(char filename[DIM], char extension[DIM]);
 void toSolve(int re);
-int commands(char arithTrig[DIM], char path[DIM], double result, double result2);
+int commands(char arithTrig[DIM], char path[DIM], double result1, double result2);
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain);
 double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM], int txt, char variable[DIM], int v, int j, double result1, double result2, int isFromMain, int var, int valGet, int command);
 boolean atcFunctions(char functionName[DIM]);
@@ -62,3 +62,5 @@ int isToWrite(char arith[DIM]);
 void sprint(char text[DIM], double result1, double result2);
 void customFuncRenamer(char variable[DIM]);
 void showValues();
+boolean isCommand(char forTesting[DIM], char command[DIM]);
+boolean readyToSolve(char paTh[DIM]);

@@ -1190,7 +1190,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		}
 	}
 	if (Mode == 0){
-		opt = modeId;
+		opt = applySettings(4);
 		if (opt == 3){
 			deg = 0;
 			rad = 0;
@@ -1561,7 +1561,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		complex_tan(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
-		if ((v[7] == 90 || v[7] == -90 || v[7] == 270 || v[7] == -270 || v[7] == 0 || v[7] == 180 || v[7] == -180)&vI[7] == 0){
+		if ((v[7] == 90 || v[7] == -90 || v[7] == 270 || v[7] == -270 || v[7] == 0 || v[7] == 180 || v[7] == -180)&&vI[7] == 0){
 			result1 = v[0] * (sqrt(1 - cos(v[1])*cos(v[1])) / sqrt(1 - sin(v[1])*sin(v[1])));
 		}
 	}

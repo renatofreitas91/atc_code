@@ -9,7 +9,187 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	int command = 0, i = 0, r = 0, year = 0, s = 0;
 	i = 0;
-	if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'p'&&arithTrig[i + 2] == 'r'&&arithTrig[i + 3] == 'i'&&arithTrig[i + 4] == 'n'&&arithTrig[i + 5] == 't'&&arithTrig[i + 6] == '('){
+	if (isCommand(arithTrig, "atcfromcmd") == true){
+		command = 1;
+		TCHAR NPath[MAX_PATH];
+		GetCurrentDirectory(MAX_PATH, NPath);
+		char directory[MAX_PATH] = "";
+		wcstombs(directory, NPath, wcslen(NPath) + 1);
+		char comm[300] = "";
+		sprintf(comm, "/C \"setx /M PATH \"%%PATH%%;%s\\\"", directory);
+		using namespace std;
+		std::string s = string(comm);
+		std::wstring stemp = std::wstring(s.begin(), s.end());
+		LPCWSTR sw = stemp.c_str();
+		ShellExecute(NULL, _T("runas"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+		puts("\n==> You can now run cmd.exe and enter e.g. \"atc time\" <==\n");
+		puts("");
+	}
+	if (isCommand(arithTrig, "autosolvetxt") == true){
+		command = 1;
+		int p = 0;
+		char paTH[DIM] = "";
+		i = 0;
+		puts("\n==> Drag to here the file for automatic processing and press the button \"Enter\" <==\n");
+		while (strlen(paTH) == 0){
+			gets(paTH);
+		}
+		puts("\n==> Waiting for the flag \"SOLVE_NOW\" be detected in the last line of this file. <==\n");
+		boolean ready = false;
+		while (ready == readyToSolve(paTH)){
+			Sleep(2000);
+		}
+		processTxt(paTH, rf);
+		printf("\n==> Close the file with the answers to continue. <==\n\n");
+		fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
+		openTxt();
+
+	}
+	if (isCommand(arithTrig, "solvequadraticequation") == true && arithTrig[i + 22] == '('){
+		command = 1;
+		char values[DIM] = "", value[DIM] = "", saveValue[DIM] = "";
+		int v = 0, ct = 0;
+		double aR = 0, aI = 0, bR = 0, bI = 0, cR = 0, cI = 0;
+		i = 23;
+		while (arithTrig[i] != '\0'&&arithTrig[i] != ')'){
+			if (arithTrig[i] == '\\'){
+				ct++;
+			}
+			values[v] = arithTrig[i];
+			v++; i++;
+		}
+		values[v] = '\0';
+		if (ct != 2){
+			puts("\nError: You must include a, b and c values.\n");
+		}
+		else{
+			puts(" ");
+			v = 0;
+			i = 0;
+			while (values[i] != '\\'){
+				value[v] = values[i];
+				i++; v++;
+			}
+			value[v] = '\0';
+			solveNow(value, 0, 0);
+			aR = resultR;
+			aI = resultI;
+			i++; v = 0;
+			while (values[i] != '\\'){
+				value[v] = values[i];
+				i++; v++;
+			}
+			value[v] = '\0';
+			solveNow(value, 0, 0);
+			bR = resultR;
+			bI = resultI;
+			i++; v = 0;
+			while (values[i] != '\0'){
+				value[v] = values[i];
+				i++; v++;
+			}
+			value[v] = '\0';
+			solveNow(value, 0, 0);
+			cR = resultR;
+			cI = resultI;
+			multiplication(-1, 0, bR, bI);
+			double minusbR = resultR, minusbI = resultI;
+			multiplication(bR, bI, bR, bI);
+			double bRquad = resultR, bIquad = resultI;
+			multiplication(aR, aI, cR, cI);
+			double acR = resultR, acI = resultI;
+			multiplication(2, 0, aR, aI);
+			double twoaR = resultR, twoaI = resultI;
+			multiplication(4, 0, acR, acI);
+			double fouracR = resultR, fouracI = resultI;
+			subtraction(bRquad, bIquad, fouracR, fouracI);
+			double radicandR = resultR, radicandI = resultI;
+			exponentiation(radicandR, radicandI, 0.5, 0, 1);
+			double sqrtR = resultR, sqrtI = resultI;
+			subtraction(minusbR, minusbI, sqrtR, sqrtI);
+			double minusR = resultR, minusI = resultI;
+			sum(minusbR, minusbI, sqrtR, sqrtI);
+			double plusR = resultR, plusI = resultI;
+			division(plusR, plusI, twoaR, twoaI);
+			double x1R = resultR, x1I = resultI;
+			division(minusR, minusI, twoaR, twoaI);
+			double x2R = resultR, x2I = resultI;
+			if (x1R > 0 && x1I > 0){
+				printf("x1=%G+%Gi\n", x1R, x1I);
+			}
+			else{
+				if (x1R > 0 && x1I < 0){
+					printf("x1=%G%Gi\n", x1R, x1I);
+				}
+				else{
+					if (x1R < 0 && x1I > 0){
+						printf("x1=%G+%Gi\n", x1R, x1I);
+					}
+					else{
+						if (x1R < 0 && x1I < 0){
+							printf("x1=%G%Gi\n", x1R, x1I);
+						}
+						else{
+							if (x1R == 0 && x1I == 0){
+								printf("x1=%G\n", x1R);
+							}
+							else{
+								if (x1R == 0 && x1I != 0){
+									printf("x1=%Gi\n", x1I);
+								}
+								else{
+									if (x1R != 0 && x1I == 0){
+										printf("x1=%G\n", x1R);
+									}
+									else{
+										printf("x1=%G+%Gi\n", x1R, x1I);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if (x2R > 0 && x2I > 0){
+				printf("x2=%G+%Gi\n", x2R, x2I);
+			}
+			else{
+				if (x2R > 0 && x2I < 0){
+					printf("x2=%G%Gi\n", x2R, x2I);
+				}
+				else{
+					if (x2R < 0 && x2I > 0){
+						printf("x2=%G+%Gi\n", x2R, x2I);
+					}
+					else{
+						if (x2R < 0 && x2I < 0){
+							printf("x2=%G%Gi\n", x2R, x2I);
+						}
+						else{
+							if (x2R == 0 && x2I == 0){
+								printf("x2=%G\n", x2R);
+							}
+							else{
+								if (x2R == 0 && x2I != 0){
+									printf("x2=%Gi\n", x2I);
+								}
+								else{
+									if (x2R != 0 && x2I == 0){
+										printf("x2=%G\n", x2R);
+									}
+									else{
+										printf("x2=%G+%Gi\n", x2R, x2I);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			puts(" ");
+		}
+	}
+	if (isCommand(arithTrig, "sprint") == true && arithTrig[i + 6] == '('){
 		char vaString[DIM] = "";
 		int x = 0, y = 0;
 		y = i + 7;
@@ -24,7 +204,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		arithTrig[0] = '\0'; command = 1;
 	}
 
-	if (arithTrig[i] == 'p'&&arithTrig[i + 1] == 'r'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'n'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == '('){
+	if (isCommand(arithTrig, "print") == true && arithTrig[i + 5] == '('){
 		char vaString[DIM] = "";
 		int x = 0, y = 0;
 		y = i + 6;
@@ -53,7 +233,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 		arithTrig[0] = '\0'; command = 1;
 	}
-	if (arithTrig[i] == 'c'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'o'&&arithTrig[i + 3] == 'c'&&arithTrig[i + 4] == 'k'&&arithTrig[i + 5] == 'c'&&arithTrig[i + 6] == 't'&&arithTrig[i + 7] == 'd'&&arithTrig[i + 10] == '\0'){
+	if (isCommand(arithTrig, "clockctd") == true){
 		command = 1;
 		TCHAR NPath[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, NPath);
@@ -68,7 +248,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
-	if (arithTrig[i] == 't'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'r'&&arithTrig[i + 3] == 'm'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 8] == 's'&&arithTrig[i + 9] == 'e'&&arithTrig[i + 10] == 's'&&arithTrig[i + 11] == 's'&&arithTrig[i + 12] == 'a'&&arithTrig[i + 13] == 'o'&&arithTrig[i + 16] == '\0' || arithTrig[i] == 'l'&&arithTrig[i + 1] == 'o' && arithTrig[i + 2] == 'g' && arithTrig[i + 3] == 'o'&&arithTrig[i + 4] == 'f'&&arithTrig[i + 5] == 'f'&&arithTrig[i + 8] == '\0'){
+	if (isCommand(arithTrig, "logoff") == true){
 		continu = 0;
 		command = 1;
 		if (IsPreviousToWindowsVista() == true){
@@ -78,19 +258,19 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			system("C:\\WINDOWS\\System32\\shutdown /l");
 		}
 	}
-	if (arithTrig[i] == 'e'&&arithTrig[i + 1] == 'n'&&arithTrig[i + 2] == 'a'&&arithTrig[i + 3] == 'b'&&arithTrig[i + 4] == 'l'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 6] == 't'&&arithTrig[i + 7] == 'x'&&arithTrig[i + 8] == 't'&&arithTrig[i + 9] == 'd'&&arithTrig[i + 10] == 'e'&&arithTrig[i + 11] == 't'&&arithTrig[i + 12] == 'e'&&arithTrig[i + 13] == 'c'&&arithTrig[i + 14] == 't'&& arithTrig[i + 15] == 'o'&&arithTrig[i + 16] == 'r' && arithTrig[i + 19] == '\0'){
+	if (isCommand(arithTrig, "enabletxtdetector") == true){
 		command = 1;
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del disable_txt_detector.txt\""), NULL, SW_SHOW);
 		Sleep(200);
 		puts(" ");
 	}
-	if (arithTrig[i] == 'h'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 't'&&arithTrig[i + 4] == 'o'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 'y'&&arithTrig[i + 9] == '\0'){
+	if (isCommand(arithTrig, "history") == true){
 		command = 1;
 		puts(" ");
 		printf("\n==> Close the history to continue. <==\n\n");
 		system("notepad.exe history.txt");
 	}
-	if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'a'&&arithTrig[i + 6] == 'l'&&arithTrig[i + 7] == 'l'&&arithTrig[i + 10] == '\0'){
+	if (isCommand(arithTrig, "resetall") == true){
 		command = 1;
 		puts(" ");
 		FILE *start;
@@ -99,7 +279,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		fclose(start);
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
 	}
-	if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 's'&&arithTrig[i + 6] == 'e'&&arithTrig[i + 7] == 't'&&arithTrig[i + 8] == 't'&&arithTrig[i + 9] == 'i'&&arithTrig[i + 10] == 'n'&&arithTrig[i + 11] == 'g'&&arithTrig[i + 12] == 's'&&arithTrig[i + 15] == '\0'){
+	if (isCommand(arithTrig, "resetsettings") == true){
 		command = 1;
 		puts(" ");
 		FILE *start;
@@ -108,7 +288,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		fclose(start);
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
 	}
-	if (arithTrig[i] == 'a'&&arithTrig[i + 1] == 't'&&arithTrig[i + 2] == 'c'&&arithTrig[i + 3] == 'f'&&arithTrig[i + 4] == 'o'&&arithTrig[i + 5] == 'l'&&arithTrig[i + 6] == 'd'&&arithTrig[i + 7] == 'e'&&arithTrig[i + 8] == 'r'&&arithTrig[i + 11] == '\0'){
+	if (isCommand(arithTrig, "atcfolder") == true){
 		command = 1;
 		TCHAR NPath[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, NPath);
@@ -125,7 +305,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 
 	}
 
-	if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'o'&&arithTrig[i + 2] == 'u'&&arithTrig[i + 3] == 'r'&&arithTrig[i + 4] == 'c'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 6] == 'c'&&arithTrig[i + 7] == 'o'&&arithTrig[i + 8] == 'd'&&arithTrig[i + 9] == 'e'&&arithTrig[i + 12] == '\0'){
+	if (isCommand(arithTrig, "sourcecode") == true){
 		command = 1;
 		TCHAR NPath[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, NPath);
@@ -140,8 +320,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
-
-	if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'c'&&arithTrig[i + 2] == 'r'&&arithTrig[i + 3] == 'i'&&arithTrig[i + 4] == 'p'&&arithTrig[i + 5] == 't'&&arithTrig[i + 6] == 's'&&arithTrig[i + 7] == 'e'&&arithTrig[i + 8] == 'x'&&arithTrig[i + 9] == 'a'&&arithTrig[i + 10] == 'm'&&arithTrig[i + 11] == 'p'&&arithTrig[i + 12] == 'l'&&arithTrig[i + 13] == 'e'&&arithTrig[i + 14] == 's'&&arithTrig[i + 17] == '\0'){
+	if (isCommand(arithTrig, "scriptsexamples") == true){
 		command = 1;
 		TCHAR NPath[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, NPath);
@@ -156,8 +335,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
-
-	if (arithTrig[i] == 's'&&arithTrig[i + 1] == 't'&&arithTrig[i + 2] == 'r'&&arithTrig[i + 3] == 'i'&&arithTrig[i + 4] == 'n'&&arithTrig[i + 5] == 'g'&&arithTrig[i + 6] == 's'&&arithTrig[i + 9] == '\0'){
+	if (isCommand(arithTrig, "strings") == true){
 		command = 1;
 		TCHAR NPath[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, NPath);
@@ -172,8 +350,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
-
-	if (arithTrig[i] == 'u'&&arithTrig[i + 1] == 's'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 'r'&&arithTrig[i + 4] == 'f'&&arithTrig[i + 5] == 'u'&&arithTrig[i + 6] == 'n'&&arithTrig[i + 7] == 'c'&&arithTrig[i + 8] == 't'&&arithTrig[i + 9] == 'i'&&arithTrig[i + 10] == 'o'&&arithTrig[i + 11] == 'n'&&arithTrig[i + 12] == 's'&&arithTrig[i + 15] == '\0'){
+	if (isCommand(arithTrig, "userfunctions") == true){
 		command = 1;
 		TCHAR NPath[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, NPath);
@@ -189,7 +366,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		puts("");
 	}
 
-	if (arithTrig[i] == 't'&&arithTrig[i + 1] == 'o'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 'o'&&arithTrig[i + 4] == 'l'&&arithTrig[i + 5] == 'v'&&arithTrig[i + 6] == 'e'&&arithTrig[i + 9] == '\0'){
+	if (isCommand(arithTrig, "tosolve") == true){
 		command = 1;
 		TCHAR NPath[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, NPath);
@@ -205,52 +382,53 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		puts("");
 	}
 
-	if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 't'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 't'&&arithTrig[i + 7] == 'a'&&arithTrig[i + 8] == 't'&&arithTrig[i + 9] == 'c'&&arithTrig[i + 12] == '\0'){
+	if (isCommand(arithTrig, "restartatc") == true){
 		command = 1;
 		continu = 0;
-		ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator EN.exe"), NULL, NULL, SW_SHOW);
+		ShellExecute(NULL, _T("open"), _T("atc.exe"), NULL, NULL, SW_SHOW);
 	}
 
-	if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'u'&&arithTrig[i + 2] == 'n'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'c'&&arithTrig[i + 8] == '\0'){
+	if (isCommand(arithTrig, "runatc") == true){
 		command = 1;
 		puts(" ");
-		ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator EN.exe"), NULL, NULL, SW_SHOW);
+		ShellExecute(NULL, _T("open"), _T("atc.exe"), NULL, NULL, SW_SHOW);
 	}
-	if (arithTrig[i] == 'u'&&arithTrig[i + 1] == 'p'&&arithTrig[i + 2] == 'd'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 6] == 'p'&&arithTrig[i + 7] == 'o'&&arithTrig[i + 8] == 'r'&&arithTrig[i + 9] == 't'&&arithTrig[i + 10] == 'a'&&arithTrig[i + 11] == 'b'&&arithTrig[i + 12] == 'l'&&arithTrig[i + 13] == 'e'&&arithTrig[i + 16] == '\0'){
+	if (isCommand(arithTrig, "updateportable") == true){
 		command = 1;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Advanced%20Trigonometry%20Calculator.zip/download\""), NULL, SW_SHOW);
 	}
-	if (arithTrig[i] == 'u'&&arithTrig[i + 1] == 'p'&&arithTrig[i + 2] == 'd'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 8] == '\0' || arithTrig[i] == 'a'&&arithTrig[i + 1] == 't' && arithTrig[i + 2] == 'u' && arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 'l'&&arithTrig[i + 5] == 'i'&&arithTrig[i + 6] == 'z'&&arithTrig[i + 7] == 'a'&&arithTrig[i + 8] == 'r'&&arithTrig[i + 11] == '\0'){
+	if (isCommand(arithTrig, "update") == true){
 		command = 1;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator.exe/download\""), NULL, SW_SHOW);
 	}
-	if (arithTrig[i] == 'u'&&arithTrig[i + 1] == 's'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 'r'&&arithTrig[i + 4] == 'g'&&arithTrig[i + 5] == 'u'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'd'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 11] == '\0' || arithTrig[i] == 'm'&&arithTrig[i + 1] == 'a' && arithTrig[i + 2] == 'n' && arithTrig[i + 3] == 'u'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'l'&&arithTrig[i + 8] == '\0'){
+	if (isCommand(arithTrig, "userguide") == true){
 		command = 1;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator - User Guide.pdf"), NULL, NULL, SW_SHOW);
 	}
-	if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'u'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 'p'&&arithTrig[i + 4] == 'e'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'd'&&arithTrig[i + 7] == 'e'&&arithTrig[i + 8] == 'r'&&arithTrig[i + 11] == '\0' || arithTrig[i] == 's'&&arithTrig[i + 1] == 'l' && arithTrig[i + 2] == 'e' && arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'p'&&arithTrig[i + 7] == '\0'){
+	if (isCommand(arithTrig, "sleep") == true){
 		command = 1;
 		puts(" ");
 		ShellExecute(NULL, _T("runas"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"powercfg -hibernate off\""), NULL, SW_SHOW);
 		Sleep(5000);
 		system("C:\\WINDOWS\\System32\\Rundll32.exe powrprof.dll,SetSuspendState Sleep");
 	}
-	if (arithTrig[i] == 'b'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'o'&&arithTrig[i + 3] == 'q'&&arithTrig[i + 4] == 'u'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 10] == '\0' || arithTrig[i] == 'l'&&arithTrig[i + 1] == 'o' && arithTrig[i + 2] == 'c' && arithTrig[i + 3] == 'k'&&arithTrig[i + 6] == '\0'){
+	if (isCommand(arithTrig, "lock") == true){
 		command = 1;
 		puts(" ");
 		system("C:\\WINDOWS\\System32\\Rundll32.exe User32.dll,LockWorkStation");
 	}
-	if (arithTrig[i] == 'h'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'b'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'r'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 10] == '\0' || arithTrig[i] == 'h'&&arithTrig[i + 1] == 'i' && arithTrig[i + 2] == 'b' && arithTrig[i + 3] == 'e'&& arithTrig[i + 4] == 'r'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 't'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 11] == '\0'){
+
+	if (isCommand(arithTrig, "hibernate") == true){
 		command = 1;
 		puts(" ");
 		ShellExecute(NULL, _T("runas"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"powercfg -hibernate on\""), NULL, SW_SHOW);
 		Sleep(5000);
 		system("C:\\WINDOWS\\System32\\rundll32.exe PowrProf.dll,SetSuspendState Hibernate");
 	}
-	if (arithTrig[i] == 'e'&&arithTrig[i + 1] == 'n'&&arithTrig[i + 2] == 'c'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'r'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 10] == '\0' || arithTrig[i] == 's'&&arithTrig[i + 1] == 'h' && arithTrig[i + 2] == 'u' && arithTrig[i + 3] == 't'&& arithTrig[i + 4] == 'd'&&arithTrig[i + 5] == 'o'&&arithTrig[i + 6] == 'w'&&arithTrig[i + 7] == 'n'&&arithTrig[i + 10] == '\0'){
+	if (isCommand(arithTrig, "shutdown") == true){
 		continu = 0;
 		command = 1;
 		if (IsPreviousToWindowsVista() == true){
@@ -260,7 +438,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			system("C:\\WINDOWS\\System32\\shutdown /s");
 		}
 	}
-	if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'n'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'c'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'a'&&arithTrig[i + 8] == 'r' &&arithTrig[i + 11] == '\0' || arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e' && arithTrig[i + 2] == 's' && arithTrig[i + 3] == 't'&& arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 't'&&arithTrig[i + 7] == 'p'&&arithTrig[i + 8] == 'c'&&arithTrig[i + 11] == '\0'){
+	if (isCommand(arithTrig, "restartpc") == true){
 		continu = 0;
 		command = 1;
 		if (IsPreviousToWindowsVista() == true){
@@ -270,23 +448,23 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			system("C:\\WINDOWS\\System32\\shutdown /r");
 		}
 	}
-	if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'r'&&arithTrig[i + 6] == '\0' || (arithTrig[i] == 'e' || arithTrig[i] == 'E') && arithTrig[i + 1] == 'x'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 't'&&arithTrig[i + 6] == '\0'){
+	if (isCommand(arithTrig, "exit") == true){
 		continu = 0;
 		fprintf(fout, "\n");
 		command = 1;
 	}
-	if (arithTrig[i] == 'l'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'm'&&arithTrig[i + 3] == 'p'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] != 'h'&&arithTrig[i + 8] == '\0' || arithTrig[i] == 'c'&&arithTrig[i + 1] == 'l' && (arithTrig[i + 2] == 'e' || arithTrig[i + 2] == 'E') && arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 'n'&&arithTrig[i + 5] != 'h'&&arithTrig[i + 7] == '\0'){
+	if (isCommand(arithTrig, "clean") == true){
 		cls(); command = 1;
 		arithTrig[0] = '\0';
 		fprintf(fout, "\n");
 	}
-	if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'o'&&arithTrig[i + 2] == 'b'&&arithTrig[i + 3] == 'r' && (arithTrig[i + 4] == 'e' || arithTrig[i + 4] == 'E') && arithTrig[i + 7] == '\0' || arithTrig[i] == 'a'&&arithTrig[i + 1] == 'b'&&arithTrig[i + 2] == 'o'&&arithTrig[i + 3] == 'u'&&arithTrig[i + 4] == 't'&&arithTrig[i + 7] == '\0'){
+	if (isCommand(arithTrig, "about") == true){
 		arithTrig[0] = '\0'; command = 1;
 		cls();
 		about2();
 		fprintf(fout, "\n");
 	}
-	if (arithTrig[i] == 'm'&&arithTrig[i + 1] == 'o'&&arithTrig[i + 2] == 'd' && (arithTrig[i + 3] == 'e' || arithTrig[i + 3] == 'E') && arithTrig[i + 6] == '\0' || arithTrig[i] == 'm'&&arithTrig[i + 1] == 'o'&&arithTrig[i + 2] == 'd'&&arithTrig[i + 3] == 'o'&&arithTrig[i + 6] == '\0'){
+	if (isCommand(arithTrig, "mode") == true){
 		arithTrig[0] = '\0'; command = 1;
 		printf("\n==> Configuration of mode <==\n\n");
 		fprintf(fout, "\n==> Configuration of mode <==\n\n");
@@ -294,7 +472,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		fprintf(fout, "\n");
 		printf("\n");
 	}
-	if (arithTrig[i] == 'l'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'm'&&arithTrig[i + 3] == 'p'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 'h'&&arithTrig[i + 7] == 'i'&&arithTrig[i + 8] == 's'&&arithTrig[i + 9] == 't'&&arithTrig[i + 10] == 'o'&&arithTrig[i + 11] == 'r'&&arithTrig[i + 12] == 'i'&&arithTrig[i + 13] == 'c'&&arithTrig[i + 14] == 'o'&&arithTrig[i + 17] == '\0' || arithTrig[i] == 'c'&&arithTrig[i + 1] == 'l' && (arithTrig[i + 2] == 'e' || arithTrig[i + 2] == 'E') && arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 'n'&&arithTrig[i + 5] == 'h'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 's'&&arithTrig[i + 8] == 't'&&arithTrig[i + 9] == 'o'&&arithTrig[i + 10] == 'r'&&arithTrig[i + 11] == 'y'&&arithTrig[i + 14] == '\0'){
+	if (isCommand(arithTrig, "cleanhistory") == true){
 		fclean = NULL;
 		while (fclean == NULL){
 			fclean = fopen(path, "w");
@@ -305,25 +483,25 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		arithTrig[0] = '\0';
 		cleanhistory = 1;
 	}
-	if (arithTrig[i] == 'c'&&arithTrig[i + 1] == 'o'&&arithTrig[i + 2] == 'r' && (arithTrig[i + 3] == 'e' || arithTrig[i + 3] == 'E') && arithTrig[i + 4] == 's'&&arithTrig[i + 7] == '\0' || arithTrig[i] == 'c'&&arithTrig[i + 1] == 'o'&&arithTrig[i + 2] == 'l'&&arithTrig[i + 3] == 'o'&&arithTrig[i + 4] == 'r'&&arithTrig[i + 5] == 's'&&arithTrig[i + 8] == '\0'){
+	if (isCommand(arithTrig, "colors") == true){
 		arithTrig[0] = '\0'; command = 1;
 		printf("\n==> Configuration of background and text colors <==\n\n");
 		fprintf(fout, "\n==> Configuration of background and text colors <==\n\n");
 		colors();
 	}
-	if (arithTrig[i] == 'd'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'm' && (arithTrig[i + 3] == 'e' || arithTrig[i + 3] == 'E') && arithTrig[i + 4] == 'n'&&arithTrig[i + 5] == 's'&&arithTrig[i + 6] == 'o' && (arithTrig[i + 7] == 'e' || arithTrig[i + 7] == 'E') && arithTrig[i + 8] == 's'&&arithTrig[i + 11] == '\0' || arithTrig[i] == 'd'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'm' && (arithTrig[i + 3] == 'e' || arithTrig[i + 3] == 'E') && arithTrig[i + 4] == 'n'&&arithTrig[i + 5] == 's'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'o'&&arithTrig[i + 8] == 'n'&&arithTrig[i + 9] == 's'&&arithTrig[i + 12] == '\0'){
+	if (isCommand(arithTrig, "dimensions") == true){
 		arithTrig[0] = '\0'; command = 1;
 		printf("\n==> Dimensional configuration of the application window <==\n\n");
 		fprintf(fout, "\n==> Dimensional configuration of the application window <==\n\n");
 		dimensions();
 	}
-	if (arithTrig[i] == 'j'&&arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'n' && (arithTrig[i + 3] == 'e' || arithTrig[i + 3] == 'E') && arithTrig[i + 4] == 'l'&&arithTrig[i + 5] == 'a'&&arithTrig[i + 8] == '\0' || arithTrig[i] == 'w'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'n'&&arithTrig[i + 3] == 'd'&&arithTrig[i + 4] == 'o'&&arithTrig[i + 5] == 'w'&&arithTrig[i + 8] == '\0'){
+	if (isCommand(arithTrig, "window") == true){
 		arithTrig[0] = '\0'; command = 1;
 		printf("\n==> Configuration of the position, width and height of the application window <==\n\n");
 		fprintf(fout, "\n==> Configuration of the position, width and height of the application window <==\n\n");
 		window();
 	}
-	if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 'o'&&arithTrig[i + 4] == 'l'&&arithTrig[i + 5] == 'v'&&arithTrig[i + 6] == 'e'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 8] == 's'&&arithTrig[i + 9] == 'i'&&arithTrig[i + 10] == 's'&&arithTrig[i + 11] == 't'&&arithTrig[i + 12] == 'e'&&arithTrig[i + 13] == 'm'&&arithTrig[i + 14] == 'a'&&arithTrig[i + 15] == 'd'&&arithTrig[i + 16] == 'e'&&arithTrig[i + 17] == 'e'&&arithTrig[i + 18] == 'q'&&arithTrig[i + 19] == 'u'&&arithTrig[i + 20] == 'a'&&arithTrig[i + 21] == 'c'&&arithTrig[i + 22] == 'o'&&arithTrig[i + 23] == 'e'&&arithTrig[i + 24] == 's' &&arithTrig[i + 25] == '(' || arithTrig[i] == 's'&&arithTrig[i + 1] == 'o'&&arithTrig[i + 2] == 'l'&&arithTrig[i + 3] == 'v'&&arithTrig[i + 4] == 'e'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 6] == 'q'&&arithTrig[i + 7] == 'u'&&arithTrig[i + 8] == 'a'&&arithTrig[i + 9] == 't'&&arithTrig[i + 10] == 'i'&&arithTrig[i + 11] == 'o'&&arithTrig[i + 12] == 'n'&&arithTrig[i + 13] == 's'&&arithTrig[i + 14] == 's'&&arithTrig[i + 15] == 'y'&&arithTrig[i + 16] == 's'&&arithTrig[i + 17] == 't'&&arithTrig[i + 18] == 'e'&&arithTrig[i + 19] == 'm'&&arithTrig[i + 20] == '('){
+	if (isCommand(arithTrig, "solveequationssystem") == true && arithTrig[i + 20] == '('){
 		int correct = 1, vi = 0, vj = 0;
 
 		count = 2;
@@ -515,7 +693,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 		arithTrig[0] = '\0'; command = 1;
 	}
-	if (arithTrig[i] == 'e'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'm'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 8] == 'v'&&arithTrig[i + 9] == 'a'&&arithTrig[i + 10] == 'r'&&arithTrig[i + 11] == 'i'&&arithTrig[i + 12] == 'a'&&arithTrig[i + 13] == 'v'&&arithTrig[i + 14] == 'e'&&arithTrig[i + 15] == 'i'&&arithTrig[i + 16] == 's'&&arithTrig[i + 19] == '\0' || arithTrig[i] == 'e'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'm'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 't'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 9] == 'v'&&arithTrig[i + 10] == 'a'&&arithTrig[i + 11] == 'r'&&arithTrig[i + 12] == 'i'&&arithTrig[i + 13] == 'a'&&arithTrig[i + 14] == 'b'&&arithTrig[i + 15] == 'l'&&arithTrig[i + 16] == 'e'&&arithTrig[i + 17] == 's'&&arithTrig[i + 20] == '\0'){
+	if (isCommand(arithTrig, "eliminatevariables") == true){
 		FILE *open = NULL;
 		int r = 0;
 		while (open == NULL&&r < 100){
@@ -540,7 +718,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 	}
 
-	if (arithTrig[i] == 'e'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'm'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 't'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 9] == 's'&&arithTrig[i + 10] == 't'&&arithTrig[i + 11] == 'r'&&arithTrig[i + 12] == 'i'&&arithTrig[i + 13] == 'n'&&arithTrig[i + 14] == 'g'&&arithTrig[i + 15] == 's'&&arithTrig[i + 18] == '\0'){
+	if (isCommand(arithTrig, "eliminatestrings") == true){
 		FILE *open = NULL;
 		int r = 0;
 		while (open == NULL&&r < 100){
@@ -558,7 +736,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 	}
 
-	if (arithTrig[i] == 'c'&&arithTrig[i + 1] == 'r'&&arithTrig[i + 2] == 'o'&&arithTrig[i + 3] == 'n'&&arithTrig[i + 4] == 'o'&&arithTrig[i + 5] == 'm'&&arithTrig[i + 6] == 'e'&&arithTrig[i + 7] == 't'&&arithTrig[i + 8] == 'r'&&arithTrig[i + 9] == 'o'&&arithTrig[i + 10] == '(' || arithTrig[i] == 's'&&arithTrig[i + 1] == 't'&&arithTrig[i + 2] == 'o'&&arithTrig[i + 3] == 'p'&&arithTrig[i + 4] == 'w'&&arithTrig[i + 5] == 'a'&&arithTrig[i + 6] == 't'&&arithTrig[i + 7] == 'c'&&arithTrig[i + 8] == 'h'&&arithTrig[i + 9] == '('){
+	if (isCommand(arithTrig, "stopwatch") == true && arithTrig[i + 9] == '('){
 		printf("\nPress \"Enter\" button to mark time.\n");
 		fprintf(fout, "\nPress \"Enter\" button to mark time.\n");
 		int ct = 0, countT = 0;
@@ -623,7 +801,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		arithTrig[0] = '\0';
 	}
 
-	if (arithTrig[i] == 'e'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'm'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 8] == 'r'&&arithTrig[i + 9] == 'e'&&arithTrig[i + 10] == 's'&&arithTrig[i + 11] == 'u'&&arithTrig[i + 12] == 'l'&&arithTrig[i + 13] == 't'&&arithTrig[i + 14] == 'a'&&arithTrig[i + 15] == 'd'&&arithTrig[i + 16] == 'o'&&arithTrig[i + 17] == 's'&&arithTrig[i + 20] == '\0' || arithTrig[i] == 'e'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'm'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 't'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 9] == 'r'&&arithTrig[i + 10] == 'e'&&arithTrig[i + 11] == 's'&&arithTrig[i + 12] == 'u'&&arithTrig[i + 13] == 'l'&&arithTrig[i + 14] == 't'&&arithTrig[i + 15] == 's'&&arithTrig[i + 18] == '\0'){
+	if (isCommand(arithTrig, "eliminateresults") == true){
 		r = 0; command = 1;
 		while (r < rf){
 			ans[r] = 0;
@@ -636,7 +814,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		arithTrig[0] = '\0';
 	}
 
-	if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 's'&&arithTrig[i + 4] == 't'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'n'&&arithTrig[i + 8] == 'g'&&arithTrig[i + 9] == 's'&&arithTrig[i + 12] == '\0'){
+	if (isCommand(arithTrig, "seestrings") == true){
 		FILE *open = NULL;
 		int r = 0;
 		while (open == NULL&&r < 100){
@@ -662,7 +840,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 	}
 
-	if (arithTrig[i] == 'v'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'r'&&arithTrig[i + 3] == 'v'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'a'&&arithTrig[i + 8] == 'v'&&arithTrig[i + 9] == 'e'&&arithTrig[i + 10] == 'i'&&arithTrig[i + 11] == 's'&&arithTrig[i + 14] == '\0' || arithTrig[i] == 's'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 'v'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'a'&&arithTrig[i + 8] == 'b'&&arithTrig[i + 9] == 'l'&&arithTrig[i + 10] == 'e'&&arithTrig[i + 11] == 's'&&arithTrig[i + 14] == '\0'){
+	if (isCommand(arithTrig, "seevariables") == true){
 		FILE *open = NULL;
 		int r = 0;
 		while (open == NULL&&r < 100){
@@ -687,7 +865,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			arithTrig[0] = '\0';
 		}
 	}
-	if (arithTrig[i] == 'e'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'm'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 8] == 'a'&&arithTrig[i + 9] == 'b'&&arithTrig[i + 10] == 'r'&&arithTrig[i + 11] == 'e'&&arithTrig[i + 12] == 'v'&&arithTrig[i + 13] == 'i'&&arithTrig[i + 14] == 'a'&&arithTrig[i + 15] == 't'&&arithTrig[i + 16] == 'u'&&arithTrig[i + 17] == 'r'&&arithTrig[i + 18] == 'a'&&arithTrig[i + 19] == 's'&&arithTrig[i + 22] == '\0' || arithTrig[i] == 'e'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'i'&&arithTrig[i + 3] == 'm'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'n'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 't'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 9] == 'a'&&arithTrig[i + 10] == 'b'&&arithTrig[i + 11] == 'b'&&arithTrig[i + 12] == 'r'&&arithTrig[i + 13] == 'e'&&arithTrig[i + 14] == 'v'&&arithTrig[i + 15] == 'i'&&arithTrig[i + 16] == 'a'&&arithTrig[i + 17] == 't'&&arithTrig[i + 18] == 'i'&&arithTrig[i + 19] == 'o'&&arithTrig[i + 20] == 'n'&&arithTrig[i + 21] == 's'&&arithTrig[i + 24] == '\0'){
+	if (isCommand(arithTrig, "eliminateabbreviations") == true){
 		FILE *open = NULL;	 command = 1;
 		while (open == NULL){
 			open = fopen("pathName.txt", "w");
@@ -697,7 +875,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		arithTrig[0] = '\0';
 		fclose(open);
 	}
-	if (arithTrig[i] == 'v'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'r'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 'b'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 'e'&&arithTrig[i + 7] == 'v'&&arithTrig[i + 8] == 'i'&&arithTrig[i + 9] == 'a'&&arithTrig[i + 10] == 't'&&arithTrig[i + 11] == 'u'&&arithTrig[i + 12] == 'r'&&arithTrig[i + 13] == 'a'&&arithTrig[i + 14] == 's'&&arithTrig[i + 17] == '\0' || arithTrig[i] == 's'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 'b'&&arithTrig[i + 5] == 'b'&&arithTrig[i + 6] == 'r'&&arithTrig[i + 7] == 'e'&&arithTrig[i + 8] == 'v'&&arithTrig[i + 9] == 'i'&&arithTrig[i + 10] == 'a'&&arithTrig[i + 11] == 't'&&arithTrig[i + 12] == 'i'&&arithTrig[i + 13] == 'o'&&arithTrig[i + 14] == 'n'&&arithTrig[i + 15] == 's'&&arithTrig[i + 18] == '\0'){
+	if (isCommand(arithTrig, "seeabbreviations") == true){
 		FILE *open = NULL;	   command = 1;
 		while (open == NULL){
 			open = fopen("pathName.txt", "a+");
@@ -717,7 +895,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 		fclose(open);
 	}
-	if (arithTrig[i] == 'v'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'r'&&arithTrig[i + 3] == 'r'&&arithTrig[i + 4] == 'e'&&arithTrig[i + 5] == 's'&&arithTrig[i + 6] == 'u'&&arithTrig[i + 7] == 'l'&&arithTrig[i + 8] == 't'&&arithTrig[i + 9] == 'a'&&arithTrig[i + 10] == 'd'&&arithTrig[i + 11] == 'o'&&arithTrig[i + 12] == 's'&&arithTrig[i + 15] == '\0' || arithTrig[i] == 's'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 'r'&&arithTrig[i + 4] == 'e'&&arithTrig[i + 5] == 's'&&arithTrig[i + 6] == 'u'&&arithTrig[i + 7] == 'l'&&arithTrig[i + 8] == 't'&&arithTrig[i + 9] == 's'&&arithTrig[i + 12] == '\0'){
+	if (isCommand(arithTrig, "seeresults") == true){
 		arithTrig[0] = '\0'; command = 1;
 		if (rf > 0){
 			printf("\nResult value\n\n");
@@ -765,7 +943,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 
 	}
-	if (arithTrig[i] == 'v'&&arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'r'&&arithTrig[i + 3] == 'i'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'v'&&arithTrig[i + 6] == 'e'&&arithTrig[i + 7] == 'i'&&arithTrig[i + 8] == 's'&&arithTrig[i + 9] == 'r'&&arithTrig[i + 10] == 'e'&&arithTrig[i + 11] == 'n'&&arithTrig[i + 12] == 'o'&&arithTrig[i + 13] == 'm'&&arithTrig[i + 14] == 'e'&&arithTrig[i + 15] == 'a'&&arithTrig[i + 16] == 'd'&&arithTrig[i + 17] == 'a'&&arithTrig[i + 18] == 's'&&arithTrig[i + 21] == '\0' || arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'n'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 'm'&&arithTrig[i + 5] == 'e'&&arithTrig[i + 6] == 'd'&&arithTrig[i + 7] == 'v'&&arithTrig[i + 8] == 'a'&&arithTrig[i + 9] == 'r'&&arithTrig[i + 10] == 'i'&&arithTrig[i + 11] == 'a'&&arithTrig[i + 12] == 'b'&&arithTrig[i + 13] == 'l'&&arithTrig[i + 14] == 'e'&&arithTrig[i + 15] == 's'&&arithTrig[i + 18] == '\0'){
+	if (isCommand(arithTrig, "renamedvariables") == true){
 		arithTrig[0] = '\0'; command = 1;
 		FILE *open = NULL;
 		int r = 0;
@@ -789,7 +967,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			}
 		}
 	}
-	if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 't'&&arithTrig[i + 4] == 'e'&&arithTrig[i + 5] == 'm'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 's'&&arithTrig[i + 8] == 'n'&&arithTrig[i + 9] == 'u'&&arithTrig[i + 10] == 'm'&&arithTrig[i + 11] == 'e'&&arithTrig[i + 12] == 'r'&&arithTrig[i + 13] == 'i'&&arithTrig[i + 14] == 'c'&&arithTrig[i + 15] == 'o'&&arithTrig[i + 16] == 's'&&arithTrig[i + 19] == '\0' || arithTrig[i] == 'n'&&arithTrig[i + 1] == 'u'&&arithTrig[i + 2] == 'm'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'r'&&arithTrig[i + 5] == 'i'&&arithTrig[i + 6] == 'c'&&arithTrig[i + 7] == 'a'&&arithTrig[i + 8] == 'l'&&arithTrig[i + 9] == 's'&&arithTrig[i + 10] == 'y'&&arithTrig[i + 11] == 's'&&arithTrig[i + 12] == 't'&&arithTrig[i + 13] == 'e'&&arithTrig[i + 14] == 'm'&&arithTrig[i + 15] == 's'&&arithTrig[i + 18] == '\0'){
+	if (isCommand(arithTrig, "numericalsystems") == true){
 		char arithTrig[DIM] = ""; command = 1;
 		arithTrig[0] = '\0';
 		printf("\n==> Configuration of numerical systems response <==\n\n");
@@ -798,7 +976,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		fprintf(fout, "\n");
 		printf("\n");
 	}
-	if (arithTrig[i] == 't'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'm'&&arithTrig[i + 3] == 'p'&&arithTrig[i + 4] == 'o'&&arithTrig[i + 5] == 'r'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'z'&&arithTrig[i + 8] == 'a'&&arithTrig[i + 9] == 'd'&&arithTrig[i + 10] == 'o'&&arithTrig[i + 11] == 'r'&&arithTrig[i + 12] == '(' || arithTrig[i] == 't'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'm'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'r'&&arithTrig[i + 5] == '('){
+	if (isCommand(arithTrig, "timer") == true && arithTrig[i + 5] == '('){
 		if (arithTrig[i + 12] == '('){
 			i = i + 13;
 		}
@@ -911,8 +1089,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 
 
-
-	if (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 'l'&&arithTrig[i + 3] == 'o'&&arithTrig[i + 4] == 'g'&&arithTrig[i + 5] == 'i'&&arithTrig[i + 6] == 'o'&&arithTrig[i + 7] == '(' || arithTrig[i] == 'c'&&arithTrig[i + 1] == 'l'&&arithTrig[i + 2] == 'o'&&arithTrig[i + 3] == 'c'&&arithTrig[i + 4] == 'k'&&arithTrig[i + 5] == '('){
+	if (isCommand(arithTrig, "clock") == true && arithTrig[i + 5] == '('){
 		if (arithTrig[i + 7] == '('){
 			i = i + 8;
 		}
@@ -1041,8 +1218,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		arithTrig[0] = '\0'; command = 1;
 	}
 
-
-	if (arithTrig[i] == 's'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'p'&&arithTrig[i + 3] == 'r'&&arithTrig[i + 4] == 'e'&&arithTrig[i + 5] == 'f'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'x'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 9] == 's'&&arithTrig[i + 12] == '\0' || arithTrig[i] == 'p'&&arithTrig[i + 1] == 'r'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 'f'&&arithTrig[i + 4] == 'i'&&arithTrig[i + 5] == 'x'&&arithTrig[i + 6] == 'o'&&arithTrig[i + 7] == 's'&&arithTrig[i + 8] == 's'&&arithTrig[i + 9] == 'i'&&arithTrig[i + 12] == '\0'){
+	if (isCommand(arithTrig, "siprefixes") == true){
 		arithTrig[0] = '\0'; command = 1;
 		printf("\n==> Configuration of SI prefixes response <==\n\n");
 		fprintf(fout, "\n==> Configuration of SI prefixes response <==\n\n");
@@ -1050,12 +1226,12 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		fprintf(fout, "\n");
 		printf("\n");
 	}
-	if (arithTrig[i] == 't'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'm'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] != 'r'&&arithTrig[i + 6] == '\0' || arithTrig[i] == 'h'&&arithTrig[i + 1] == 'o'&&arithTrig[i + 2] == 'r'&&arithTrig[i + 3] == 'a'&&arithTrig[i + 4] == 's'&&arithTrig[i + 5] != 'a'&&arithTrig[i + 7] == '\0'){
+	if (isCommand(arithTrig, "time") == true){
 		arithTrig[0] = '\0'; command = 1;
 		Clock(1);
 		puts("");
 	}
-	if (arithTrig[i] == 'a'&&arithTrig[i + 1] == 'c'&&arithTrig[i + 2] == 't'&&arithTrig[i + 3] == 'u'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 'l'&&arithTrig[i + 6] == 't'&&arithTrig[i + 7] == 'i'&&arithTrig[i + 8] == 'm'&&arithTrig[i + 9] == 'e'&&arithTrig[i + 10] == 'r'&&arithTrig[i + 11] == 'e'&&arithTrig[i + 12] == 's'&&arithTrig[i + 13] == 'p'&&arithTrig[i + 14] == 'o'&&arithTrig[i + 15] == 'n'&&arithTrig[i + 16] == 's'&&arithTrig[i + 17] == 'e'&&arithTrig[i + 20] == '\0' || arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 'p'&&arithTrig[i + 4] == 'o'&&arithTrig[i + 5] == 's'&&arithTrig[i + 6] == 't'&&arithTrig[i + 7] == 'a'&&arithTrig[i + 8] == 'h'&&arithTrig[i + 9] == 'o'&&arithTrig[i + 10] == 'r'&&arithTrig[i + 11] == 'a'&&arithTrig[i + 12] == 's'&&arithTrig[i + 13] == 'a'&&arithTrig[i + 14] == 't'&&arithTrig[i + 15] == 'u'&&arithTrig[i + 16] == 'a'&&arithTrig[i + 17] == 'i'&&arithTrig[i + 18] == 's'&&arithTrig[i + 21] == '\0'){
+	if (isCommand(arithTrig, "actualtimeresponse") == true){
 		arithTrig[0] = '\0'; command = 1;
 		printf("\n==> Configuration of actual time response <==\n\n");
 		fprintf(fout, "\n==> Configuration of actual time response <==\n\n");
@@ -1063,7 +1239,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		fprintf(fout, "\n");
 		printf("\n");
 	}
-	if (arithTrig[i] == 'd'&&arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'y'&&arithTrig[i + 3] == 'o'&&arithTrig[i + 4] == 'f'&&arithTrig[i + 5] == 'w'&&arithTrig[i + 6] == 'e'&&arithTrig[i + 7] == 'e'&&arithTrig[i + 8] == 'k' &&arithTrig[i + 9] == '(' || arithTrig[i] == 'd'&&arithTrig[i + 1] == 'i'&&arithTrig[i + 2] == 'a'&&arithTrig[i + 3] == 'd'&&arithTrig[i + 4] == 'a'&&arithTrig[i + 5] == 's'&&arithTrig[i + 6] == 'e'&&arithTrig[i + 7] == 'm'&&arithTrig[i + 8] == 'a'&&arithTrig[i + 9] == 'n'&&arithTrig[i + 10] == 'a'&&arithTrig[i + 11] == '('){
+	if (isCommand(arithTrig, "dayofweek") == true && arithTrig[i + 9] == '('){
 		arithTrig[0] = '\0'; command = 1;
 		char Day[DIM] = "", Month[DIM] = "", Year[DIM] = "";
 		double plusYears = 0;
@@ -1453,8 +1629,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			}
 		}
 	}
-
-	if (arithTrig[i] == 'p'&&arithTrig[i + 1] == 'r'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 'd'&&arithTrig[i + 4] == 'e'&&arithTrig[i + 5] == 'f'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'n'&&arithTrig[i + 8] == 'e'&&arithTrig[i + 9] == 't'&&arithTrig[i + 10] == 'x'&&arithTrig[i + 11] == 't'&&arithTrig[i + 14] == '\0' || arithTrig[i] == 'p'&&arithTrig[i + 1] == 'r'&&arithTrig[i + 2] == 'e'&&arithTrig[i + 3] == 'd'&&arithTrig[i + 4] == 'e'&&arithTrig[i + 5] == 'f'&&arithTrig[i + 6] == 'i'&&arithTrig[i + 7] == 'n'&&arithTrig[i + 8] == 'i'&&arithTrig[i + 9] == 'r'&&arithTrig[i + 10] == 't'&&arithTrig[i + 11] == 'x'&&arithTrig[i + 12] == 't'&&arithTrig[i + 15] == '\0'){
+	if (isCommand(arithTrig, "predefinetxt") == true){
 		arithTrig[0] = '\0'; command = 1;
 		printf("\n==> Drag to here the file to predefine and press the button \"Enter\" <==\n");
 		fprintf(fout, "\n==> Drag to here the file to predefine and press the button \"Enter\" <==\n");
@@ -1478,7 +1653,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		fprintf(fout, "\n");
 	}
 
-	if ((arithTrig[i] == 's'&&arithTrig[i + 1] == 'o'&&arithTrig[i + 2] == 'l'&&arithTrig[i + 3] == 'v'&&arithTrig[i + 4] == 'e'&&arithTrig[i + 5] == 't'&&arithTrig[i + 6] == 'x'&&arithTrig[i + 7] == 't' && (arithTrig[i + 10] == '\0' || arithTrig[i + 8] == '(')) || (arithTrig[i] == 'r'&&arithTrig[i + 1] == 'e'&&arithTrig[i + 2] == 's'&&arithTrig[i + 3] == 'o'&&arithTrig[i + 4] == 'l'&&arithTrig[i + 5] == 'v'&&arithTrig[i + 6] == 'e'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 8] == 't'&&arithTrig[i + 9] == 'x'&&arithTrig[i + 10] == 't' && (arithTrig[i + 13] == '\0' || arithTrig[i + 11] == '('))){
+	if (isCommand(arithTrig, "solvetxt") == true && (arithTrig[i + 10] == '\0' || arithTrig[i + 8] == '(')){
 		arithTrig[0] = '\0'; command = 1;
 		FILE *readPred = NULL;
 		char readPath[DIM] = "";
@@ -1523,8 +1698,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			}
 		}
 	}
-
-	if (arithTrig[i] == 'c'&&arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'l'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'n'&&arithTrig[i + 5] == 'd'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r' && (arithTrig[i + 8] == '(' || arithTrig[i + 8] == '+') || arithTrig[i] == 'c'&&arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'l'&&arithTrig[i + 3] == 'e'&&arithTrig[i + 4] == 'n'&&arithTrig[i + 5] == 'd'&&arithTrig[i + 6] == 'a'&&arithTrig[i + 7] == 'r'&&arithTrig[i + 8] == 'i'&&arithTrig[i + 9] == 'o' && (arithTrig[i + 10] == '(' || arithTrig[i + 10] == '+')) {
+	if (isCommand(arithTrig, "calendar") == true && (arithTrig[i + 8] == '(' || arithTrig[i + 8] == '+')){
 		char ye[100], calendar[DIM];
 		int k = 0;
 		int p = 0, countR = 0, countL = 0;
@@ -1696,4 +1870,42 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	fclose(fout);
 	return command;
+}
+
+boolean isCommand(char forTesting[DIM], char command[DIM]){
+	char toTest[DIM] = "";
+	int i = 0;
+	while (verifyLetter(forTesting[i]) == 1){
+		toTest[i] = forTesting[i];
+		i++;
+	}
+	toTest[i] = '\0';
+	i = 0;
+	while (toTest[i] == command[i]){
+		i++;
+	}
+	i--;
+	if (toTest[i] == command[i] && command[i] == '\0' && (forTesting[strlen(toTest)] == '(' || (forTesting[strlen(toTest)] == '+'&&forTesting[strlen(toTest) + 1] == '0'&&forTesting[strlen(toTest) + 2] == '\0'))){
+		if (forTesting[strlen(toTest)] == '('){
+			i = strlen(toTest) + 1;
+			int rP = 0, lP = 0;
+			while (forTesting[i] != '\0'){
+				if (forTesting[i] == '('){
+					lP++;
+				}
+				if (forTesting[i] == ')'){
+					rP++;
+				}
+				i++;
+			}
+			if (rP == 1 && lP == 0){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
 }

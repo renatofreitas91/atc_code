@@ -2609,3 +2609,47 @@ void toSolve(int re){
 		fclose(file);
 	}
 }
+
+boolean readyToSolve(char paTh[DIM]){
+	FILE *openTxt = NULL;
+	int i = 0, lastchar = 0, j = 0;
+	char data[DIM] = "", checkFlag[DIM] = "", flagToTest[DIM] = "", flag[20] = "SOLVE_NOW";
+	if (paTh[0] == '\"'&&paTh[strlen(paTh) - 1] == '\"'){
+		paTh[strlen(paTh) - 1] = '\0';
+		while (paTh[i + 1] != '\0'){
+			paTh[i] = paTh[i + 1];
+			i++;
+		}
+		paTh[i] = '\0';
+	}
+	openTxt = fopen(paTh, "r");
+	if (openTxt != NULL){
+		for (i = 0; (data[i] = fgetc(openTxt)) != EOF; i++){
+			if (data[i] == '\n'){
+				lastchar = i;
+			}
+		}
+		data[i] = '\0';
+		j = 0;
+		for (i = lastchar + 1; data[i] != '\0'; i++){
+			flagToTest[j] = data[i];
+			j++;
+		}
+		flagToTest[j] = '\0';
+		j = 0;
+		while (flag[j] == flagToTest[j]){
+			j++;
+
+		}
+		j--;
+		if (flag[j] == '\0'&&flagToTest[j] == '\0'){
+			fclose(openTxt);
+			openTxt = fopen(paTh, "w");
+			data[lastchar] = '\0';
+			fprintf(openTxt, "%s", data);
+			fclose(openTxt);
+			return true;
+		}
+	}
+	return false;
+}

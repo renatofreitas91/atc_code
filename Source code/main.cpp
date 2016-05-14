@@ -7,17 +7,19 @@ int Mode = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0
 
 
 
-int main(){
-
+int main(int argc, char *argv[]){
+	char dataToSolve[DIM] = "";
 	FILE *fout = NULL;
 	int Colors = 1, tD = 0, i = 0;
 	char  path[DIM] = "history.txt";
 	double result1 = 0, result2 = 0;
-	on_start();
-	applySettings(Colors);
-	system("title Advanced Trigonometry Calculator v1.8.6");
-	continu = about();
-	system("title Advanced Trigonometry Calculator v1.8.6                                                             ==) Enter data (==              ");
+	if (argc != 2){
+		on_start();
+		applySettings(Colors);
+		system("title Advanced Trigonometry Calculator v1.8.7");
+		continu = about();
+		system("title Advanced Trigonometry Calculator v1.8.7                                                             ==) Enter data (==              ");
+	}
 	if (continu == 1){
 		do{
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
@@ -26,8 +28,13 @@ int main(){
 			flushall();
 			char trigData[DIM] = "";
 			tD = 0;
-			printf(">");
-			gets(trigData);
+			if (argc != 2){
+				printf(">");
+				gets(trigData);
+			}
+			else{
+				sprintf(trigData, "%s", argv[1]);
+			}
 			for (tD = 0; trigData[tD] != 0; tD++){
 				if (trigData[tD] == '{' || trigData[tD] == '['){
 					trigData[tD] = '(';
@@ -82,6 +89,10 @@ int main(){
 			}
 			if (continu != 1){
 				fclose(fout);
+			}
+			if (argc == 2){
+				exit(0);
+				return 0;
 			}
 		} while (continu == 1);
 	}

@@ -51,7 +51,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 	}
 	variable[0] = '\0';
 	for (i = 0; arithTrig[i] != '\0'; i++){
-		if (arithTrig[i] == ':'&&arithTrig[i + 1] == '\\'){
+		if (arithTrig[i] == ':'&&arithTrig[i + 1] == '\\' && (i == 1 || i == 2)){
 			txt = 1;
 		}
 		if (arithTrig[i] == '='){
@@ -378,7 +378,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		if (cleanhistory == 0){
 			if (arithTrig[0] != '\0'&&verify == 1){
 				if (isFromMain == 1){
-					system("title Advanced Trigonometry Calculator v1.8.6                                                            ==) Calculating... (==              ");
+					system("title Advanced Trigonometry Calculator v1.8.7                                                            ==) Calculating... (==              ");
 				}
 				initialProcessor(arithTrig, result1);
 			}
@@ -684,7 +684,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					fputs("\n", fout);
 					fclose(fout);
 					if (isFromMain == 1){
-						system("title Advanced Trigonometry Calculator v1.8.6                                                      ==) Calculated, you can enter more data (==              ");
+						system("title Advanced Trigonometry Calculator v1.8.7                                                      ==) Calculated, you can enter more data (==              ");
 					}
 				}
 			}
@@ -699,7 +699,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					}
 					fprintf(fout, "\nError in syntax.\n\n");
 					fclose(fout);
-					system("title Advanced Trigonometry Calculator v1.8.6                                                             ==) Enter data (==              ");
+					system("title Advanced Trigonometry Calculator v1.8.7                                                             ==) Enter data (==              ");
 				}
 			}
 		}

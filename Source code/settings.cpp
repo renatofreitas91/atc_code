@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "atc_functions.h"
 
-int modeId = 2;
 void colors(){
 	FILE *open;
 	char bGround = ' ', cTxt = ' ', express[DIM] = "color 73", value[DIM] = "";
@@ -149,7 +148,6 @@ int applySettings(int toDo){
 		else{
 			fgets(opt, 2, open);
 			option = atoi(opt);
-			modeId = option;
 		}
 		return option;
 	}
@@ -169,12 +167,11 @@ void mode(){
 	}
 	open = fopen("mode.txt", "w");
 	fprintf(open, "%d", option);
-	modeId = option;
 	fclose(open);
 }
 
 int about(){
-	system("title Advanced Trigonometry Calculator v1.8.6");
+	system("title Advanced Trigonometry Calculator v1.8.7");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
@@ -201,11 +198,11 @@ int about(){
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("                                     %c%c    %c%c%c     %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                                    %c %c   %c   %c   %c   \n", 177, 177, 177, 177, 177);
-	printf("                             %c   %c %c  %c    %c%c%c    %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                              %c %c     %c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177);
-	printf("                               %c      %c %c  %c%c%c  %c  %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                                     %c%c    %c%c%c    %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                                    %c %c   %c   %c       %c\n", 177, 177, 177, 177, 177);
+	printf("                             %c   %c %c  %c    %c%c%c       %c\n", 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                              %c %c     %c   %c   %c     %c \n", 177, 177, 177, 177, 177, 177);
+	printf("                               %c      %c %c  %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177);
 
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n            To know how to use this application please enter \"user guide\"\n\n");
 	printf("     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS\n\n");
@@ -258,13 +255,13 @@ int about(){
 		int Window = 3, Dimensions = 2;
 		applySettings(Window);
 		applySettings(Dimensions);
-		system("title Advanced Trigonometry Calculator v1.8.6                                                             ==) Enter data (==              ");
+		system("title Advanced Trigonometry Calculator v1.8.7                                                             ==) Enter data (==              ");
 	}
 	return continu;
 }
 
 void about2(){
-	system("title Advanced Trigonometry Calculator v1.8.6");
+	system("title Advanced Trigonometry Calculator v1.8.7");
 	system("MODE con cols=90 lines=15");
 	cls();
 	FILE *open = NULL;
@@ -281,6 +278,6 @@ void about2(){
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v1.8.6                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v1.8.7                                                             ==) Enter data (==              ");
 
 }
