@@ -9,6 +9,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 	continu = 1;
 	validVar = 1;
 	str = 0;
+	nPlaces = 0;
 	sprintf(savefTrig, "%s", fTrig);
 	if (arithTrig[0] == 'g'&&arithTrig[1] == 'e'&&arithTrig[2] == 't'&&arithTrig[3] == '('){
 		i = 4;
@@ -268,61 +269,85 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 	}
 	char dP[DIM] = "", bP[DIM] = "", oP[DIM] = "", hP[DIM] = "";
 	int dp = -1, bp = -1, op = -1, hp = -1;
-	while (arithTrig[0] == 'd' &&arithTrig[1] == 'p' || arithTrig[0] == 'b' &&arithTrig[1] == 'p' || arithTrig[0] == 'o' &&arithTrig[1] == 'p' || arithTrig[0] == 'h' &&arithTrig[1] == 'p')  {
+	while ((arithTrig[0] == 'd' &&arithTrig[1] == 'p' || arithTrig[0] == 'b' &&arithTrig[1] == 'p' || arithTrig[0] == 'o' &&arithTrig[1] == 'p' || arithTrig[0] == 'h' &&arithTrig[1] == 'p') && arithTrig[i] != '\0'&&i < strlen(arithTrig))  {
 		if (arithTrig[0] == 'd' &&arithTrig[1] == 'p'){
 			i = 2;
-			while (arithTrig[i] != 'd'&&arithTrig[i] != '\0'){
+			while ((arithTrig[i] == 'd'&arithTrig[i + 1] == 'p') == false && arithTrig[i] != '\0'){
 				dP[i - 2] = arithTrig[i];
 				i++;
 			}
 			dP[i - 2] = '\0';
-			dp = initialProcessor(dP, result1);
-			i = i + 2;
-			int b = 0;
-			for (b = 0; arithTrig[b] != '\0'; b++){
-				arithTrig[b] = arithTrig[b + i];
+			if (arithTrig[i] != '\0'){
+				dp = initialProcessor(dP, result1);
+				i = i + 2;
+				int b = 0;
+				for (b = 0; arithTrig[b] != '\0'; b++){
+					arithTrig[b] = arithTrig[b + i];
+				}
+			}
+			else{
+				dp = 10000;
+				nPlaces = dp;
 			}
 		}
 		if (arithTrig[0] == 'b' &&arithTrig[1] == 'p'){
 			i = 2;
-			while (arithTrig[i] != 'b'&&arithTrig[i] != '\0'){
+			while ((arithTrig[i] == 'b'&arithTrig[i + 1] == 'p') == false && arithTrig[i] != '\0'){
 				bP[i - 2] = arithTrig[i];
 				i++;
 			}
 			bP[i - 2] = '\0';
-			bp = initialProcessor(bP, result1);
-			i = i + 2;
-			int b = 0;
-			for (b = 0; arithTrig[b] != '\0'; b++){
-				arithTrig[b] = arithTrig[b + i];
+			if (arithTrig[i] != '\0'){
+				bp = initialProcessor(bP, result1);
+				i = i + 2;
+				int b = 0;
+				for (b = 0; arithTrig[b] != '\0'; b++){
+					arithTrig[b] = arithTrig[b + i];
+				}
+			}
+			else{
+				bp = 1000;
+				nPlaces = bp;
 			}
 		}
 		if (arithTrig[0] == 'o' &&arithTrig[1] == 'p'){
 			i = 2;
-			while (arithTrig[i] != 'o'&&arithTrig[i] != '\0'){
+			while ((arithTrig[i] == 'o'&arithTrig[i + 1] == 'p') == false && arithTrig[i] != '\0'){
 				oP[i - 2] = arithTrig[i];
 				i++;
 			}
 			oP[i - 2] = '\0';
-			op = initialProcessor(oP, result1);
-			i = i + 2;
-			int b = 0;
-			for (b = 0; arithTrig[b] != '\0'; b++){
-				arithTrig[b] = arithTrig[b + i];
+			if (arithTrig[i] != '\0'){
+				op = initialProcessor(oP, result1);
+				i = i + 2;
+				int b = 0;
+				for (b = 0; arithTrig[b] != '\0'; b++){
+					arithTrig[b] = arithTrig[b + i];
+				}
+			}
+			else{
+				op = 8000;
+				nPlaces = op;
 			}
 		}
 		if (arithTrig[0] == 'h' &&arithTrig[1] == 'p'){
 			i = 2;
-			while (arithTrig[i] != 'h'&&arithTrig[i] != '\0'){
+			while ((arithTrig[i] == 'h'&arithTrig[i + 1] == 'p') == false && arithTrig[i] != '\0'){
 				hP[i - 2] = arithTrig[i];
 				i++;
 			}
 			hP[i - 2] = '\0';
-			hp = initialProcessor(hP, result1);
-			i = i + 2;
-			int b = 0;
-			for (b = 0; arithTrig[b] != '\0'; b++){
-				arithTrig[b] = arithTrig[b + i];
+			if (arithTrig[i] != '\0'){
+				hp = initialProcessor(hP, result1);
+				i = i + 2;
+				int b = 0;
+				for (b = 0; arithTrig[b] != '\0'; b++){
+					arithTrig[b] = arithTrig[b + i];
+				}
+			}
+			else{
+				hp = 16000;
+				nPlaces = hp;
 			}
 		}
 	}

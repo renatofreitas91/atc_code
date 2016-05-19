@@ -3,7 +3,7 @@
 
 double ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
 char varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
-int Mode = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0;
+int Mode = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0;
 
 
 
@@ -321,6 +321,36 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 	if (synTest == 0){
 		decision = 1;
 		synTest = 1;
+		if (nPlaces != 0){
+			if (nPlaces == 1000){
+				if (comment == 1){
+					puts("\nBinary places number entered with errors.\n");
+				}
+				decision = 0;
+				return decision;
+			}
+			if (nPlaces == 8000){
+				if (comment == 1){
+					puts("\nOctal places number entered with errors.\n");
+				}
+				decision = 0;
+				return decision;
+			}
+			if (nPlaces == 10000){
+				if (comment == 1){
+					puts("\nDecimal places number entered with errors.\n");
+				}
+				decision = 0;
+				return decision;
+			}
+			if (nPlaces == 16000){
+				if (comment == 1){
+					puts("\nHexadecimal places number entered with errors.\n");
+				}
+				decision = 0;
+				return decision;
+			}
+		}
 		for (w = 0; data[w] != '\0'; w++){
 			if ((data[w] == 'B' || data[w] == 'O' || data[w] == 'H' || data[w] == 'P' || data[w] == '#') && (w == 0 || data[w - 1] == '+' || data[w - 1] == '-' || data[w - 1] == '*' || data[w - 1] == '/' || data[w - 1] == '^' || data[w - 1] == '(')){
 				w++;
