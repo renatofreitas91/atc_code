@@ -13,7 +13,7 @@ int main(int argc, char *argv[]){
 	int Colors = 1, tD = 0, i = 0;
 	char  path[DIM] = "history.txt";
 	double result1 = 0, result2 = 0;
-	if (argc != 2){
+	if (argc < 2){
 		on_start();
 		applySettings(Colors);
 		system("title Advanced Trigonometry Calculator v1.8.7");
@@ -28,12 +28,17 @@ int main(int argc, char *argv[]){
 			flushall();
 			char trigData[DIM] = "";
 			tD = 0;
-			if (argc != 2){
+			if (argc < 2){
 				printf(">");
 				gets(trigData);
 			}
 			else{
-				sprintf(trigData, "%s", argv[1]);
+				int arG = 1;
+				trigData[0] = '\0';
+				while (arG < argc){
+					sprintf(trigData, "%s%s", trigData, argv[arG]);
+					arG++;
+				}
 			}
 			for (tD = 0; trigData[tD] != 0; tD++){
 				if (trigData[tD] == '{' || trigData[tD] == '['){
@@ -90,7 +95,7 @@ int main(int argc, char *argv[]){
 			if (continu != 1){
 				fclose(fout);
 			}
-			if (argc == 2){
+			if (argc >= 2){
 				exit(0);
 				return 0;
 			}
