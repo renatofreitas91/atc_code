@@ -52,16 +52,18 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 	}
 	variable[0] = '\0';
 	for (i = 0; arithTrig[i] != '\0'; i++){
-		if (arithTrig[i] == ':'&&arithTrig[i + 1] == '\\' && (i == 1 || i == 2)){
+		if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == ':'&&arithTrig[i + 1] == '\\'){
 			txt = 1;
 		}
+	}
+	for (i = 0; arithTrig[i] != '\0'; i++){
 		if (arithTrig[i] == '='){
 			var = 1;
 			if (valGet == 1){
 				puts(" ");
 			}
 		}
-		if (arithTrig[i] == '\"'&&arithTrig[strlen(arithTrig) - 1] == '\"'){
+		if (arithTrig[i] == '\"'&&arithTrig[strlen(arithTrig) - 1] == '\"'&&txt != 1){
 			str = 1;
 		}
 		else{
