@@ -48,7 +48,9 @@ void numSystemsController(){
 			}
 		}
 	}
-	open = fopen("numSystems.txt", "w");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\numSystems.txt", atcPath);
+	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
 	fclose(open);
 }
@@ -67,7 +69,9 @@ void siPrefixController(){
 			}
 		}
 	}
-	open = fopen("siPrefixes.txt", "w");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\siPrefixes.txt", atcPath);
+	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
 	fclose(open);
 }
@@ -86,7 +90,9 @@ void actualTimeController(){
 			}
 		}
 	}
-	open = fopen("actualTime.txt", "w");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\actualTime.txt", atcPath);
+	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
 	fclose(open);
 }
@@ -99,9 +105,11 @@ double processVariable(char variable[DIM]){
 	char vari[DIM] = "", va[DIM] = "", value[DIM] = "";
 	char *pointer;
 	i = 0;
-	open = fopen("variables.txt", "a+");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\variables.txt", atcPath);
+	open = fopen(toOpen, "a+");
 	while (open == NULL&&cou < 10){
-		open = fopen("variables.txt", "a+");
+		open = fopen(toOpen, "a+");
 		cou++;
 	}
 	if (cou < 10){
@@ -193,17 +201,18 @@ void variableController(char variable[DIM], double result){
 	int i = 0, f = 0;
 	vari[0] = '\0';
 	int y = 0, h = 0, k = 0, g = 0;
-	open = fopen("variables.txt", "r");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\variables.txt", atcPath);
+	open = fopen(toOpen, "r");
 	if (open == NULL){
-		open = fopen("variables.txt", "w");
-		fclose(open);
+		open = fopen(toOpen, "w");
 	}
 	if (open != NULL){
 		fclose(open);
 	}
 	open = NULL;
 	while (open == NULL&&i < 100){
-		open = fopen("variables.txt", "a+");
+		open = fopen(toOpen, "a+");
 		i++;
 	}
 	if (i < 100){
@@ -260,7 +269,7 @@ void variableController(char variable[DIM], double result){
 				}
 				open = NULL;
 				while (open == NULL){
-					open = fopen("variables.txt", "w");
+					open = fopen(toOpen, "w");
 				}
 				fprintf(open, "%s", vari);
 				fclose(open);
@@ -269,7 +278,7 @@ void variableController(char variable[DIM], double result){
 		}
 		open = NULL;
 		while (open == NULL){
-			open = fopen("variables.txt", "a+");
+			open = fopen(toOpen, "a+");
 		}
 		fprintf(open, "%s %G %G\n", variable, resultR, resultI);
 		fclose(open);
@@ -436,8 +445,10 @@ int variableValidator(char variable[DIM]){
 				fclose(var1);
 			}
 			var1 = NULL;
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
 			while (var1 == NULL&&i < 100){
-				var1 = fopen("renamedVar.txt", "a+");
+				var1 = fopen(toOpen, "a+");
 				i++;
 			}
 			if (i < 100){
@@ -458,6 +469,8 @@ int variableValidator(char variable[DIM]){
 }
 
 int prefDet(double n, char path[DIM]){
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\history.txt", atcPath);
 	int y = 0;
 	if (n < 0){
 		n = n*-1;
@@ -467,7 +480,7 @@ int prefDet(double n, char path[DIM]){
 	double result = 0;
 	FILE *open;
 	open = fopen(path, "a+");
-	if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't'){
+	if (isEqual(path, toOpen) == true){
 		a = 1;
 	}
 
@@ -915,8 +928,10 @@ void variableRenamer(char variable[DIM]){
 	char vari[DIM] = "";
 	int i = 0, j = 0;
 	FILE *open = NULL;
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
 	while (open == NULL&&i < 50){
-		open = fopen("renamedVar.txt", "a+");
+		open = fopen(toOpen, "a+");
 		i++;
 	}
 	if (open != NULL){
@@ -951,7 +966,9 @@ void pathNameToPath(char pathName[DIM]){
 	int i = 0, j = 0, k = 0;
 	char data[DIM] = "";
 	pathNAme[0] = '\0';
-	open = fopen("pathName.txt", "r");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\pathName.txt", atcPath);
+	open = fopen(toOpen, "r");
 	if (open == NULL){
 		puts("\n==> No path abbreviation created! <==\n");
 	}
@@ -987,8 +1004,10 @@ void pathNameToPath(char pathName[DIM]){
 
 void pathNameController(char pathName[DIM], char path[DIM]){
 	FILE *save = NULL;
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\pathName.txt", atcPath);
 	while (save == NULL){
-		save = fopen("pathName.txt", "a+");
+		save = fopen(toOpen, "a+");
 	}
 	char data[DIM] = "", paName[DIM] = "";
 	int i = 0, j = 0, k = 0, y = 0, w = 0, l = 0;
@@ -1015,7 +1034,7 @@ void pathNameController(char pathName[DIM], char path[DIM]){
 				}
 				data[l] = '\0';
 				fclose(save);
-				save = fopen("pathName.txt", "w");
+				save = fopen(toOpen, "w");
 				fputs(data, save);
 				fclose(save);
 			}
@@ -1025,7 +1044,7 @@ void pathNameController(char pathName[DIM], char path[DIM]){
 			j = 0;
 		}
 	}
-	save = fopen("pathName.txt", "a+");
+	save = fopen(toOpen, "a+");
 	fprintf(save, "%s %s\n", pathName, path);
 	fclose(save);
 }
@@ -1035,7 +1054,9 @@ void stringVariableToString(char stringVariable[DIM]){
 	int i = 0, j = 0, k = 0;
 	char data[DIM] = "";
 	variableSTring[0] = '\0';
-	open = fopen("stringVariable.txt", "r");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\stringVariable.txt", atcPath);
+	open = fopen(toOpen, "r");
 	if (open == NULL){
 		puts("\n==> No string variable created! <==\n");
 	}
@@ -1051,13 +1072,8 @@ void stringVariableToString(char stringVariable[DIM]){
 					i++;
 				}
 				if (j == strlen(stringVariable) && data[i] == '\n'){
-
-
-					TCHAR NPath[MAX_PATH];
-					GetCurrentDirectory(MAX_PATH, NPath);
 					char directory[MAX_PATH] = "";
-					wcstombs(directory, NPath, wcslen(NPath) + 1);
-					sprintf(directory, "%s\\Strings\\%s.txt", directory, stringVariable);
+					sprintf(directory, "%s\\Strings\\%s.txt", atcPath, stringVariable);
 
 					open = fopen(directory, "a+");
 					for (k = 0; (variableSTring[k] = fgetc(open)) != EOF; k++);
@@ -1075,8 +1091,10 @@ void stringVariableToString(char stringVariable[DIM]){
 
 void stringVariableController(char stringVariable[DIM], char string[DIM]){
 	FILE *save = NULL;
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\stringVariable.txt", atcPath);
 	while (save == NULL){
-		save = fopen("stringVariable.txt", "a+");
+		save = fopen(toOpen, "a+");
 	}
 	char data[DIM] = "", vaString[DIM] = "";
 	int i = 0, j = 0, k = 0, y = 0, w = 0, l = 0;
@@ -1097,7 +1115,7 @@ void stringVariableController(char stringVariable[DIM], char string[DIM]){
 				}
 				data[l] = '\0';
 				fclose(save);
-				save = fopen("stringVariable.txt", "w");
+				save = fopen(toOpen, "w");
 				fputs(data, save);
 				fclose(save);
 			}
@@ -1107,15 +1125,11 @@ void stringVariableController(char stringVariable[DIM], char string[DIM]){
 			j = 0;
 		}
 	}
-	save = fopen("stringVariable.txt", "a+");
+	save = fopen(toOpen, "a+");
 	fprintf(save, "%s\n", stringVariable);
 	fclose(save);
-
-	TCHAR NPath[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, NPath);
 	char directory[MAX_PATH] = "";
-	wcstombs(directory, NPath, wcslen(NPath) + 1);
-	sprintf(directory, "%s\\Strings\\%s.txt", directory, stringVariable);
+	sprintf(directory, "%s\\Strings\\%s.txt", atcPath, stringVariable);
 	save = fopen(directory, "w");
 	if (save != NULL){
 		fprintf(save, "%s\n", string);
@@ -1576,7 +1590,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 			toTest[f] = '\0';
 			char usRFunc[DIM] = "";
-			sprintf(usRFunc, "User functions//%s.txt", toTest);
+			sprintf(usRFunc, "%s\\User functions\\%s.txt", atcPath, toTest);
 			FILE *test = NULL;
 			test = fopen(usRFunc, "r");
 			if (test != NULL && (letterScan[savePosition - 4] == 'a'&&letterScan[savePosition - 3] == 't'&&letterScan[savePosition - 2] == 'c'&&letterScan[savePosition - 1] == ' ') == true){
@@ -2460,19 +2474,33 @@ void on_start(){
 	FILE *open = NULL;
 	char onStart[100] = "";
 	int Colors = 1, Dimensions = 2, Window = 3;
-	open = fopen("onStart.txt", "r");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\onStart.txt", atcPath);
+	open = fopen(toOpen, "r");
 	if (open != NULL){
 		fgets(onStart, 100, open);
 		fclose(open);
 		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 'a'&&onStart[6] == 'l'&&onStart[7] == 'l'&&onStart[8] == '\0'){
-			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del history.txt&del variables.txt&del renamedVar.txt&del pathName.txt&del predefinedTxt.txt&del calendar.txt&del numSystems.txt&del siPrefixes.txt&del actualTime.txt&del colors.txt&del dimensions.txt&del window.txt&del mode.txt&del onStart.txt&del disable_txt_detector.txt&del stringVariable.txt&rmdir /Q /S Strings&mkdir Strings\""), NULL, SW_SHOW);
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\variables.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&rmdir /Q /S \"%s\\Strings\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
+			using namespace std;
+			std::string s = string(toOpen);
+			std::wstring stemp = std::wstring(s.begin(), s.end());
+			LPCWSTR sw = stemp.c_str();
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 			Sleep(1000);
 			applySettings(Colors);
 			applySettings(Window);
 			applySettings(Dimensions);
 		}
 		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 's'&&onStart[6] == 'e'&&onStart[7] == 't'&&onStart[8] == 't'&&onStart[9] == 'i'&&onStart[10] == 'n'&&onStart[11] == 'g'&&onStart[12] == 's'&&onStart[13] == '\0'){
-			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del numSystems.txt&del siPrefixes.txt&del actualTime.txt&del colors.txt&del dimensions.txt&del window.txt&del mode.txt&del onStart.txt\""), NULL, SW_SHOW);
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "/C \"del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
+			using namespace std;
+			std::string s = string(toOpen);
+			std::wstring stemp = std::wstring(s.begin(), s.end());
+			LPCWSTR sw = stemp.c_str();
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 			Sleep(1000);
 			applySettings(Colors);
 			applySettings(Window);
@@ -2496,16 +2524,110 @@ int searchExtension(char filename[DIM], char extension[DIM]){
 	}
 }
 
-void toSolve(int re){
-	FILE *file = NULL;
-	file = fopen("disable_txt_detector.txt", "r");
-	if (file == NULL){
-		char option[30] = "";
+void addATCPath(){
+	FILE *open = NULL, *pathReader = NULL;
+	char contents[DIM] = "", atcName[DIM] = "\\Advanced Trigonometry Calculator", atcPAth[DIM] = "";
+	int w = 0, i = 0, s = 0, j = 0, tested = 0;
+	open = fopen("atc_path.txt", "r");
+	FILE *test = NULL;
+	char testPath[DIM] = "";
+	if (open != NULL){
+		fgets(atcPath, DIM, open);
+		sprintf(testPath, "%s\\License.txt", atcPath);
+		test = fopen(testPath, "r");
+		tested = 1;
+	}
+
+	if (open == NULL || (test == NULL&&open != NULL&&tested == 1)){
+		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"echo %PATH% > PATH_paths.txt\""), NULL, SW_SHOW);
+		Sleep(200);
+		pathReader = fopen("PATH_paths.txt", "r");
+		if (pathReader != NULL){
+			for (w = 0; (contents[w] = fgetc(pathReader)) != EOF; w++);
+			contents[w] = '\0';
+			fclose(pathReader);
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del PATH_paths.txt\""), NULL, SW_SHOW);
+			for (w = 0; contents[w] != '\0'; w++){
+				if (contents[w] == atcName[0]){
+					s = w;
+					i = 0;
+					while (contents[w] == atcName[i] && contents[w] != '\0'){
+						i++; w++;
+					}
+					if (i == strlen(atcName)){
+						w = s;
+						while (contents[w] != ';'&&w != 0){
+							w--;
+						}
+						w++;
+						j = 0;
+						while (contents[w] != ';'&&contents[w] != '\0'){
+							atcPAth[j] = contents[w];
+							w++; j++;
+						}
+						atcPAth[j] = '\0';
+						if (atcPAth[strlen(atcPAth) - 2] == ' '){
+							atcPAth[strlen(atcPAth) - 2] = '\0';
+						}
+						open = NULL;
+						while (open == NULL){
+							open = fopen("atc_path.txt", "w");
+						}
+						fprintf(open, "%s", atcPAth);
+						fclose(open);
+						sprintf(atcPath, "%s", atcPAth);
+					}
+				}
+			}
+		}
+	}
+	if (test != NULL){
+		fclose(test);
+	}
+	if (open != NULL){
+		fclose(open);
+	}
+}
+
+void getATCPath(){
+	FILE *aPath = NULL;
+	aPath = fopen("atc_path.txt", "r");
+	if (aPath == NULL){
+		aPath = fopen("atc_path.txt", "w");
 		TCHAR NPath[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, NPath);
-		char directory[MAX_PATH] = "";
-		wcstombs(directory, NPath, wcslen(NPath) + 1);
-		sprintf(directory, "%s\\To solve\\", directory);
+		wcstombs(atcPath, NPath, wcslen(NPath) + 1);
+		fprintf(aPath, "%s", atcPath);
+		fclose(aPath);
+	}
+	else{
+		fgets(atcPath, DIM, aPath);
+		fclose(aPath);
+		if (atcPath[strlen(atcPath) - 2] == ' '){
+			atcPath[strlen(atcPath) - 2] = '\0';
+		}
+		FILE *test = NULL;
+		char testPath[DIM] = "";
+		sprintf(testPath, "%s\\License.txt", atcPath);
+		test = fopen(testPath, "r");
+		if (test == NULL){
+			test = fopen("atc_path.txt", "w");
+			TCHAR NPath[MAX_PATH];
+			GetCurrentDirectory(MAX_PATH, NPath);
+			wcstombs(atcPath, NPath, wcslen(NPath) + 1);
+			fprintf(test, "%s", atcPath);
+			fclose(test);
+		}
+	}
+}
+void toSolve(int re){
+	FILE *file = NULL;
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
+	file = fopen(toOpen, "r");
+	if (file == NULL){
+		char option[30] = "", directory[DIM] = "";
+		sprintf(directory, "%s\\To solve\\", atcPath);
 		int k = 0, numFiles = 0, i = 0;
 		DIR *d;
 		struct dirent *dir;
@@ -2597,7 +2719,9 @@ void toSolve(int re){
 				puts(" ");
 				if (disable == 1){
 					FILE *dis = NULL;
-					dis = fopen("disable_txt_detector.txt", "w");
+					char toOpen[DIM] = "";
+					sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
+					dis = fopen(toOpen, "w");
 					fclose(dis);
 					puts("==> To enable the feature later enter \"enable txt detector\" <==\n");
 				}
@@ -2650,6 +2774,17 @@ boolean readyToSolve(char paTh[DIM]){
 			fclose(openTxt);
 			return true;
 		}
+	}
+	return false;
+}
+
+boolean isEqual(char forTesting[DIM], char command[DIM]){
+	int i = 0;
+	while (forTesting[i] == command[i] && command[i] != '\0'){
+		i++;
+	}
+	if (forTesting[i] == command[i] && forTesting[i] == '\0'){
+		return true;
 	}
 	return false;
 }

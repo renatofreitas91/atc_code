@@ -668,12 +668,15 @@ void sprint(char text[DIM], double result1, double result2){
 
 double solveNow(char toSolveNow[DIM], double result1, double result2){
 	FILE *fout = NULL;
-	char path[15] = "temp.txt";
+	char path[DIM] = "";
+	sprintf(path, "%s\\temp.txt", atcPath);
 	double resultFF = 0;
-	fout = fopen("temp.txt", "r");
+	fout = fopen(path, "r");
 	if (fout != NULL){
 		fclose(fout);
-		system("del temp.txt");
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "del \"%s\"", path);
+		system(toOpen);
 		fout = NULL;
 	}
 	while (fout == NULL){

@@ -2,7 +2,7 @@
 #include "atc_functions.h"
 
 double ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
-char varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
+char atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
 int Mode = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0;
 
 
@@ -11,8 +11,9 @@ int main(int argc, char *argv[]){
 	char dataToSolve[DIM] = "";
 	FILE *fout = NULL;
 	int Colors = 1, tD = 0, i = 0;
-	char  path[DIM] = "history.txt";
+	char  path[DIM] = "";
 	double result1 = 0, result2 = 0;
+	getATCPath();
 	if (argc < 2){
 		on_start();
 		applySettings(Colors);
@@ -24,13 +25,13 @@ int main(int argc, char *argv[]){
 		do{
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
-			toSolve(rf);
 			flushall();
 			char trigData[DIM] = "";
 			tD = 0;
 			if (argc < 2){
 				printf(">");
 				gets(trigData);
+
 			}
 			else{
 				int arG = 1;
@@ -39,7 +40,11 @@ int main(int argc, char *argv[]){
 					sprintf(trigData, "%s%s", trigData, argv[arG]);
 					arG++;
 				}
+				addATCPath();
 			}
+			sprintf(path, "%s\\history.txt", atcPath);
+			toSolve(rf);
+
 			for (tD = 0; trigData[tD] != 0; tD++){
 				if (trigData[tD] == '{' || trigData[tD] == '['){
 					trigData[tD] = '(';
@@ -64,7 +69,6 @@ int main(int argc, char *argv[]){
 				while (trigData[tD] != '\0'&&trigData[tD] != ','){
 					if (trigData[tD - 6] == 'p'&&trigData[tD - 5] == 'r'&&trigData[tD - 4] == 'i'&&trigData[tD - 3] == 'n'&&trigData[tD - 2] == 't'&&trigData[tD - 1] == '('){
 						arithTrig[i] = trigData[tD];
-
 						i++; tD++;
 						while (fl > fr && trigData[tD] != '\0'){
 							if (trigData[tD] == '('){

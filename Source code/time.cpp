@@ -13,7 +13,9 @@ void Clock(int a)
 	char *tim;
 	tim = ctime(&hour);
 	tim[24] = '\0';
-	fout = fopen("history.txt", "a+");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\history.txt", atcPath);
+	fout = fopen(toOpen, "a+");
 	char min[3] = { tim[14], tim[15], '\0' };
 	minutes = atoi(min);
 	char hou[3] = { tim[11], tim[12], '\0' };

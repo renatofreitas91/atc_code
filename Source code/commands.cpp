@@ -9,14 +9,25 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	int command = 0, i = 0, r = 0, year = 0, s = 0;
 	i = 0;
+	if (isCommand(arithTrig, "donate") == true){
+		command = 1;
+		puts(" ");
+		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/p/advantrigoncalc/donate/?source=navbar\""), NULL, SW_SHOW);
+	}
+	if (isCommand(arithTrig, "atcfacebook") == true){
+		command = 1;
+		puts(" ");
+		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://www.facebook.com/advantrigoncalc/\""), NULL, SW_SHOW);
+	}
+	if (isCommand(arithTrig, "atcsourceforge") == true){
+		command = 1;
+		puts(" ");
+		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/projects/advantrigoncalc/\""), NULL, SW_SHOW);
+	}
 	if (isCommand(arithTrig, "atcfromcmd") == true){
 		command = 1;
-		TCHAR NPath[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, NPath);
-		char directory[MAX_PATH] = "";
-		wcstombs(directory, NPath, wcslen(NPath) + 1);
 		char comm[300] = "";
-		sprintf(comm, "/C \"setx /M PATH \"%%PATH%%;%s\\\"", directory);
+		sprintf(comm, "/C \"setx /M PATH \"%%PATH%%;%s\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
 		std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -25,6 +36,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		puts("\n==> You can now run cmd.exe and enter e.g. \"atc time\" <==\n");
 		puts("");
 	}
+
 	if (isCommand(arithTrig, "autosolvetxt") == true){
 		command = 1;
 		int p = 0;
@@ -235,12 +247,8 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	if (isCommand(arithTrig, "clockctd") == true){
 		command = 1;
-		TCHAR NPath[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, NPath);
-		char directory[MAX_PATH] = "";
-		wcstombs(directory, NPath, wcslen(NPath) + 1);
 		char comm[300] = "";
-		sprintf(comm, "/C \"explorer.exe %s\\Extra\\ctd.exe\"", directory);
+		sprintf(comm, "/C \"explorer.exe %s\\Extra\\ctd.exe\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
 		std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -268,13 +276,17 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		command = 1;
 		puts(" ");
 		printf("\n==> Close the history to continue. <==\n\n");
-		system("notepad.exe history.txt");
+		char path4ATC[DIM] = "";
+		sprintf(path4ATC, "notepad.exe %s\\history.txt", atcPath);
+		system(path4ATC);
 	}
 	if (isCommand(arithTrig, "resetall") == true){
 		command = 1;
 		puts(" ");
 		FILE *start;
-		start = fopen("onStart.txt", "w");
+		char path4ATC[DIM] = "";
+		sprintf(path4ATC, "%s\\onStart.txt", atcPath);
+		start = fopen(path4ATC, "w");
 		fprintf(start, "resetall");
 		fclose(start);
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
@@ -283,19 +295,17 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		command = 1;
 		puts(" ");
 		FILE *start;
-		start = fopen("onStart.txt", "w");
+		char path4ATC[DIM] = "";
+		sprintf(path4ATC, "%s\\onStart.txt", atcPath);
+		start = fopen(path4ATC, "w");
 		fprintf(start, "resetsettings");
 		fclose(start);
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
 	}
 	if (isCommand(arithTrig, "atcfolder") == true){
 		command = 1;
-		TCHAR NPath[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, NPath);
-		char directory[MAX_PATH] = "";
-		wcstombs(directory, NPath, wcslen(NPath) + 1);
 		char comm[300] = "";
-		sprintf(comm, "/C \"explorer %s\"", directory);
+		sprintf(comm, "/C \"explorer %s\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
 		std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -307,12 +317,8 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 
 	if (isCommand(arithTrig, "sourcecode") == true){
 		command = 1;
-		TCHAR NPath[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, NPath);
-		char directory[MAX_PATH] = "";
-		wcstombs(directory, NPath, wcslen(NPath) + 1);
 		char comm[300] = "";
-		sprintf(comm, "/C \"explorer %s\\Source code\\\"", directory);
+		sprintf(comm, "/C \"explorer %s\\Source code\\\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
 		std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -322,12 +328,8 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	if (isCommand(arithTrig, "scriptsexamples") == true){
 		command = 1;
-		TCHAR NPath[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, NPath);
-		char directory[MAX_PATH] = "";
-		wcstombs(directory, NPath, wcslen(NPath) + 1);
 		char comm[300] = "";
-		sprintf(comm, "/C \"explorer %s\\Scripts examples\\\"", directory);
+		sprintf(comm, "/C \"explorer %s\\Scripts examples\\\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
 		std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -337,12 +339,8 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	if (isCommand(arithTrig, "strings") == true){
 		command = 1;
-		TCHAR NPath[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, NPath);
-		char directory[MAX_PATH] = "";
-		wcstombs(directory, NPath, wcslen(NPath) + 1);
 		char comm[300] = "";
-		sprintf(comm, "/C \"explorer %s\\Strings\\\"", directory);
+		sprintf(comm, "/C \"explorer %s\\Strings\\\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
 		std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -352,12 +350,8 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	if (isCommand(arithTrig, "userfunctions") == true){
 		command = 1;
-		TCHAR NPath[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, NPath);
-		char directory[MAX_PATH] = "";
-		wcstombs(directory, NPath, wcslen(NPath) + 1);
 		char comm[300] = "";
-		sprintf(comm, "/C \"explorer %s\\User functions\\\"", directory);
+		sprintf(comm, "/C \"explorer %s\\User functions\\\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
 		std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -368,12 +362,8 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 
 	if (isCommand(arithTrig, "tosolve") == true){
 		command = 1;
-		TCHAR NPath[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, NPath);
-		char directory[MAX_PATH] = "";
-		wcstombs(directory, NPath, wcslen(NPath) + 1);
 		char comm[300] = "";
-		sprintf(comm, "/C \"explorer %s\\To solve\\\"", directory);
+		sprintf(comm, "/C \"explorer %s\\To solve\\\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
 		std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -385,13 +375,25 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	if (isCommand(arithTrig, "restartatc") == true){
 		command = 1;
 		continu = 0;
-		ShellExecute(NULL, _T("open"), _T("atc.exe"), NULL, NULL, SW_SHOW);
+		char path4ATC[DIM] = "";
+		sprintf(path4ATC, "%s\\atc.exe", atcPath);
+		using namespace std;
+		std::string s = string(path4ATC);
+		std::wstring stemp = std::wstring(s.begin(), s.end());
+		LPCWSTR sw = stemp.c_str();
+		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 	}
 
 	if (isCommand(arithTrig, "runatc") == true){
 		command = 1;
 		puts(" ");
-		ShellExecute(NULL, _T("open"), _T("atc.exe"), NULL, NULL, SW_SHOW);
+		char path4ATC[DIM] = "";
+		sprintf(path4ATC, "%s\\atc.exe", atcPath);
+		using namespace std;
+		std::string s = string(path4ATC);
+		std::wstring stemp = std::wstring(s.begin(), s.end());
+		LPCWSTR sw = stemp.c_str();
+		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 	}
 	if (isCommand(arithTrig, "updateportable") == true){
 		command = 1;
@@ -696,8 +698,10 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	if (isCommand(arithTrig, "eliminatevariables") == true){
 		FILE *open = NULL;
 		int r = 0;
+		char toPath[DIM] = "";
+		sprintf(toPath, "%s\\variables.txt", atcPath);
 		while (open == NULL&&r < 100){
-			open = fopen("variables.txt", "w");
+			open = fopen(toPath, "w");
 			r++;
 		}
 		if (r < 100){
@@ -705,8 +709,10 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			fclose(open);
 			open = NULL;
 			r = 0;
+			char toPath[DIM] = "";
+			sprintf(toPath, "%s\\renamedVar.txt", atcPath);
 			while (open == NULL&&r < 100){
-				open = fopen("renamedVar.txt", "w");
+				open = fopen(toPath, "w");
 				r++;
 			}
 			if (r < 100){
@@ -721,8 +727,10 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	if (isCommand(arithTrig, "eliminatestrings") == true){
 		FILE *open = NULL;
 		int r = 0;
+		char toPath[DIM] = "";
+		sprintf(toPath, "%s\\stringVariable.txt", atcPath);
 		while (open == NULL&&r < 100){
-			open = fopen("stringVariable.txt", "w");
+			open = fopen(toPath, "w");
 			r++;
 		}
 		if (r < 100){
@@ -817,8 +825,10 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	if (isCommand(arithTrig, "seestrings") == true){
 		FILE *open = NULL;
 		int r = 0;
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\stringVariable.txt", atcPath);
 		while (open == NULL&&r < 100){
-			open = fopen("stringVariable.txt", "a+");
+			open = fopen(toOpen, "a+");
 			r++;
 		}
 		if (r < 100){
@@ -843,8 +853,10 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	if (isCommand(arithTrig, "seevariables") == true){
 		FILE *open = NULL;
 		int r = 0;
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\variables.txt", atcPath);
 		while (open == NULL&&r < 100){
-			open = fopen("variables.txt", "a+");
+			open = fopen(toOpen, "a+");
 			r++;
 		}
 		if (r < 100){
@@ -867,8 +879,10 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	if (isCommand(arithTrig, "eliminateabbreviations") == true){
 		FILE *open = NULL;	 command = 1;
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\pathName.txt", atcPath);
 		while (open == NULL){
-			open = fopen("pathName.txt", "w");
+			open = fopen(toOpen, "w");
 		}
 		printf("\n==> The abbreviations were eliminated successfully. <==\n\n");
 		fprintf(fout, "\n==> The abbreviations were eliminated successfully. <==\n\n");
@@ -877,8 +891,10 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	if (isCommand(arithTrig, "seeabbreviations") == true){
 		FILE *open = NULL;	   command = 1;
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\pathName.txt", atcPath);
 		while (open == NULL){
-			open = fopen("pathName.txt", "a+");
+			open = fopen(toOpen, "a+");
 		}
 		char dataPath[DIM] = "";
 		int b = 0;
@@ -947,8 +963,10 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		arithTrig[0] = '\0'; command = 1;
 		FILE *open = NULL;
 		int r = 0;
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
 		while (open == NULL&&r < 100){
-			open = fopen("renamedVar.txt", "a+");
+			open = fopen(toOpen, "a+");
 			r++;
 		}
 		if (r < 100){
@@ -1644,8 +1662,10 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			predTxt[y] = '\0';
 		}
 		FILE *pred = NULL;
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\predefinedTxt.txt", atcPath);
 		while (pred == NULL){
-			pred = fopen("predefinedTxt.txt", "w");
+			pred = fopen(toOpen, "w");
 		}
 		fprintf(pred, "%s", predTxt);
 		fclose(pred);
@@ -1658,7 +1678,9 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		FILE *readPred = NULL;
 		char readPath[DIM] = "";
 		if (arithTrig[i + 8] != '('&&arithTrig[i + 11] != '('){
-			readPred = fopen("predefinedTxt.txt", "r");
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "%s\\predefinedTxt.txt", atcPath);
+			readPred = fopen(toOpen, "r");
 			if (readPred == NULL){
 				printf("\n==> The file was not yet predefined! <==\n\n");
 				fprintf(fout, "\n==> The file was not yet predefined! <==\n\n");
@@ -1777,7 +1799,9 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			arithTrig[0] = '\0'; command = 1;
 
 			if (year > 1759){
-				Calendar("calendar.txt", year);
+				char toOpen[DIM] = "";
+				sprintf(toOpen, "%s\\calendar.txt", atcPath);
+				Calendar(toOpen, year);
 				for (s = 0; calendarStr[s] != '\0'; s++){
 					calendar[s] = calendarStr[s];
 				}
@@ -1898,7 +1922,7 @@ boolean isCommand(char forTesting[DIM], char command[DIM]){
 				}
 				i++;
 			}
-			if (rP == 1 && lP == 0){
+			if (rP == lP + 1){
 				return true;
 			}
 			else{

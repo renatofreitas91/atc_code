@@ -343,6 +343,8 @@ void decimalToBinary(double decimal, char path[DIM], int bp){
 	double decimal1 = 0, quotient = 2, quotient1 = 2, mult = 0, mul = 0, decimal2 = 0;
 	double sN = 0, sN1 = 0, sN2 = 0;
 	char binary[DIM] = "", binary2[DIM] = "", binaryexp[DIM] = "";
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\history.txt", atcPath);
 	if (decimal >= 0){
 		sN = log10(decimal) / log10(2.0);
 		sN1 = quo(sN);
@@ -429,12 +431,12 @@ void decimalToBinary(double decimal, char path[DIM], int bp){
 		if (multi(decimal) == 0 || bp == 0){
 			if (decimal >= 0){
 				fprintf(open, "In binary=%s\n", binary2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=%s\n", binary2);
 			}
 			if (decimal < 0){
 				fprintf(open, "In binary=-%s\n", binary2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=-%s\n", binary2);
 			}
 		}
@@ -451,12 +453,12 @@ void decimalToBinary(double decimal, char path[DIM], int bp){
 			}
 			if (decimal >= 0){
 				fprintf(open, "In binary=%s\n", binary2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=%s\n", binary2);
 			}
 			if (decimal < 0){
 				fprintf(open, "In binary=-%s\n", binary2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=-%s\n", binary2);
 			}
 		}
@@ -605,22 +607,22 @@ void decimalToBinary(double decimal, char path[DIM], int bp){
 		if (multi(decimal) == 0){
 			if (decimal >= 0 && decimal2 >= 0){
 				fprintf(open, "In binary=%sx10^%s\n", binary2, binaryexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=%sx10^%s\n", binary2, binaryexp);
 			}
 			if (decimal < 0 && decimal2 < 0){
 				fprintf(open, "In binary=-%sx10^-%s\n", binary2, binaryexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=-%sx10^-%s\n", binary2, binaryexp);
 			}
 			if (decimal >= 0 && decimal2 < 0){
 				fprintf(open, "In binary=%sx10^-%s\n", binary2, binaryexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=%sx10^-%s\n", binary2, binaryexp);
 			}
 			if (decimal < 0 && decimal2 >= 0){
 				fprintf(open, "In binary=-%sx10^%s\n", binary2, binaryexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=-%sx10^%s\n", binary2, binaryexp);
 			}
 		}
@@ -637,22 +639,22 @@ void decimalToBinary(double decimal, char path[DIM], int bp){
 			}
 			if (decimal >= 0 && decimal2 >= 0){
 				fprintf(open, "In binary=%sx10^%s\n", binary2, binaryexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=%sx10^%s\n", binary2, binaryexp);
 			}
 			if (decimal < 0 && decimal2 < 0){
 				fprintf(open, "In binary=-%sx10^-%s\n", binary2, binaryexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=-%sx10^-%s\n", binary2, binaryexp);
 			}
 			if (decimal >= 0 && decimal2 < 0){
 				fprintf(open, "In binary=%sx10^-%s\n", binary2, binaryexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=%sx10^-%s\n", binary2, binaryexp);
 			}
 			if (decimal < 0 && decimal2 >= 0){
 				fprintf(open, "In binary=-%sx10^%s\n", binary2, binaryexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In binary=-%sx10^%s\n", binary2, binaryexp);
 			}
 		}
@@ -665,6 +667,8 @@ void decimalToOctal(double decimal, char path[DIM], int op){
 	char octal[DIM] = "", octal2[DIM] = "", octalexp[DIM] = "";
 	double quotient, quotient1, decimal1, decimal2 = 0, mult, sN = 0, sN1 = 0, sN2 = 0;
 	int c, j, i, rest, cou, res = 0;
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\history.txt", atcPath);
 	decimal1 = decimal; i = 0; j = 0; quotient = 8; quotient1 = 8;
 	if (decimal >= 0){
 		sN = log10(decimal) / log10(8.0);
@@ -751,12 +755,12 @@ void decimalToOctal(double decimal, char path[DIM], int op){
 		if (multi(decimal) == 0 || op == 0){
 			if (decimal >= 0){
 				fprintf(open, "In octal=%s\n", octal2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=%s\n", octal2);
 			}
 			if (decimal < 0){
 				fprintf(open, "In octal=-%s\n", octal2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=-%s\n", octal2);
 			}
 		}
@@ -773,12 +777,12 @@ void decimalToOctal(double decimal, char path[DIM], int op){
 			}
 			if (decimal >= 0){
 				fprintf(open, "In octal=%s\n", octal2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=%s\n", octal2);
 			}
 			if (decimal < 0){
 				fprintf(open, "In octal=-%s\n", octal2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=-%s\n", octal2);
 			}
 		}
@@ -928,22 +932,22 @@ void decimalToOctal(double decimal, char path[DIM], int op){
 		if (multi(decimal) == 0){
 			if (decimal >= 0 && decimal2 >= 0){
 				fprintf(open, "In octal=%sx10^%s\n", octal2, octalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=%sx10^%s\n", octal2, octalexp);
 			}
 			if (decimal < 0 && decimal2 < 0){
 				fprintf(open, "In octal=-%sx10^-%s\n", octal2, octalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=-%sx10^-%s\n", octal2, octalexp);
 			}
 			if (decimal >= 0 && decimal2 < 0){
 				fprintf(open, "In octal=%sx10^-%s\n", octal2, octalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=%sx10^-%s\n", octal2, octalexp);
 			}
 			if (decimal < 0 && decimal2 >= 0){
 				fprintf(open, "In octal=-%sx10^%s\n", octal2, octalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=-%sx10^%s\n", octal2, octalexp);
 			}
 		}
@@ -960,22 +964,22 @@ void decimalToOctal(double decimal, char path[DIM], int op){
 			}
 			if (decimal >= 0 && decimal2 >= 0){
 				fprintf(open, "In octal=%sx10^%s\n", octal2, octalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=%sx10^%s\n", octal2, octalexp);
 			}
 			if (decimal < 0 && decimal2 < 0){
 				fprintf(open, "In octal=-%sx10^-%s\n", octal2, octalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=-%sx10^-%s\n", octal2, octalexp);
 			}
 			if (decimal >= 0 && decimal2 < 0){
 				fprintf(open, "In octal=%sx10^-%s\n", octal2, octalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=%sx10^-%s\n", octal2, octalexp);
 			}
 			if (decimal < 0 && decimal2 >= 0){
 				fprintf(open, "In octal=-%sx10^%s\n", octal2, octalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In octal=-%sx10^%s\n", octal2, octalexp);
 			}
 		}
@@ -988,6 +992,8 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp){
 	char hexadecimal[DIM] = "", hexadecimal2[DIM] = "", hexadecimalexp[DIM] = "";
 	double decimal1 = decimal, decimal2 = 0, quotient = 16, quotient1 = 16, mult, sN = 0, sN1 = 0, sN2 = 0;
 	int res = 0, cou = 0, c = 0, rest = 0, i = 0, j = 0;
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\history.txt", atcPath);
 	if (decimal >= 0){
 		sN = log10(decimal) / log10(16.0);
 		sN1 = quo(sN);
@@ -1162,12 +1168,12 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp){
 		if (multi(decimal) == 0 || hp == 0){
 			if (decimal >= 0){
 				fprintf(open, "In hexadecimal=%s\n", hexadecimal2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=%s\n", hexadecimal2);
 			}
 			if (decimal < 0){
 				fprintf(open, "In hexadecimal=-%s\n", hexadecimal2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=-%s\n", hexadecimal2);
 			}
 		}
@@ -1184,12 +1190,12 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp){
 			}
 			if (decimal >= 0){
 				fprintf(open, "In hexadecimal=%s\n", hexadecimal2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=%s\n", hexadecimal2);
 			}
 			if (decimal < 0){
 				fprintf(open, "In hexadecimal=-%s\n", hexadecimal2);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=-%s\n", hexadecimal2);
 			}
 		}
@@ -1520,22 +1526,22 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp){
 		if (multi(decimal) == 0){
 			if (decimal >= 0 && decimal2 >= 0){
 				fprintf(open, "In hexadecimal=%sx10^%s\n", hexadecimal2, hexadecimalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=%sx10^%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal < 0 && decimal2 < 0){
 				fprintf(open, "In hexadecimal=-%sx10^-%s\n", hexadecimal2, hexadecimalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=-%sx10^-%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal >= 0 && decimal2 < 0){
 				fprintf(open, "In hexadecimal=-%sx10^-%s\n", hexadecimal2, hexadecimalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=%sx10^-%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal < 0 && decimal2 >= 0){
 				fprintf(open, "In hexadecimal=-%sx10^%s\n", hexadecimal2, hexadecimalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=-%sx10^%s\n", hexadecimal2, hexadecimalexp);
 			}
 		}
@@ -1552,22 +1558,22 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp){
 			}
 			if (decimal >= 0 && decimal2 >= 0){
 				fprintf(open, "In hexadecimal=%sx10^%s\n", hexadecimal2, hexadecimalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=%sx10^%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal < 0 && decimal2 < 0){
 				fprintf(open, "In hexadecimal=-%sx10^-%s\n", hexadecimal2, hexadecimalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=-%sx10^-%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal >= 0 && decimal2 < 0){
 				fprintf(open, "In hexadecimal=%sx10^-%s\n", hexadecimal2, hexadecimalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=%sx10^-%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal < 0 && decimal2 >= 0){
 				fprintf(open, "In hexadecimal=-%sx10^%s\n", hexadecimal2, hexadecimalexp);
-				if (path[0] == 'h'&&path[1] == 'i'&&path[2] == 's'&&path[3] == 't'&&path[4] == 'o'&&path[5] == 'r'&&path[6] == 'y'&&path[7] == '.'&&path[8] == 't'&&path[9] == 'x'&&path[10] == 't')
+				if (isEqual(path, toOpen) == true)
 					printf("In hexadecimal=-%sx10^%s\n", hexadecimal2, hexadecimalexp);
 			}
 		}

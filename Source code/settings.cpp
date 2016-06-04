@@ -21,7 +21,9 @@ void colors(){
 	express[7] = cTxt;
 	printf("\n");
 	system(express);
-	open = fopen("colors.txt", "w");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\colors.txt", atcPath);
+	open = fopen(toOpen, "w");
 	fprintf(open, "%s", express);
 	fclose(open);
 }
@@ -37,7 +39,9 @@ void dimensions(){
 	printf("Number of columns: ");
 	gets(cols);
 	ncols = arithSolver(cols, 0);
-	open = fopen("dimensions.txt", "w");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+	open = fopen(toOpen, "w");
 	fprintf(open, "MODE con cols=%G lines=%G", ncols, nlins);
 	fclose(open);
 	applySettings(toDo);
@@ -63,7 +67,9 @@ void window(){
 	height = arithSolver(value, 0);
 	printf("\n");
 	MoveWindow(w, (int)x, (int)y, (int)width, (int)height, FALSE);
-	open = fopen("window.txt", "w");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\window.txt", atcPath);
+	open = fopen(toOpen, "w");
 	fprintf(open, "%G\n%G\n%G\n%G\n", x, y, width, height);
 	fclose(open);
 }
@@ -72,11 +78,13 @@ int applySettings(int toDo){
 	FILE *open = NULL;
 	char setting[DIM];
 	if (toDo == 1){
-		if (fopen("colors.txt", "r") == NULL){
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\colors.txt", atcPath);
+		if (fopen(toOpen, "r") == NULL){
 			system("color 73");
 		}
 		else{
-			open = fopen("colors.txt", "r");
+			open = fopen(toOpen, "r");
 			fgets(setting, 9, open);
 			fclose(open);
 			system(setting);
@@ -84,11 +92,13 @@ int applySettings(int toDo){
 		return 0;
 	}
 	if (toDo == 2){
-		if (fopen("dimensions.txt", "r") == NULL){
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+		if (fopen(toOpen, "r") == NULL){
 			system("MODE con cols=130 lines=57");
 		}
 		else{
-			open = fopen("dimensions.txt", "r");
+			open = fopen(toOpen, "r");
 			fgets(setting, 40, open);
 			fclose(open);
 			system(setting);
@@ -99,13 +109,15 @@ int applySettings(int toDo){
 		int i = 0, e = 0;
 		double x, y, width, height, a = 1;
 		char value[DIM];
-		if (fopen("window.txt", "r") == NULL){
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\window.txt", atcPath);
+		if (fopen(toOpen, "r") == NULL){
 			HWND a;
 			a = GetConsoleWindow();
 			MoveWindow(a, 0, 0, 1000, 1000, FALSE);
 		}
 		else{
-			open = fopen("window.txt", "r");
+			open = fopen(toOpen, "r");
 			for (i = 0; (setting[i] = fgetc(open)) != EOF; i++){
 				value[e] = setting[i];
 				if (setting[i] != '\n'){
@@ -141,7 +153,9 @@ int applySettings(int toDo){
 	if (toDo == 4){
 		int option = 0;
 		char opt[DIM] = "";
-		open = fopen("mode.txt", "r");
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\mode.txt", atcPath);
+		open = fopen(toOpen, "r");
 		if (open == NULL){
 			option = 2;
 		}
@@ -165,7 +179,9 @@ void mode(){
 			printf("Error, incorrect choice.\n");
 		}
 	}
-	open = fopen("mode.txt", "w");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\mode.txt", atcPath);
+	open = fopen(toOpen, "w");
 	fprintf(open, "%d", option);
 	fclose(open);
 }

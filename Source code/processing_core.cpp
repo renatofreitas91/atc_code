@@ -1162,13 +1162,9 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		}
 		funcU[hi] = '\0';
 		FILE *open = NULL;
-
-		TCHAR NPath[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, NPath);
 		char directory[MAX_PATH] = "";
-		wcstombs(directory, NPath, wcslen(NPath) + 1);
 		char comm[300] = "";
-		sprintf(userFunc, "%s\\User functions\\%s.txt", directory, atcFunc);
+		sprintf(userFunc, "%s\\User functions\\%s.txt", atcPath, atcFunc);
 		open = fopen(userFunc, "r");
 		if (open != NULL){
 			fclose(open);
@@ -1561,7 +1557,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		complex_tan(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
-		if ((v[7] == 90 || v[7] == -90 || v[7] == 270 || v[7] == -270 || v[7] == 0 || v[7] == 180 || v[7] == -180)&&vI[7] == 0){
+		if ((v[7] == 90 || v[7] == -90 || v[7] == 270 || v[7] == -270 || v[7] == 0 || v[7] == 180 || v[7] == -180) && vI[7] == 0){
 			result1 = v[0] * (sqrt(1 - cos(v[1])*cos(v[1])) / sqrt(1 - sin(v[1])*sin(v[1])));
 		}
 	}
@@ -1655,10 +1651,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		type = 1;
 	}
 	if (op[0] == 'a'&&op[1] == 't'&&op[2] == 'c'&&op[3] == '_'){
-		TCHAR NPath[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, NPath);
-		char directory[MAX_PATH] = "";
-		wcstombs(directory, NPath, wcslen(NPath) + 1);
 		char comm[300] = "";
 		if (atcFunc[0] == 'a'&&atcFunc[1] == 't'&&atcFunc[2] == 'c'&&atcFunc[3] == '_'){
 			for (i = 0; atcFunc[i + 4] != '\0'; i++){
@@ -1667,8 +1659,8 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			atcFunc[i] = '\0';
 		}
 		char txtSolved[DIM] = "";
-		sprintf(userFunc, "%s\\User functions\\%s.txt", directory, funcU);
-		sprintf(txtSolved, "del \"%s\\User functions\\%s_answers.txt\"", directory, funcU);
+		sprintf(userFunc, "%s\\User functions\\%s.txt", atcPath, funcU);
+		sprintf(txtSolved, "del \"%s\\User functions\\%s_answers.txt\"", atcPath, funcU);
 		resultR = v[1];
 		resultI = vI[1];
 		variableController("Input", resultR);

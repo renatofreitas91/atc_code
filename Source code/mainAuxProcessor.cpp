@@ -584,7 +584,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						fclose(fout);
 						rf++;
 					}
-					open = fopen("numSystems.txt", "r");
+					char toOpen[DIM] = "";
+					sprintf(toOpen, "%s\\numSystems.txt", atcPath);
+					open = fopen(toOpen, "r");
 					char numSys[DIM] = "";
 					int numeriSys = 0;
 					if (open != NULL || bp != -1 || op != -1 || hp != -1){
@@ -659,8 +661,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							}
 						}
 					}
-
-					open = fopen("siPrefixes.txt", "r");
+					toOpen[0] = '\0';
+					sprintf(toOpen, "%s\\siPrefixes.txt", atcPath);
+					open = fopen(toOpen, "r");
 					char siPref[DIM] = "";
 					int niPrefix = 0;
 					if (open != NULL){
@@ -688,8 +691,8 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							}
 						}
 					}
-
-					open = fopen("actualTime.txt", "r");
+					sprintf(toOpen, "%s\\actualTime.txt", atcPath);
+					open = fopen(toOpen, "r");
 					char actualTime[DIM] = "";
 					int nactualTime = 0;
 					if (open != NULL){

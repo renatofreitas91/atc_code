@@ -302,9 +302,11 @@ double returnDeciPart(double number){
 }
 
 void round_complex(){
+	char path4ATC[DIM] = "";
 	if (resultR >= -DBL_MAX&&resultR <= DBL_MAX&&resultI >= -DBL_MAX&&resultI <= DBL_MAX){
 		FILE *open;
-		open = fopen("numSystems.txt", "r");
+		sprintf(path4ATC, "%s\\numSystems.txt", atcPath);
+		open = fopen(path4ATC, "r");
 		char numSys[DIM] = "";
 		int numeriSys = 0;
 		if (open != NULL){
