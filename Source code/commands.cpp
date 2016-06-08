@@ -1689,8 +1689,14 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 				fgets(readPath, DIM, readPred);
 				fclose(readPred);
 				processTxt(readPath, rf);
-				printf("\n==> Close the file with the answers to continue. <==\n\n");
-				fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
+				FILE *open = NULL;
+				open = fopen(expressionF, "r");
+				char openFile[DIM] = "";
+				if (open != NULL){
+					fclose(open);
+					printf("\n==> Close the file with the answers to continue. <==\n\n");
+					fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
+				}
 				openTxt();
 			}
 		}
@@ -1712,8 +1718,14 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 				pathNameToPath(paName);
 				if (strlen(pathNAme) != 0){
 					processTxt(pathNAme, rf);
-					printf("\n==> Close the file with the answers to continue. <==\n\n");
-					fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
+					FILE *open = NULL;
+					open = fopen(expressionF, "r");
+					char openFile[DIM] = "";
+					if (open != NULL){
+						fclose(open);
+						printf("\n==> Close the file with the answers to continue. <==\n\n");
+						fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
+					}
 					openTxt();
 				}
 

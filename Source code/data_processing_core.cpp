@@ -2392,9 +2392,14 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 }
 
 void openTxt(){
+	FILE *open = NULL;
+	open = fopen(expressionF, "r");
 	char openFile[DIM] = "";
-	sprintf(openFile, "notepad.exe %s", expressionF);
-	system(openFile);
+	if (open != NULL){
+		fclose(open);
+		sprintf(openFile, "notepad.exe %s", expressionF);
+		system(openFile);
+	}
 }
 
 void cls()
