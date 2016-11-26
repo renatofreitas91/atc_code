@@ -4,47 +4,47 @@
 #include "stdafx.h"
 
 
-void cotan(double x, double y){
+void cotan(double x, double y) {
 	complex_tan(x, y);
 	division(1.0, 0.0, resultR, resultI);
 	round_complex();
 }
 
-void sec(double x, double y){
+void sec(double x, double y) {
 	complex_cos(x, y);
 	division(1.0, 0.0, resultR, resultI);
 	round_complex();
 }
 
-void cosec(double x, double y){
+void cosec(double x, double y) {
 	resultR = 0; resultI = 0;
 	complex_sin(x, y);
 	division(1.0, 0.0, resultR, resultI);
 	round_complex();
 }
 
-void arcosec(double x, double y){
+void arcosec(double x, double y) {
 	resultR = 0; resultI = 0;
 	division(1.0, 0.0, x, y);
 	complex_asin(resultR, resultI);
 	round_complex();
 }
 
-void arcsec(double x, double y){
+void arcsec(double x, double y) {
 	resultR = 0; resultI = 0;
 	division(1.0, 0.0, x, y);
 	complex_acos(resultR, resultI);
 	round_complex();
 }
 
-void arcotg(double x, double y){
+void arcotg(double x, double y) {
 	resultR = 0; resultI = 0;
 	division(1.0, 0.0, x, y);
 	complex_atan(resultR, resultI);
 	round_complex();
 }
 
-void complex_cos(double x, double y){
+void complex_cos(double x, double y) {
 	resultR = 0; resultI = 0;
 	exponentiation(M_E, 0.0, -1 * y, x, 1);
 	double napR = resultR, napI = resultI;
@@ -56,7 +56,7 @@ void complex_cos(double x, double y){
 	round_complex();
 }
 
-void complex_sin(double x, double y){
+void complex_sin(double x, double y) {
 	resultR = 0; resultI = 0;
 	exponentiation(M_E, 0.0, -1 * y, x, 1);
 	double napR = resultR, napI = resultI;
@@ -68,7 +68,7 @@ void complex_sin(double x, double y){
 	round_complex();
 }
 
-void complex_tan(double x, double y){
+void complex_tan(double x, double y) {
 	resultR = 0; resultI = 0;
 	complex_sin(x, y);
 	double numR = resultR, numI = resultI;
@@ -79,7 +79,7 @@ void complex_tan(double x, double y){
 	round_complex();
 }
 
-void complex_cosh(double x, double y){
+void complex_cosh(double x, double y) {
 	resultR = 0; resultI = 0;
 	exponentiation(M_E, 0.0, x, y, 1);
 	double napR = resultR, napI = resultI;
@@ -91,7 +91,7 @@ void complex_cosh(double x, double y){
 	round_complex();
 }
 
-void complex_sinh(double x, double y){
+void complex_sinh(double x, double y) {
 	resultR = 0; resultI = 0;
 	exponentiation(M_E, 0.0, x, y, 1);
 	double napR = resultR, napI = resultI;
@@ -103,7 +103,7 @@ void complex_sinh(double x, double y){
 	round_complex();
 }
 
-void complex_tanh(double x, double y){
+void complex_tanh(double x, double y) {
 	resultR = 0; resultI = 0;
 	complex_sinh(x, y);
 	double numR = resultR, numI = resultI;
@@ -113,7 +113,7 @@ void complex_tanh(double x, double y){
 	round_complex();
 }
 
-void complex_asin(double x, double y){
+void complex_asin(double x, double y) {
 	resultR = 0; resultI = 0;
 	double radicandR = 1 - pot(x, 2.0, 1) + pot(y, 2.0, 1);
 	double radicandI = -1 * 2 * x*y;
@@ -126,7 +126,7 @@ void complex_asin(double x, double y){
 	round_complex();
 }
 
-void complex_acos(double x, double y){
+void complex_acos(double x, double y) {
 	resultR = 0; resultI = 0;
 	double radicandR = -1 * pot(x, 2.0, 1) + pot(y, 2.0, 1) + 1;
 	double radicandI = -2 * x*y;
@@ -140,7 +140,7 @@ void complex_acos(double x, double y){
 	round_complex();
 }
 
-void complex_atan(double x, double y){
+void complex_atan(double x, double y) {
 	resultR = 0; resultI = 0;
 	double numR = 1 + y, numI = -1 * x;
 	double denR = 1 - y, denI = x;
@@ -150,32 +150,32 @@ void complex_atan(double x, double y){
 	round_complex();
 }
 
-double arg(double a, double b){
+double arg(double a, double b) {
 	double arg_ab = 0;
-	if (a > 0){
+	if (a > 0) {
 		arg_ab = atan(b / a);
 	}
-	else{
-		if (a < 0 && b >0){
+	else {
+		if (a < 0 && b >0) {
 			arg_ab = M_PI + atan(b / a);
 		}
-		else{
-			if (a < 0 && b < 0){
+		else {
+			if (a < 0 && b < 0) {
 				arg_ab = -M_PI + atan(b / a);
 			}
-			else{
-				if (a < 0 && b == 0){
+			else {
+				if (a < 0 && b == 0) {
 					arg_ab = M_PI;
 				}
-				else{
-					if (a == 0 && b < 0){
+				else {
+					if (a == 0 && b < 0) {
 						arg_ab = -M_PI / 2;
 					}
-					else{
-						if (a == 0 && b > 0){
+					else {
+						if (a == 0 && b > 0) {
 							arg_ab = M_PI / 2;
 						}
-						else{
+						else {
 							arg_ab = 0;
 						}
 					}

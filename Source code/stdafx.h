@@ -16,8 +16,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <dirent.h> 
-extern double resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
-extern int nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified;
+extern double ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
+extern int isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified;
 extern char atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
 double functionProcessor(char trigon[DIM], double result, double amplitude, double res);
 double initialProcessor(char arithTrig[DIM], double result);
@@ -32,8 +32,7 @@ double hexadecimalToDecimal(char hexadecimal[DIM]);
 void decimalToBinary(double decimal, char path[DIM], int bp);
 void decimalToOctal(double decimal, char path[DIM], int op);
 void decimalToHexadecimal(double decimal, char path[DIM], int hp);
-double numericalSystems(char numSystem[DIM]);
-int prefDet(double n, char path[DIM]);
+void prefixDeterminator(double n, char path[DIM]);
 double convertToNumber(char number[DIM]);
 void DayofWeek(int d, int m, int y, char calendar[DIM]);
 void Calendar(char yearCalendar[DIM], int year);
@@ -67,3 +66,5 @@ boolean readyToSolve(char paTh[DIM]);
 void addATCPath();
 void getATCPath();
 boolean isEqual(char forTesting[DIM], char command[DIM]);
+char character_to_prefDet(double n);
+double numericalSystems(char numSystem[DIM]);
