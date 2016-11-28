@@ -1263,6 +1263,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			}
 		}
 	}
+
 	i = 0; j = 0;
 	for (s = 0; trigon[s] != '\0'; s++) {
 		if (((trigon[s - 1] == 'g'&&trigon[s] == 'b') && trigon[s - 1] != 'c') || (trigon[s - 1] == 't'&&trigon[s] == 'D')) {

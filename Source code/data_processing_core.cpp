@@ -308,7 +308,7 @@ int variableValidator(char variable[DIM]) {
 	abc = strlen(variable);
 	valid = 0;
 	for (i = 0; variable[i] != '\0'; i++) {
-		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
+		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd' || variable[i] == 'b')) {
 			if (variable[i] == 's') {
 				revariable[i] = 'p';
 			}
@@ -336,6 +336,13 @@ int variableValidator(char variable[DIM]) {
 			if (variable[i] == 'd') {
 				revariable[i] = 'G';
 			}
+			if (variable[i] == 'd') {
+				revariable[i] = 'G';
+			}
+			if (variable[i] == 'b') {
+				revariable[i] = 'u';
+				return 2;
+			}
 			h = 1;
 		}
 		else {
@@ -351,6 +358,7 @@ int variableValidator(char variable[DIM]) {
 				}
 				if (variable[i] == 'b') {
 					revariable[i] = 'u';
+					return 2;
 				}
 				if (variable[i] == 'D') {
 					revariable[i] = 'T';
@@ -359,7 +367,7 @@ int variableValidator(char variable[DIM]) {
 				h = 1;
 			}
 			else {
-				if (i == 0 && (variable[i] == 'B' || variable[i] == 'O' || variable[i] == 'H' || variable[i] == 'P')) {
+				if (i == 0 && (variable[i] == 'B' || variable[i] == 'O' || variable[i] == 'H' || variable[i] == 'P' || variable[i] == 'b')) {
 					if (variable[i] == 'B') {
 						revariable[i] = 'N';
 					}
@@ -372,10 +380,13 @@ int variableValidator(char variable[DIM]) {
 					if (variable[i] == 'P') {
 						revariable[i] = 'I';
 					}
+					if (variable[i] == 'b') {
+						revariable[i] = 'u';
+					}
 					h = 1;
 				}
 				else {
-					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'F' || variable[i] == 'P') {
+					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'F' || variable[i] == 'P' || variable[i] == 'b') {
 						if (variable[i] == 'A') {
 							revariable[i] = 'Q';
 						}
@@ -393,6 +404,10 @@ int variableValidator(char variable[DIM]) {
 						}
 						if (variable[i] == 'P') {
 							revariable[i] = 'S';
+						}
+						if (variable[i] == 'b') {
+							revariable[i] = 'u';
+							return 2;
 						}
 						h = 1;
 					}
@@ -453,7 +468,6 @@ int variableValidator(char variable[DIM]) {
 			}
 			if (i < 100) {
 				fprintf(var1, "%s %s\n", variable, revariable);
-				fclose(var1);
 				fclose(var1);
 			}
 			i = 0;
@@ -744,7 +758,7 @@ double convertToNumber(char number[DIM]) {
 	}
 	k = k + 2;
 	i = 1;
-	for (k; i <= l; k++) {
+	for (k; i <= l&&number[k] != '\0'&&k < abs((int)strlen(number)); k++) {
 		nu[0] = number[k];
 		nu[1] = '.';
 		nu[2] = '0';
@@ -2758,13 +2772,70 @@ boolean readyToSolve(char paTh[DIM]) {
 	return false;
 }
 
-boolean isEqual(char forTesting[DIM], char command[DIM]) {
+boolean isEqual(char to_find[DIM], char string[DIM]) {
 	int i = 0;
-	while (forTesting[i] == command[i] && command[i] != '\0') {
+	while (to_find[i] == string[i] && string[i] != '\0') {
 		i++;
 	}
-	if (forTesting[i] == command[i] && forTesting[i] == '\0') {
+	if (to_find[i] == string[i] && to_find[i] == '\0') {
 		return true;
+	}
+	return false;
+}
+
+void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]) {
+	int i = 0, j = 0, k = 0, m = 0;
+	char toChange[DIM] = "";
+	sprintf(toChange, "%s", string);
+	if (isContained(toReplace, toChange)) {
+		while (isContained(toReplace, toChange)) {
+			j = 0; k = 0;
+			sprintf(expressionF, "");
+			i = (int)resultR;
+			while (j < i) {
+				expressionF[j] = toChange[j]; j++;
+			}
+			expressionF[j] = '\0'; m = j;
+			while (k < abs((int)strlen(replacement))) {
+				expressionF[j] = replacement[k]; j++; k++;
+			}
+			expressionF[j] = '\0';
+			m = m + abs((int)strlen(toReplace));
+			while (m < abs((int)strlen(toChange))) {
+				expressionF[j] = toChange[m]; j++; m++;
+			}
+			expressionF[j] = '\0';
+			sprintf(toChange, "%s", expressionF);
+		}
+	}
+}
+
+boolean isContained(char to_find[DIM], char string[DIM]) {
+	int i = 0, j = 0;
+	if (abs((int)strlen(to_find)) > abs((int)strlen(string)) || abs((int)strlen(to_find)) == 0 && abs((int)strlen(string)) != 0 || abs((int)strlen(string)) == 0) {
+		return false;
+	}
+	else {
+		while (string[i] != '\0'&&i < abs((int)strlen(string))) {
+			while (to_find[0] != string[i] && string[i] != '\0'&&i < abs((int)strlen(string))) {
+				i++;
+			}
+			if (to_find[0] == string[i] && i < abs((int)strlen(string))) {
+				resultR = i;
+				j = 0;
+				while (to_find[j] == string[i] && string[i] != '\0'&&to_find[j] != '\0'&&i < abs((int)strlen(string)) && j < abs((int)strlen(to_find))) {
+					i++; j++;
+				}
+				resultI = i;
+			}
+			if (j == abs((int)strlen(to_find))) {
+				return true;
+			}
+			else {
+				return false;
+			}
+			i++;
+		}
 	}
 	return false;
 }
