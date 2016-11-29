@@ -3,16 +3,15 @@
 #include "stdafx.h"
 
 
-
 double initialProcessor(char arithTrig[DIM], double result) {
-	if (abs((int)strlen(arithTrig) == 0)) {
+	if (strlen(arithTrig) == 0) {
 		arithTrig[0] = '0'; arithTrig[1] = '\0';
 	}
 	char arTrig[DIM] = "", trigon[DIM] = "", trig[DIM] = "", paRect[DIM] = "", cN[DIM] = "", ex[DIM] = "", art[DIM] = "";
 	int facto = 0, sig[DIM], s = 0, rectPar = 0, h = 0, i = 0, rePar = 0, so = 0, j = 0, g = 0, count = 0, e = 0, d = 0, th = 0, f = 0, trigo = 1, trigono = 0, co = 0, k = 0, l = 0, tr = 0, pa = 0, paren = 1, pare = 0, tg = 0, p = 0, a = 0, c = 1, r = 0, iN = 0, iL = 0;
 	double triArith[DIM], triArithI[DIM], exp = 1, result1, result2, amplitude = 1;
 
-	for (s = 0; s < abs((int)strlen(arithTrig)); s++) {
+	for (s = 0; s < strlen(arithTrig); s++) {
 		triArith[s] = 0;
 		triArithI[s] = 0;
 		sig[s] = -1;
@@ -107,26 +106,26 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				u++;
 			}
 		}
-		if (verifyLetter(paTrig[u]) && firstLetterVariable(paTrig[u]) == 0) {
-			while (verifyLetter(paTrig[u])) {
+		if (verifyLetter(paTrig[u]) == 1 && firstLetterVariable(paTrig[u]) == 0) {
+			while (verifyLetter(paTrig[u]) == 1) {
 				u++;
 			}
 		}
-		if (firstLetterVariable(paTrig[u]) && firstLetterVariable(paTrig[u - 1]) == 0 && paTrig[u + 1] != 'i') {
+		if (firstLetterVariable(paTrig[u]) == 1 && firstLetterVariable(paTrig[u - 1]) == 0 && paTrig[u + 1] != 'i') {
 			u++;
-			while (verifyLetter(paTrig[u])) {
+			while (verifyLetter(paTrig[u]) == 1) {
 				u++;
 			}
 			if (paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != ')') {
 				double check = 0;
-				if (verifyLetter(paTrig[u - 1])) {
+				if (verifyLetter(paTrig[u - 1]) == 1) {
 					int z = u - 1, v = 0;
 					char toVal[DIM] = "";
-					while (verifyLetter(paTrig[z])) {
+					while (verifyLetter(paTrig[z]) == 1) {
 						z--;
 					}
 					z++;
-					while (verifyLetter(paTrig[z])) {
+					while (verifyLetter(paTrig[z]) == 1) {
 						toVal[v] = paTrig[z];
 						z++; v++;
 					}
@@ -202,7 +201,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	}
 	s = 0;
 	for (s; paTrig[s] != '\0'; s++) {
-		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'p' || paTrig[s] == 'e' || verifyLetter(paTrig[s]) && paTrig[s] != 'b'&&paTrig[s] != 'D') && (paTrig[s - 1] == ')')) {
+		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'p' || paTrig[s] == 'e' || verifyLetter(paTrig[s]) == 1 && paTrig[s] != 'b'&&paTrig[s] != 'D') && (paTrig[s - 1] == ')')) {
 			arithTrig[s] = '*';
 			for (s; paTrig[s] != '\0'; s++) {
 				arithTrig[s + 1] = paTrig[s];
@@ -303,7 +302,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	int cp = 0, mark = 0;
 	c = 0; d = 0; k = 0; l = 0; h = 0;
 	int parent[DIM];
-	for (s = 0; arithTrig[s] != '\0'&&s < abs((int)strlen(arithTrig)); s++) {
+	for (s = 0; arithTrig[s] != '\0'&&s < strlen(arithTrig); s++) {
 		if (arithTrig[s] == '(') {
 			d = 0;
 			c++;
@@ -319,7 +318,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				do {
 					l = 0;
 					h = 0;
-					while (h < abs((int)strlen(arithTrig))) {
+					while (h < strlen(arithTrig)) {
 						if (parent[h] == k) {
 							l++;
 						}
@@ -332,10 +331,10 @@ double initialProcessor(char arithTrig[DIM], double result) {
 
 				} while (l == 2);
 				h = 0;
-				while (l != 1 && h < abs((int)strlen(arithTrig))) {
+				while (l != 1 && h < strlen(arithTrig)) {
 					h = 0;
 					l = 0;
-					while (h < abs((int)strlen(arithTrig))) {
+					while (h < strlen(arithTrig)) {
 						if (parent[h] == k) {
 							l++;
 						}
@@ -374,7 +373,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	int se = 0;
 	int thj = 0;
 	if (curPar == 1) {
-		for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
+		for (i = 0; i < strlen(arithTrig); i++) {
 			int jk = 0;
 			char op[DIM] = "";
 			while (parent[i] < 1 && i <= klp) {
@@ -421,14 +420,14 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				if (arithTrig[i] == '+' || arithTrig[i] == '-' || arithTrig[i] == '*' || arithTrig[i] == '/' || arithTrig[i] == '^' || arithTrig[i] == '!') {
 					arTrig[c] = arithTrig[i]; c++;
 				}
-				if (abs((int)strlen(pas) > 0)) {
+				if (strlen(pas) > 0) {
 					triArith[b] = arithSolver(pas, result);
 					triArithI[b] = resultI;
 					pas[0] = '\0';
 					b++;
 				}
 				i++;
-				if (abs((int)strlen(op) > 0)) {
+				if (strlen(op) > 0) {
 					i--;
 				}
 			}
@@ -439,7 +438,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				i = j;
 				a = 0;
 				i++;
-				while (parent[i] != cur&&i < abs((int)strlen(arithTrig))) {
+				while (parent[i] != cur&&i < strlen(arithTrig)) {
 					pas[a] = arithTrig[i];
 					a++; i++;
 				}
@@ -456,7 +455,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					triArithI[b] = resultI;
 					sig[b] = 1;
 					pas[0] = '\0';
-					if (abs((int)strlen(op)) > 0) {
+					if (strlen(op) > 0) {
 						if (op[3] == 't' && (op[2] == 's' || op[2] == 'o'&&op[1] != 'c')) {
 							resultI = triArithI[b]; resultR = triArithI[b - 1];
 							triArith[b - 1] = functionProcessor(op, triArith[b], triArith[b - 1], result);
@@ -482,7 +481,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					triArithI[b] = resultI;
 					sig[b] = 1;
 					char pas[DIM] = "";
-					if (abs((int)strlen(op)) > 0) {
+					if (strlen(op) > 0) {
 						resultI = triArithI[b];
 						triArith[b] = functionProcessor(op, triArith[b], amplitude, result);
 						triArithI[b] = resultI;
@@ -727,7 +726,7 @@ double arithSolver(char trigon1[DIM], double result) {
 		}
 		if (number2[strlen(number2) - 4] != 'p'&&number2[strlen(number2) - 3] == 'i') {
 			complex = 1;
-			for (y = abs((int)strlen(number2)) - 3; number2[y + 1] != '\0'; y++) {
+			for (y = strlen(number2) - 3; number2[y + 1] != '\0'; y++) {
 				number2[y] = number2[y + 1];
 			}
 			number2[y] = '\0';
@@ -819,7 +818,7 @@ double arithSolver(char trigon1[DIM], double result) {
 		if (number2[0] != 'B'&&number2[0] != 'O'&&number2[0] != 'H'&&number2[0] != 'P') {
 			if (number2[0] == '_'&&number2[1] != 'e'&&number2[1] != 'p'&&number2[1] != 'B'&&number2[1] != 'O'&&number2[1] != 'H') {
 				if (number2[1] == '.') {
-					j = abs((int)strlen(number2));
+					j = strlen(number2);
 					while (j > 1) {
 						number2[j] = number2[j - 1];
 						j--;
