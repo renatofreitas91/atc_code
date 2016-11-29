@@ -124,12 +124,12 @@ void print(char text[DIM], double result1, double result2) {
 		}
 		nC = 0;
 		for (b = 0; listText[b] != '\0'; b++) {
-			if (listText[b] == '%'&&verify4Printf(listText[b + 1]) == 1) {
+			if (listText[b] == '%'&&verify4Printf(listText[b + 1])) {
 				b++;
-				while (verify4Printf(listText[b]) == 1 && verifySpecifier(listText[b]) == 0) {
+				while (verify4Printf(listText[b]) && verifySpecifier(listText[b]) == 0) {
 					b++;
 				}
-				if (verifySpecifier(listText[b]) == 1) {
+				if (verifySpecifier(listText[b])) {
 					nC++;
 				}
 			}
@@ -137,11 +137,11 @@ void print(char text[DIM], double result1, double result2) {
 		if (nC == nV) {
 			for (i = 0; listText[i] != '\0'; i++) {
 				for (j = i; listText[j] != '\0'; j++) {
-					if (listText[j] == '%'&&verify4Printf(listText[j + 1]) == 0) {
+					if (listText[j] == '%'&&verify4Printf(listText[j + 1]) == false) {
 						var2Print = 2;
 						break;
 					}
-					if (listText[j] == '%'&&verify4Printf(listText[j + 1]) == 1) {
+					if (listText[j] == '%'&&verify4Printf(listText[j + 1])) {
 						var2Print = 1;
 						break;
 					}
@@ -149,14 +149,14 @@ void print(char text[DIM], double result1, double result2) {
 
 				if (var2Print == 1) {
 					j = 0;
-					while (!(listText[i] == '%'&&verify4Printf(listText[i + 1]) == 1) && listText[i + 1] != '\0') {
+					while (!(listText[i] == '%'&&verify4Printf(listText[i + 1])) && listText[i + 1] != '\0') {
 						toPrint[j] = listText[i];
 						i++;
 						j++;
 					}
 					toPrint[j] = '\0';
 					k = 0;
-					while (verify4Printf(listText[i]) == 1 && verifySpecifier(varType[k - 1]) == 0 && listText[i] != '\0') {
+					while (verify4Printf(listText[i]) && verifySpecifier(varType[k - 1]) == 0 && listText[i] != '\0') {
 						varType[k] = listText[i];
 						k++; i++;
 					}
@@ -329,7 +329,7 @@ void sprint(char text[DIM], double result1, double result2) {
 	char toPrint[DIM], listValues[DIM], listText[DIM], varType[DIM], printing[DIM], varValue[DIM], variable[DIM] = "", String[DIM] = "", finalString[DIM] = "";
 	char specifier, clica = 39;
 	i = 0;
-	while (verifyLetter(text[i]) == 1 || verifyNumber(text[i]) == 1) {
+	while (verifyLetter(text[i]) || verifyNumber(text[i])) {
 		variable[i] = text[i];
 		i++;
 	}
@@ -449,12 +449,12 @@ void sprint(char text[DIM], double result1, double result2) {
 		}
 		nC = 0;
 		for (b = 0; listText[b] != '\0'; b++) {
-			if (listText[b] == '%'&&verify4Printf(listText[b + 1]) == 1) {
+			if (listText[b] == '%'&&verify4Printf(listText[b + 1])) {
 				b++;
-				while (verify4Printf(listText[b]) == 1 && verifySpecifier(listText[b]) == 0) {
+				while (verify4Printf(listText[b]) && verifySpecifier(listText[b]) == 0) {
 					b++;
 				}
-				if (verifySpecifier(listText[b]) == 1) {
+				if (verifySpecifier(listText[b])) {
 					nC++;
 				}
 			}
@@ -462,11 +462,11 @@ void sprint(char text[DIM], double result1, double result2) {
 		if (nC == nV) {
 			for (i = 0; listText[i] != '\0'; i++) {
 				for (j = i; listText[j] != '\0'; j++) {
-					if (listText[j] == '%'&&verify4Printf(listText[j + 1]) == 0) {
+					if (listText[j] == '%'&&verify4Printf(listText[j + 1]) == false) {
 						var2Print = 2;
 						break;
 					}
-					if (listText[j] == '%'&&verify4Printf(listText[j + 1]) == 1) {
+					if (listText[j] == '%'&&verify4Printf(listText[j + 1])) {
 						var2Print = 1;
 						break;
 					}
@@ -474,14 +474,14 @@ void sprint(char text[DIM], double result1, double result2) {
 
 				if (var2Print == 1) {
 					j = 0;
-					while (!(listText[i] == '%'&&verify4Printf(listText[i + 1]) == 1) && listText[i + 1] != '\0') {
+					while (!(listText[i] == '%'&&verify4Printf(listText[i + 1])) && listText[i + 1] != '\0') {
 						toPrint[j] = listText[i];
 						i++;
 						j++;
 					}
 					toPrint[j] = '\0';
 					k = 0;
-					while (verify4Printf(listText[i]) == 1 && verifySpecifier(varType[k - 1]) == 0 && listText[i] != '\0') {
+					while (verify4Printf(listText[i]) && verifySpecifier(varType[k - 1]) == 0 && listText[i] != '\0') {
 						varType[k] = listText[i];
 						k++; i++;
 					}

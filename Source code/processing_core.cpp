@@ -3,8 +3,9 @@
 #include "stdafx.h"
 
 
+
 double initialProcessor(char arithTrig[DIM], double result) {
-	if (strlen(arithTrig) == 0) {
+	if (abs((int)strlen(arithTrig) == 0)) {
 		arithTrig[0] = '0'; arithTrig[1] = '\0';
 	}
 	char arTrig[DIM] = "", trigon[DIM] = "", trig[DIM] = "", paRect[DIM] = "", cN[DIM] = "", ex[DIM] = "", art[DIM] = "";
@@ -106,26 +107,26 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				u++;
 			}
 		}
-		if (verifyLetter(paTrig[u]) == 1 && firstLetterVariable(paTrig[u]) == 0) {
-			while (verifyLetter(paTrig[u]) == 1) {
+		if (verifyLetter(paTrig[u]) && firstLetterVariable(paTrig[u]) == 0) {
+			while (verifyLetter(paTrig[u])) {
 				u++;
 			}
 		}
-		if (firstLetterVariable(paTrig[u]) == 1 && firstLetterVariable(paTrig[u - 1]) == 0 && paTrig[u + 1] != 'i') {
+		if (firstLetterVariable(paTrig[u]) && firstLetterVariable(paTrig[u - 1]) == 0 && paTrig[u + 1] != 'i') {
 			u++;
-			while (verifyLetter(paTrig[u]) == 1) {
+			while (verifyLetter(paTrig[u])) {
 				u++;
 			}
 			if (paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != ')') {
 				double check = 0;
-				if (verifyLetter(paTrig[u - 1]) == 1) {
+				if (verifyLetter(paTrig[u - 1])) {
 					int z = u - 1, v = 0;
 					char toVal[DIM] = "";
-					while (verifyLetter(paTrig[z]) == 1) {
+					while (verifyLetter(paTrig[z])) {
 						z--;
 					}
 					z++;
-					while (verifyLetter(paTrig[z]) == 1) {
+					while (verifyLetter(paTrig[z])) {
 						toVal[v] = paTrig[z];
 						z++; v++;
 					}
@@ -201,7 +202,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	}
 	s = 0;
 	for (s; paTrig[s] != '\0'; s++) {
-		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'p' || paTrig[s] == 'e' || verifyLetter(paTrig[s]) == 1 && paTrig[s] != 'b'&&paTrig[s] != 'D') && (paTrig[s - 1] == ')')) {
+		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'p' || paTrig[s] == 'e' || verifyLetter(paTrig[s]) && paTrig[s] != 'b'&&paTrig[s] != 'D') && (paTrig[s - 1] == ')')) {
 			arithTrig[s] = '*';
 			for (s; paTrig[s] != '\0'; s++) {
 				arithTrig[s + 1] = paTrig[s];
@@ -420,14 +421,14 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				if (arithTrig[i] == '+' || arithTrig[i] == '-' || arithTrig[i] == '*' || arithTrig[i] == '/' || arithTrig[i] == '^' || arithTrig[i] == '!') {
 					arTrig[c] = arithTrig[i]; c++;
 				}
-				if (strlen(pas) > 0) {
+				if (abs((int)strlen(pas) > 0)) {
 					triArith[b] = arithSolver(pas, result);
 					triArithI[b] = resultI;
 					pas[0] = '\0';
 					b++;
 				}
 				i++;
-				if (strlen(op) > 0) {
+				if (abs((int)strlen(op) > 0)) {
 					i--;
 				}
 			}
@@ -455,7 +456,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					triArithI[b] = resultI;
 					sig[b] = 1;
 					pas[0] = '\0';
-					if (strlen(op) > 0) {
+					if (abs((int)strlen(op)) > 0) {
 						if (op[3] == 't' && (op[2] == 's' || op[2] == 'o'&&op[1] != 'c')) {
 							resultI = triArithI[b]; resultR = triArithI[b - 1];
 							triArith[b - 1] = functionProcessor(op, triArith[b], triArith[b - 1], result);
@@ -481,7 +482,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					triArithI[b] = resultI;
 					sig[b] = 1;
 					char pas[DIM] = "";
-					if (strlen(op) > 0) {
+					if (abs((int)strlen(op)) > 0) {
 						resultI = triArithI[b];
 						triArith[b] = functionProcessor(op, triArith[b], amplitude, result);
 						triArithI[b] = resultI;
@@ -726,7 +727,7 @@ double arithSolver(char trigon1[DIM], double result) {
 		}
 		if (number2[strlen(number2) - 4] != 'p'&&number2[strlen(number2) - 3] == 'i') {
 			complex = 1;
-			for (y = strlen(number2) - 3; number2[y + 1] != '\0'; y++) {
+			for (y = abs((int)strlen(number2)) - 3; number2[y + 1] != '\0'; y++) {
 				number2[y] = number2[y + 1];
 			}
 			number2[y] = '\0';
@@ -818,7 +819,7 @@ double arithSolver(char trigon1[DIM], double result) {
 		if (number2[0] != 'B'&&number2[0] != 'O'&&number2[0] != 'H'&&number2[0] != 'P') {
 			if (number2[0] == '_'&&number2[1] != 'e'&&number2[1] != 'p'&&number2[1] != 'B'&&number2[1] != 'O'&&number2[1] != 'H') {
 				if (number2[1] == '.') {
-					j = strlen(number2);
+					j = abs((int)strlen(number2));
 					while (j > 1) {
 						number2[j] = number2[j - 1];
 						j--;
@@ -1243,7 +1244,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			}
 			trigon[i] = '\0';
 		}
-		if ((trigon[0] == 'r'&&trigon[1] == 't'&&trigon[2] == 'D'&&trigon[3] == 'D'&&trigon[4] == '\0') || (trigon[0] == 'l'&&trigon[1] == 'o'&&trigon[2] == 'g'&&trigon[3] == 'b'&&trigon[4] == 'b'&&trigon[5] == '\0')) {
+		if ((isEqual("rtDD", op)) || (isEqual("logbb", trigon))) {
 			return 0.5;
 		}
 		for (i = 0; function[i] != '\0'; i++) {
@@ -1381,7 +1382,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			}
 		}
 	}
-	if (op[0] == 'l'&&op[1] == 'o'&&op[2] == 'g'&&op[3] == '\0') {
+	if (isEqual("log", op)) {
 		if (dgrt != 0 || dgrt2 != 0) {
 			complex_log(dgrt, dgrt2);
 			double baR = resultR, baI = resultI;
@@ -1399,29 +1400,29 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			result2 = resultI;
 		}
 	}
-	if (op[0] == 'r'&&op[1] == 't'&&op[2] == '\0') {
+	if (isEqual("rt", op)) {
 		division(1, 0.0, dgrt, dgrt2);
 		exponentiation(v[1], result2, resultR, resultI, 1);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if (op[0] == 's'&&op[1] == 'q'&&op[2] == 'r'&&op[3] == 't'&&op[4] == '\0') {
+	if (isEqual("sqrt", op)) {
 		exponentiation(v[1], result2, 1 / 2.0, 0, 1);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if (op[0] == 'c'&&op[1] == 'b'&&op[2] == 'r'&&op[3] == 't'&&op[4] == '\0') {
+	if (isEqual("cbrt", op)) {
 		exponentiation(v[1], result2, 1 / 3.0, 0, 1);
 		result1 = resultR;
 		result2 = resultI;
 	}
 
-	if (op[0] == 'l'&&op[1] == 'n'&&op[2] == '\0') {
+	if (isEqual("ln", op)) {
 		complex_log(v[1], result2);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if ((op[0] == 'c'&&op[1] == 'o'&&op[2] == 's'&&op[3] == 'e'&&op[4] == 'c'&&op[5] == '\0') || (op[0] == 'c'&&op[1] == 's'&&op[2] == 'c'&&op[3] == '\0')) {
+	if (isEqual("cosec", op)) {
 		if (deg == 1) {
 			v[1] = ((v[1] * M_PI) / 180);
 			vI[1] = ((vI[1] * M_PI) / 180);
@@ -1434,12 +1435,12 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if ((op[0] == 'c'&&op[1] == 'o'&&op[2] == 's'&&op[3] == 'e'&&op[4] == 'c'&&op[5] == 'h'&&op[6] == '\0') || (op[0] == 'c'&&op[1] == 's'&&op[2] == 'c'&&op[3] == 'h')) {
+	if (isEqual("cosech", op)) {
 		cosech(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if (op[0] == 's'&&op[1] == 'e'&&op[2] == 'c'&&op[3] == '\0') {
+	if (isEqual("sec", op)) {
 		if (deg == 1) {
 			v[1] = ((v[1] * M_PI) / 180);
 			vI[1] = ((vI[1] * M_PI) / 180);
@@ -1453,13 +1454,13 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if (op[0] == 's'&&op[1] == 'e'&&op[2] == 'c'&&op[3] == 'h'&&op[4] == '\0') {
+	if (isEqual("sech", op)) {
 		sech(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
 
-	if ((op[0] == 'c'&&op[1] == 'o'&&op[2] == 't'&&op[3] == 'g'&&op[4] == '\0') || (op[0] == 'c'&&op[1] == 'o'&&op[2] == 't'&&op[3] == 'a'&&op[4] == 'n'&&op[5] == '\0') || (op[0] == 'c'&&op[1] == 't'&&op[2] == 'g'&&op[3] == '\0')) {
+	if (isEqual("cotan", op)) {
 		if (deg == 1) {
 			v[1] = ((v[1] * M_PI) / 180);
 			vI[1] = ((vI[1] * M_PI) / 180);
@@ -1472,27 +1473,27 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if ((op[0] == 'c'&&op[1] == 'o'&&op[2] == 't'&&op[3] == 'g'&&op[4] == 'h'&&op[5] == '\0') || (op[0] == 'c'&&op[1] == 'o'&&op[2] == 't'&&op[3] == 'a'&&op[4] == 'n'&&op[5] == 'h'&&op[6] == '\0') || (op[0] == 'c'&&op[1] == 't'&&op[2] == 'g'&&op[3] == 'h'&&op[4] == '\0')) {
+	if (isEqual("cotanh", op)) {
 		cotanh(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if ((op[0] == 'a'&&op[1] == 'c'&&op[2] == 'o'&&op[3] == 's'&&op[4] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 'o'&&op[4] == 's'&&op[5] == '\0')) {
+	if (isEqual("cosech", op)) {
 		complex_acos(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if ((op[0] == 'a'&&op[1] == 's'&&op[2] == 'i'&&op[3] == 'n'&&op[4] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 's'&&op[4] == 'e'&&op[5] == 'n'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 's'&&op[4] == 'i'&&op[5] == 'n'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 's'&&op[2] == 'e'&&op[3] == 'n'&&op[4] == '\0')) {
+	if (isEqual("asin", op)) {
 		complex_asin(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if ((op[0] == 'a'&&op[1] == 't'&&op[2] == 'a'&&op[3] == 'n'&&op[4] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 't'&&op[4] == 'a'&&op[5] == 'n'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 't'&&op[4] == 'g'&&op[5] == '\0') || (op[0] == 'a'&&op[1] == 't'&&op[2] == 'g'&&op[3] == '\0')) {
+	if (isEqual("atan", op)) {
 		complex_atan(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if (op[0] == 'c'&&op[1] == 'o'&&op[2] == 's'&&op[3] == '\0') {
+	if (isEqual("cos", op)) {
 		if (deg == 1) {
 			v[1] = ((v[1] * M_PI) / 180);
 			vI[1] = ((vI[1] * M_PI) / 180);
@@ -1508,12 +1509,12 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			result1 = v[0] * sqrt(1 - (sin(v[1])*sin(v[1])));
 		}
 	}
-	if (op[0] == 'c'&&op[1] == 'o'&&op[2] == 's'&&op[3] == 'h'&&op[4] == '\0') {
+	if (isEqual("cosh", op)) {
 		complex_cosh(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if ((op[0] == 's'&&op[1] == 'i'&&op[2] == 'n'&&op[3] == '\0') || (op[0] == 's'&&op[1] == 'e'&&op[2] == 'n'&&op[3] == '\0')) {
+	if (isEqual("sin", op)) {
 		if (deg == 1) {
 			v[1] = ((v[1] * M_PI) / 180);
 			vI[1] = ((vI[1] * M_PI) / 180);
@@ -1530,18 +1531,18 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		}
 	}
 
-	if ((op[0] == 's'&&op[1] == 'i'&&op[2] == 'n'&&op[3] == 'h'&&op[4] == '\0') || (op[0] == 's'&&op[1] == 'e'&&op[2] == 'n'&&op[3] == 'h'&&op[4] == '\0')) {
+	if (isEqual("sinh", op)) {
 		complex_sinh(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if (op[0] == 's'&&op[1] == 'i'&&op[2] == 'n'&&op[3] == 'c'&&op[4] == '\0') {
+	if (isEqual("sinc", op)) {
 		sinc(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
 
-	if ((op[0] == 't'&&op[1] == 'a'&&op[2] == 'n'&&op[3] == '\0') || (op[0] == 't'&&op[1] == 'g'&&op[2] == '\0')) {
+	if (isEqual("tan", op)) {
 		if (deg == 1) {
 			v[1] = ((v[1] * M_PI) / 180);
 			vI[1] = ((vI[1] * M_PI) / 180);
@@ -1557,92 +1558,92 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			result1 = v[0] * (sqrt(1 - cos(v[1])*cos(v[1])) / sqrt(1 - sin(v[1])*sin(v[1])));
 		}
 	}
-	if ((op[0] == 't'&&op[1] == 'a'&&op[2] == 'n'&&op[3] == 'h'&&op[4] == '\0') || (op[0] == 't'&&op[1] == 'g'&&op[2] == 'h'&&op[3] == '\0')) {
+	if (isEqual("tanh", op)) {
 		complex_tanh(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 		type = 1;
 	}
-	if ((op[0] == 'a'&&op[1] == 's'&&op[2] == 'i'&&op[3] == 'n'&&op[4] == 'h'&&op[5] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 's'&&op[3] == 'i'&&op[4] == 'n'&&op[5] == 'h'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 's'&&op[4] == 'i'&&op[5] == 'n'&&op[6] == 'h'&&op[7] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 's'&&op[4] == 'e'&&op[5] == 'n'&&op[6] == 'h'&&op[7] == '\0')) {
+	if (isEqual("asinh", op)) {
 		arsinh(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 		type = 1;
 	}
-	if ((op[0] == 'a'&&op[1] == 'c'&&op[2] == 'o'&&op[3] == 's'&&op[4] == 'h'&&op[5] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 'o'&&op[4] == 's'&&op[5] == 'h'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 'o'&&op[4] == 's'&&op[5] == 'h'&&op[6] == '\0')) {
+	if (isEqual("acosh", op)) {
 		arcosh(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 		type = 1;
 	}
-	if ((op[0] == 'a'&&op[1] == 't'&&op[2] == 'a'&&op[3] == 'n'&&op[4] == 'h'&&op[5] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 't'&&op[4] == 'g'&&op[5] == 'h'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 't'&&op[3] == 'a'&&op[4] == 'n'&&op[5] == 'h'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 't'&&op[4] == 'a'&&op[5] == 'n'&&op[6] == 'h'&&op[7] == '\0')) {
+	if (isEqual("atanh", op)) {
 		artanh(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 		type = 1;
 	}
-	if ((op[0] == 'a'&&op[1] == 'c'&&op[2] == 'o'&&op[3] == 't'&&op[4] == 'a'&&op[5] == 'n'&&op[6] == 'h'&&op[7] == '\0') || (op[0] == 'a'&&op[1] == 'c'&&op[2] == 'o'&&op[3] == 't'&&op[4] == 'h'&&op[5] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 'o'&&op[4] == 't'&&op[5] == 'h'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 'o'&&op[4] == 't'&&op[5] == 'g'&&op[6] == 'h'&&op[7] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 'o'&&op[4] == 't'&&op[5] == 'a'&&op[6] == 'n'&&op[7] == 'h'&&op[8] == '\0')) {
+	if (isEqual("acotanh", op)) {
 		arcoth(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 		type = 1;
 	}
-	if ((op[0] == 'a'&&op[1] == 's'&&op[2] == 'e'&&op[3] == 'c'&&op[4] == 'h'&&op[5] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 's'&&op[3] == 'e'&&op[4] == 'c'&&op[5] == 'h'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 's'&&op[4] == 'e'&&op[5] == 'c'&&op[6] == 'h'&&op[7] == '\0')) {
+	if (isEqual("asech", op)) {
 		arsech(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 		type = 1;
 	}
-	if ((op[0] == 'a'&&op[1] == 'c'&&op[2] == 'o'&&op[3] == 's'&&op[4] == 'e'&&op[5] == 'c'&&op[6] == 'h'&&op[7] == '\0') || (op[0] == 'a'&&op[1] == 'c'&&op[2] == 's'&&op[3] == 'c'&&op[4] == 'h'&&op[5] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 's'&&op[4] == 'c'&&op[5] == 'h'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 'o'&&op[4] == 's'&&op[5] == 'e'&&op[6] == 'c'&&op[7] == 'h'&&op[8] == '\0')) {
+	if (isEqual("acosech", op)) {
 		arcsch(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 		type = 1;
 	}
-	if (op[0] == 'q'&&op[1] == 'u'&&op[2] == 'o'&&op[3] == 't'&&op[4] == 'i'&&op[5] == 'e'&&op[6] == 'n'&&op[7] == 't'&&op[8] == '\0') {
+	if (isEqual("quotient", op)) {
 		qu_complex(v[0], vI[0], v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if (op[0] == 'r'&&op[1] == 'e'&&op[2] == 's'&&op[3] == 't'&&op[4] == '\0') {
+	if (isEqual("rest", op)) {
 		re_complex(v[0], vI[0], v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if ((op[0] == 'a'&&op[1] == 'c'&&op[2] == 'o'&&op[3] == 's'&&op[4] == 'e'&&op[5] == 'c'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 'o'&&op[4] == 's'&&op[5] == 'e'&&op[6] == 'c'&&op[7] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 's'&&op[4] == 'c'&&op[5] == '\0') || (op[0] == 'a'&&op[1] == 'c'&&op[2] == 's'&&op[3] == 'c'&&op[4] == '\0')) {
+	if (isEqual("acosec", op)) {
 		arcosec(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if ((op[0] == 'a'&&op[1] == 's'&&op[2] == 'e'&&op[3] == 'c'&&op[4] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 's'&&op[4] == 'e'&&op[5] == 'c'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 's'&&op[2] == 'c'&&op[3] == '\0')) {
+	if (isEqual("acosec", op)) {
 		arcsec(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if ((op[0] == 'a'&&op[1] == 'c'&&op[2] == 'o'&&op[3] == 't'&&op[4] == 'a'&&op[5] == 'n'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 'o'&&op[4] == 't'&&op[5] == 'g'&&op[6] == '\0') || (op[0] == 'a'&&op[1] == 'c'&&op[2] == 't'&&op[3] == 'g'&&op[4] == '\0') || (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 'o'&&op[4] == 't'&&op[5] == 'a'&&op[6] == 'n'&&op[7] == '\0')) {
+	if (isEqual("acotan", op)) {
 		arcotg(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if (op[0] == 'q'&&op[1] == 'f'&&op[2] == 'u'&&op[3] == 'n'&&op[4] == 'c'&&op[5] == '\0') {
+	if (isEqual("qfunc", op)) {
 		result1 = v[0] * qfunc(v[1]);
 	}
-	if (op[0] == 'q'&&op[1] == 'f'&&op[2] == 'u'&&op[3] == 'n'&&op[4] == 'c'&&op[5] == 'i'&&op[6] == 'n'&&op[7] == 'v'&&op[8] == '\0') {
+	if (isEqual("qfuncinv", op)) {
 		result1 = v[0] * qfuncinv(v[1]);
 	}
-	if (op[0] == 'g'&&op[1] == 'e'&&op[2] == 'r'&&op[3] == 'r'&&op[4] == 'o'&&op[5] == 'r'&&op[6] == '\0') {
+	if (isEqual("gerror", op)) {
 		result1 = v[0] * gerror(v[1]);
 	}
-	if (op[0] == 'g'&&op[1] == 'e'&&op[2] == 'r'&&op[3] == 'r'&&op[4] == 'o'&&op[5] == 'r'&&op[6] == 'c'&&op[7] == '\0') {
+	if (isEqual("gerrorc", op)) {
 		result1 = v[0] * gerrorc(v[1]);
 	}
-	if (op[0] == 'g'&&op[1] == 'e'&&op[2] == 'r'&&op[3] == 'r'&&op[4] == 'o'&&op[5] == 'r'&&op[6] == 'i'&&op[7] == 'n'&&op[8] == 'v'&&op[9] == '\0') {
+	if (isEqual("gerrorinv", op)) {
 		result1 = v[0] * gerrorinv(v[1]);
 	}
-	if (op[0] == 'g'&&op[1] == 'e'&&op[2] == 'r'&&op[3] == 'r'&&op[4] == 'o'&&op[5] == 'r'&&op[6] == 'c'&&op[7] == 'i'&&op[8] == 'n'&&op[9] == 'v'&&op[10] == '\0') {
+	if (isEqual("gerrorcinv", op)) {
 		result1 = v[0] * gerrorcinv(v[1]);
 	}
-	if (op[0] == 'a'&&op[1] == 'r'&&op[2] == 'c'&&op[3] == 'f'&&op[4] == 'a'&&op[5] == 'c'&&op[6] == 't'&&op[7] == '\0' || op[0] == 'a'&&op[1] == 'f'&&op[2] == 'a'&&op[3] == 'c'&&op[4] == 't'&&op[5] == '\0') {
+	if (isEqual("afact", op)) {
 		result1 = v[0] * arcfact(v[1]);
 		type = 1;
 	}

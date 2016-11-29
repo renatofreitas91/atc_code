@@ -1,31 +1,32 @@
 #include "stdafx.h"
 
-int commands(char arithTrig[DIM], char path[DIM], double result1, double result2) {
+boolean commands(char arithTrig[DIM], char path[DIM], double result1, double result2) {
 	FILE *fout = NULL, *fclean = NULL;
 	char stringV[DIM] = "";
 	fout = NULL;
 	while (fout == NULL) {
 		fout = fopen(path, "a+");
 	}
-	int command = 0, i = 0, r = 0, year = 0, s = 0;
+	int i = 0, r = 0, year = 0, s = 0;
+	boolean command = false;
 	i = 0;
 	if (isCommand(arithTrig, "donate")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/p/advantrigoncalc/donate/?source=navbar\""), NULL, SW_SHOW);
 	}
 	if (isCommand(arithTrig, "atcfacebook")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://www.facebook.com/advantrigoncalc/\""), NULL, SW_SHOW);
 	}
 	if (isCommand(arithTrig, "atcsourceforge")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/projects/advantrigoncalc/\""), NULL, SW_SHOW);
 	}
 	if (isCommand(arithTrig, "atcfromcmd")) {
-		command = 1;
+		command = true;
 		char comm[300] = "";
 		sprintf(comm, "/C \"setx /M PATH \"%%PATH%%;%s\"", atcPath);
 		using namespace std;
@@ -38,7 +39,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 
 	if (isCommand(arithTrig, "autosolvetxt")) {
-		command = 1;
+		command = true;
 		int p = 0;
 		char paTH[DIM] = "";
 		i = 0;
@@ -58,7 +59,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 
 	}
 	if (isCommand(arithTrig, "solvequadraticequation") && arithTrig[i + 22] == '(') {
-		command = 1;
+		command = true;
 		char values[DIM] = "", value[DIM] = "", saveValue[DIM] = "";
 		int v = 0, ct = 0;
 		double aR = 0, aI = 0, bR = 0, bI = 0, cR = 0, cI = 0;
@@ -213,7 +214,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		stringV[strlen(stringV) - 1] = '\0';
 		sprint(stringV, result1, result2);
 		puts(" ");
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 	}
 
 	if (isCommand(arithTrig, "print") && arithTrig[i + 5] == '(') {
@@ -243,10 +244,10 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			print(stringV, result1, result2);
 			puts(" ");
 		}
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 	}
 	if (isCommand(arithTrig, "clockctd")) {
-		command = 1;
+		command = true;
 		char comm[300] = "";
 		sprintf(comm, "/C \"explorer.exe %s\\Extra\\ctd.exe\"", atcPath);
 		using namespace std;
@@ -258,7 +259,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	if (isCommand(arithTrig, "logoff")) {
 		continu = 0;
-		command = 1;
+		command = true;
 		if (IsPreviousToWindowsVista()) {
 			system("C:\\WINDOWS\\System32\\shutdown -l");
 		}
@@ -267,13 +268,13 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 	}
 	if (isCommand(arithTrig, "enabletxtdetector")) {
-		command = 1;
+		command = true;
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del disable_txt_detector.txt\""), NULL, SW_SHOW);
 		Sleep(200);
 		puts(" ");
 	}
 	if (isCommand(arithTrig, "history")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		printf("\n==> Close the history to continue. <==\n\n");
 		char path4ATC[DIM] = "";
@@ -281,7 +282,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		system(path4ATC);
 	}
 	if (isCommand(arithTrig, "resetall")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		FILE *start;
 		char path4ATC[DIM] = "";
@@ -292,7 +293,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
 	}
 	if (isCommand(arithTrig, "resetsettings")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		FILE *start;
 		char path4ATC[DIM] = "";
@@ -303,7 +304,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
 	}
 	if (isCommand(arithTrig, "atcfolder")) {
-		command = 1;
+		command = true;
 		char comm[300] = "";
 		sprintf(comm, "/C \"explorer %s\"", atcPath);
 		using namespace std;
@@ -316,7 +317,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 
 	if (isCommand(arithTrig, "sourcecode")) {
-		command = 1;
+		command = true;
 		char comm[300] = "";
 		sprintf(comm, "/C \"explorer %s\\Source code\\\"", atcPath);
 		using namespace std;
@@ -327,7 +328,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		puts("");
 	}
 	if (isCommand(arithTrig, "scriptsexamples")) {
-		command = 1;
+		command = true;
 		char comm[300] = "";
 		sprintf(comm, "/C \"explorer %s\\Scripts examples\\\"", atcPath);
 		using namespace std;
@@ -338,7 +339,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		puts("");
 	}
 	if (isCommand(arithTrig, "strings")) {
-		command = 1;
+		command = true;
 		char comm[300] = "";
 		sprintf(comm, "/C \"explorer %s\\Strings\\\"", atcPath);
 		using namespace std;
@@ -349,7 +350,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		puts("");
 	}
 	if (isCommand(arithTrig, "userfunctions")) {
-		command = 1;
+		command = true;
 		char comm[300] = "";
 		sprintf(comm, "/C \"explorer %s\\User functions\\\"", atcPath);
 		using namespace std;
@@ -361,7 +362,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 
 	if (isCommand(arithTrig, "tosolve")) {
-		command = 1;
+		command = true;
 		char comm[300] = "";
 		sprintf(comm, "/C \"explorer %s\\To solve\\\"", atcPath);
 		using namespace std;
@@ -373,7 +374,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 
 	if (isCommand(arithTrig, "restartatc")) {
-		command = 1;
+		command = true;
 		continu = 0;
 		char path4ATC[DIM] = "";
 		sprintf(path4ATC, "%s\\atc.exe", atcPath);
@@ -385,7 +386,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 
 	if (isCommand(arithTrig, "runatc")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		char path4ATC[DIM] = "";
 		sprintf(path4ATC, "%s\\atc.exe", atcPath);
@@ -396,35 +397,40 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 	}
 	if (isCommand(arithTrig, "updateportable")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Advanced%20Trigonometry%20Calculator.zip/download\""), NULL, SW_SHOW);
 	}
 	if (isCommand(arithTrig, "update")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator.exe/download\""), NULL, SW_SHOW);
 	}
+	if (isCommand(arithTrig, "updatex64")) {
+		command = true;
+		puts(" ");
+		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator%20x64.exe/download\""), NULL, SW_SHOW);
+	}
 	if (isCommand(arithTrig, "userguide")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator - User Guide.pdf"), NULL, NULL, SW_SHOW);
 	}
 	if (isCommand(arithTrig, "sleep")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("runas"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"powercfg -hibernate off\""), NULL, SW_SHOW);
 		Sleep(5000);
 		system("C:\\WINDOWS\\System32\\Rundll32.exe powrprof.dll,SetSuspendState Sleep");
 	}
 	if (isCommand(arithTrig, "lock")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		system("C:\\WINDOWS\\System32\\Rundll32.exe User32.dll,LockWorkStation");
 	}
 
 	if (isCommand(arithTrig, "hibernate")) {
-		command = 1;
+		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("runas"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"powercfg -hibernate on\""), NULL, SW_SHOW);
 		Sleep(5000);
@@ -432,7 +438,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	if (isCommand(arithTrig, "shutdown")) {
 		continu = 0;
-		command = 1;
+		command = true;
 		if (IsPreviousToWindowsVista()) {
 			system("C:\\WINDOWS\\System32\\shutdown -s");
 		}
@@ -442,7 +448,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 	if (isCommand(arithTrig, "restartpc")) {
 		continu = 0;
-		command = 1;
+		command = true;
 		if (IsPreviousToWindowsVista()) {
 			system("C:\\WINDOWS\\System32\\shutdown -r");
 		}
@@ -453,21 +459,21 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	if (isCommand(arithTrig, "exit")) {
 		continu = 0;
 		fprintf(fout, "\n");
-		command = 1;
+		command = true;
 	}
 	if (isCommand(arithTrig, "clean")) {
-		cls(); command = 1;
+		cls(); command = true;
 		arithTrig[0] = '\0';
 		fprintf(fout, "\n");
 	}
 	if (isCommand(arithTrig, "about")) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		cls();
 		about2();
 		fprintf(fout, "\n");
 	}
 	if (isCommand(arithTrig, "mode")) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of mode <==\n\n");
 		fprintf(fout, "\n==> Configuration of mode <==\n\n");
 		mode();
@@ -478,7 +484,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		fclean = NULL;
 		while (fclean == NULL) {
 			fclean = fopen(path, "w");
-		}command = 1;
+		}command = true;
 		fclose(fclean);
 		printf("\n==> The history was cleaned sucessfully. <==\n\n");
 		fprintf(fout, "\n==> The history was cleaned sucessfully. <==\n\n");
@@ -486,19 +492,19 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		cleanhistory = 1;
 	}
 	if (isCommand(arithTrig, "colors")) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of background and text colors <==\n\n");
 		fprintf(fout, "\n==> Configuration of background and text colors <==\n\n");
 		colors();
 	}
 	if (isCommand(arithTrig, "dimensions")) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Dimensional configuration of the application window <==\n\n");
 		fprintf(fout, "\n==> Dimensional configuration of the application window <==\n\n");
 		dimensions();
 	}
 	if (isCommand(arithTrig, "window")) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of the position, width and height of the application window <==\n\n");
 		fprintf(fout, "\n==> Configuration of the position, width and height of the application window <==\n\n");
 		window();
@@ -693,7 +699,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n\n\n", countL, countR);
 			fprintf(fout, "\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n\n\n", countL, countR);
 		}
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 	}
 	if (isCommand(arithTrig, "eliminatevariables")) {
 		FILE *open = NULL;
@@ -705,7 +711,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			r++;
 		}
 		if (r < 100) {
-			command = 1;
+			command = true;
 			fclose(open);
 			open = NULL;
 			r = 0;
@@ -734,7 +740,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			r++;
 		}
 		if (r < 100) {
-			command = 1;
+			command = true;
 			fclose(open);
 			fclose(open);
 			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"rmdir /Q /S Strings&mkdir Strings\""), NULL, SW_SHOW);
@@ -805,12 +811,12 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 		puts("");
 		fputs("\n", fout);
-		command = 1;
+		command = true;
 		arithTrig[0] = '\0';
 	}
 
 	if (isCommand(arithTrig, "eliminateresults")) {
-		r = 0; command = 1;
+		r = 0; command = true;
 		while (r < rf) {
 			ans[r] = 0;
 			ansI[r] = 0;
@@ -832,7 +838,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			r++;
 		}
 		if (r < 100) {
-			command = 1;
+			command = true;
 			int w;
 			char seeVar[DIM] = "";
 			for (w = 0; (seeVar[w] = fgetc(open)) != EOF; w++);
@@ -860,7 +866,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 			r++;
 		}
 		if (r < 100) {
-			command = 1;
+			command = true;
 			int w;
 			char seeVar[DIM] = "";
 			for (w = 0; (seeVar[w] = fgetc(open)) != EOF; w++);
@@ -878,7 +884,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 	}
 	if (isCommand(arithTrig, "eliminateabbreviations")) {
-		FILE *open = NULL;	 command = 1;
+		FILE *open = NULL;	 command = true;
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\pathName.txt", atcPath);
 		while (open == NULL) {
@@ -890,7 +896,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		fclose(open);
 	}
 	if (isCommand(arithTrig, "seeabbreviations")) {
-		FILE *open = NULL;	   command = 1;
+		FILE *open = NULL;	   command = true;
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\pathName.txt", atcPath);
 		while (open == NULL) {
@@ -900,7 +906,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		int b = 0;
 		for (b = 0; (dataPath[b] = fgetc(open)) != EOF; b++);
 		dataPath[b] = '\0';
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		if (dataPath[0] != '\0') {
 			printf("\nAbbreviations paths\n\n%s\n", dataPath);
 			fprintf(fout, "\nAbbreviations paths\n\n%s\n", dataPath);
@@ -912,7 +918,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		fclose(open);
 	}
 	if (isCommand(arithTrig, "seeresults")) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		if (rf > 0) {
 			printf("\nResult value\n\n");
 			fprintf(fout, "\nResult value\n\n");
@@ -960,7 +966,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 
 	}
 	if (isCommand(arithTrig, "renamedvariables")) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		FILE *open = NULL;
 		int r = 0;
 		char toOpen[DIM] = "";
@@ -986,7 +992,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 	}
 	if (isCommand(arithTrig, "numericalsystems")) {
-		char arithTrig[DIM] = ""; command = 1;
+		char arithTrig[DIM] = ""; command = true;
 		arithTrig[0] = '\0';
 		printf("\n==> Configuration of numerical systems response <==\n\n");
 		fprintf(fout, "\n==> Configuration of numerical systems response <==\n\n");
@@ -1107,7 +1113,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 				printf("\n==> Your expression has syntax errors. <==\n\n");
 			}
 		}
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 	}
 
 
@@ -1241,11 +1247,11 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 				printf("\n==> Your expression has syntax errors. <==\n\n");
 			}
 		}
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 	}
 
 	if (isCommand(arithTrig, "siprefixes")) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of SI prefixes response <==\n\n");
 		fprintf(fout, "\n==> Configuration of SI prefixes response <==\n\n");
 		siPrefixController();
@@ -1253,12 +1259,12 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		printf("\n");
 	}
 	if (isCommand(arithTrig, "time")) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		Clock(1);
 		puts("");
 	}
 	if (isCommand(arithTrig, "actualtimeresponse")) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of actual time response <==\n\n");
 		fprintf(fout, "\n==> Configuration of actual time response <==\n\n");
 		actualTimeController();
@@ -1266,7 +1272,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		printf("\n");
 	}
 	if (isCommand(arithTrig, "dayofweek") && arithTrig[i + 9] == '(') {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		char Day[DIM] = "", Month[DIM] = "", Year[DIM] = "";
 		double plusYears = 0;
 		int r = 0;
@@ -1656,7 +1662,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 		}
 	}
 	if (isCommand(arithTrig, "predefinetxt")) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Drag to here the file to predefine and press the button \"Enter\" <==\n");
 		fprintf(fout, "\n==> Drag to here the file to predefine and press the button \"Enter\" <==\n");
 		char predTxt[DIM] = "";
@@ -1682,7 +1688,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 	}
 
 	if (isCommand(arithTrig, "solvetxt") && (arithTrig[i + 10] == '\0' || arithTrig[i + 8] == '(')) {
-		arithTrig[0] = '\0'; command = 1;
+		arithTrig[0] = '\0'; command = true;
 		FILE *readPred = NULL;
 		char readPath[DIM] = "";
 		if (arithTrig[i + 8] != '('&&arithTrig[i + 11] != '(') {
@@ -1816,7 +1822,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 					year = (int)convertToNumber(yea);
 				}
 			}
-			arithTrig[0] = '\0'; command = 1;
+			arithTrig[0] = '\0'; command = true;
 
 			if (year > 1759) {
 				char toOpen[DIM] = "";
@@ -1919,7 +1925,7 @@ int commands(char arithTrig[DIM], char path[DIM], double result1, double result2
 boolean isCommand(char forTesting[DIM], char command[DIM]) {
 	char toTest[DIM] = "";
 	int i = 0;
-	while (verifyLetter(forTesting[i]) == 1) {
+	while (verifyLetter(forTesting[i]) || verifyNumber(forTesting[i])) {
 		toTest[i] = forTesting[i];
 		i++;
 	}
@@ -1927,7 +1933,7 @@ boolean isCommand(char forTesting[DIM], char command[DIM]) {
 	if (isEqual(toTest, command)) {
 		if (forTesting[strlen(toTest)] == '(' || (forTesting[strlen(toTest)] == '+'&&forTesting[strlen(toTest) + 1] == '0'&&forTesting[strlen(toTest) + 2] == '\0')) {
 			if (forTesting[strlen(toTest)] == '(') {
-				i = strlen(toTest) + 1;
+				i = abs((int)strlen(toTest)) + 1;
 				int rP = 0, lP = 0;
 				while (forTesting[i] != '\0'&&i < abs((int)strlen(forTesting))) {
 					if (forTesting[i] == '(') {

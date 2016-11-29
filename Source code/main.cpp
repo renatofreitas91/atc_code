@@ -7,7 +7,7 @@ int Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 
 
 
 
-int main(int argc, char *argv[]) {
+void main(int argc, char *argv[]) {
 	char dataToSolve[DIM] = "";
 	FILE *fout = NULL;
 	int Colors = 1, tD = 0, i = 0;
@@ -103,7 +103,6 @@ int main(int argc, char *argv[]) {
 			}
 			if (argc >= 2) {
 				exit(0);
-				return 0;
 			}
 			char Path[DIM] = "";
 			sprintf(Path, "%s\\temp.txt", atcPath);
@@ -118,10 +117,9 @@ int main(int argc, char *argv[]) {
 		} while (continu == 1);
 	}
 	exit(0);
-	return 0;
 }
 
-int processTxt(char path[DIM], int re) {
+boolean processTxt(char path[DIM], int re) {
 	double result1 = 0, result2 = 0, anstxt[DIM], anstxtI[DIM];
 	FILE *fin = NULL, *fout = NULL, *open = NULL, *read = NULL;
 	char addBar[DIM] = "", savePath[DIM] = "", arith[DIM] = "", sendFunc[DIM] = "", resp[30] = "_answers.txt", varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
@@ -332,11 +330,27 @@ int processTxt(char path[DIM], int re) {
 	return toWrite;
 }
 
-int dataVerifier(char data[DIM], double result1, double result2, int comment, int verify) {
-	int decision = 1;
+boolean dataVerifier(char data[DIM], double result1, double result2, int comment, int verify) {
+	boolean decision = true;
 
 	if (abs((int)strlen(data)) > 0) {
-		int i = 0, j = 0, k = 0, l = 0, kr = 0, kl = 0, v = 0, cChars = 0, fr = 0, ra = 0, nDot = 0, g = 0, d = 0, w = 0, y = 0, t = 0, space = 0;
+		int kg = 0, kc = 0, i = 0;
+		for (i = 0; data[i] != '\0'; i++) {
+			if (data[i] == '(') {
+				kg++;
+			}
+			if (data[i] == ')') {
+				kc++;
+			}
+		}
+		if (kg != kc) {
+			decision = false;
+			if (comment == 1) {
+				printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
+			}
+			return decision;
+		}
+		int j = 0, k = 0, l = 0, kr = 0, kl = 0, v = 0, cChars = 0, fr = 0, ra = 0, nDot = 0, g = 0, d = 0, w = 0, y = 0, t = 0, space = 0;
 		char function[DIM] = "", variable[DIM] = "", expression[DIM] = "", text[DIM] = "", value[DIM] = "", saveVar[DIM] = "";
 		char validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_";
 		char numsysData[DIM] = "";
@@ -377,42 +391,42 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 				char systI[DIM] = "";
 				sprintf(systI, "%G", argumentI);
 				if (isEqual(systR, "INF") || isEqual(systR, "-INF") || isEqual(systI, "INF") || isEqual(systI, "-INF")) {
-					decision = 0;
+					decision = false;
 					if (comment == 1) {
 						printf("\nFunction argument is too big. Unable to process it.\n");
 					}
 					return decision;
 				}
 			}
-			decision = 1;
+			decision = true;
 			synTest = 1;
 			if (nPlaces != 0) {
 				if (nPlaces == 1000) {
 					if (comment == 1) {
 						puts("\nBinary places number entered with errors.\n");
 					}
-					decision = 0;
+					decision = false;
 					return decision;
 				}
 				if (nPlaces == 8000) {
 					if (comment == 1) {
 						puts("\nOctal places number entered with errors.\n");
 					}
-					decision = 0;
+					decision = false;
 					return decision;
 				}
 				if (nPlaces == 10000) {
 					if (comment == 1) {
 						puts("\nDecimal places number entered with errors.\n");
 					}
-					decision = 0;
+					decision = false;
 					return decision;
 				}
 				if (nPlaces == 16000) {
 					if (comment == 1) {
 						puts("\nHexadecimal places number entered with errors.\n");
 					}
-					decision = 0;
+					decision = false;
 					return decision;
 				}
 			}
@@ -438,7 +452,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 						}
 
 						if (t != strlen(numsysData)) {
-							decision = 0;
+							decision = false;
 							if (comment == 1) {
 								puts("\nBinary number entered with errors.\n");
 							}
@@ -464,7 +478,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 							}
 						}
 						if (t != strlen(numsysData)) {
-							decision = 0;
+							decision = false;
 							if (comment == 1) {
 								puts("\nOctal number entered with errors.\n");
 							}
@@ -490,7 +504,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 							}
 						}
 						if (t != strlen(numsysData)) {
-							decision = 0;
+							decision = false;
 							if (comment == 1) {
 								puts("\nHexadecimal number entered with errors.\n");
 							}
@@ -526,7 +540,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 							if (comment == 1) {
 								puts("\nResult indentifier not found.\n");
 							}
-							decision = 0;
+							decision = false;
 							return decision;
 						}
 					}
@@ -534,13 +548,13 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 				}
 
 			}
-			w = strlen(data) - 4;
+			w = abs((int)strlen(data)) - 4;
 			if ((data[w - 1] == '+' || data[w - 1] == '-' || data[w - 1] == '*' || data[w - 1] == '/' || data[w - 1] == '^') && data[w] == '+'&&data[w + 1] == '0'&&data[w + 2] == '+'&&data[w + 3] == '0'&&data[w + 4] == '\0') {
 				verify = 0;
 				if (comment == 1) {
 					puts("\nYour expression is terminating with an arithmetic symbol.\n");
 				}
-				decision = 0;
+				decision = false;
 				return decision;
 			}
 			for (w = 0; data[w] != '\0'; w++) {
@@ -549,7 +563,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 					if (comment == 1) {
 						puts("\nYour expression has consecutive arithmetic symbols.\n");
 					}
-					decision = 0;
+					decision = false;
 					return decision;
 				}
 			}
@@ -630,10 +644,10 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 						if (validVar == 0) {
 							if (varValidator[0] == 'E' || varValidator[0] == 'B' || varValidator[0] == 'O' || varValidator[0] == 'H' || varValidator[0] == 'P' || varValidator[0] == 'e' || varValidator[0] == 'p'&&varValidator[1] == 'i') {
 								if (varValidator[0] == 'E' || varValidator[0] == 'B' || varValidator[0] == 'O' || varValidator[0] == 'H' || initialProcessor(varValidator, 0) != 0) {
-									decision = 1;
+									decision = true;
 								}
 								else {
-									decision = 0;
+									decision = false;
 									if (comment == 1) {
 										printf("\nThe variable \"%s\" is not created yet.\n", saveVar);
 									}
@@ -641,7 +655,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 								}
 							}
 							else {
-								decision = 0;
+								decision = false;
 								if (comment == 1) {
 									printf("\nThe variable \"%s\" is not created yet.\n", saveVar);
 								}
@@ -689,7 +703,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 							char systI[DIM] = "";
 							sprintf(systI, "%G", argumentI);
 							if (isEqual(systR, "INF") || isEqual(systR, "-INF") || isEqual(systI, "INF") || isEqual(systI, "-INF")) {
-								decision = 0;
+								decision = false;
 								if (comment == 1) {
 									printf("\nFunction argument is too big. Unable to process it.\n");
 								}
@@ -715,7 +729,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 				}
 			}
 			if (nDot > 1) {
-				decision = 0;
+				decision = false;
 				if (comment == 1) {
 					puts("\nYou entered more than one dot on the entered value.\n");
 				}
@@ -724,7 +738,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 		}
 		for (ra = 0; data[ra] != '\0'; ra++) {
 			if (data[ra] == '_'&&data[ra - 1] == '_') {
-				decision = 0;
+				decision = false;
 				if (comment == 1) {
 					puts("\nYou don't need to enter \"__\", please use only a symbol \"_\" to represent negative values.\n");
 				}
@@ -737,14 +751,14 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 			}
 		}
 		if (cChars != ra) {
-			decision = 0;
+			decision = false;
 			if (comment == 1) {
 				puts("\nYou entered invalid characters.\n");
 			}
 			return decision;
 		}
 		if ((data[0] == '+' || data[0] == '-' || data[0] == '*' || data[0] == 'x' || data[0] == '/' || data[0] == '^') && (data[1] == '0'&&data[2] == '\0')) {
-			decision = 0;
+			decision = false;
 			if (comment == 1) {
 				puts("\nYou are trying relate the previous expression with zero (0).\n");
 			}
@@ -796,7 +810,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 		}
 		for (i = 0; data[i] != '\0'; i++) {
 			if (data[i] == '"' || data[i] == '%' || data[i] == '&' || data[i] == '"' || data[i] == '=' || data[i] == '?' || data[i] == '@' || data[i] == '£' || data[i] == '§' || data[i] == '\'' || data[i] == '€' || data[i] == '¨' || data[i] == '´' || data[i] == '`' || data[i] == 'ª' || data[i] == 'º' || data[i] == '~' || data[i] == ',' || data[i] == ';' || data[i] == ':' || data[i] == '«' || data[i] == '»') {
-				decision = 0;
+				decision = false;
 				if (comment == 1) {
 					puts("\nYou entered invalid characters.\n");
 				}
@@ -812,7 +826,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 			if (data[i] == '(') {
 				kl++;
 				if (data[i + 1] == '+' || data[i + 1] == '-' || data[i + 1] == '*' || data[i + 1] == 'x' || data[i + 1] == '/' || data[i + 1] == '^' || data[i + 1] == '!') {
-					decision = 0;
+					decision = false;
 					if (comment == 1) {
 						puts("\nYou entered an arithmetic symbol next to \"(\".\n");
 					}
@@ -822,7 +836,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 			if (data[i] == ')') {
 				kr++;
 				if (data[i - 1] == '+' || data[i - 1] == '-' || data[i - 1] == '*' || data[i - 1] == 'x' || data[i - 1] == '/' || data[i - 1] == '^') {
-					decision = 0;
+					decision = false;
 					if (comment == 1) {
 						puts("\nYou entered an arithmetic symbol previous to \")\".\n");
 					}
@@ -831,30 +845,30 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 			}
 		}
 		if (kr != kl) {
-			decision = 0;
+			decision = false;
 			return decision;
 		}
 		for (i = 0; data[i] != '\0'; i++) {
 			j = 0;
 			if (data[i] == 'r'&&data[i + 1] == 'e'&&data[i + 2] == 's'&&data[i + 3] != 't') {
-				decision = 1;
+				decision = true;
 				i = i + 3;
 			}
 			if (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == 'x' || data[i] == '^' || data[i] == 'e' || data[i] == 'p'&&data[i + 1] == 'i' || data[i - 1] == 'p'&&data[i] == 'i') {
 				j = 0;
 				while (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == 'x' || data[i] == '^' || data[i] == 'e' || data[i] == 'p'&&data[i + 1] == 'i' || data[i - 1] == 'p'&&data[i] == 'i') {
 					i++;
-					decision = 1;
+					decision = true;
 					j++;
 				}
 			}
 			if (data[i] == 'r'&&data[i + 1] == 'e'&&data[i + 2] == 's'&&data[i + 3] != 't') {
-				decision = 1;
+				decision = true;
 				i = i + 3;
 			}
 
 			if (data[i] == 'a' || data[i] == 's'&&data[i - 1] != 'e'&&data[i - 2] != 'r' || data[i] == 'c' || data[i] == 't' || data[i] == 'g' || data[i] == 'd' || data[i] == 'l' || data[i] == 'q' || data[i] == 'r') {
-				decision = 1;
+				decision = true;
 				j = 0;
 				while (data[i] != '('&&data[i] != '\0'&&i < abs((int)strlen(data))) {
 					k = 0;
@@ -871,7 +885,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 						expression[l] = '\0';
 						int p = 0;
 						if (strlen(expression) == 0) {
-							decision = 0;
+							decision = false;
 							if (comment == 1) {
 								puts("\nLogarithm base is null.\n");
 							}
@@ -893,7 +907,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 							k++;
 						}
 						if (k != 2) {
-							decision = 0;
+							decision = false;
 							if (comment == 1) {
 								puts("\nNumber of \"bs\" for advanced logarithmic function can't be different of 2.\n");
 							}
@@ -922,7 +936,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 						}
 						expression[l] = '\0';
 						if (strlen(expression) == 0) {
-							decision = 0;
+							decision = false;
 							if (comment == 1) {
 								puts("\nRoot degree is null.\n");
 							}
@@ -943,7 +957,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 							k++;
 						}
 						if (k != 2) {
-							decision = 0;
+							decision = false;
 							if (comment == 1) {
 								puts("\nNumber of \"Ds\" for advanced root function can't be different of 2.\n");
 							}
@@ -963,7 +977,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 								j++;
 							}
 							if (function[j + 1] != '\0') {
-								decision = 0;
+								decision = false;
 								return decision;
 							}
 						}
@@ -973,29 +987,29 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 								j++;
 							}
 							if (function[j + 1] != '\0') {
-								decision = 0;
+								decision = false;
 								return decision;
 							}
 						}
 						j++;
 					}
 					if (j != strlen(function)) {
-						decision = 0;
+						decision = false;
 						return decision;
 					}
 				}
 				resultI = 0.5;
-				int ko = strlen(function);
+				int ko = abs((int)strlen(function));
 				function[ko] = '?'; function[ko + 1] = '\0';
 				if (functionProcessor(function, 0.2, 1.0, result1) != 0 || function[0] == 'r'&&function[1] == 'e'&&function[2] == 's'&&function[3] == 't'&&function[4] == '\0' || function[0] == 'q'&&function[1] == 'u'&&function[2] == 'o'&&function[3] == 't'&&function[4] == 'i'&&function[5] == 'e'&&function[6] == 'n'&&function[7] == 't'&&function[8] == '\0' || function[0] == 'a'&&function[1] == 'c'&&function[2] == 'o'&&function[3] == 's'&&function[4] == 'h'&&function[5] == '\0' || function[0] == 'a'&&function[1] == 'c'&&function[2] == 'o'&&function[3] == 't'&&function[4] == 'a'&&function[5] == 'n'&&function[6] == 'h'&&function[7] == '\0') {
-					decision = 1;
+					decision = true;
 				}
 				else {
 					if (strlen(function) > 0) {
 						if (comment == 1) {
 							puts("\nInvalid function entered.\n");
 						}
-						decision = 0;
+						decision = false;
 					}
 					return decision;
 				}
@@ -1004,13 +1018,13 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 				j = 0;
 				while ((data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == 'x' || data[i] == '^' || data[i] == 'e' || data[i] == 'p'&&data[i + 1] == 'i' || data[i - 1] == 'p'&&data[i] == 'i') && data[i] != '\0') {
 					i++;
-					decision = 1;
+					decision = true;
 					j++;
 				}
 			}
 			j = 0;
 			if (data[i] == 'r'&&data[i + 1] == 'e'&&data[i + 2] == 's'&&data[i + 3] != 't') {
-				decision = 1;
+				decision = true;
 				i = i + 3;
 			}
 			if (data[i] == 'B' || data[i] == 'O' || data[i] == 'H' || data[i] == 'Q' || data[i] == 'W' || data[i] == 'R' || data[i] == 'T' || data[i] == 'Y' || data[i] == 'U' || data[i] == 'I' || data[i] == 'P' || data[i] == 'A' || data[i] == 'S' || data[i] == 'D' || data[i] == 'F' || data[i] == 'G' || data[i] == 'J' || data[i] == 'K' || data[i] == 'L' || data[i] == 'Z' || data[i] == 'X' || data[i] == 'C' || data[i] == 'V' || data[i] == 'N' || data[i] == 'M' || data[i] == 'm' || data[i] == 'n' || data[i] == 'b' || data[i] == 'v' || data[i] == 'z' || data[i] == 'k' || data[i] == 'j' || data[i] == 'h' || data[i] == 'f' || data[i] == 'a' || data[i] == 'p' || data[i] == 'o' || data[i] == 'u' || data[i] == 'y' || data[i] == 'w') {
@@ -1022,7 +1036,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 				}
 				variable[j] = '\0';
 				if (initialProcessor(variable, result1) != 0) {
-					decision = 1;
+					decision = true;
 					variable[j] = '\0';
 				}
 				else {
@@ -1034,7 +1048,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 					variable[w] = '\0';
 					processVariable(variable);
 					if (validVar == 1) {
-						decision = 1;
+						decision = true;
 					}
 				}
 			}
@@ -1042,7 +1056,7 @@ int dataVerifier(char data[DIM], double result1, double result2, int comment, in
 		return decision;
 	}
 	else {
-		decision = 0;
+		decision = false;
 		printf("\nData for verification is null.\n");
 		return decision;
 	}

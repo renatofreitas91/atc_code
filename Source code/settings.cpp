@@ -188,7 +188,7 @@ void mode() {
 	fclose(open);
 }
 
-int about() {
+boolean about() {
 	system("title Advanced Trigonometry Calculator v1.8.7");
 	HWND a;
 	a = GetConsoleWindow();
@@ -196,7 +196,8 @@ int about() {
 	system("MODE con cols=84 lines=40");
 	_flushall();
 	char exit[DIM] = "";
-	int i, continu = 1;
+	int i;
+	boolean continu = true;
 	puts("\n\n\n\n");
 	printf("                   %c%c%c  %c%c%c%c  %c   %c  %c%c%c  %c   %c  %c%c%c  %c%c%c%c%c %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("                  %c   %c %c   %c %c   %c %c   %c %c%c  %c %c   %c %c     %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
@@ -266,10 +267,10 @@ int about() {
 		}
 	}
 
-	if (continu == 1) {
+	if (continu) {
 		cls();
 	}
-	if (continu == 1) {
+	if (continu) {
 		int Window = 3, Dimensions = 2;
 		applySettings(Window);
 		applySettings(Dimensions);

@@ -30,7 +30,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			getVarName[h] = '\0';
 			strIndex = 0;
 			for (int ks = 0; getVarName[ks] != '\0'; ks++) {
-				if (verifyNumber(getVarName[ks]) == 1 || verifyLetter(getVarName[ks]) == 1) {
+				if (verifyNumber(getVarName[ks]) || verifyLetter(getVarName[ks])) {
 					strIndex++;
 				}
 			}
@@ -53,7 +53,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 	}
 	variable[0] = '\0';
 	for (i = 0; arithTrig[i] != '\0'; i++) {
-		if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == ':'&&arithTrig[i + 1] == '\\') {
+		if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == ':'&&arithTrig[i + 1] == '\\') {
 			txt = 1;
 		}
 	}
@@ -84,8 +84,8 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			}
 			pathName[p] = '\0';
 			for (p = 0; pathName[p] != ' '&&pathName[p] != ')'&&pathName[p] != '\0'; p++);
-			if (p == strlen(pathName)) {
-				int lenPath = strlen(pathName) + 1;
+			if (p == abs((int)strlen(pathName))) {
+				int lenPath = abs((int)strlen(pathName)) + 1;
 				for (p = lenPath; arithTrig[p] != '\0'; p++) {
 					arithTrig[p - lenPath] = arithTrig[p];
 				}
@@ -101,8 +101,8 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 
 		if (arithTrig[0] != '\0') {
 			command = 1;
-			int toWrite = processTxt(arithTrig, rf);
-			if (toWrite == 1) {
+			boolean toWrite = processTxt(arithTrig, rf);
+			if (toWrite) {
 				printf("\n==> Close the file with the answers to continue. <==\n\n");
 				fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
 				openTxt();
@@ -125,7 +125,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			variableString[p] = '\0';
 			for (p = 0; variableString[p] != ' '&&variableString[p] != ')'&&variableString[p] != '\0'&&p < abs((int)strlen(variableString)); p++);
 			if (strIndex == strlen(variableString)) {
-				int lenStr = strlen(variableString) + 1;
+				int lenStr = abs((int)strlen(variableString)) + 1;
 				p++;
 				if (arithTrig[lenStr] == '\"') {
 					arithTrig[p - lenStr] = arithTrig[p];
@@ -217,7 +217,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			while (fout == NULL) {
 				fout = fopen(path, "a+");
 			}
-			if (command == 0 && continu == 1) {
+			if (command == 0 && continu) {
 				main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
 				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 			}
@@ -254,10 +254,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		int hk = variableValidator(variable);
 		if (hk == 1 || v == 1) {
 			processVariable(revariable);
-			if (validVar == 0 && valid == 0) {
-				//printf("\n==> Your variable was renamed to \"%s\", but you can continue using it with the same name that you chose. <==\n\n", revariable);
-				//fprintf(fout, "\n==> Your variable was renamed to \"%s\", but you can continue using it with the same name that you chose. <==\n\n", revariable);
-			}
 		}
 		if (hk == 2) {
 			if (isFromMain == 1) {
@@ -383,25 +379,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		synTest = 0;
 		verify = dataVerifier(arithTrig, result1, result2, isFromMain, verify);
 	}
-
-	int kg = 0, kc = 0;
-	for (i = 0; arithTrig[i] != '\0'; i++) {
-		if (arithTrig[i] == '(' || arithTrig[i] == '[' || arithTrig[i] == '{') {
-			kg++;
-		}
-		if (arithTrig[i] == ')' || arithTrig[i] == ']' || arithTrig[i] == '}') {
-			kc++;
-		}
-	}
-	if (kg != kc) {
-		if (isFromMain == 1) {
-			printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n\n\n", kg, kc);
-		}
-		fprintf(fout, "\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n\n\n", kg, kc);
-		arithTrig[0] = '\0';
-	}
-
-
 	fclose(fout);
 	if (arithTrig[0] != '\0'&&isFromMain == 1) {
 		Clock(0);

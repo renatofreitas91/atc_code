@@ -116,7 +116,7 @@ double processVariable(char variable[DIM]) {
 		i = 0;
 		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 		vari[i] = '\0';
-		lth = strlen(vari);
+		lth = abs((int)strlen(vari));
 		fclose(open);
 		i = 0;
 		for (i = 0; vari[i] != '\0'; i++) {
@@ -242,7 +242,7 @@ void variableController(char variable[DIM], double result) {
 					}g++; i++;
 				}
 				va[g] = '\0';
-				p = strlen(variable);
+				p = abs((int)strlen(variable));
 			}
 			g = 0;
 			for (y = 0; va[y] != '\0'; y++) {
@@ -305,7 +305,7 @@ int variableValidator(char variable[DIM]) {
 
 	FILE *var = NULL, *var1 = NULL;
 	i = 0;
-	abc = strlen(variable);
+	abc = abs((int)strlen(variable));
 	valid = 0;
 	for (i = 0; variable[i] != '\0'; i++) {
 		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd' || variable[i] == 'b')) {
@@ -746,7 +746,7 @@ double convertToNumber(char number[DIM]) {
 	while (number[i] != '\0') {
 		i++;
 	}
-	l = strlen(number) - j - 4;
+	l = abs((int)strlen(number)) - j - 4;
 	for (i = 0; j >= 0; i++) {
 		nu[0] = number[i];
 		nu[1] = '.';
@@ -772,7 +772,7 @@ double convertToNumber(char number[DIM]) {
 	return result;
 }
 
-int isToWrite(char arith[DIM]) {
+boolean isToWrite(char arith[DIM]) {
 	char noAnswer[16] = "NO_ANSWERS_FILE";
 	int h = 0;
 	if (noAnswer[h] == arith[h]) {
@@ -781,10 +781,10 @@ int isToWrite(char arith[DIM]) {
 		}
 		h--;
 		if (h == strlen(arith) && strlen(arith) == strlen(noAnswer)) {
-			return 0;
+			return false;
 		}
 	}
-	return 1;
+	return true;
 }
 
 void renamer(char expression[DIM]) {
@@ -1010,7 +1010,7 @@ void pathNameController(char pathName[DIM], char path[DIM]) {
 					k++; i++;
 				}
 				paName[k] = '\0';
-				w = strlen(pathName) + strlen(paName) + 3;
+				w = abs((int)strlen(pathName)) + abs((int)strlen(paName)) + 3;
 				for (l = y; data[l + w] != '\0'; l++) {
 					data[l] = data[l + w];
 
@@ -1090,8 +1090,8 @@ void stringVariableController(char stringVariable[DIM], char string[DIM]) {
 				j++;
 				i++;
 			}
-			if (j == strlen(stringVariable) && data[i] == '\n') {
-				w = strlen(stringVariable) + 3;
+			if (j == abs((int)strlen(stringVariable)) && data[i] == '\n') {
+				w = abs((int)strlen(stringVariable)) + 3;
 				for (l = y; data[l + w] != '\0'; l++) {
 					data[l] = data[l + w];
 
@@ -1120,81 +1120,81 @@ void stringVariableController(char stringVariable[DIM], char string[DIM]) {
 	}
 }
 
-int firstLetterVariable(char letter) {
+boolean firstLetterVariable(char letter) {
 	char letters[100] = "QWRTYUISGJKLZXVNMwyuofhjkzvnmp";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(letters)); i++) {
 		if (letter == letters[i]) {
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
-int letterVariables(char letter) {
+boolean letterVariables(char letter) {
 	char letters[100] = "QWRTYUIOSGHJKLZXVNMqwrtyuopasdfghjklzcvnm";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(letters)); i++) {
 		if (letter == letters[i]) {
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
-int verifyLetter(char letter) {
+boolean verifyLetter(char letter) {
 	char letters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(letters)); i++) {
 		if (letter == letters[i]) {
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
-int verifyNumber(char number) {
+boolean verifyNumber(char number) {
 	char numbers[DIM] = "0123456789";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(numbers)); i++) {
 		if (number == numbers[i]) {
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
-int verifyNumerical(char number) {
+boolean verifyNumerical(char number) {
 	char numbers[DIM] = "_-.0123456789ABCDEF";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(numbers)); i++) {
 		if (number == numbers[i]) {
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
-int verify4Printf(char chars) {
+boolean verify4Printf(char chars) {
 	char printfChars[DIM] = "0123456789diuoxXfFeEgGaAcspn%-+#*.hljztL\"";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(printfChars)); i++) {
 		if (chars == printfChars[i]) {
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
-int verifySpecifier(char chars) {
+boolean verifySpecifier(char chars) {
 	char printfChars[DIM] = "diuoxXfFeEgGaAcsp";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(printfChars)); i++) {
 		if (chars == printfChars[i]) {
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
 void variableToMultiply(char expression[DIM]) {
@@ -1202,11 +1202,11 @@ void variableToMultiply(char expression[DIM]) {
 	char variable[DIM] = "", saveVariable[DIM] = "";
 	while (expression[i] != '\0') {
 		v = -7;
-		if (verifyLetter(expression[i]) == 1 && (verifyLetter(expression[i - 1]) == 0 || i == 0)) {
+		if (verifyLetter(expression[i]) && (verifyLetter(expression[i - 1]) == false || i == 0)) {
 			j = 0;
 			u = i;
 			validVar = 0;
-			while (verifyLetter(expression[i]) == 1) {
+			while (verifyLetter(expression[i])) {
 				variable[j] = expression[i];
 				variable[j + 1] = '\0';
 				for (d = 0; variable[d] != '\0'; d++) {
@@ -1228,7 +1228,7 @@ void variableToMultiply(char expression[DIM]) {
 				}
 				variable[d] = '\0';
 				if (validVar == 1) {
-					l = strlen(expression);
+					l = abs((int)strlen(expression));
 					v = i;
 				}
 				j++; i++;
@@ -1239,7 +1239,7 @@ void variableToMultiply(char expression[DIM]) {
 				for (k; k - 1 > v; k--) {
 					expression[k] = expression[k - 1];
 				}
-				if (verifyNumber(expression[k + 1]) == 1 || verifyLetter(expression[k + 1]) == 1) {
+				if (verifyNumber(expression[k + 1]) || verifyLetter(expression[k + 1])) {
 					expression[k] = '*';
 				}
 				else {
@@ -1273,8 +1273,8 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 			j++; i = i + 2;
 		}
 		else {
-			if (verifyNumber(expression[i]) == 1) {
-				while (verifyNumber(expression[i]) == 1 && expression[i] != '\0' || expression[i] == 'i'&&expression[i - 1] == '1') {
+			if (verifyNumber(expression[i])) {
+				while (verifyNumber(expression[i]) && expression[i] != '\0' || expression[i] == 'i'&&expression[i - 1] == '1') {
 					value[j] = expression[i];
 					value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
 					j++; i++;
@@ -1282,8 +1282,8 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 			}
 
 			else {
-				if (verifyLetter(expression[i - 1]) == 0 && firstLetterVariable(expression[i]) == 1) {
-					while (verifyLetter(expression[i]) == 1 && expression[i] != '\0') {
+				if (verifyLetter(expression[i - 1]) == 0 && firstLetterVariable(expression[i])) {
+					while (verifyLetter(expression[i]) && expression[i] != '\0') {
 						value[j] = expression[i];
 						j++; i++;
 					}
@@ -1293,7 +1293,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 
 				}
 				else {
-					if (verifyLetter(expression[i - 1]) == 0 && firstLetterFunction(expression[i]) == 1) {
+					if (verifyLetter(expression[i - 1]) == 0 && firstLetterFunction(expression[i])) {
 						value[j] = expression[i];
 						value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
 						j++; i++;
@@ -1354,7 +1354,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 							synTest = 0;
 							verify = dataVerifier(value, result1, result2, 0, verify);
 
-							if (verify == 1 && firstLetterFunction(value[j]) == 0 && verifyLetter(value[j]) == 1 && value[j] != 'i') {
+							if (verify == 1 && firstLetterFunction(value[j]) == false && verifyLetter(value[j]) && value[j] != 'i') {
 								j++; i++;
 								while (verify == 1 && expression[i] != '\0') {
 									value[j] = expression[i];
@@ -1393,7 +1393,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 										value[j + 1] = expression[i + 1]; value[j + 2] = '+'; value[j + 3] = '0'; value[j + 4] = '\0';
 										int verifyS = dataVerifier(value, result1, result2, 0, verify);
 										value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
-										if (verify == verifyS&&verify == 1 && verifyLetter(expression[i + 1]) == 1) {
+										if (verify == verifyS&&verify == 1 && verifyLetter(expression[i + 1])) {
 											verify = 0;
 										}
 										j++; i++;
@@ -1422,9 +1422,9 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 	expressionF[i] = '\0';
 }
 
-int verifyPrefix(char prefix[DIM]) {
+boolean verifyPrefix(char prefix[DIM]) {
 	char prefixes[DIM] = "Y,Z,E,P,T,G,M,k,h,da,d,c,m,u,n,p,f,a,z,y,";
-	int i = 0, j = 0, valid = 1;
+	int i = 0, j = 0;
 	for (i = 0; prefix[i] != '\0'; i++) {
 		for (j = 0; prefixes[j] != '\0'; j++) {
 			if (prefix[i] == prefixes[j] && i == 0) {
@@ -1432,24 +1432,24 @@ int verifyPrefix(char prefix[DIM]) {
 					i++; j++;
 				}
 				if (prefix[i] == '\0'&&prefixes[j] == ',') {
-					return valid;
+					return true;
 				}
 				i = 0;
 			}
 		}
 	}
-	return 0;
+	return false;
 }
 
-int firstLetterFunction(char letter) {
+boolean firstLetterFunction(char letter) {
 	char letters[100] = "castlrqgd";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(letters)); i++) {
 		if (letter == letters[i]) {
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
 void customFuncRenamer(char variable[DIM]) {
@@ -1552,7 +1552,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	int i = 0, j = 0, s = 0, f = 0;
 	char letterScan[DIM] = "";
 	for (i = 0; arithTrig[i] != '\0'; i++) {
-		if (verifyLetter(arithTrig[i]) == 1) {
+		if (verifyLetter(arithTrig[i])) {
 			letterScan[i] = arithTrig[i];
 		}
 		else {
@@ -1563,10 +1563,10 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	char toTest[DIM] = "";
 	int savePosition = 0;
 	for (i = 0; letterScan[i] != '\0'; i++) {
-		if (verifyLetter(letterScan[i]) == 1) {
+		if (verifyLetter(letterScan[i])) {
 			f = 0;
 			savePosition = i;
-			while (verifyLetter(letterScan[i]) == 1) {
+			while (verifyLetter(letterScan[i])) {
 				toTest[f] = letterScan[i];
 				i++; f++;
 			}
@@ -1594,7 +1594,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		}
 	}
 	for (i = 0; arithTrig[i] != '\0'; i++) {
-		if (verifyLetter(arithTrig[i]) == 1) {
+		if (verifyLetter(arithTrig[i])) {
 			arithTrig[i] = letterScan[i];
 		}
 	}
@@ -1614,18 +1614,18 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if (arithTrig[i] == 'B' || arithTrig[i] == 'O' || arithTrig[i] == 'H') {
 				i++;
-				while (verifyNumerical(arithTrig[i]) == 1) {
+				while (verifyNumerical(arithTrig[i])) {
 					i++;
 				}
 				if (arithTrig[i - 1] == '1'&&arithTrig[i] == 'i') {
 					j = i;
-					i = strlen(arithTrig) + 1;
+					i = abs((int)strlen(arithTrig)) + 1;
 					while (i > j) {
 						arithTrig[i] = arithTrig[i - 2];
 						i--;
 					}
 					arithTrig[i] = '*'; arithTrig[i + 1] = '1';
-					i = strlen(arithTrig);
+					i = abs((int)strlen(arithTrig));
 
 				}
 			}
@@ -1633,7 +1633,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if (arithTrig[i] == 'B' || arithTrig[i] == 'O' || arithTrig[i] == 'H') {
 				i++;
-				while (verifyNumerical(arithTrig[i]) == 1) {
+				while (verifyNumerical(arithTrig[i])) {
 					i++;
 				}
 				if (arithTrig[i - 1] == '1'&&arithTrig[i] == 'i') {
@@ -1651,20 +1651,20 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needOne == 1) {
 		needOne = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i - 1] != '1'&& arithTrig[i - 1] != 'i'&&arithTrig[i - 1] != 'p'&& arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == 0) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1'&& arithTrig[i - 1] != 'i'&&arithTrig[i - 1] != 'p'&& arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == false) {
 				j = i;
-				i = strlen(arithTrig) + 1;
+				i = abs((int)strlen(arithTrig)) + 1;
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 2];
 					i--;
 				}
 				arithTrig[i] = '*'; arithTrig[i + 1] = '1';
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i - 1] != '1'&& arithTrig[i - 1] != 'i'&&arithTrig[i - 1] != 'p'&& arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == 0) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1'&& arithTrig[i - 1] != 'i'&&arithTrig[i - 1] != 'p'&& arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == false) {
 				needOne = 1;
 			}
 		}
@@ -1680,9 +1680,9 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needAst == 1) {
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1]) == 1) {
+			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1])) {
 				j = i + 1;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 1];
 					i--;
@@ -1691,7 +1691,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1]) == 1) {
+			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1])) {
 				needAst = 1;
 			}
 		}
@@ -1700,9 +1700,9 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needAst == 1) {
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 1) {
+			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2])) {
 				j = i + 2;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 1];
 					i--;
@@ -1712,7 +1712,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		}
 
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 1) {
+			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2])) {
 				needAst = 1;
 			}
 		}
@@ -1721,21 +1721,21 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needAst == 1) {
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i - 1] != 'b'&&arithTrig[i - 1] != 'D'&&arithTrig[i - 2] != 't'&&arithTrig[i - 3] != 'r' && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 0) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != 'b'&&arithTrig[i - 1] != 'D'&&arithTrig[i - 2] != 't'&&arithTrig[i - 3] != 'r' && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == false) {
 				j = i;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 1];
 					i--;
 				}
 				arithTrig[i] = '*';
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 
 			}
 		}
 
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i - 1] != 'b'&&arithTrig[i - 1] != 'D'&&arithTrig[i - 2] != 't'&&arithTrig[i - 3] != 'r' && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 0) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != 'b'&&arithTrig[i - 1] != 'D'&&arithTrig[i - 2] != 't'&&arithTrig[i - 3] != 'r' && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == false) {
 				needAst = 1;
 			}
 		}
@@ -1744,19 +1744,19 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needAst == 1) {
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1]) == 0) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1]) == false) {
 				j = i;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 1];
 					i--;
 				}
 				arithTrig[i] = '*';
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1]) == 0) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1]) == false) {
 				needAst = 1;
 			}
 		}
@@ -1772,15 +1772,15 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needAst == 1) {
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 1) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2])) {
 				if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') {
-					while (verifyLetter(arithTrig[i]) == 1) {
+					while (verifyLetter(arithTrig[i])) {
 						i--;
 					}
 					i++;
 					int lo = 0;
 					char func[DIM] = "";
-					while (verifyLetter(arithTrig[i]) == 1 && arithTrig[i] != 'b'&&arithTrig[i] != 'D') {
+					while (verifyLetter(arithTrig[i]) && arithTrig[i] != 'b'&&arithTrig[i] != 'D') {
 						func[lo] = arithTrig[i];
 						lo++; i++;
 					}
@@ -1793,18 +1793,18 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					}
 				}
 			}
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 1) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2])) {
 
 
 				j = i;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 1];
 					i--;
 				}
 				arithTrig[i] = '*';
 				j = j + 3;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 1];
 					i--;
@@ -1814,15 +1814,15 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 1) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2])) {
 				if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') {
-					while (verifyLetter(arithTrig[i]) == 1) {
+					while (verifyLetter(arithTrig[i])) {
 						i--;
 					}
 					i++;
 					int lo = 0;
 					char func[DIM] = "";
-					while (verifyLetter(arithTrig[i]) == 1 && arithTrig[i] != 'b'&&arithTrig[i] != 'D') {
+					while (verifyLetter(arithTrig[i]) && arithTrig[i] != 'b'&&arithTrig[i] != 'D') {
 						func[lo] = arithTrig[i];
 						lo++; i++;
 					}
@@ -1836,7 +1836,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 			}
 
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == 1) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2])) {
 				needAst = 1;
 			}
 		}
@@ -1851,20 +1851,20 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needOne == 1) {
 		needOne = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) == 1 && arithTrig[i + 1] != 'D'&&arithTrig[i + 1] != 'b') {
+			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D'&&arithTrig[i + 1] != 'b') {
 				j = i + 1;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 1];
 					i--;
 				}
 				arithTrig[i] = '*';
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) == 1 && arithTrig[i + 1] != 'D'&&arithTrig[i + 1] != 'b') {
+			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D'&&arithTrig[i + 1] != 'b') {
 				needOne = 1;
 			}
 		}
@@ -1873,20 +1873,20 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needOne == 1) {
 		needOne = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i - 1] != '1'&&arithTrig[i - 1] != 'p'&& arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == 0) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1'&&arithTrig[i - 1] != 'p'&& arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == 0) {
 				j = i;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 1];
 					i--;
 				}
 				arithTrig[i] = '1';
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i - 1] != '1'&&arithTrig[i - 1] != 'p'&& arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == 0) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1'&&arithTrig[i - 1] != 'p'&& arithTrig[i] == 'i'&& verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == 0) {
 				needOne = 1;
 			}
 		}
@@ -1898,15 +1898,15 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needAst == 1) {
 		valRenamedVar = 0;
 		for (i = mark1; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) == 1 && needAst == 1) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) && needAst == 1) {
 				if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') {
-					while (verifyLetter(arithTrig[i]) == 1) {
+					while (verifyLetter(arithTrig[i])) {
 						i--;
 					}
 					i++;
 					int lo = 0;
 					char func[DIM] = "";
-					while (verifyLetter(arithTrig[i]) == 1 && arithTrig[i] != 'b'&&arithTrig[i] != 'D') {
+					while (verifyLetter(arithTrig[i]) && arithTrig[i] != 'b'&&arithTrig[i] != 'D') {
 						func[lo] = arithTrig[i];
 						lo++; i++;
 					}
@@ -1919,12 +1919,12 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					}
 				}
 			}
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) == 1 && needAst == 1) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) && needAst == 1) {
 				mark1 = i + 1;
 				j = i;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				int p = j;
-				while (verifyLetter(arithTrig[p]) == 1) {
+				while (verifyLetter(arithTrig[p])) {
 					p--;
 				}
 				if (j != p) {
@@ -1933,7 +1933,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					char function[DIM] = "";
 
 					int y = 0;
-					while (verifyLetter(arithTrig[p]) == 1 && p < abs((int)strlen(arithTrig))) {
+					while (verifyLetter(arithTrig[p]) && p < abs((int)strlen(arithTrig))) {
 						function[y] = arithTrig[p];
 						p++; y++;
 
@@ -1992,7 +1992,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 
 						arithTrig[i] = '*';
 						j = j + 2;
-						i = strlen(arithTrig);
+						i = abs((int)strlen(arithTrig));
 						while (i > j) {
 							arithTrig[i] = arithTrig[i - 1];
 							i--;
@@ -2010,7 +2010,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 							while (arithTrig[n] == functionP[m]) {
 								n++; m++;
 							}
-							int z = strlen(arithTrig), nj = n, nc = 0;
+							int z = abs((int)strlen(arithTrig)), nj = n, nc = 0;
 							nc = z;
 							if (arithTrig[nj + 1] != '(') {
 								if ((arithTrig[nj - 3] == 'l'&&arithTrig[nj - 2] == 'o'&&arithTrig[nj - 1] == 'g'&&arithTrig[nj] == 'b') == false && (arithTrig[nj - 2] == 'r'&&arithTrig[nj - 1] == 't'&&arithTrig[nj] == 'D') == false) {
@@ -2020,7 +2020,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 									}
 
 									arithTrig[nj] = '*';
-									z = strlen(arithTrig);
+									z = abs((int)strlen(arithTrig));
 									nj = n + 2;
 									if (arithTrig[nj - 1] != '(') {
 										while (nj < z) {
@@ -2042,15 +2042,15 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		}
 		for (i = mark; arithTrig[i] != '\0'; i++) {
 			needAst = 0;
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) == 1) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1])) {
 				if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') {
-					while (verifyLetter(arithTrig[i]) == 1) {
+					while (verifyLetter(arithTrig[i])) {
 						i--;
 					}
 					i++;
 					int lo = 0;
 					char func[DIM] = "";
-					while (verifyLetter(arithTrig[i]) == 1 && arithTrig[i] != 'b'&&arithTrig[i] != 'D') {
+					while (verifyLetter(arithTrig[i]) && arithTrig[i] != 'b'&&arithTrig[i] != 'D') {
 						func[lo] = arithTrig[i];
 						lo++; i++;
 					}
@@ -2063,7 +2063,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					}
 				}
 			}
-			if (verifyLetter(arithTrig[i - 1]) == 1 && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1]) == 1) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1])) {
 				mark = i + 1;
 				needAst = 1;
 			}
@@ -2088,26 +2088,26 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				u++;
 			}
 		}
-		if (verifyLetter(paTrig[u]) == 1 && firstLetterVariable(paTrig[u]) == 0) {
-			while (verifyLetter(paTrig[u]) == 1) {
+		if (verifyLetter(paTrig[u]) && firstLetterVariable(paTrig[u]) == 0) {
+			while (verifyLetter(paTrig[u])) {
 				u++;
 			}
 		}
-		if (firstLetterVariable(paTrig[u]) == 1 && firstLetterVariable(paTrig[u - 1]) == 0 && paTrig[u + 1] != 'i') {
+		if (firstLetterVariable(paTrig[u]) && firstLetterVariable(paTrig[u - 1]) == 0 && paTrig[u + 1] != 'i') {
 			u++;
-			while (verifyLetter(paTrig[u]) == 1) {
+			while (verifyLetter(paTrig[u])) {
 				u++;
 			}
 			if (paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != ')') {
 				double check = 0;
-				if (verifyLetter(paTrig[u - 1]) == 1) {
+				if (verifyLetter(paTrig[u - 1])) {
 					int z = u - 1, v = 0;
 					char toVal[DIM] = "";
-					while (verifyLetter(paTrig[z]) == 1) {
+					while (verifyLetter(paTrig[z])) {
 						z--;
 					}
 					z++;
-					while (verifyLetter(paTrig[z]) == 1) {
+					while (verifyLetter(paTrig[z])) {
 						toVal[v] = paTrig[z];
 						z++; v++;
 					}
@@ -2138,9 +2138,9 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needAst == 1) {
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i - 1] != '(' && arithTrig[i] == 'i'&&verifyLetter(arithTrig[i + 1]) == 1 && arithTrig[i + 1] != 'D'&& arithTrig[i + 1] != 'b') {
+			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i - 1] != '(' && arithTrig[i] == 'i'&&verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D'&& arithTrig[i + 1] != 'b') {
 				j = i + 1;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				int comp = 0;
 				if (verifyNumber(arithTrig[j - 2]) == 0) {
 					i++;
@@ -2163,7 +2163,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i - 1] != '('&&arithTrig[i] == 'i'&&verifyLetter(arithTrig[i + 1]) == 1 && arithTrig[i + 1] != 'D'&& arithTrig[i + 1] != 'b') {
+			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i - 1] != '('&&arithTrig[i] == 'i'&&verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D'&& arithTrig[i + 1] != 'b') {
 				needAst = 1;
 			}
 		}
@@ -2172,22 +2172,22 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needAst == 1) {
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if ((verifyLetter(arithTrig[i - 1]) == 1 || verifyNumber(arithTrig[i - 1]) == 1) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D'&& arithTrig[i - 1] != 'b'&& arithTrig[i] == 'i'&&arithTrig[i - 1] != '1'&&arithTrig[i - 1] != '('&&verifyLetter(arithTrig[i + 1]) == 0) {
+			if ((verifyLetter(arithTrig[i - 1]) || verifyNumber(arithTrig[i - 1])) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D'&& arithTrig[i - 1] != 'b'&& arithTrig[i] == 'i'&&arithTrig[i - 1] != '1'&&arithTrig[i - 1] != '('&&verifyLetter(arithTrig[i + 1]) == 0) {
 
 				j = i;
-				i = strlen(arithTrig) + 1;
+				i = abs((int)strlen(arithTrig)) + 1;
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 2];
 					i--;
 				}
 				arithTrig[i] = '*'; arithTrig[i + 1] = '1';
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 
 			}
 		}
 
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if ((verifyLetter(arithTrig[i - 1]) == 1 || verifyNumber(arithTrig[i - 1]) == 1) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D'&& arithTrig[i - 1] != 'b'&& arithTrig[i] == 'i'&&arithTrig[i - 1] != '1'&&arithTrig[i - 1] != '('&&verifyLetter(arithTrig[i + 1]) == 0) {
+			if ((verifyLetter(arithTrig[i - 1]) || verifyNumber(arithTrig[i - 1])) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D'&& arithTrig[i - 1] != 'b'&& arithTrig[i] == 'i'&&arithTrig[i - 1] != '1'&&arithTrig[i - 1] != '('&&verifyLetter(arithTrig[i + 1]) == 0) {
 				needAst = 1;
 			}
 		}
@@ -2198,13 +2198,13 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if (arithTrig[i - 1] == ')' && arithTrig[i] == 'i'&&verifyLetter(arithTrig[i + 1]) == 0) {
 				j = i;
-				i = strlen(arithTrig) + 1;
+				i = abs((int)strlen(arithTrig)) + 1;
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 2];
 					i--;
 				}
 				arithTrig[i] = '*'; arithTrig[i + 1] = '1';
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 
 			}
 		}
@@ -2222,7 +2222,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&&arithTrig[i + 1] == '(') {
 				j = i + 1;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				int comp = 0;
 				if (verifyNumber(arithTrig[j - 2]) == 0) {
 					i++;
@@ -2264,9 +2264,9 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needAst == 1) {
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& arithTrig[i + 1] != '1' && (verifyLetter(arithTrig[i + 1]) == 1 || verifyNumber(arithTrig[i + 1]) == 1)) {
+			if (verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& arithTrig[i + 1] != '1' && (verifyLetter(arithTrig[i + 1]) || verifyNumber(arithTrig[i + 1]))) {
 				j = i + 1;
-				i = strlen(arithTrig) + 1;
+				i = abs((int)strlen(arithTrig)) + 1;
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 2];
 					i--;
@@ -2277,7 +2277,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		}
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& arithTrig[i + 1] != '1' && (verifyLetter(arithTrig[i + 1]) == 1 || verifyNumber(arithTrig[i + 1]) == 1)) {
+			if (verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& arithTrig[i + 1] != '1' && (verifyLetter(arithTrig[i + 1]) || verifyNumber(arithTrig[i + 1]))) {
 				needAst = 1;
 			}
 
@@ -2289,13 +2289,13 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if ((verifyLetter(arithTrig[i - 1]) == 0 || arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& verifyNumber(arithTrig[i + 1]) == 0 && (verifyLetter(arithTrig[i + 1]) == 0 || arithTrig[i + 1] == 'D' || arithTrig[i + 1] == 'b')) {
 				j = i;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 1];
 					i--;
 				}
 				arithTrig[i] = '1';
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 
 			}
 		}
@@ -2309,9 +2309,9 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needAst == 1) {
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (arithTrig[i - 1] == '1' && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) == 1 && arithTrig[i + 1] != 'D'&&arithTrig[i + 1] != 'b' || verifyNumber(arithTrig[i + 1]) == 1)) {
+			if (arithTrig[i - 1] == '1' && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D'&&arithTrig[i + 1] != 'b' || verifyNumber(arithTrig[i + 1]))) {
 				j = i + 1;
-				i = strlen(arithTrig);
+				i = abs((int)strlen(arithTrig));
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 1];
 					i--;
@@ -2321,7 +2321,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		}
 
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (arithTrig[i - 1] == '1' && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) == 1 && arithTrig[i + 1] != 'D'&&arithTrig[i + 1] != 'b' || verifyNumber(arithTrig[i + 1]) == 1)) {
+			if (arithTrig[i - 1] == '1' && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D'&&arithTrig[i + 1] != 'b' || verifyNumber(arithTrig[i + 1]))) {
 				needAst = 1;
 			}
 		}
@@ -2504,17 +2504,17 @@ void on_start() {
 
 }
 
-int searchExtension(char filename[DIM], char extension[DIM]) {
-	int i = strlen(filename) - 1, j = strlen(extension) - 1;
+boolean searchExtension(char filename[DIM], char extension[DIM]) {
+	int i = abs((int)strlen(filename)) - 1, j = abs((int)strlen(extension)) - 1;
 	while (extension[j] == filename[i]) {
 		i--; j--;
 	}
 	i++; j++;
 	if (extension[j] == filename[i] && extension[j] == '.') {
-		return 1;
+		return true;
 	}
 	else {
-		return 0;
+		return false;
 	}
 }
 
@@ -2614,6 +2614,7 @@ void getATCPath() {
 		}
 	}
 }
+
 void toSolve(int re) {
 	FILE *file = NULL;
 	char toOpen[DIM] = "";
@@ -2635,8 +2636,8 @@ void toSolve(int re) {
 				if (dir->d_type == DT_REG)
 				{
 					sprintf(filename, "%s", dir->d_name);
-					if (searchExtension(filename, ".txt") == 1) {
-						int h = strlen(filename) - 1;
+					if (searchExtension(filename, ".txt")) {
+						int h = abs((int)strlen(filename)) - 1;
 						if ((filename[h - 10] == 'a'&& filename[h - 9] == 'n'&&filename[h - 8] == 's'&&filename[h - 7] == 'w'&&filename[h - 6] == 'e'&&filename[h - 5] == 'r'&&filename[h - 4] == 's'&&filename[h - 3] == '.'&&filename[h - 2] == 't'&&filename[h - 1] == 'x'&&filename[h] == 't') == false) {
 							char path[DIM] = "";
 							sprintf(path, "%s%s", directory, filename);
@@ -2900,4 +2901,5 @@ char character_to_prefDet(double n) {
 																			else
 																				if (n >= 1E24)
 																					return 'T';
+	return 'U';
 }
