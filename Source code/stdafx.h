@@ -54,6 +54,7 @@ void print(char text[DIM], double result1, double result2);
 void sprint(char text[DIM], double result1, double result2);
 void customFuncRenamer(char variable[DIM]);
 void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]);
+void ShowConsoleCursor(BOOL bShow);
 boolean verifyPrefix(char prefix[DIM]);
 boolean processTxt(char path[DIM], int re);
 boolean dataVerifier(char data[DIM], double result1, double result2, int comment, int verify);
@@ -65,3 +66,4 @@ boolean isCommand(char forTesting[DIM], char command[DIM]);
 boolean readyToSolve(char paTh[DIM]);
 boolean isEqual(char to_find[DIM], char string[DIM]);
 boolean isContained(char to_find[DIM], char string[DIM]);
+

@@ -2903,3 +2903,18 @@ char character_to_prefDet(double n) {
 																					return 'T';
 	return 'U';
 }
+
+void ShowConsoleCursor(BOOL bShow)
+{
+	static HANDLE hOut;
+	static BOOL firstTime = TRUE;
+	CONSOLE_CURSOR_INFO cursorInfo;
+	if (firstTime)
+	{
+		hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+		firstTime = FALSE;
+	}
+	cursorInfo.dwSize = 10;
+	cursorInfo.bVisible = bShow;
+	SetConsoleCursorInfo(hOut, &cursorInfo);
+}

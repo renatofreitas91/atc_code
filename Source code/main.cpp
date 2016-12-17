@@ -4,7 +4,7 @@
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
 char atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
 int Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0;
-
+clock_t start_processing, end_processing;
 
 
 void main(int argc, char *argv[]) {
@@ -19,11 +19,12 @@ void main(int argc, char *argv[]) {
 	if (argc < 2) {
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v1.8.7");
+		system("title Advanced Trigonometry Calculator v1.8.8");
 		continu = about();
-		system("title Advanced Trigonometry Calculator v1.8.7                                                             ==) Enter data (==              ");
 	}
+
 	if (continu == 1) {
+		system("title Advanced Trigonometry Calculator v1.8.8       ==) ATC is ready to process data. (==");
 		do {
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
@@ -33,7 +34,8 @@ void main(int argc, char *argv[]) {
 				sprintf(trigData, "");
 				printf(">");
 				gets_s(trigData);
-
+				start_processing = clock();
+				system("title Advanced Trigonometry Calculator v1.8.8       ==) Processing... (==");
 			}
 			else {
 				int arG = 1;
@@ -114,6 +116,13 @@ void main(int argc, char *argv[]) {
 				sprintf(toOpen, "del \"%s\"", Path);
 				system(toOpen);
 			}
+			end_processing = clock();
+			double time_ms = (end_processing - start_processing) / (CLOCKS_PER_SEC / 1000);
+			double time_s = qu(time_ms, 1000);
+			double time_ms_final = re(time_ms, 1000);
+			char state[DIM] = "";
+			sprintf(state, "title Advanced Trigonometry Calculator v1.8.8       ==) Processed in %Gs and %Gms. ATC is ready to process more data. (==", time_s, time_ms_final);
+			system(state);
 		} while (continu == 1);
 	}
 	exit(0);

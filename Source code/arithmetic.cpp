@@ -171,7 +171,7 @@ double quo(double quotient) {
 	char *pointer;
 	int i = 0;
 	sprintf(quot, "%.500f", quotient);
-	while (quot[i] != '.') {
+	while (quot[i] != '.'&&quot[i] != '\0') {
 		quo[i] = quot[i];
 		i++;
 	}
@@ -188,7 +188,7 @@ double qu(double dividend, double divider) {
 	int i = 0;
 	quotient = dividend / divider;
 	sprintf(quot, "%f", quotient);
-	while (quot[i] != '.') {
+	while (quot[i] != '.'&&quot[i] != '\0') {
 		quo[i] = quot[i];
 		i++;
 	}
@@ -229,7 +229,7 @@ double re(double dividend, double divider) {
 	int i = 0;
 	quotient = dividend / divider;
 	sprintf(quot, "%.300f", quotient);
-	while (quot[i] != '.') {
+	while (quot[i] != '.'&&quot[i] != '\0') {
 		quo[i] = quot[i];
 		i++;
 	}

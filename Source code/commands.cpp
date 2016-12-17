@@ -15,16 +15,19 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/p/advantrigoncalc/donate/?source=navbar\""), NULL, SW_SHOW);
 	}
+
 	if (isCommand(arithTrig, "atcfacebook")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://www.facebook.com/advantrigoncalc/\""), NULL, SW_SHOW);
 	}
+
 	if (isCommand(arithTrig, "atcsourceforge")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/projects/advantrigoncalc/\""), NULL, SW_SHOW);
 	}
+
 	if (isCommand(arithTrig, "atcfromcmd")) {
 		command = true;
 		char comm[300] = "";
@@ -36,6 +39,96 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		ShellExecute(NULL, _T("runas"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("\n==> You can now run cmd.exe and enter e.g. \"atc time\" <==\n");
 		puts("");
+	}
+
+	if (isCommand(arithTrig, "atcovercmd")) {
+		command = true;
+		puts("\n==> ATC is ready to process data. <==\n");
+		int tD = 0;
+		char trigData[DIM] = "";
+		clock_t start_processing, end_processing;
+		do {
+			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
+			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
+			fflush(NULL);
+			tD = 0;
+			printf(">");
+			gets_s(trigData);
+			start_processing = clock();
+			puts("\n==> Processing... <==\n");
+			sprintf(path, "%s\\history.txt", atcPath);
+			toSolve(rf);
+			for (tD = 0; trigData[tD] != 0; tD++) {
+				if (trigData[tD] == '{' || trigData[tD] == '[') {
+					trigData[tD] = '(';
+				}
+				if (trigData[tD] == '}' || trigData[tD] == ']') {
+					trigData[tD] = ')';
+				}
+			}
+			for (tD = 0; trigData[tD] != '\0'; tD++) {
+				fflush(NULL);
+				char fTrig[DIM] = "", arithTrig[DIM] = "";
+				fout = NULL;
+				while (fout == NULL) {
+					fout = fopen(path, "a+");
+				}
+				varRename[0] = '\0'; revariable[0] = '\0';
+				validVar = 1;
+				fTrig[0] = '\0';
+				i = 0;
+				int fl = 1, fr = 0;
+				while (trigData[tD] != '\0'&&trigData[tD] != ','&&tD < abs((int)strlen(trigData))) {
+					if (trigData[tD - 6] == 'p'&&trigData[tD - 5] == 'r'&&trigData[tD - 4] == 'i'&&trigData[tD - 3] == 'n'&&trigData[tD - 2] == 't'&&trigData[tD - 1] == '(') {
+						arithTrig[i] = trigData[tD];
+						i++; tD++;
+						while (fl > fr && trigData[tD] != '\0') {
+							if (trigData[tD] == '(') {
+								fl++;
+							}
+							if (trigData[tD] == ')') {
+								fr++;
+							}
+							arithTrig[i] = trigData[tD];
+							i++; tD++;
+						}
+						arithTrig[i] = '\0';
+					}
+					else {
+						arithTrig[i] = trigData[tD];
+						i++; tD++;
+					}
+				}
+				arithTrig[i] = '\0';
+				sprintf(fTrig, "%s", arithTrig);
+				main_core(arithTrig, fTrig, fout, path, result1, result2, 1);
+				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
+				if (verified == 1) {
+					result1 = resultR;
+					result2 = resultI;
+					verified = 0;
+				}
+			}
+			if (continu != 1) {
+				fclose(fout);
+			}
+			char Path[DIM] = "";
+			sprintf(Path, "%s\\temp.txt", atcPath);
+			FILE *Try = NULL;
+			Try = fopen(Path, "r");
+			if (Try != NULL) {
+				fclose(Try);
+				char toOpen[DIM] = "";
+				sprintf(toOpen, "del \"%s\"", Path);
+				system(toOpen);
+			}
+			end_processing = clock();
+			double time_ms = (end_processing - start_processing) / (CLOCKS_PER_SEC / 1000);
+			double time_s = qu(time_ms, 1000);
+			double time_ms_final = re(time_ms, 1000);
+			printf("==> Processed in %Gs and %Gms. ATC is ready to process more data. <==\n\n", time_s, time_ms_final);
+
+		} while (continu == 1);
 	}
 
 	if (isCommand(arithTrig, "autosolvetxt")) {
@@ -58,6 +151,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		openTxt();
 
 	}
+
 	if (isCommand(arithTrig, "solvequadraticequation") && arithTrig[i + 22] == '(') {
 		command = true;
 		char values[DIM] = "", value[DIM] = "", saveValue[DIM] = "";
@@ -202,6 +296,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			puts(" ");
 		}
 	}
+
 	if (isCommand(arithTrig, "sprint") && arithTrig[i + 6] == '(') {
 		char vaString[DIM] = "";
 		int x = 0, y = 0;
@@ -246,17 +341,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		arithTrig[0] = '\0'; command = true;
 	}
-	if (isCommand(arithTrig, "clockctd")) {
-		command = true;
-		char comm[300] = "";
-		sprintf(comm, "/C \"explorer.exe %s\\Extra\\ctd.exe\"", atcPath);
-		using namespace std;
-		std::string s = string(comm);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
-		puts("");
-	}
+
 	if (isCommand(arithTrig, "logoff")) {
 		continu = 0;
 		command = true;
@@ -267,12 +352,14 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			system("C:\\WINDOWS\\System32\\shutdown /l");
 		}
 	}
+
 	if (isCommand(arithTrig, "enabletxtdetector")) {
 		command = true;
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del disable_txt_detector.txt\""), NULL, SW_SHOW);
 		Sleep(200);
 		puts(" ");
 	}
+
 	if (isCommand(arithTrig, "history")) {
 		command = true;
 		puts(" ");
@@ -281,6 +368,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		sprintf(path4ATC, "notepad.exe %s\\history.txt", atcPath);
 		system(path4ATC);
 	}
+
 	if (isCommand(arithTrig, "resetall")) {
 		command = true;
 		puts(" ");
@@ -292,6 +380,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fclose(start);
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
 	}
+
 	if (isCommand(arithTrig, "resetsettings")) {
 		command = true;
 		puts(" ");
@@ -303,6 +392,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fclose(start);
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
 	}
+
 	if (isCommand(arithTrig, "atcfolder")) {
 		command = true;
 		char comm[300] = "";
@@ -327,6 +417,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
+
 	if (isCommand(arithTrig, "scriptsexamples")) {
 		command = true;
 		char comm[300] = "";
@@ -338,6 +429,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
+
 	if (isCommand(arithTrig, "strings")) {
 		command = true;
 		char comm[300] = "";
@@ -349,6 +441,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
+
 	if (isCommand(arithTrig, "userfunctions")) {
 		command = true;
 		char comm[300] = "";
@@ -396,26 +489,31 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		LPCWSTR sw = stemp.c_str();
 		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 	}
+
 	if (isCommand(arithTrig, "updateportable")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Advanced%20Trigonometry%20Calculator.zip/download\""), NULL, SW_SHOW);
 	}
+
 	if (isCommand(arithTrig, "update")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator.exe/download\""), NULL, SW_SHOW);
 	}
+
 	if (isCommand(arithTrig, "updatex64")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator%20x64.exe/download\""), NULL, SW_SHOW);
 	}
+
 	if (isCommand(arithTrig, "userguide")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator - User Guide.pdf"), NULL, NULL, SW_SHOW);
 	}
+
 	if (isCommand(arithTrig, "sleep")) {
 		command = true;
 		puts(" ");
@@ -423,6 +521,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		Sleep(5000);
 		system("C:\\WINDOWS\\System32\\Rundll32.exe powrprof.dll,SetSuspendState Sleep");
 	}
+
 	if (isCommand(arithTrig, "lock")) {
 		command = true;
 		puts(" ");
@@ -436,6 +535,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		Sleep(5000);
 		system("C:\\WINDOWS\\System32\\rundll32.exe PowrProf.dll,SetSuspendState Hibernate");
 	}
+
 	if (isCommand(arithTrig, "shutdown")) {
 		continu = 0;
 		command = true;
@@ -446,6 +546,18 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			system("C:\\WINDOWS\\System32\\shutdown /s");
 		}
 	}
+
+	if (isCommand(arithTrig, "shutdownnow")) {
+		continu = 0;
+		command = true;
+		if (IsPreviousToWindowsVista()) {
+			system("C:\\WINDOWS\\System32\\shutdown -s -t 0");
+		}
+		else {
+			system("C:\\WINDOWS\\System32\\shutdown /s /t 0");
+		}
+	}
+
 	if (isCommand(arithTrig, "restartpc")) {
 		continu = 0;
 		command = true;
@@ -456,22 +568,37 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			system("C:\\WINDOWS\\System32\\shutdown /r");
 		}
 	}
+
+	if (isCommand(arithTrig, "restartpcnow")) {
+		continu = 0;
+		command = true;
+		if (IsPreviousToWindowsVista()) {
+			system("C:\\WINDOWS\\System32\\shutdown -r -t 0");
+		}
+		else {
+			system("C:\\WINDOWS\\System32\\shutdown /r /t 0");
+		}
+	}
+
 	if (isCommand(arithTrig, "exit")) {
 		continu = 0;
 		fprintf(fout, "\n");
 		command = true;
 	}
+
 	if (isCommand(arithTrig, "clean")) {
 		cls(); command = true;
 		arithTrig[0] = '\0';
 		fprintf(fout, "\n");
 	}
+
 	if (isCommand(arithTrig, "about")) {
 		arithTrig[0] = '\0'; command = true;
 		cls();
 		about2();
 		fprintf(fout, "\n");
 	}
+
 	if (isCommand(arithTrig, "mode")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of mode <==\n\n");
@@ -480,6 +607,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(fout, "\n");
 		printf("\n");
 	}
+
 	if (isCommand(arithTrig, "cleanhistory")) {
 		fclean = NULL;
 		while (fclean == NULL) {
@@ -491,24 +619,28 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		arithTrig[0] = '\0';
 		cleanhistory = 1;
 	}
+
 	if (isCommand(arithTrig, "colors")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of background and text colors <==\n\n");
 		fprintf(fout, "\n==> Configuration of background and text colors <==\n\n");
 		colors();
 	}
+
 	if (isCommand(arithTrig, "dimensions")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Dimensional configuration of the application window <==\n\n");
 		fprintf(fout, "\n==> Dimensional configuration of the application window <==\n\n");
 		dimensions();
 	}
+
 	if (isCommand(arithTrig, "window")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of the position, width and height of the application window <==\n\n");
 		fprintf(fout, "\n==> Configuration of the position, width and height of the application window <==\n\n");
 		window();
 	}
+
 	if (isCommand(arithTrig, "solveequationssystem") && arithTrig[i + 20] == '(') {
 		int correct = 1, vi = 0, vj = 0;
 
@@ -701,6 +833,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		arithTrig[0] = '\0'; command = true;
 	}
+
 	if (isCommand(arithTrig, "eliminatevariables")) {
 		FILE *open = NULL;
 		int r = 0;
@@ -750,69 +883,89 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 	}
 
-	if (isCommand(arithTrig, "stopwatch") && arithTrig[i + 9] == '(') {
-		printf("\nPress \"Enter\" button to mark time.\n");
-		fprintf(fout, "\nPress \"Enter\" button to mark time.\n");
-		int ct = 0, countT = 0;
-		char countTimes[DIM] = "", pause[1000] = "";
-		double stopTime = 0;
-		if (arithTrig[i] == 'c') {
-			i = i + 11;
+	if (isCommand(arithTrig, "stopwatch") && arithTrig[i + 9] == '(' || isCommand(arithTrig, "runstopwatch") && arithTrig[i + 12] == '(') {
+		if (isCommand(arithTrig, "runstopwatch")) {
+			command = true;
+			char comm[300] = "";
+			char commandToExecute[300] = "";
+			replace("run", "", arithTrig);
+			sprintf(commandToExecute, "%s", expressionF);
+			replace("+0", "", commandToExecute);
+			sprintf(commandToExecute, "%s", expressionF);
+			sprintf(comm, "/C \"pause&\"%s\\atc.exe\" \"%s\"&pause\"", atcPath, commandToExecute);
+			using namespace std;
+			std::string s = string(comm);
+			std::wstring stemp = std::wstring(s.begin(), s.end());
+			LPCWSTR sw = stemp.c_str();
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+			puts("");
 		}
 		else {
-			i = i + 10;
-		}
-		ct = 0;
-		while (arithTrig[i] != '\0'&&arithTrig[i] != ')') {
-			countTimes[ct] = arithTrig[i];
-			ct++; i++;
-		}
-		countTimes[ct] = '\0';
-		countT = abs((int)initialProcessor(countTimes, result1));
-		clock_t start, end;
-		start = clock();
-		ct = 0;
-		while (ct < countT) {
-			char pause[1000] = "";
-			gets_s(pause);
-			end = clock();
-			stopTime = (double)(end - start) / CLOCKS_PER_SEC;
-			int days = (int)qu(stopTime, 86400);
-			int hours = (int)qu(re(stopTime, 86400), 3600);
-			int minutes = (int)qu(re(re(stopTime, 86400), 3600), 60);
-			int seconds = (int)re(re(re(stopTime, 86400), 3600), 60);
-			int miliseconds = (int)(1000 * (stopTime - qu(stopTime, 1)));
-			printf("t%d=", ct + 1);
-			fprintf(fout, "t%d=", ct + 1);
-			if (days != 0) {
-				printf("%dd ", days);
-				fprintf(fout, "%dd ", days);
+			ShowConsoleCursor(FALSE);
+			printf("\nPress \"Enter\" button to mark time.\n");
+			fprintf(fout, "\nPress \"Enter\" button to mark time.\n");
+			int ct = 0, countT = 0;
+			char countTimes[DIM] = "", pause[1000] = "";
+			double stopTime = 0;
+			if (arithTrig[i] == 'c') {
+				i = i + 11;
 			}
-			if (hours != 0) {
-				printf("%dh ", hours);
-				fprintf(fout, "%dh ", hours);
+			else {
+				i = i + 10;
 			}
-			if (minutes != 0) {
-				printf("%dm ", minutes);
-				fprintf(fout, "%dm ", minutes);
+			ct = 0;
+			while (arithTrig[i] != '\0'&&arithTrig[i] != ')') {
+				countTimes[ct] = arithTrig[i];
+				ct++; i++;
 			}
+			countTimes[ct] = '\0';
+			countT = abs((int)initialProcessor(countTimes, result1));
+			clock_t start, end;
+			start = clock();
+			ct = 0;
+			while (ct < countT) {
+				char pause[1000] = "";
+				gets_s(pause);
+				end = clock();
+				stopTime = (double)(end - start) / CLOCKS_PER_SEC;
+				int days = (int)qu(stopTime, 86400);
+				int hours = (int)qu(re(stopTime, 86400), 3600);
+				int minutes = (int)qu(re(re(stopTime, 86400), 3600), 60);
+				int seconds = (int)re(re(re(stopTime, 86400), 3600), 60);
+				int miliseconds = (int)(1000 * (stopTime - qu(stopTime, 1)));
+				printf("t%d=", ct + 1);
+				fprintf(fout, "t%d=", ct + 1);
+				if (days != 0) {
+					printf("%dd ", days);
+					fprintf(fout, "%dd ", days);
+				}
+				if (hours != 0) {
+					printf("%dh ", hours);
+					fprintf(fout, "%dh ", hours);
+				}
+				if (minutes != 0) {
+					printf("%dm ", minutes);
+					fprintf(fout, "%dm ", minutes);
+				}
 
-			if (seconds != 0) {
-				printf("%ds ", seconds);
-				fprintf(fout, "%ds ", seconds);
+				if (seconds != 0) {
+					printf("%ds ", seconds);
+					fprintf(fout, "%ds ", seconds);
+				}
+				if (miliseconds != 0) {
+					printf("%dms ", miliseconds);
+					fprintf(fout, "%dms ", miliseconds);
+				}
+				printf("\n");
+				fprintf(fout, "\n");
+				ct++;
 			}
-			if (miliseconds != 0) {
-				printf("%dms ", miliseconds);
-				fprintf(fout, "%dms ", miliseconds);
-			}
-			printf("\n");
-			fprintf(fout, "\n");
-			ct++;
 		}
 		puts("");
 		fputs("\n", fout);
 		command = true;
 		arithTrig[0] = '\0';
+		ShowConsoleCursor(TRUE);
 	}
 
 	if (isCommand(arithTrig, "eliminateresults")) {
@@ -883,6 +1036,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			arithTrig[0] = '\0';
 		}
 	}
+
 	if (isCommand(arithTrig, "eliminateabbreviations")) {
 		FILE *open = NULL;	 command = true;
 		char toOpen[DIM] = "";
@@ -895,6 +1049,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		arithTrig[0] = '\0';
 		fclose(open);
 	}
+
 	if (isCommand(arithTrig, "seeabbreviations")) {
 		FILE *open = NULL;	   command = true;
 		char toOpen[DIM] = "";
@@ -917,6 +1072,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		fclose(open);
 	}
+
 	if (isCommand(arithTrig, "seeresults")) {
 		arithTrig[0] = '\0'; command = true;
 		if (rf > 0) {
@@ -965,6 +1121,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 
 	}
+
 	if (isCommand(arithTrig, "renamedvariables")) {
 		arithTrig[0] = '\0'; command = true;
 		FILE *open = NULL;
@@ -991,6 +1148,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 		}
 	}
+
 	if (isCommand(arithTrig, "numericalsystems")) {
 		char arithTrig[DIM] = ""; command = true;
 		arithTrig[0] = '\0';
@@ -1000,254 +1158,289 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(fout, "\n");
 		printf("\n");
 	}
-	if (isCommand(arithTrig, "timer") && arithTrig[i + 5] == '(') {
-		if (arithTrig[i + 12] == '(') {
-			i = i + 13;
+
+	if (isCommand(arithTrig, "timer") && arithTrig[i + 5] == '(' || isCommand(arithTrig, "runtimer") && arithTrig[i + 8] == '(') {
+		if (isCommand(arithTrig, "runtimer")) {
+			command = true;
+			char comm[300] = "";
+			char commandToExecute[300] = "";
+			replace("run", "", arithTrig);
+			sprintf(commandToExecute, "%s", expressionF);
+			replace("+0", "", commandToExecute);
+			sprintf(commandToExecute, "%s", expressionF);
+			sprintf(comm, "/C \"MODE con cols=69 lines=14&\"%s\\atc.exe\" \"%s\"", atcPath, commandToExecute);
+			using namespace std;
+			std::string s = string(comm);
+			std::wstring stemp = std::wstring(s.begin(), s.end());
+			LPCWSTR sw = stemp.c_str();
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+			puts("");
 		}
 		else {
+			ShowConsoleCursor(FALSE);
 			if (arithTrig[i + 5] == '(') {
 				i = i + 6;
 
 			}
-		}
-		int t = i, p = 0;
-		for (t; arithTrig[t] != '\0'; t++) {
-			if (arithTrig[t] == ')') {
-				p++;
-			}
-		}
-		if (p != 1) {
-			printf("\n\n==> You need to terminate the expression with ')' character. <==\n\n");
-		}
-		else {
-			char time[DIM] = "", expression[DIM] = "";
-			t = 0;
-			int b = i;
-			while (arithTrig[b] != ')') {
-				expression[t] = arithTrig[b];
-				b++; t++;
-			}
-			expression[t] = '\0';
-			b = 0;
-			int sep = 0;
-			for (t = 0; expression[t] != '\0'; t++) {
-				if (expression[t] == ':' || expression[t] == '0' || expression[t] == '1' || expression[t] == '2' || expression[t] == '3' || expression[t] == '4' || expression[t] == '5' || expression[t] == '6' || expression[t] == '7' || expression[t] == '8' || expression[t] == '9') {
-					b++;
-					if (expression[t] == ':') {
-						sep++;
-					}
+			int t = i, p = 0;
+			for (t; arithTrig[t] != '\0'; t++) {
+				if (arithTrig[t] == ')') {
+					p++;
 				}
 			}
-			if (b == strlen(expression) && sep == 2) {
-				sprintf(time, "");
-				t = 0;
-				while (arithTrig[i] != ':'&&arithTrig[i] != ')') {
-					time[t] = arithTrig[i];
-					t++; i++;
-				}
-				i++;
-				time[t] = '\0';
-				int hours = (int)solveNow(time, 0, 0);
-				sprintf(time, "");
-				t = 0;
-				while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
-					time[t] = arithTrig[i];
-					t++; i++;
-				}
-				time[t] = '\0';
-				i++;
-				int minutes = (int)solveNow(time, 0, 0);
-				sprintf(time, "");
-				t = 0;
-				while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
-					time[t] = arithTrig[i];
-					t++; i++;
-				}
-				time[t] = '\0';
-				int seconds = (int)solveNow(time, 0, 0);
-				sprintf(time, "");
-				clock_t start, end, syn1, syn2;
-				int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
-				int timeActual = 50, timepass = 0, time2syn = 0;
-				start = clock();
-				if (totalTime > 0) {
-					while (timeActual > 0) {
-
-						end = clock();
-						timePassed = (end - start) / CLOCKS_PER_SEC;
-						if (timePassed == 0) {
-							syn1 = clock();
-							while (timepass == timePassed) {
-								end = clock();
-								timePassed = (end - start) / CLOCKS_PER_SEC;
-								Sleep(1);
-							}
-							syn2 = clock();
-							time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
-						}
-						else {
-							Sleep(time2syn - 50);
-							while (timepass == timePassed) {
-								end = clock();
-								timePassed = (end - start) / CLOCKS_PER_SEC;
-								Sleep(3);
-							}
-						}
-						timeActual = totalTime - timePassed;
-						int thours = timeActual / 3600;
-						int tminutes = (timeActual % 3600) / 60;
-						int tseconds = (timeActual % 3600) % 60;
-						timepass = timePassed;
-						printTimer(thours, tminutes, tseconds);
-					}
-				}
-				i = 0;
-				Sleep(400);
-				while (i < 25) {
-					Beep(777, 400);
-					Sleep(400);
-					i++;
-				}
+			if (p != 1) {
+				printf("\n\n==> You need to terminate the expression with ')' character. <==\n\n");
 			}
 			else {
-				printf("\n==> Your expression has syntax errors. <==\n\n");
+				char time[DIM] = "", expression[DIM] = "";
+				t = 0;
+				int b = i;
+				while (arithTrig[b] != ')') {
+					expression[t] = arithTrig[b];
+					b++; t++;
+				}
+				expression[t] = '\0';
+				b = 0;
+				int sep = 0;
+				for (t = 0; expression[t] != '\0'; t++) {
+					if (expression[t] == ':' || expression[t] == '0' || expression[t] == '1' || expression[t] == '2' || expression[t] == '3' || expression[t] == '4' || expression[t] == '5' || expression[t] == '6' || expression[t] == '7' || expression[t] == '8' || expression[t] == '9') {
+						b++;
+						if (expression[t] == ':') {
+							sep++;
+						}
+					}
+				}
+				if (b == strlen(expression) && sep == 2) {
+					sprintf(time, "");
+					t = 0;
+					while (arithTrig[i] != ':'&&arithTrig[i] != ')') {
+						time[t] = arithTrig[i];
+						t++; i++;
+					}
+					i++;
+					time[t] = '\0';
+					int hours = (int)solveNow(time, 0, 0);
+					sprintf(time, "");
+					t = 0;
+					while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
+						time[t] = arithTrig[i];
+						t++; i++;
+					}
+					time[t] = '\0';
+					i++;
+					int minutes = (int)solveNow(time, 0, 0);
+					sprintf(time, "");
+					t = 0;
+					while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+						time[t] = arithTrig[i];
+						t++; i++;
+					}
+					time[t] = '\0';
+					int seconds = (int)solveNow(time, 0, 0);
+					sprintf(time, "");
+					clock_t start, end, syn1, syn2;
+					int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
+					int timeActual = 50, timepass = 0, time2syn = 0;
+					start = clock();
+					if (totalTime > 0) {
+						while (timeActual > 0) {
+
+							end = clock();
+							timePassed = (end - start) / CLOCKS_PER_SEC;
+							if (timePassed == 0) {
+								syn1 = clock();
+								while (timepass == timePassed) {
+									end = clock();
+									timePassed = (end - start) / CLOCKS_PER_SEC;
+									Sleep(1);
+								}
+								syn2 = clock();
+								time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
+							}
+							else {
+								Sleep(time2syn - 50);
+								while (timepass == timePassed) {
+									end = clock();
+									timePassed = (end - start) / CLOCKS_PER_SEC;
+									Sleep(3);
+								}
+							}
+							timeActual = totalTime - timePassed;
+							int thours = timeActual / 3600;
+							int tminutes = (timeActual % 3600) / 60;
+							int tseconds = (timeActual % 3600) % 60;
+							timepass = timePassed;
+							printTimer(thours, tminutes, tseconds);
+						}
+					}
+					i = 0;
+					Sleep(400);
+					while (i < 25) {
+						Beep(777, 400);
+						Sleep(400);
+						i++;
+					}
+				}
+				else {
+					printf("\n==> Your expression has syntax errors. <==\n\n");
+				}
 			}
 		}
 		arithTrig[0] = '\0'; command = true;
+		ShowConsoleCursor(TRUE);
 	}
 
-
-	if (isCommand(arithTrig, "clock") && arithTrig[i + 5] == '(') {
-		if (arithTrig[i + 7] == '(') {
-			i = i + 8;
+	if (isCommand(arithTrig, "clock") && arithTrig[i + 5] == '(' || isCommand(arithTrig, "runclock") && arithTrig[i + 8] == '(') {
+		if (isCommand(arithTrig, "runclock")) {
+			command = true;
+			char comm[300] = "";
+			char commandToExecute[300] = "";
+			replace("run", "", arithTrig);
+			sprintf(commandToExecute, "%s", expressionF);
+			replace("+0", "", commandToExecute);
+			sprintf(commandToExecute, "%s", expressionF);
+			sprintf(comm, "/C \"MODE con cols=69 lines=18&\"%s\\atc.exe\" \"%s\"\"", atcPath, commandToExecute);
+			using namespace std;
+			std::string s = string(comm);
+			std::wstring stemp = std::wstring(s.begin(), s.end());
+			LPCWSTR sw = stemp.c_str();
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+			puts("");
 		}
 		else {
-			if (arithTrig[i + 5] == '(') {
-				i = i + 6;
-
-			}
-		}
-		int t = i, p = 0;
-		for (t; arithTrig[t] != '\0'; t++) {
-			if (arithTrig[t] == ')') {
-				p++;
-			}
-		}
-		if (p != 1) {
-			printf("\n\n==> You need to terminate the expression with ')' character. <==\n\n");
-		}
-		else {
-			char timE[DIM] = "", expression[DIM] = "";
-			t = 0;
-			int b = i;
-			while (arithTrig[b] != ')') {
-				expression[t] = arithTrig[b];
-				b++; t++;
-			}
-			expression[t] = '\0';
-			b = 0;
-			int sep = 0;
-			for (t = 0; expression[t] != '\0'; t++) {
-				if (expression[t] == ':' || expression[t] == '0' || expression[t] == '1' || expression[t] == '2' || expression[t] == '3' || expression[t] == '4' || expression[t] == '5' || expression[t] == '6' || expression[t] == '7' || expression[t] == '8' || expression[t] == '9') {
-					b++;
-					if (expression[t] == ':') {
-						sep++;
-					}
-				}
-			}
-			if (b == strlen(expression) && sep == 2) {
-				t = 0;
-				sprintf(timE, "");
-				while (arithTrig[i] != ':'&&arithTrig[i] != ')') {
-					timE[t] = arithTrig[i];
-					t++; i++;
-				}
-				i++;
-				timE[t] = '\0';
-				int hours = (int)solveNow(timE, 0, 0);
-				sprintf(timE, "");
-				t = 0;
-				while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0') {
-					timE[t] = arithTrig[i];
-					t++; i++;
-				}
-				timE[t] = '\0';
-				i++;
-				int minutes = (int)solveNow(timE, 0, 0);
-				sprintf(timE, "");
-				t = 0;
-				while (arithTrig[i] != ')'&&arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
-					timE[t] = arithTrig[i];
-					t++; i++;
-				}
-				timE[t] = '\0';
-				int seconds = (int)solveNow(timE, 0, 0);
-				sprintf(timE, "");
-				clock_t start, end, syn1, syn2;
-				int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
-				int timeActual = 50, timepass = 0, time2syn = 0;
-				int sec = 0;
-				char seco[3] = "";
-				char *tim;
-				time_t hour1;
-				time(&hour1);
-				tim = ctime(&hour1);
-				tim[24] = '\0';
-				seco[0] = tim[17]; seco[1] = tim[18]; seco[2] = '\0';
-				sec = atoi(seco);
-				wait(sec);
-				start = clock();
-				if (totalTime > 0) {
-					while (timeActual > 0) {
-
-						end = clock();
-						timePassed = (end - start) / CLOCKS_PER_SEC;
-						if (timePassed == 0) {
-							syn1 = clock();
-							while (timepass == timePassed) {
-								end = clock();
-								timePassed = (end - start) / CLOCKS_PER_SEC;
-								Sleep(1);
-							}
-							syn2 = clock();
-							time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
-						}
-						else {
-							Sleep(time2syn - 50);
-							while (timepass == timePassed) {
-								end = clock();
-								timePassed = (end - start) / CLOCKS_PER_SEC;
-								Sleep(3);
-							}
-						}
-						timeActual = totalTime - timePassed;
-						int thours = timeActual / 3600;
-						int tminutes = (timeActual % 3600) / 60;
-						int tseconds = (timeActual % 3600) % 60;
-						if (tseconds == -1) { tseconds = 0; }
-						timepass = timePassed;
-						time_t hour;
-						time(&hour);
-						char *tim;
-						tim = ctime(&hour);
-						tim[24] = '\0';
-						char hou[3] = { tim[11], tim[12], '\0' };
-						int Hours = atoi(hou);
-						char min[3] = { tim[14], tim[15], '\0' };
-						int Minutes = atoi(min);
-						char sec[3] = { tim[17], tim[18], '\0' };
-						int Seconds = atoi(sec);
-						printTimer(Hours, Minutes, Seconds);
-						printf("\n\n%02d:%02d:%02d\n\n", thours, tminutes, tseconds);
-					}
-				}
-
+			ShowConsoleCursor(FALSE);
+			if (arithTrig[i + 7] == '(') {
+				i = i + 8;
 			}
 			else {
-				printf("\n==> Your expression has syntax errors. <==\n\n");
+				if (arithTrig[i + 5] == '(') {
+					i = i + 6;
+
+				}
+			}
+			int t = i, p = 0;
+			for (t; arithTrig[t] != '\0'; t++) {
+				if (arithTrig[t] == ')') {
+					p++;
+				}
+			}
+			if (p != 1) {
+				printf("\n\n==> You need to terminate the expression with ')' character. <==\n\n");
+			}
+			else {
+				char timE[DIM] = "", expression[DIM] = "";
+				t = 0;
+				int b = i;
+				while (arithTrig[b] != ')') {
+					expression[t] = arithTrig[b];
+					b++; t++;
+				}
+				expression[t] = '\0';
+				b = 0;
+				int sep = 0;
+				for (t = 0; expression[t] != '\0'; t++) {
+					if (expression[t] == ':' || expression[t] == '0' || expression[t] == '1' || expression[t] == '2' || expression[t] == '3' || expression[t] == '4' || expression[t] == '5' || expression[t] == '6' || expression[t] == '7' || expression[t] == '8' || expression[t] == '9') {
+						b++;
+						if (expression[t] == ':') {
+							sep++;
+						}
+					}
+				}
+				if (b == strlen(expression) && sep == 2) {
+					t = 0;
+					sprintf(timE, "");
+					while (arithTrig[i] != ':'&&arithTrig[i] != ')') {
+						timE[t] = arithTrig[i];
+						t++; i++;
+					}
+					i++;
+					timE[t] = '\0';
+					int hours = (int)solveNow(timE, 0, 0);
+					sprintf(timE, "");
+					t = 0;
+					while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+						timE[t] = arithTrig[i];
+						t++; i++;
+					}
+					timE[t] = '\0';
+					i++;
+					int minutes = (int)solveNow(timE, 0, 0);
+					sprintf(timE, "");
+					t = 0;
+					while (arithTrig[i] != ')'&&arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
+						timE[t] = arithTrig[i];
+						t++; i++;
+					}
+					timE[t] = '\0';
+					int seconds = (int)solveNow(timE, 0, 0);
+					sprintf(timE, "");
+					clock_t start, end, syn1, syn2;
+					int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
+					int timeActual = 50, timepass = 0, time2syn = 0;
+					int sec = 0;
+					char seco[3] = "";
+					char *tim;
+					time_t hour1;
+					time(&hour1);
+					tim = ctime(&hour1);
+					tim[24] = '\0';
+					seco[0] = tim[17]; seco[1] = tim[18]; seco[2] = '\0';
+					sec = atoi(seco);
+					wait(sec);
+					start = clock();
+					if (totalTime > 0) {
+						while (timeActual > 0) {
+
+							end = clock();
+							timePassed = (end - start) / CLOCKS_PER_SEC;
+							if (timePassed == 0) {
+								syn1 = clock();
+								while (timepass == timePassed) {
+									end = clock();
+									timePassed = (end - start) / CLOCKS_PER_SEC;
+									Sleep(1);
+								}
+								syn2 = clock();
+								time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
+							}
+							else {
+								Sleep(time2syn - 50);
+								while (timepass == timePassed) {
+									end = clock();
+									timePassed = (end - start) / CLOCKS_PER_SEC;
+									Sleep(3);
+								}
+							}
+							timeActual = totalTime - timePassed;
+							int thours = timeActual / 3600;
+							int tminutes = (timeActual % 3600) / 60;
+							int tseconds = (timeActual % 3600) % 60;
+							if (tseconds == -1) { tseconds = 0; }
+							timepass = timePassed;
+							time_t hour;
+							time(&hour);
+							char *tim;
+							tim = ctime(&hour);
+							tim[24] = '\0';
+							char hou[3] = { tim[11], tim[12], '\0' };
+							int Hours = atoi(hou);
+							char min[3] = { tim[14], tim[15], '\0' };
+							int Minutes = atoi(min);
+							char sec[3] = { tim[17], tim[18], '\0' };
+							int Seconds = atoi(sec);
+							printTimer(Hours, Minutes, Seconds);
+							printf("\n\n%02d:%02d:%02d\n\n", thours, tminutes, tseconds);
+						}
+					}
+
+				}
+				else {
+					printf("\n==> Your expression has syntax errors. <==\n\n");
+				}
 			}
 		}
 		arithTrig[0] = '\0'; command = true;
+		ShowConsoleCursor(TRUE);
 	}
 
 	if (isCommand(arithTrig, "siprefixes")) {
@@ -1258,11 +1451,13 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(fout, "\n");
 		printf("\n");
 	}
+
 	if (isCommand(arithTrig, "time")) {
 		arithTrig[0] = '\0'; command = true;
 		Clock(1);
 		puts("");
 	}
+
 	if (isCommand(arithTrig, "actualtimeresponse")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of actual time response <==\n\n");
@@ -1271,6 +1466,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(fout, "\n");
 		printf("\n");
 	}
+
 	if (isCommand(arithTrig, "dayofweek") && arithTrig[i + 9] == '(') {
 		arithTrig[0] = '\0'; command = true;
 		char Day[DIM] = "", Month[DIM] = "", Year[DIM] = "";
@@ -1661,6 +1857,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 		}
 	}
+
 	if (isCommand(arithTrig, "predefinetxt")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Drag to here the file to predefine and press the button \"Enter\" <==\n");
@@ -1746,6 +1943,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 		}
 	}
+
 	if (isCommand(arithTrig, "calendar") && (arithTrig[i + 8] == '(' || arithTrig[i + 8] == '+')) {
 		char ye[100], calendar[DIM];
 		int k = 0;

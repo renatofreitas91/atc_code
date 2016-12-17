@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);
 	resultR = 0; resultI;
@@ -210,7 +211,9 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 					}
 				}
 			}
-			fprintf(fout, ">%s\n", savefTrig);
+			if (verify == 1) {
+				fprintf(fout, ">%s\n", savefTrig);
+			}
 			command = commands(arithTrig, path, result1, result2);
 			fclose(fout);
 			fout = NULL;
@@ -387,9 +390,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		_flushall();
 		if (cleanhistory == 0) {
 			if (arithTrig[0] != '\0'&&verify == 1) {
-				if (isFromMain == 1) {
-					system("title Advanced Trigonometry Calculator v1.8.7                                                            ==) Calculating... (==              ");
-				}
 				initialProcessor(arithTrig, result1);
 			}
 		}
@@ -593,91 +593,97 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							sprintf(syst, "%G", result1);
 							if (isEqual(syst, "-NAN(IND)")) {
 								if (isFromMain == 1) {
+									puts("");
 									puts("In binary=-NAN(IND)");
 									puts("In octal=-NAN(IND)");
 									puts("In hexadecimal=-NAN(IND)");
 								}
 								open = fopen(path, "a+");
+								fputs("", open);
 								fputs("In binary=-NAN(IND)\n", open);
 								fputs("In octal=-NAN(IND)\n", open);
 								fputs("In hexadecimal=-NAN(IND)\n", open);
 								fclose(open);
 							}
-							if (syst[0] == 'I'&&syst[1] == 'N'&&syst[2] == 'F') {
-								if (isFromMain == 1) {
-									puts("In binary=INF");
-									puts("In octal=INF");
-									puts("In hexadecimal=INF");
-								}
-								open = fopen(path, "a+");
-								fputs("In binary=INF\n", open);
-								fputs("In octal=INF\n", open);
-								fputs("In hexadecimal=INF\n", open);
-								fclose(open);
-							}
 							else {
-								if (syst[0] == '-'&&syst[1] == 'I'&&syst[2] == 'N'&&syst[3] == 'F') {
+								if (syst[0] == 'I'&&syst[1] == 'N'&&syst[2] == 'F') {
 									if (isFromMain == 1) {
-										puts("In binary=-INF");
-										puts("In octal=-INF");
-										puts("In hexadecimal=-INF");
+										puts("");
+										puts("In binary=INF");
+										puts("In octal=INF");
+										puts("In hexadecimal=INF");
 									}
 									open = fopen(path, "a+");
-									fputs("In binary=-INF\n", open);
-									fputs("In octal=-INF\n", open);
-									fputs("In hexadecimal=-INF\n", open);
+									fputs("", open);
+									fputs("In binary=INF\n", open);
+									fputs("In octal=INF\n", open);
+									fputs("In hexadecimal=INF\n", open);
 									fclose(open);
 								}
 								else {
-									char Value[DIM] = "";
-									sprintf(Value, "%G", result1);
-									for (int v = 0; Value[v]; v++) {
-										if (Value[v] == '-') {
-											Value[v] = '_';
-										}
-										if (Value[v] == '+') {
-											Value[v] = '0';
-										}
-									}
-									double result1_save = result1;
-									result1 = initialProcessor(Value, 0);
-									if (result1 != 0 || result1 == 0 && result2 == 0) {
-										open = fopen(path, "a+");
-										fputs("\nReal part:\n", open);
+									if (syst[0] == '-'&&syst[1] == 'I'&&syst[2] == 'N'&&syst[3] == 'F') {
 										if (isFromMain == 1) {
-											puts("\nReal part:\n");
+											puts("");
+											puts("In binary=-INF");
+											puts("In octal=-INF");
+											puts("In hexadecimal=-INF");
 										}
+										open = fopen(path, "a+");
+										fputs("", open);
+										fputs("In binary=-INF\n", open);
+										fputs("In octal=-INF\n", open);
+										fputs("In hexadecimal=-INF\n", open);
 										fclose(open);
-										char syst[DIM] = "";
-										sprintf(syst, "%G", result1_save);
-										if (isEqual(syst, "-NAN(IND)")) {
-											if (isFromMain == 1) {
-												puts("In binary=-NAN(IND)");
-												puts("In octal=-NAN(IND)");
-												puts("In hexadecimal=-NAN(IND)");
-											}
+									}
+									else {
+										if (result1 != 0 && result2 == 0 || result1 == 0 && result2 == 0) {
 											open = fopen(path, "a+");
-											fputs("In binary=-NAN(IND)\n", open);
-											fputs("In octal=-NAN(IND)\n", open);
-											fputs("In hexadecimal=-NAN(IND)\n", open);
+											fputs("\nReal part:\n", open);
+											if (isFromMain == 1) {
+												puts("\nReal part:\n");
+											}
 											fclose(open);
-										}
-										else {
 											decimalToBinary(result1, path, bp);
 											decimalToOctal(result1, path, op);
 											decimalToHexadecimal(result1, path, hp);
 										}
-									}
-									if (result2 != 0) {
-										open = fopen(path, "a+");
-										fputs("\nImaginary part:\n", open);
-										if (isFromMain == 1) {
-											puts("\nImaginary part:\n");
+										else {
+											if (result1 != 0 && result2 != 0) {
+												open = fopen(path, "a+");
+												fputs("\nReal part:\n", open);
+												if (isFromMain == 1) {
+													puts("\nReal part:\n");
+												}
+												fclose(open);
+												decimalToBinary(result1, path, bp);
+												decimalToOctal(result1, path, op);
+												decimalToHexadecimal(result1, path, hp);
+
+												open = fopen(path, "a+");
+												fputs("\nImaginary part:\n", open);
+												if (isFromMain == 1) {
+													puts("\nImaginary part:\n");
+												}
+												fclose(open);
+												decimalToBinary(result2, path, bp);
+												decimalToOctal(result2, path, op);
+												decimalToHexadecimal(result2, path, hp);
+
+											}
+											else {
+												if (result2 != 0) {
+													open = fopen(path, "a+");
+													fputs("\nImaginary part:\n", open);
+													if (isFromMain == 1) {
+														puts("\nImaginary part:\n");
+													}
+													fclose(open);
+													decimalToBinary(result2, path, bp);
+													decimalToOctal(result2, path, op);
+													decimalToHexadecimal(result2, path, hp);
+												}
+											}
 										}
-										fclose(open);
-										decimalToBinary(result2, path, bp);
-										decimalToOctal(result2, path, op);
-										decimalToHexadecimal(result2, path, hp);
 									}
 								}
 							}
@@ -693,23 +699,90 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						fclose(open);
 						niPrefix = atoi(siPref);
 						if (niPrefix == 1) {
+							char pref[DIM] = "";
+							sprintf(pref, "%G", result1);
+							char Value[DIM] = "";
 							if (result1 != 0 || result1 == 0 && result2 == 0) {
 								open = fopen(path, "a+");
+								fputs("\nReal part:\n", open);
 								if (isFromMain == 1) {
-									printf("\nReal part");
+									puts("\nReal part:\n");
 								}
-								fprintf(open, "\nReal part");
 								fclose(open);
-								prefixDeterminator(result1, path);
+								char pref[DIM] = "";
+								sprintf(pref, "%G", result1);
+								if (isEqual(pref, "-NAN(IND)")) {
+									if (isFromMain == 1) {
+										puts("=-NAN(IND)");
+									}
+									open = fopen(path, "a+");
+									fputs("=-NAN(IND)\n", open);
+									fclose(open);
+								}
+								else {
+									if (pref[0] == 'I'&&pref[1] == 'N'&&pref[2] == 'F') {
+										if (isFromMain == 1) {
+											puts("=INF");
+										}
+										open = fopen(path, "a+");
+										fputs("=INF\n", open);
+										fclose(open);
+									}
+									else {
+										if (pref[0] == '-'&&pref[1] == 'I'&&pref[2] == 'N'&&pref[3] == 'F') {
+											if (isFromMain == 1) {
+												puts("=-INF");
+											}
+											open = fopen(path, "a+");
+											fputs("=-INF\n", open);
+											fclose(open);
+										}
+										else {
+											prefixDeterminator(result1, path);
+										}
+									}
+								}
 							}
 							if (result2 != 0) {
 								open = fopen(path, "a+");
+								fputs("\nImaginary part:\n", open);
 								if (isFromMain == 1) {
-									printf("\nImaginary part");
+									puts("\nImaginary part:\n");
 								}
-								fprintf(open, "\nImaginary part");
 								fclose(open);
-								prefixDeterminator(result2, path);
+								char pref[DIM] = "";
+								sprintf(pref, "%G", result2);
+								if (isEqual(pref, "-NAN(IND)")) {
+									if (isFromMain == 1) {
+										puts("=-NAN(IND)");
+									}
+									open = fopen(path, "a+");
+									fputs("=-NAN(IND)\n", open);
+									fclose(open);
+								}
+								else {
+									if (pref[0] == 'I'&&pref[1] == 'N'&&pref[2] == 'F') {
+										if (isFromMain == 1) {
+											puts("=INF");
+										}
+										open = fopen(path, "a+");
+										fputs("=INF\n", open);
+										fclose(open);
+									}
+									else {
+										if (pref[0] == '-'&&pref[1] == 'I'&&pref[2] == 'N'&&pref[3] == 'F') {
+											if (isFromMain == 1) {
+												puts("=-INF");
+											}
+											open = fopen(path, "a+");
+											fputs("=-INF\n", open);
+											fclose(open);
+										}
+										else {
+											prefixDeterminator(result2, path);
+										}
+									}
+								}
 							}
 						}
 					}
@@ -736,9 +809,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					}
 					fputs("\n", fout);
 					fclose(fout);
-					if (isFromMain == 1) {
-						system("title Advanced Trigonometry Calculator v1.8.7                                                      ==) Calculated, you can enter more data (==              ");
-					}
 				}
 			}
 			else {
@@ -752,7 +822,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					}
 					fprintf(fout, "\nError in syntax.\n\n");
 					fclose(fout);
-					system("title Advanced Trigonometry Calculator v1.8.7                                                             ==) Enter data (==              ");
 				}
 			}
 		}
