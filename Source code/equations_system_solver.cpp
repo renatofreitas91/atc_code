@@ -20,7 +20,7 @@ void matrixToValues(char matrix[DIM], double result) {
 			}
 			value[l] = '\0';
 			k++;
-			initialProcessor(value, result);
+			solveNow(value, result, 0);
 			values[i][j] = resultR;
 			valuesS[i][j] = values[i][j];
 			valuesI[i][j] = resultI;

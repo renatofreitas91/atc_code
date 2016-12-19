@@ -178,7 +178,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				i++; v++;
 			}
 			value[v] = '\0';
-			solveNow(value, 0, 0);
+			solveNow(value, result1, result2);
 			aR = resultR;
 			aI = resultI;
 			i++; v = 0;
@@ -187,7 +187,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				i++; v++;
 			}
 			value[v] = '\0';
-			solveNow(value, 0, 0);
+			solveNow(value, result1, result2);
 			bR = resultR;
 			bI = resultI;
 			i++; v = 0;
@@ -196,7 +196,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				i++; v++;
 			}
 			value[v] = '\0';
-			solveNow(value, 0, 0);
+			solveNow(value, result1, result2);
 			cR = resultR;
 			cI = resultI;
 			multiplication(-1, 0, bR, bI);
@@ -720,7 +720,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 							if (Value[v] == '-')
 								Value[v] = '_';
 						}
-						solutionR = initialProcessor(Value, 0);
+						solutionR = solveNow(Value, result1, result2);
 						sprintf(Value, "%G", valuesS[p][count - 1]);
 						for (int v = 0; Value[v]; v++) {
 							if (Value[v] == '-') {
@@ -730,7 +730,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 								Value[v] = '0';
 							}
 						}
-						valuesS[p][count - 1] = initialProcessor(Value, 0);
+						valuesS[p][count - 1] = solveNow(Value, result1, result2);
 
 
 						sprintf(Value, "%G", solutionI);
@@ -738,7 +738,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 							if (Value[v] == '-')
 								Value[v] = '_';
 						}
-						solutionI = initialProcessor(Value, 0);
+						solutionI = solveNow(Value, result1, result2);
 						sprintf(Value, "%G", valuesSI[p][count - 1]);
 						for (int v = 0; Value[v]; v++) {
 							if (Value[v] == '-') {
@@ -748,7 +748,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 								Value[v] = '0';
 							}
 						}
-						valuesSI[p][count - 1] = initialProcessor(Value, 0);
+						valuesSI[p][count - 1] = solveNow(Value, result1, result2);
 						if (solutionR != valuesS[p][count - 1] || solutionI != valuesSI[p][count - 1]) {
 							printf("\n==> Unsolvable system. <==\n\n");
 							fprintf(fout, "\n==> Unsolvable system. <==\n\n");
@@ -767,7 +767,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 								if (Value[v] == '-')
 									Value[v] = '_';
 							}
-							values[p][count - 1] = initialProcessor(Value, 0);
+							values[p][count - 1] = solveNow(Value, result1, result2);
 							if (values[p][count - 1] >= 0 && valuesI[p][count - 1] > 0) {
 								printf("x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
 								fprintf(fout, "x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
@@ -919,7 +919,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				ct++; i++;
 			}
 			countTimes[ct] = '\0';
-			countT = abs((int)initialProcessor(countTimes, result1));
+			countT = abs((int)solveNow(countTimes, result1, result2));
 			clock_t start, end;
 			start = clock();
 			ct = 0;
@@ -1219,7 +1219,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 					i++;
 					time[t] = '\0';
-					int hours = (int)solveNow(time, 0, 0);
+					int hours = (int)solveNow(time, result1, result2);
 					sprintf(time, "");
 					t = 0;
 					while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
@@ -1228,7 +1228,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 					time[t] = '\0';
 					i++;
-					int minutes = (int)solveNow(time, 0, 0);
+					int minutes = (int)solveNow(time, result1, result2);
 					sprintf(time, "");
 					t = 0;
 					while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
@@ -1236,7 +1236,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 						t++; i++;
 					}
 					time[t] = '\0';
-					int seconds = (int)solveNow(time, 0, 0);
+					int seconds = (int)solveNow(time, result1, result2);
 					sprintf(time, "");
 					clock_t start, end, syn1, syn2;
 					int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
@@ -1355,7 +1355,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 					i++;
 					timE[t] = '\0';
-					int hours = (int)solveNow(timE, 0, 0);
+					int hours = (int)solveNow(timE, result1, result2);
 					sprintf(timE, "");
 					t = 0;
 					while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0') {
@@ -1364,7 +1364,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 					timE[t] = '\0';
 					i++;
-					int minutes = (int)solveNow(timE, 0, 0);
+					int minutes = (int)solveNow(timE, result1, result2);
 					sprintf(timE, "");
 					t = 0;
 					while (arithTrig[i] != ')'&&arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
@@ -1372,7 +1372,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 						t++; i++;
 					}
 					timE[t] = '\0';
-					int seconds = (int)solveNow(timE, 0, 0);
+					int seconds = (int)solveNow(timE, result1, result2);
 					sprintf(timE, "");
 					clock_t start, end, syn1, syn2;
 					int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
@@ -1506,7 +1506,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 				if (arithTrig[i] == '-') {
 					Day[r] = '+'; Day[r + 1] = '0'; Day[r + 2] = '\0';
-					day = initialProcessor(Day, 0);
+					day = solveNow(Day, result1, result2);
 					dayS = day;
 					r = 0;
 					i++;
@@ -1516,12 +1516,12 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 						r++; i++;
 					}
 					Day[r] = '+'; Day[r + 1] = '0'; Day[r + 2] = '\0';
-					day1 = initialProcessor(Day, 0);
+					day1 = solveNow(Day, result1, result2);
 					day1S = day1;
 				}
 				else {
 					Day[r] = '+'; Day[r + 1] = '0'; Day[r + 2] = '\0';
-					day = initialProcessor(Day, 0);
+					day = solveNow(Day, result1, result2);
 
 				}
 			}
@@ -1541,7 +1541,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 				if (arithTrig[i] == '-') {
 					Month[r] = '+'; Month[r + 1] = '0'; Month[r + 2] = '\0';
-					month = initialProcessor(Month, 0);
+					month = solveNow(Month, result1, result2);
 					monthS = month;
 					r = 0;
 					i++;
@@ -1551,12 +1551,12 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 						r++; i++;
 					}
 					Month[r] = '+'; Month[r + 1] = '0'; Month[r + 2] = '\0';
-					month1 = initialProcessor(Month, 0);
+					month1 = solveNow(Month, result1, result2);
 					month1S = month1;
 				}
 				else {
 					Month[r] = '+'; Month[r + 1] = '0'; Month[r + 2] = '\0';
-					month = initialProcessor(Month, 0);
+					month = solveNow(Month, result1, result2);
 
 				}
 			}
@@ -1575,7 +1575,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 				if (arithTrig[i] == '-') {
 					Year[r] = '+'; Year[r + 1] = '0'; Year[r + 2] = '\0';
-					year = initialProcessor(Year, 0);
+					year = solveNow(Year, result1, result2);
 					yearS = year;
 					r = 0;
 					i++;
@@ -1585,13 +1585,13 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 						r++; i++;
 					}
 					Year[r] = '+'; Year[r + 1] = '0'; Year[r + 2] = '\0';
-					year1 = initialProcessor(Year, 0);
+					year1 = solveNow(Year, result1, result2);
 					year1S = year1;
 
 				}
 				else {
 					Year[r] = '+'; Year[r + 1] = '0'; Year[r + 2] = '\0';
-					year = initialProcessor(Year, 0);
+					year = solveNow(Year, result1, result2);
 
 				}
 			}
@@ -1771,11 +1771,11 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		char tim[DIM] = "";
 		sprintf(tim, "%G", day);
-		int daY = (int)initialProcessor(tim, 0);
+		int daY = (int)solveNow(tim, result1, result2);
 		sprintf(tim, "%G", month);
-		int montH = (int)initialProcessor(tim, 0);
+		int montH = (int)solveNow(tim, result1, result2);
 		sprintf(tim, "%G", year);
-		int yeaR = (int)initialProcessor(tim, 0);
+		int yeaR = (int)solveNow(tim, result1, result2);
 		if (daY < 1 || daY>31) {
 			printf("\nError entering the day.\n ==> In a month, the days only vary between 1 and 31.\n\n");
 			fprintf(fout, "\nError entering the day.\n ==> In a month, the days only vary between 1 and 31.\n\n");
@@ -1978,7 +1978,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 				ye[k] = '\0';
 				if (countR == countL) {
-					year = (int)initialProcessor(ye, 0);
+					year = (int)solveNow(ye, result1, result2);
 				}
 
 			}
@@ -2005,7 +2005,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 					ye[k] = '\0';
 					if (countR == countL) {
-						year = (int)initialProcessor(ye, 0);
+						year = (int)solveNow(ye, result1, result2);
 					}
 
 

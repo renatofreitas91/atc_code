@@ -285,7 +285,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 			}
 			dP[i - 2] = '\0';
 			if (arithTrig[i] != '\0') {
-				dp = (int)initialProcessor(dP, result1);
+				dp = (int)solveNow(dP, result1, result2);
 				i = i + 2;
 				int b = 0;
 				for (b = 0; arithTrig[b] != '\0'; b++) {
@@ -305,7 +305,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 			}
 			bP[i - 2] = '\0';
 			if (arithTrig[i] != '\0') {
-				bp = (int)initialProcessor(bP, result1);
+				bp = (int)solveNow(bP, result1, result2);
 				i = i + 2;
 				int b = 0;
 				for (b = 0; arithTrig[b] != '\0'; b++) {
@@ -325,7 +325,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 			}
 			oP[i - 2] = '\0';
 			if (arithTrig[i] != '\0') {
-				op = (int)initialProcessor(oP, result1);
+				op = (int)solveNow(oP, result1, result2);
 				i = i + 2;
 				int b = 0;
 				for (b = 0; arithTrig[b] != '\0'; b++) {
@@ -345,7 +345,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 			}
 			hP[i - 2] = '\0';
 			if (arithTrig[i] != '\0') {
-				hp = (int)initialProcessor(hP, result1);
+				hp = (int)solveNow(hP, result1, result2);
 				i = i + 2;
 				int b = 0;
 				for (b = 0; arithTrig[b] != '\0'; b++) {

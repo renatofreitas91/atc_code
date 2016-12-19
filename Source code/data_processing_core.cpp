@@ -308,7 +308,7 @@ int variableValidator(char variable[DIM]) {
 	abc = abs((int)strlen(variable));
 	valid = 0;
 	for (i = 0; variable[i] != '\0'; i++) {
-		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd' || variable[i] == 'b')) {
+		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
 			if (variable[i] == 's') {
 				revariable[i] = 'p';
 			}
@@ -339,35 +339,41 @@ int variableValidator(char variable[DIM]) {
 			if (variable[i] == 'd') {
 				revariable[i] = 'G';
 			}
-			if (variable[i] == 'b') {
-				revariable[i] = 'u';
-				return 2;
-			}
 			h = 1;
 		}
 		else {
-			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'x' || variable[i] == 'b' || variable[i] == 'D') {
+			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'x' || variable[i] == 'D' || variable[i] == 'b') {
+
 				if (variable[i] == 'i') {
 					revariable[i] = 'o';
 				}
+
 				if (variable[i] == 'e') {
 					revariable[i] = 'w';
 				}
+
 				if (variable[i] == 'x') {
 					revariable[i] = 'y';
 				}
-				if (variable[i] == 'b') {
-					revariable[i] = 'u';
-					return 2;
-				}
+
 				if (variable[i] == 'D') {
 					revariable[i] = 'T';
-					sD = 1;
+					if (isEqual("b", variable)) {
+						return 2;
+					}
 				}
+
+				if (variable[i] == 'b') {
+					revariable[i] = 'u';
+					if (isEqual("b", variable)) {
+						return 2;
+					}
+				}
+
 				h = 1;
 			}
 			else {
-				if (i == 0 && (variable[i] == 'B' || variable[i] == 'O' || variable[i] == 'H' || variable[i] == 'P' || variable[i] == 'b')) {
+				if (i == 0 && (variable[i] == 'B' || variable[i] == 'O' || variable[i] == 'H' || variable[i] == 'P')) {
 					if (variable[i] == 'B') {
 						revariable[i] = 'N';
 					}
@@ -380,13 +386,10 @@ int variableValidator(char variable[DIM]) {
 					if (variable[i] == 'P') {
 						revariable[i] = 'I';
 					}
-					if (variable[i] == 'b') {
-						revariable[i] = 'u';
-					}
 					h = 1;
 				}
 				else {
-					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'F' || variable[i] == 'P' || variable[i] == 'b') {
+					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'F' || variable[i] == 'P') {
 						if (variable[i] == 'A') {
 							revariable[i] = 'Q';
 						}
@@ -404,10 +407,6 @@ int variableValidator(char variable[DIM]) {
 						}
 						if (variable[i] == 'P') {
 							revariable[i] = 'S';
-						}
-						if (variable[i] == 'b') {
-							revariable[i] = 'u';
-							return 2;
 						}
 						h = 1;
 					}
@@ -451,7 +450,7 @@ int variableValidator(char variable[DIM]) {
 	func = functionProcessor(variableT, 0.3, 1.0, 0);
 	variable[abc] = '\0';
 	processVariable(variable);
-	if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0 && sD == 0) {
+	if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0) {
 		processVariable(revariable);
 		if (valid == 0) {
 			i = 0;
@@ -474,9 +473,8 @@ int variableValidator(char variable[DIM]) {
 		}
 	}
 	else {
-		if (h == 1 && valid == 0 && (arith != 0 || func != 0 || prefix != 0 || sD != 0)) {
+		if (h == 1 && valid == 0 && (arith != 0 || func != 0 || prefix != 0)) {
 			h = 2;
-			sD = 0;
 		}
 	}
 	return h;

@@ -392,7 +392,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					as++; r++;
 				}
 				argument[as] = '+'; argument[as + 1] = '('; argument[as + 2] = '0'; argument[as + 3] = ')'; argument[as + 4] = '\0';
-				initialProcessor(argument, result1);
+				solveNow(argument, result1, result2);
 				double argumentR = resultR;
 				double argumentI = resultI;
 				char systR[DIM] = "";
@@ -652,7 +652,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					if (funcF != 0.5) {
 						if (validVar == 0) {
 							if (varValidator[0] == 'E' || varValidator[0] == 'B' || varValidator[0] == 'O' || varValidator[0] == 'H' || varValidator[0] == 'P' || varValidator[0] == 'e' || varValidator[0] == 'p'&&varValidator[1] == 'i') {
-								if (varValidator[0] == 'E' || varValidator[0] == 'B' || varValidator[0] == 'O' || varValidator[0] == 'H' || initialProcessor(varValidator, 0) != 0) {
+								if (varValidator[0] == 'E' || varValidator[0] == 'B' || varValidator[0] == 'O' || varValidator[0] == 'H' || solveNow(varValidator, result1, result2) != 0) {
 									decision = true;
 								}
 								else {
@@ -704,7 +704,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 								as++; r++;
 							}
 							argument[as] = '+'; argument[as + 1] = '('; argument[as + 2] = '0'; argument[as + 3] = ')'; argument[as + 4] = '\0';
-							initialProcessor(argument, result1);
+							solveNow(argument, result1, result2);
 							double argumentR = resultR;
 							double argumentI = resultI;
 							char systR[DIM] = "";
@@ -1044,7 +1044,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					i++;
 				}
 				variable[j] = '\0';
-				if (initialProcessor(variable, result1) != 0) {
+				if (solveNow(variable, result1, result2) != 0) {
 					decision = true;
 					variable[j] = '\0';
 				}
@@ -1074,7 +1074,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 boolean atcFunctions(char functionName[DIM]) {
 	int i = 0, j = 0, funcIndex = 0, g = 0, h = 0;
 	boolean isFunction = false;
-	char namesForFunctions[DIM] = "initialProcessor,functionProcessor", saveFunction[DIM] = "";
+	char namesForFunctions[DIM] = "solveNow,initialProcessor,functionProcessor,arithSolver", saveFunction[DIM] = "";
 	for (j = 0; functionName[j] != '\0'; j++) {
 		saveFunction[j] = functionName[j];
 	}
