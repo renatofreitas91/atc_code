@@ -668,18 +668,26 @@ void sprint(char text[DIM], double result1, double result2) {
 }
 
 double solveNow(char toSolveNow[DIM], double result1, double result2) {
-	FILE *fout = NULL;
+	FILE *fsolveN = NULL;
 	char path[DIM] = "";
 	sprintf(path, "%s\\temp.txt", atcPath);
-	double resultFF = 0;
-	while (fout == NULL) {
-		fout = fopen(path, "w");
+	fsolveN = NULL;
+	while (fsolveN == NULL) {
+		while (fsolveN == NULL) {
+			fsolveN = fopen(path, "w");
+		}
 	}
+	double resultFF = 0;
 	isFromSolveNow = 1;
-	main_core(toSolveNow, toSolveNow, fout, path, result1, result2, 0);
+	main_core(toSolveNow, toSolveNow, fsolveN, path, result1, result2, 0);
 	sprintf(toSolveNow, "");
-	fclose(fout);
 	resultFF = resultR;
 	isFromSolveNow = 0;
+	char deleteFile[DIM] = "";
+	if (fsolveN != NULL) {
+		fclose(fsolveN);
+	}
+	sprintf(deleteFile, "del \"%s\"", path);
+	system(deleteFile);
 	return resultFF;
 }
