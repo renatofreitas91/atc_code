@@ -671,11 +671,8 @@ double solveNow(char toSolveNow[DIM], double result1, double result2) {
 	FILE *fsolveN = NULL;
 	char path[DIM] = "";
 	sprintf(path, "%s\\temp.txt", atcPath);
-	fsolveN = NULL;
 	while (fsolveN == NULL) {
-		while (fsolveN == NULL) {
-			fsolveN = fopen(path, "w");
-		}
+		fsolveN = fopen(path, "w");
 	}
 	double resultFF = 0;
 	isFromSolveNow = 1;
@@ -683,11 +680,8 @@ double solveNow(char toSolveNow[DIM], double result1, double result2) {
 	sprintf(toSolveNow, "");
 	resultFF = resultR;
 	isFromSolveNow = 0;
-	char deleteFile[DIM] = "";
 	if (fsolveN != NULL) {
 		fclose(fsolveN);
 	}
-	sprintf(deleteFile, "del \"%s\"", path);
-	system(deleteFile);
 	return resultFF;
 }

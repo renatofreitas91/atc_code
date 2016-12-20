@@ -1631,7 +1631,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		result1 = resultR;
 		result2 = resultI;
 	}
-	if (isEqual("acosec", op)) {
+	if (isEqual("asec", op)) {
 		arcsec(v[1], vI[1]);
 		result1 = resultR;
 		result2 = resultI;
