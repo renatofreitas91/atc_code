@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-char calendarStr[DIM] = "";
+
 
 void Clock(int a)
 {
@@ -566,6 +566,32 @@ void printTimer(int hours, int minutes, int seconds) {
 	puts(display);
 }
 
+void wait(int seconds) {
+	int sec = 0;
+	char seco[3] = "";
+	char *tim;
+	time_t hour1;
+	time(&hour1);
+	tim = ctime(&hour1);
+	tim[24] = '\0';
+	seco[0] = tim[17]; seco[1] = tim[18]; seco[2] = '\0';
+	sec = atoi(seco);
+	if (seconds == sec) {
+		while (seconds == sec) {
+			char *tim;
+			time_t hour1;
+			time(&hour1);
+			tim = ctime(&hour1);
+			tim[24] = '\0';
+			seco[0] = tim[17]; seco[1] = tim[18]; seco[2] = '\0';
+			sec = atoi(seco);
+			Sleep(1);
+		}
+	}
+}
+
+char calendarStr[DIM] = "";
+
 int datePreciser(double day, double month, double year, double dayS, double monthS, double yearS) {
 	int plusYears = 0, k = 10, count = -1, flag = 1;
 	double dayF = day, monthF = month, yearF = year, dayFF = day;
@@ -638,28 +664,3 @@ int datePreciser(double day, double month, double year, double dayS, double mont
 	}
 	return count;
 }
-
-void wait(int seconds) {
-	int sec = 0;
-	char seco[3] = "";
-	char *tim;
-	time_t hour1;
-	time(&hour1);
-	tim = ctime(&hour1);
-	tim[24] = '\0';
-	seco[0] = tim[17]; seco[1] = tim[18]; seco[2] = '\0';
-	sec = atoi(seco);
-	if (seconds == sec) {
-		while (seconds == sec) {
-			char *tim;
-			time_t hour1;
-			time(&hour1);
-			tim = ctime(&hour1);
-			tim[24] = '\0';
-			seco[0] = tim[17]; seco[1] = tim[18]; seco[2] = '\0';
-			sec = atoi(seco);
-			Sleep(1);
-		}
-	}
-}
-

@@ -1,4 +1,8 @@
+
+
 #include "stdafx.h"
+
+
 
 void print(char text[DIM], double result1, double result2) {
 	int i = 0, j = 0, varAndValues = 0, k = 0, var2Print = 0, g = 0, valP = 0, l = 0, chChar = 0, b = 0, nV = 0, nC = 0;

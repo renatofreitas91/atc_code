@@ -3,6 +3,7 @@
 #include "stdafx.h"
 
 
+
 double initialProcessor(char arithTrig[DIM], double result) {
 
 	if (strlen(arithTrig) == 0) {
@@ -942,7 +943,7 @@ double arithSolver(char trigon1[DIM], double result) {
 			complex = 2;
 		}
 		if (number2[0] == '_'&&number2[1] == 'r'&&number2[2] == 'e'&&number2[3] == 's' || number2[0] == '['&&number2[1] == '_'&&number2[2] == 'r'&&number2[3] == 'e'&&number2[4] == 's') {
-			ampl[n] = ansRV*(-1);
+			ampl[n] = ansRV*-1;
 			amplI[n] = ansIV*-1;
 			complex = 2;
 		}

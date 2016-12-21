@@ -1,4 +1,7 @@
+
+
 #include "stdafx.h"
+
 
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
@@ -390,43 +393,52 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		_flushall();
 		if (cleanhistory == 0) {
 			if (arithTrig[0] != '\0'&&verify == 1) {
+				sprintf(expressionF, "%s", arithTrig);
+				replace(")", "+0]", expressionF);
+				replace("(", "[0+", expressionF);
+				replace("]", ")", expressionF);
+				replace("[", "(", expressionF);
+				replace("+0", "", expressionF);
+				sprintf(arithTrig, "%s+0", expressionF);
 				initialProcessor(arithTrig, result1);
+				if (resultR == 0 && resultI == 0) {
+					initialProcessor(arithTrig, result1);
+				}
 			}
 		}
 		if (arithTrig[0] != '\0'&&txt != 1) {
-			if (res == '+') {
-				sum(result1, result2, resultR, resultI);
-			}
-			if (res == '-') {
-				subtraction(result1, result2, resultR, resultI);
-			}
-			if (res == '/') {
-				division(result1, result2, resultR, resultI);
-			}
-			if (res == '*' || res == 'x') {
-				multiplication(result1, result2, resultR, resultI);
-			}
-			if (res == '^') {
-				exponentiation(result1, result2, resultR, resultI, 1);
-			}
 			if (verify == 1) {
+				if (res == '+') {
+					sum(result1, result2, resultR, resultI);
+				}
+				if (res == '-') {
+					subtraction(result1, result2, resultR, resultI);
+				}
+				if (res == '/') {
+					division(result1, result2, resultR, resultI);
+				}
+				if (res == '*' || res == 'x') {
+					multiplication(result1, result2, resultR, resultI);
+				}
+				if (res == '^') {
+					exponentiation(result1, result2, resultR, resultI, 1);
+				}
 				verified = 1;
 				round_complex();
 				result1 = resultR;
 				result2 = resultI;
-				ansRV = result1;
-				ansIV = result2;
 				resultFI = result2;
-
+				if (isFromSolveNow == 0) {
+					ans[rf] = result1;
+					ansI[rf] = result2;
+					ansRV = result1;
+					ansIV = result2;
+				}
 				if (var == 1) {
 					variableController(revariable, result1);
 				}
 				if (valGet == 0) {
 					if (dp == -1) {
-						if (isFromSolveNow == 0) {
-							ans[rf] = result1;
-							ansI[rf] = result2;
-						}
 						if (isFromMain == 1) {
 							if (result1 > 0 && result2 > 0) {
 								printf("#%d=%G+%Gi\n", rf, result1, result2);
@@ -515,10 +527,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						}
 					}
 					if (dp > -1) {
-						if (isFromSolveNow == 0) {
-							ans[rf] = result1;
-							ansI[rf] = resultFI;
-						}
 						if (result1 > 0 && result2 > 0) {
 							sprintf(dP, "#%d=%%.%df+%%.%dfi\n", rf, dp, dp);
 							if (isFromMain == 1) {

@@ -3,36 +3,6 @@
 #include "stdafx.h"
 
 
-double numericalSystems(char numSystem[DIM]) {
-	double result = 0;
-	char system = ' ';
-	int i, j = 0;
-	system = numSystem[0];
-	if (numSystem[1] == '_') {
-		numSystem[1] = '-';
-	}
-	for (i = 1; numSystem[i] != '\0'; i++) {
-		numSystem[i - 1] = numSystem[i];
-		if (numSystem[i - 1] == '.') {
-			j++;
-			if (j == 2) {
-				numSystem[i - 1] = '\0';
-			}
-		}
-	}
-	numSystem[i - 1] = '\0';
-
-	if (system == 'B') {
-		result = binaryToDecimal(numSystem);
-	}
-	if (system == 'O') {
-		result = octalToDecimal(numSystem);
-	}
-	if (system == 'H') {
-		result = hexadecimalToDecimal(numSystem);
-	}
-	return result;
-}
 
 void numSystemsController() {
 	FILE *open;
@@ -95,104 +65,6 @@ void actualTimeController() {
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
 	fclose(open);
-}
-
-double processVariable(char variable[DIM]) {
-	validVar = 0;
-	FILE *open = NULL;
-	int i, g, h, y, l = 0, lth = 0, cou = 0;
-	double varValue = 0;
-	char vari[DIM] = "", va[DIM] = "", value[DIM] = "";
-	char *pointer;
-	i = 0;
-	char toOpen[DIM] = "";
-	sprintf(toOpen, "%s\\variables.txt", atcPath);
-	open = fopen(toOpen, "a+");
-	while (open == NULL&&cou < 10) {
-		open = fopen(toOpen, "a+");
-		cou++;
-	}
-	if (cou < 10) {
-		i = 0;
-		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
-		vari[i] = '\0';
-		lth = abs((int)strlen(vari));
-		fclose(open);
-		i = 0;
-		for (i = 0; vari[i] != '\0'; i++) {
-			g = 0;
-			int j = i;
-			while (vari[j] != ' '&&vari[j] != '\0') {
-				j++;
-			}
-			j = j - i;
-			if (vari[i] == variable[g] && (i == 0 || vari[i - 1] == '\n')) {
-				while (vari[i] == variable[g]) {
-					if (vari[i] == variable[g]) {
-						va[g] = vari[i];
-					}i++; g++;
-				}
-				if (vari[i] != ' ') {
-					while (vari[i] != ' ') {
-						va[g] = vari[i];
-						g++; i++;
-					}
-				}
-				va[g] = '\0';
-			}
-			l = i;
-			g = 0;
-			for (y = 0; va[y] != '\0'; y++) {
-				if (va[y] == variable[y]) {
-					g++;
-				}
-			}
-			vari[lth] = '\0';
-			if (g == strlen(va) && strlen(variable) == g&&j == g&&g != 0) {
-				int space = 0;
-				valid = 1; validVar = 1;
-				int gh = l;
-				while (vari[gh] != '\n') {
-					gh++;
-				}
-				h = gh;
-				gh = l + 1;
-				y = 0;
-				for (gh; gh < h; gh++) {
-					value[y] = vari[gh];
-					if (value[y] == ' ') {
-						space = 1;
-					}
-					y++;
-				}
-				value[y] = '\0';
-				if (space == 0) {
-					resultR = strtod(value, &pointer);
-				}
-				else {
-					char real[DIM] = "", imag[DIM] = "";
-					y = 0;
-					while (value[y] != ' ') {
-						real[y] = value[y];
-						y++;
-					}
-					real[y] = '\0';
-					y++;
-					gh = 0;
-					while (value[y] != '\0') {
-						imag[gh] = value[y];
-						y++; gh++;
-					}
-					imag[gh] = '\0';
-					resultR = strtod(real, &pointer);
-					resultI = strtod(imag, &pointer);
-					varValue = resultR;
-				}
-				break;
-			}
-		}
-	}
-	return varValue;
 }
 
 void variableController(char variable[DIM], double result) {
@@ -283,201 +155,6 @@ void variableController(char variable[DIM], double result) {
 		fprintf(open, "%s %G %G\n", variable, resultR, resultI);
 		fclose(open);
 	}
-}
-
-int variableValidator(char variable[DIM]) {
-	int validate = 0, i = 0, h = -1, abc = 0, j = 0, k = 0, sD = 0;
-	char variableT[DIM], varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
-	double arith = 0, func = 0;
-	for (k = 0; variable[k] != '\0'; k++) {
-		for (i = 0; varLetters[i] != '\0'; i++) {
-			if (variable[k] == varLetters[i]) {
-				j++;
-				break;
-			}
-		}
-	}
-	if (j != strlen(variable) || j == 0 && strlen(variable) == 0) {
-		h = 0;
-		return h;
-	}
-	revariable[0] = '\0';
-
-	FILE *var = NULL, *var1 = NULL;
-	i = 0;
-	abc = abs((int)strlen(variable));
-	valid = 0;
-	for (i = 0; variable[i] != '\0'; i++) {
-		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
-			if (variable[i] == 's') {
-				revariable[i] = 'p';
-			}
-			if (variable[i] == 'c') {
-				revariable[i] = 'h';
-			}
-			if (variable[i] == 't') {
-				revariable[i] = 'j';
-			}
-			if (variable[i] == 'a') {
-				revariable[i] = 'k';
-			}
-			if (variable[i] == 'l') {
-				revariable[i] = 'z';
-			}
-			if (variable[i] == 'r') {
-				revariable[i] = 'v';
-			}
-			if (variable[i] == 'q') {
-				revariable[i] = 'n';
-			}
-			if (variable[i] == 'g') {
-				revariable[i] = 'm';
-			}
-			if (variable[i] == 'd') {
-				revariable[i] = 'G';
-			}
-			if (variable[i] == 'd') {
-				revariable[i] = 'G';
-			}
-			h = 1;
-		}
-		else {
-			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'x' || variable[i] == 'D' || variable[i] == 'b') {
-
-				if (variable[i] == 'i') {
-					revariable[i] = 'o';
-				}
-
-				if (variable[i] == 'e') {
-					revariable[i] = 'w';
-				}
-
-				if (variable[i] == 'x') {
-					revariable[i] = 'y';
-				}
-
-				if (variable[i] == 'D') {
-					revariable[i] = 'T';
-					if (isEqual("b", variable)) {
-						return 2;
-					}
-				}
-
-				if (variable[i] == 'b') {
-					revariable[i] = 'u';
-					if (isEqual("b", variable)) {
-						return 2;
-					}
-				}
-
-				h = 1;
-			}
-			else {
-				if (i == 0 && (variable[i] == 'B' || variable[i] == 'O' || variable[i] == 'H' || variable[i] == 'P')) {
-					if (variable[i] == 'B') {
-						revariable[i] = 'N';
-					}
-					if (variable[i] == 'O') {
-						revariable[i] = 'M';
-					}
-					if (variable[i] == 'H') {
-						revariable[i] = 'V';
-					}
-					if (variable[i] == 'P') {
-						revariable[i] = 'I';
-					}
-					h = 1;
-				}
-				else {
-					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'F' || variable[i] == 'P') {
-						if (variable[i] == 'A') {
-							revariable[i] = 'Q';
-						}
-						if (variable[i] == 'B') {
-							revariable[i] = 'W';
-						}
-						if (variable[i] == 'C') {
-							revariable[i] = 'R';
-						}
-						if (variable[i] == 'E') {
-							revariable[i] = 'Y';
-						}
-						if (variable[i] == 'F') {
-							revariable[i] = 'U';
-						}
-						if (variable[i] == 'P') {
-							revariable[i] = 'S';
-						}
-						h = 1;
-					}
-					else {
-						revariable[i] = variable[i];
-					}
-				}
-			}
-		}
-	}
-
-	revariable[i] = '\0';
-	i = 0;
-
-	variable[abc] = '\0';
-	processVariable(variable);
-	variable[abc] = '\0';
-	arith = arithSolver(variable, 0);
-	if ((variable[0] == 'E' || variable[0] == 'B' || variable[0] == 'O' || variable[0] == 'H' || variable[0] == 'P' || variable[0] == 'x') && variable[1] == '=') {
-		arith = 10;
-	}
-	variable[abc] = '\0';
-	for (i = 0; variable[i] != '\0'; i++) {
-		variableT[i] = variable[i];
-	}
-	variableT[i] = '?'; variableT[i + 1] = '\0';
-	char testPrefix[DIM] = "";
-	for (i = 0; variable[i] != '\0'; i++) {
-		testPrefix[i] = variable[i];
-	}
-	testPrefix[i] = '\0';
-	double prefix = 0;
-	if (testPrefix[0] == 'P') {
-		testPrefix[0] = '1';
-		for (i = 1; testPrefix[i] != '\0'; i++) {
-			testPrefix[i] = testPrefix[i - 1];
-		}
-		testPrefix[i] = '\0';
-		prefix = arithSolver(testPrefix, 0);
-	}
-	func = functionProcessor(variableT, 0.3, 1.0, 0);
-	variable[abc] = '\0';
-	processVariable(variable);
-	if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0) {
-		processVariable(revariable);
-		if (valid == 0) {
-			i = 0;
-			FILE *var1 = NULL;
-			if (var1 != NULL) {
-				fclose(var1);
-			}
-			var1 = NULL;
-			char toOpen[DIM] = "";
-			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
-			while (var1 == NULL&&i < 100) {
-				var1 = fopen(toOpen, "a+");
-				i++;
-			}
-			if (i < 100) {
-				fprintf(var1, "%s %s\n", variable, revariable);
-				fclose(var1);
-			}
-			i = 0;
-		}
-	}
-	else {
-		if (h == 1 && valid == 0 && (arith != 0 || func != 0 || prefix != 0)) {
-			h = 2;
-		}
-	}
-	return h;
 }
 
 void prefixDeterminator(double n, char path[DIM]) {
@@ -708,81 +385,31 @@ void prefixDeterminator(double n, char path[DIM]) {
 	fclose(open);
 }
 
-double convertToNumber(char number[DIM]) {
-	int i = 0, j = 0, num = 0, k = 0, l = 0, sig = 1, h = 0, m = 0, f = 0;
-	char nu[DIM] = "";
-	double result = 0, exp = 0;
-	for (h = 0; number[h] != '\0'; h++) {
-		if (number[h] == 'E') {
-			m = h;
-			h++;
-			f = 0;
-			if (number[h] == '-') {
-				sig = -1;
-				h++;
+void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]) {
+	int i = 0, j = 0, k = 0, m = 0;
+	char toChange[DIM] = "";
+	sprintf(toChange, "%s", string);
+	if (isContained(toReplace, toChange)) {
+		while (isContained(toReplace, toChange)) {
+			j = 0; k = 0;
+			sprintf(expressionF, "");
+			i = (int)resultR;
+			while (j < i) {
+				expressionF[j] = toChange[j]; j++;
 			}
-			while (number[h] != '\0') {
-				nu[f] = number[h];
-				f++; h++;
+			expressionF[j] = '\0'; m = j;
+			while (k < abs((int)strlen(replacement))) {
+				expressionF[j] = replacement[k]; j++; k++;
 			}
-			nu[f] = '\0';
-			exp = convertToNumber(nu);
-			number[m] = '.';
-			number[m + 1] = '0';
-			number[m + 2] = '\0';
+			expressionF[j] = '\0';
+			m = m + abs((int)strlen(toReplace));
+			while (m < abs((int)strlen(toChange))) {
+				expressionF[j] = toChange[m]; j++; m++;
+			}
+			expressionF[j] = '\0';
+			sprintf(toChange, "%s", expressionF);
 		}
 	}
-
-	i = 0;
-	while (number[i] != '.'&&number[i] != '\0') {
-		i++;
-	}
-	i--;
-	j = i;
-	k = i;
-	i++;
-	while (number[i] != '\0') {
-		i++;
-	}
-	l = abs((int)strlen(number)) - j - 4;
-	for (i = 0; j >= 0; i++) {
-		nu[0] = number[i];
-		nu[1] = '.';
-		nu[2] = '0';
-		nu[3] = '\0';
-		num = atoi(nu);
-		result = result + num*pot(10.0, j, 1);
-		j--;
-	}
-	k = k + 2;
-	i = 1;
-	for (k; i <= l&&number[k] != '\0'&&k < abs((int)strlen(number)); k++) {
-		nu[0] = number[k];
-		nu[1] = '.';
-		nu[2] = '0';
-		nu[3] = '\0';
-		num = atoi(nu);
-		result = result + num*pot(10.0, i*-1, 1);
-		i++;
-	}
-
-	result = result*pot(10.0, exp*sig, 1);
-	return result;
-}
-
-boolean isToWrite(char arith[DIM]) {
-	char noAnswer[16] = "NO_ANSWERS_FILE";
-	int h = 0;
-	if (noAnswer[h] == arith[h]) {
-		while (noAnswer[h] == arith[h]) {
-			h++;
-		}
-		h--;
-		if (h == strlen(arith) && strlen(arith) == strlen(noAnswer)) {
-			return false;
-		}
-	}
-	return true;
 }
 
 void renamer(char expression[DIM]) {
@@ -816,91 +443,6 @@ void renamer(char expression[DIM]) {
 		expressionF[i] = expression[i];
 	}
 	expressionF[i] = '\0';
-}
-
-double prefToNumber(char prefix) {
-	double result = 0;
-	if (prefix == 'Y') {
-		result = pow(10.0, 24.0);
-		return result;
-	}
-	if (prefix == 'Z') {
-		result = pow(10.0, 21.0);
-		return result;
-	}
-	if (prefix == 'E') {
-		result = pow(10.0, 18.0);
-		return result;
-	}
-	if (prefix == 'P') {
-		result = pow(10.0, 15.0);
-		return result;
-	}
-	if (prefix == 'T') {
-		result = pow(10.0, 12.0);
-		return result;
-	}
-	if (prefix == 'G') {
-		result = pow(10.0, 9.0);
-		return result;
-	}
-	if (prefix == 'M') {
-		result = pow(10.0, 6.0);
-		return result;
-	}
-	if (prefix == 'k') {
-		result = pow(10.0, 3.0);
-		return result;
-	}
-	if (prefix == 'h') {
-		result = pow(10.0, 2.0);
-		return result;
-	}
-	if (prefix == 'D') {
-		result = pow(10.0, 1.0);
-		return result;
-	}
-	if (prefix == 'd') {
-		result = pow(10.0, -1.0);
-		return result;
-	}
-	if (prefix == 'c') {
-		result = pow(10.0, -2.0);
-		return result;
-	}
-	if (prefix == 'm') {
-		result = pow(10.0, -3.0);
-		return result;
-	}
-	if (prefix == 'u') {
-		result = pow(10.0, -6.0);
-		return result;
-	}
-	if (prefix == 'n') {
-		result = pow(10.0, -9.0);
-		return result;
-	}
-	if (prefix == 'p') {
-		result = pow(10.0, -12.0);
-		return result;
-	}
-	if (prefix == 'f') {
-		result = pow(10.0, -15.0);
-		return result;
-	}
-	if (prefix == 'a') {
-		result = pow(10.0, -18.0);
-		return result;
-	}
-	if (prefix == 'z') {
-		result = pow(10.0, -21.0);
-		return result;
-	}
-	if (prefix == 'y') {
-		result = pow(10.0, -24.0);
-		return result;
-	}
-	return result;
 }
 
 void variableRenamer(char variable[DIM]) {
@@ -1116,83 +658,6 @@ void stringVariableController(char stringVariable[DIM], char string[DIM]) {
 		fprintf(save, "%s\n", string);
 		fclose(save);
 	}
-}
-
-boolean firstLetterVariable(char letter) {
-	char letters[100] = "QWRTYUISGJKLZXVNMwyuofhjkzvnmp";
-	int i = 0;
-	for (i = 0; i < abs((int)strlen(letters)); i++) {
-		if (letter == letters[i]) {
-			return true;
-		}
-	}
-	return false;
-}
-
-boolean letterVariables(char letter) {
-	char letters[100] = "QWRTYUIOSGHJKLZXVNMqwrtyuopasdfghjklzcvnm";
-	int i = 0;
-	for (i = 0; i < abs((int)strlen(letters)); i++) {
-		if (letter == letters[i]) {
-			return true;
-		}
-	}
-	return false;
-}
-
-boolean verifyLetter(char letter) {
-	char letters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
-	int i = 0;
-	for (i = 0; i < abs((int)strlen(letters)); i++) {
-		if (letter == letters[i]) {
-			return true;
-		}
-	}
-	return false;
-}
-
-boolean verifyNumber(char number) {
-	char numbers[DIM] = "0123456789";
-	int i = 0;
-	for (i = 0; i < abs((int)strlen(numbers)); i++) {
-		if (number == numbers[i]) {
-			return true;
-		}
-	}
-	return false;
-}
-
-boolean verifyNumerical(char number) {
-	char numbers[DIM] = "_-.0123456789ABCDEF";
-	int i = 0;
-	for (i = 0; i < abs((int)strlen(numbers)); i++) {
-		if (number == numbers[i]) {
-			return true;
-		}
-	}
-	return false;
-}
-
-boolean verify4Printf(char chars) {
-	char printfChars[DIM] = "0123456789diuoxXfFeEgGaAcspn%-+#*.hljztL\"";
-	int i = 0;
-	for (i = 0; i < abs((int)strlen(printfChars)); i++) {
-		if (chars == printfChars[i]) {
-			return true;
-		}
-	}
-	return false;
-}
-
-boolean verifySpecifier(char chars) {
-	char printfChars[DIM] = "diuoxXfFeEgGaAcsp";
-	int i = 0;
-	for (i = 0; i < abs((int)strlen(printfChars)); i++) {
-		if (chars == printfChars[i]) {
-			return true;
-		}
-	}
-	return false;
 }
 
 void variableToMultiply(char expression[DIM]) {
@@ -1418,36 +883,6 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 		expressionF[i] = value[i];
 	}
 	expressionF[i] = '\0';
-}
-
-boolean verifyPrefix(char prefix[DIM]) {
-	char prefixes[DIM] = "Y,Z,E,P,T,G,M,k,h,da,d,c,m,u,n,p,f,a,z,y,";
-	int i = 0, j = 0;
-	for (i = 0; prefix[i] != '\0'; i++) {
-		for (j = 0; prefixes[j] != '\0'; j++) {
-			if (prefix[i] == prefixes[j] && i == 0) {
-				while (prefix[i] == prefixes[j]) {
-					i++; j++;
-				}
-				if (prefix[i] == '\0'&&prefixes[j] == ',') {
-					return true;
-				}
-				i = 0;
-			}
-		}
-	}
-	return false;
-}
-
-boolean firstLetterFunction(char letter) {
-	char letters[100] = "castlrqgd";
-	int i = 0;
-	for (i = 0; i < abs((int)strlen(letters)); i++) {
-		if (letter == letters[i]) {
-			return true;
-		}
-	}
-	return false;
 }
 
 void customFuncRenamer(char variable[DIM]) {
@@ -2443,79 +1878,6 @@ void cls()
 	SetConsoleCursorPosition(hConsole, coordScreen);
 }
 
-bool IsPreviousToWindowsVista()
-{
-	bool previousToVista = false;
-
-	OSVERSIONINFOEX osversion;
-	ZeroMemory(&osversion, sizeof(OSVERSIONINFOEX));
-	osversion.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	if (GetVersionEx((OSVERSIONINFO*)&osversion))
-	{
-		const DWORD VistaVersion = 6;
-		if ((osversion.dwPlatformId == VER_PLATFORM_WIN32_NT) && (osversion.dwMajorVersion < VistaVersion))
-		{
-			previousToVista = true;
-		}
-	}
-
-	return previousToVista;
-}
-
-void on_start() {
-	FILE *open = NULL;
-	char onStart[100] = "";
-	int Colors = 1, Dimensions = 2, Window = 3;
-	char toOpen[DIM] = "";
-	sprintf(toOpen, "%s\\onStart.txt", atcPath);
-	open = fopen(toOpen, "r");
-	if (open != NULL) {
-		fgets(onStart, 100, open);
-		fclose(open);
-		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 'a'&&onStart[6] == 'l'&&onStart[7] == 'l'&&onStart[8] == '\0') {
-			char toOpen[DIM] = "";
-			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\variables.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&rmdir /Q /S \"%s\\Strings\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
-			using namespace std;
-			std::string s = string(toOpen);
-			std::wstring stemp = std::wstring(s.begin(), s.end());
-			LPCWSTR sw = stemp.c_str();
-			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
-			Sleep(1000);
-			applySettings(Colors);
-			applySettings(Window);
-			applySettings(Dimensions);
-		}
-		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 's'&&onStart[6] == 'e'&&onStart[7] == 't'&&onStart[8] == 't'&&onStart[9] == 'i'&&onStart[10] == 'n'&&onStart[11] == 'g'&&onStart[12] == 's'&&onStart[13] == '\0') {
-			char toOpen[DIM] = "";
-			sprintf(toOpen, "/C \"del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
-			using namespace std;
-			std::string s = string(toOpen);
-			std::wstring stemp = std::wstring(s.begin(), s.end());
-			LPCWSTR sw = stemp.c_str();
-			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
-			Sleep(1000);
-			applySettings(Colors);
-			applySettings(Window);
-			applySettings(Dimensions);
-		}
-	}
-
-}
-
-boolean searchExtension(char filename[DIM], char extension[DIM]) {
-	int i = abs((int)strlen(filename)) - 1, j = abs((int)strlen(extension)) - 1;
-	while (extension[j] == filename[i]) {
-		i--; j--;
-	}
-	i++; j++;
-	if (extension[j] == filename[i] && extension[j] == '.') {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
 void addATCPath() {
 	FILE *open = NULL, *pathReader = NULL;
 	char contents[DIM] = "", atcName[DIM] = "\\Advanced Trigonometry Calculator", atcPAth[DIM] = "";
@@ -2727,116 +2089,78 @@ void toSolve(int re) {
 	}
 }
 
-boolean readyToSolve(char paTh[DIM]) {
-	FILE *openTxt = NULL;
-	int i = 0, lastchar = 0, j = 0;
-	char data[DIM] = "", checkFlag[DIM] = "", flagToTest[DIM] = "", flag[20] = "SOLVE_NOW";
-	if (paTh[0] == '\"'&&paTh[strlen(paTh) - 1] == '\"') {
-		paTh[strlen(paTh) - 1] = '\0';
-		while (paTh[i + 1] != '\0') {
-			paTh[i] = paTh[i + 1];
-			i++;
+void on_start() {
+	FILE *open = NULL;
+	char onStart[100] = "";
+	int Colors = 1, Dimensions = 2, Window = 3;
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\onStart.txt", atcPath);
+	open = fopen(toOpen, "r");
+	if (open != NULL) {
+		fgets(onStart, 100, open);
+		fclose(open);
+		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 'a'&&onStart[6] == 'l'&&onStart[7] == 'l'&&onStart[8] == '\0') {
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\variables.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&rmdir /Q /S \"%s\\Strings\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
+			using namespace std;
+			std::string s = string(toOpen);
+			std::wstring stemp = std::wstring(s.begin(), s.end());
+			LPCWSTR sw = stemp.c_str();
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+			Sleep(1000);
+			applySettings(Colors);
+			applySettings(Window);
+			applySettings(Dimensions);
 		}
-		paTh[i] = '\0';
+		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 's'&&onStart[6] == 'e'&&onStart[7] == 't'&&onStart[8] == 't'&&onStart[9] == 'i'&&onStart[10] == 'n'&&onStart[11] == 'g'&&onStart[12] == 's'&&onStart[13] == '\0') {
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "/C \"del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
+			using namespace std;
+			std::string s = string(toOpen);
+			std::wstring stemp = std::wstring(s.begin(), s.end());
+			LPCWSTR sw = stemp.c_str();
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+			Sleep(1000);
+			applySettings(Colors);
+			applySettings(Window);
+			applySettings(Dimensions);
+		}
 	}
-	openTxt = fopen(paTh, "r");
-	if (openTxt != NULL) {
-		for (i = 0; (data[i] = fgetc(openTxt)) != EOF; i++) {
-			if (data[i] == '\n') {
-				lastchar = i;
-			}
-		}
-		data[i] = '\0';
-		j = 0;
-		for (i = lastchar + 1; data[i] != '\0'; i++) {
-			flagToTest[j] = data[i];
-			j++;
-		}
-		flagToTest[j] = '\0';
-		j = 0;
-		while (flag[j] == flagToTest[j]) {
-			j++;
 
-		}
-		j--;
-		if (flag[j] == '\0'&&flagToTest[j] == '\0') {
-			fclose(openTxt);
-			openTxt = fopen(paTh, "w");
-			data[lastchar] = '\0';
-			fprintf(openTxt, "%s", data);
-			fclose(openTxt);
-			return true;
-		}
-	}
-	return false;
 }
 
-boolean isEqual(char to_find[DIM], char string[DIM]) {
-	int i = 0;
-	while (to_find[i] == string[i] && string[i] != '\0') {
-		i++;
+void ShowConsoleCursor(BOOL bShow)
+{
+	static HANDLE hOut;
+	static BOOL firstTime = TRUE;
+	CONSOLE_CURSOR_INFO cursorInfo;
+	if (firstTime)
+	{
+		hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+		firstTime = FALSE;
 	}
-	if (to_find[i] == string[i] && to_find[i] == '\0') {
-		return true;
-	}
-	return false;
+	cursorInfo.dwSize = 10;
+	cursorInfo.bVisible = bShow;
+	SetConsoleCursorInfo(hOut, &cursorInfo);
 }
 
-void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]) {
-	int i = 0, j = 0, k = 0, m = 0;
-	char toChange[DIM] = "";
-	sprintf(toChange, "%s", string);
-	if (isContained(toReplace, toChange)) {
-		while (isContained(toReplace, toChange)) {
-			j = 0; k = 0;
-			sprintf(expressionF, "");
-			i = (int)resultR;
-			while (j < i) {
-				expressionF[j] = toChange[j]; j++;
-			}
-			expressionF[j] = '\0'; m = j;
-			while (k < abs((int)strlen(replacement))) {
-				expressionF[j] = replacement[k]; j++; k++;
-			}
-			expressionF[j] = '\0';
-			m = m + abs((int)strlen(toReplace));
-			while (m < abs((int)strlen(toChange))) {
-				expressionF[j] = toChange[m]; j++; m++;
-			}
-			expressionF[j] = '\0';
-			sprintf(toChange, "%s", expressionF);
-		}
-	}
-}
+bool IsPreviousToWindowsVista()
+{
+	bool previousToVista = false;
 
-boolean isContained(char to_find[DIM], char string[DIM]) {
-	int i = 0, j = 0;
-	if (abs((int)strlen(to_find)) > abs((int)strlen(string)) || abs((int)strlen(to_find)) == 0 && abs((int)strlen(string)) != 0 || abs((int)strlen(string)) == 0) {
-		return false;
-	}
-	else {
-		while (string[i] != '\0'&&i < abs((int)strlen(string))) {
-			while (to_find[0] != string[i] && string[i] != '\0'&&i < abs((int)strlen(string))) {
-				i++;
-			}
-			if (to_find[0] == string[i] && i < abs((int)strlen(string))) {
-				resultR = i;
-				j = 0;
-				while (to_find[j] == string[i] && string[i] != '\0'&&to_find[j] != '\0'&&i < abs((int)strlen(string)) && j < abs((int)strlen(to_find))) {
-					i++; j++;
-				}
-				resultI = i;
-			}
-			if (j == abs((int)strlen(to_find))) {
-				return true;
-			}
-			else {
-				return false;
-			}
-			i++;
+	OSVERSIONINFOEX osversion;
+	ZeroMemory(&osversion, sizeof(OSVERSIONINFOEX));
+	osversion.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	if (GetVersionEx((OSVERSIONINFO*)&osversion))
+	{
+		const DWORD VistaVersion = 6;
+		if ((osversion.dwPlatformId == VER_PLATFORM_WIN32_NT) && (osversion.dwMajorVersion < VistaVersion))
+		{
+			previousToVista = true;
 		}
 	}
-	return false;
+
+	return previousToVista;
 }
 
 char character_to_prefDet(double n) {
@@ -2902,17 +2226,694 @@ char character_to_prefDet(double n) {
 	return 'U';
 }
 
-void ShowConsoleCursor(BOOL bShow)
-{
-	static HANDLE hOut;
-	static BOOL firstTime = TRUE;
-	CONSOLE_CURSOR_INFO cursorInfo;
-	if (firstTime)
-	{
-		hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-		firstTime = FALSE;
+int variableValidator(char variable[DIM]) {
+	int validate = 0, i = 0, h = -1, abc = 0, j = 0, k = 0, sD = 0;
+	char variableT[DIM], varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
+	double arith = 0, func = 0;
+	for (k = 0; variable[k] != '\0'; k++) {
+		for (i = 0; varLetters[i] != '\0'; i++) {
+			if (variable[k] == varLetters[i]) {
+				j++;
+				break;
+			}
+		}
 	}
-	cursorInfo.dwSize = 10;
-	cursorInfo.bVisible = bShow;
-	SetConsoleCursorInfo(hOut, &cursorInfo);
+	if (j != strlen(variable) || j == 0 && strlen(variable) == 0) {
+		h = 0;
+		return h;
+	}
+	revariable[0] = '\0';
+
+	FILE *var = NULL, *var1 = NULL;
+	i = 0;
+	abc = abs((int)strlen(variable));
+	valid = 0;
+	for (i = 0; variable[i] != '\0'; i++) {
+		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
+			if (variable[i] == 's') {
+				revariable[i] = 'p';
+			}
+			if (variable[i] == 'c') {
+				revariable[i] = 'h';
+			}
+			if (variable[i] == 't') {
+				revariable[i] = 'j';
+			}
+			if (variable[i] == 'a') {
+				revariable[i] = 'k';
+			}
+			if (variable[i] == 'l') {
+				revariable[i] = 'z';
+			}
+			if (variable[i] == 'r') {
+				revariable[i] = 'v';
+			}
+			if (variable[i] == 'q') {
+				revariable[i] = 'n';
+			}
+			if (variable[i] == 'g') {
+				revariable[i] = 'm';
+			}
+			if (variable[i] == 'd') {
+				revariable[i] = 'G';
+			}
+			if (variable[i] == 'd') {
+				revariable[i] = 'G';
+			}
+			h = 1;
+		}
+		else {
+			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'x' || variable[i] == 'D' || variable[i] == 'b') {
+
+				if (variable[i] == 'i') {
+					revariable[i] = 'o';
+				}
+
+				if (variable[i] == 'e') {
+					revariable[i] = 'w';
+				}
+
+				if (variable[i] == 'x') {
+					revariable[i] = 'y';
+				}
+
+				if (variable[i] == 'D') {
+					revariable[i] = 'T';
+					if (isEqual("b", variable)) {
+						return 2;
+					}
+				}
+
+				if (variable[i] == 'b') {
+					revariable[i] = 'u';
+					if (isEqual("b", variable)) {
+						return 2;
+					}
+				}
+
+				h = 1;
+			}
+			else {
+				if (i == 0 && (variable[i] == 'B' || variable[i] == 'O' || variable[i] == 'H' || variable[i] == 'P')) {
+					if (variable[i] == 'B') {
+						revariable[i] = 'N';
+					}
+					if (variable[i] == 'O') {
+						revariable[i] = 'M';
+					}
+					if (variable[i] == 'H') {
+						revariable[i] = 'V';
+					}
+					if (variable[i] == 'P') {
+						revariable[i] = 'I';
+					}
+					h = 1;
+				}
+				else {
+					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'F' || variable[i] == 'P') {
+						if (variable[i] == 'A') {
+							revariable[i] = 'Q';
+						}
+						if (variable[i] == 'B') {
+							revariable[i] = 'W';
+						}
+						if (variable[i] == 'C') {
+							revariable[i] = 'R';
+						}
+						if (variable[i] == 'E') {
+							revariable[i] = 'Y';
+						}
+						if (variable[i] == 'F') {
+							revariable[i] = 'U';
+						}
+						if (variable[i] == 'P') {
+							revariable[i] = 'S';
+						}
+						h = 1;
+					}
+					else {
+						revariable[i] = variable[i];
+					}
+				}
+			}
+		}
+	}
+
+	revariable[i] = '\0';
+	i = 0;
+
+	variable[abc] = '\0';
+	processVariable(variable);
+	variable[abc] = '\0';
+	arith = arithSolver(variable, 0);
+	if ((variable[0] == 'E' || variable[0] == 'B' || variable[0] == 'O' || variable[0] == 'H' || variable[0] == 'P' || variable[0] == 'x') && variable[1] == '=') {
+		arith = 10;
+	}
+	variable[abc] = '\0';
+	for (i = 0; variable[i] != '\0'; i++) {
+		variableT[i] = variable[i];
+	}
+	variableT[i] = '?'; variableT[i + 1] = '\0';
+	char testPrefix[DIM] = "";
+	for (i = 0; variable[i] != '\0'; i++) {
+		testPrefix[i] = variable[i];
+	}
+	testPrefix[i] = '\0';
+	double prefix = 0;
+	if (testPrefix[0] == 'P') {
+		testPrefix[0] = '1';
+		for (i = 1; testPrefix[i] != '\0'; i++) {
+			testPrefix[i] = testPrefix[i - 1];
+		}
+		testPrefix[i] = '\0';
+		prefix = arithSolver(testPrefix, 0);
+	}
+	func = functionProcessor(variableT, 0.3, 1.0, 0);
+	variable[abc] = '\0';
+	processVariable(variable);
+	if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0) {
+		processVariable(revariable);
+		if (valid == 0) {
+			i = 0;
+			FILE *var1 = NULL;
+			if (var1 != NULL) {
+				fclose(var1);
+			}
+			var1 = NULL;
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+			while (var1 == NULL&&i < 100) {
+				var1 = fopen(toOpen, "a+");
+				i++;
+			}
+			if (i < 100) {
+				fprintf(var1, "%s %s\n", variable, revariable);
+				fclose(var1);
+			}
+			i = 0;
+		}
+	}
+	else {
+		if (h == 1 && valid == 0 && (arith != 0 || func != 0 || prefix != 0)) {
+			h = 2;
+		}
+	}
+	return h;
+}
+
+double prefToNumber(char prefix) {
+	double result = 0;
+	if (prefix == 'Y') {
+		result = pow(10.0, 24.0);
+		return result;
+	}
+	if (prefix == 'Z') {
+		result = pow(10.0, 21.0);
+		return result;
+	}
+	if (prefix == 'E') {
+		result = pow(10.0, 18.0);
+		return result;
+	}
+	if (prefix == 'P') {
+		result = pow(10.0, 15.0);
+		return result;
+	}
+	if (prefix == 'T') {
+		result = pow(10.0, 12.0);
+		return result;
+	}
+	if (prefix == 'G') {
+		result = pow(10.0, 9.0);
+		return result;
+	}
+	if (prefix == 'M') {
+		result = pow(10.0, 6.0);
+		return result;
+	}
+	if (prefix == 'k') {
+		result = pow(10.0, 3.0);
+		return result;
+	}
+	if (prefix == 'h') {
+		result = pow(10.0, 2.0);
+		return result;
+	}
+	if (prefix == 'D') {
+		result = pow(10.0, 1.0);
+		return result;
+	}
+	if (prefix == 'd') {
+		result = pow(10.0, -1.0);
+		return result;
+	}
+	if (prefix == 'c') {
+		result = pow(10.0, -2.0);
+		return result;
+	}
+	if (prefix == 'm') {
+		result = pow(10.0, -3.0);
+		return result;
+	}
+	if (prefix == 'u') {
+		result = pow(10.0, -6.0);
+		return result;
+	}
+	if (prefix == 'n') {
+		result = pow(10.0, -9.0);
+		return result;
+	}
+	if (prefix == 'p') {
+		result = pow(10.0, -12.0);
+		return result;
+	}
+	if (prefix == 'f') {
+		result = pow(10.0, -15.0);
+		return result;
+	}
+	if (prefix == 'a') {
+		result = pow(10.0, -18.0);
+		return result;
+	}
+	if (prefix == 'z') {
+		result = pow(10.0, -21.0);
+		return result;
+	}
+	if (prefix == 'y') {
+		result = pow(10.0, -24.0);
+		return result;
+	}
+	return result;
+}
+
+double numericalSystems(char numSystem[DIM]) {
+	double result = 0;
+	char system = ' ';
+	int i, j = 0;
+	system = numSystem[0];
+	if (numSystem[1] == '_') {
+		numSystem[1] = '-';
+	}
+	for (i = 1; numSystem[i] != '\0'; i++) {
+		numSystem[i - 1] = numSystem[i];
+		if (numSystem[i - 1] == '.') {
+			j++;
+			if (j == 2) {
+				numSystem[i - 1] = '\0';
+			}
+		}
+	}
+	numSystem[i - 1] = '\0';
+
+	if (system == 'B') {
+		result = binaryToDecimal(numSystem);
+	}
+	if (system == 'O') {
+		result = octalToDecimal(numSystem);
+	}
+	if (system == 'H') {
+		result = hexadecimalToDecimal(numSystem);
+	}
+	return result;
+}
+
+double processVariable(char variable[DIM]) {
+	validVar = 0;
+	FILE *open = NULL;
+	int i, g, h, y, l = 0, lth = 0, cou = 0;
+	double varValue = 0;
+	char vari[DIM] = "", va[DIM] = "", value[DIM] = "";
+	char *pointer;
+	i = 0;
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\variables.txt", atcPath);
+	open = fopen(toOpen, "a+");
+	while (open == NULL&&cou < 10) {
+		open = fopen(toOpen, "a+");
+		cou++;
+	}
+	if (cou < 10) {
+		i = 0;
+		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+		vari[i] = '\0';
+		lth = abs((int)strlen(vari));
+		fclose(open);
+		i = 0;
+		for (i = 0; vari[i] != '\0'; i++) {
+			g = 0;
+			int j = i;
+			while (vari[j] != ' '&&vari[j] != '\0') {
+				j++;
+			}
+			j = j - i;
+			if (vari[i] == variable[g] && (i == 0 || vari[i - 1] == '\n')) {
+				while (vari[i] == variable[g]) {
+					if (vari[i] == variable[g]) {
+						va[g] = vari[i];
+					}i++; g++;
+				}
+				if (vari[i] != ' ') {
+					while (vari[i] != ' ') {
+						va[g] = vari[i];
+						g++; i++;
+					}
+				}
+				va[g] = '\0';
+			}
+			l = i;
+			g = 0;
+			for (y = 0; va[y] != '\0'; y++) {
+				if (va[y] == variable[y]) {
+					g++;
+				}
+			}
+			vari[lth] = '\0';
+			if (g == strlen(va) && strlen(variable) == g&&j == g&&g != 0) {
+				int space = 0;
+				valid = 1; validVar = 1;
+				int gh = l;
+				while (vari[gh] != '\n') {
+					gh++;
+				}
+				h = gh;
+				gh = l + 1;
+				y = 0;
+				for (gh; gh < h; gh++) {
+					value[y] = vari[gh];
+					if (value[y] == ' ') {
+						space = 1;
+					}
+					y++;
+				}
+				value[y] = '\0';
+				if (space == 0) {
+					resultR = strtod(value, &pointer);
+				}
+				else {
+					char real[DIM] = "", imag[DIM] = "";
+					y = 0;
+					while (value[y] != ' ') {
+						real[y] = value[y];
+						y++;
+					}
+					real[y] = '\0';
+					y++;
+					gh = 0;
+					while (value[y] != '\0') {
+						imag[gh] = value[y];
+						y++; gh++;
+					}
+					imag[gh] = '\0';
+					resultR = strtod(real, &pointer);
+					resultI = strtod(imag, &pointer);
+					varValue = resultR;
+				}
+				break;
+			}
+		}
+	}
+	return varValue;
+}
+
+double convertToNumber(char number[DIM]) {
+	int i = 0, j = 0, num = 0, k = 0, l = 0, sig = 1, h = 0, m = 0, f = 0;
+	char nu[DIM] = "";
+	double result = 0, exp = 0;
+	for (h = 0; number[h] != '\0'; h++) {
+		if (number[h] == 'E') {
+			m = h;
+			h++;
+			f = 0;
+			if (number[h] == '-') {
+				sig = -1;
+				h++;
+			}
+			while (number[h] != '\0') {
+				nu[f] = number[h];
+				f++; h++;
+			}
+			nu[f] = '\0';
+			exp = convertToNumber(nu);
+			number[m] = '.';
+			number[m + 1] = '0';
+			number[m + 2] = '\0';
+		}
+	}
+
+	i = 0;
+	while (number[i] != '.'&&number[i] != '\0') {
+		i++;
+	}
+	i--;
+	j = i;
+	k = i;
+	i++;
+	while (number[i] != '\0') {
+		i++;
+	}
+	l = abs((int)strlen(number)) - j - 4;
+	for (i = 0; j >= 0; i++) {
+		nu[0] = number[i];
+		nu[1] = '.';
+		nu[2] = '0';
+		nu[3] = '\0';
+		num = atoi(nu);
+		result = result + num*pot(10.0, j, 1);
+		j--;
+	}
+	k = k + 2;
+	i = 1;
+	for (k; i <= l&&number[k] != '\0'&&k < abs((int)strlen(number)); k++) {
+		nu[0] = number[k];
+		nu[1] = '.';
+		nu[2] = '0';
+		nu[3] = '\0';
+		num = atoi(nu);
+		result = result + num*pot(10.0, i*-1, 1);
+		i++;
+	}
+
+	result = result*pot(10.0, exp*sig, 1);
+	return result;
+}
+
+boolean firstLetterVariable(char letter) {
+	char letters[100] = "QWRTYUISGJKLZXVNMwyuofhjkzvnmp";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(letters)); i++) {
+		if (letter == letters[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean letterVariables(char letter) {
+	char letters[100] = "QWRTYUIOSGHJKLZXVNMqwrtyuopasdfghjklzcvnm";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(letters)); i++) {
+		if (letter == letters[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean verifyLetter(char letter) {
+	char letters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(letters)); i++) {
+		if (letter == letters[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean verifyNumber(char number) {
+	char numbers[DIM] = "0123456789";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (number == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean verifyNumerical(char number) {
+	char numbers[DIM] = "_-.0123456789ABCDEF";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (number == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean verify4Printf(char chars) {
+	char printfChars[DIM] = "0123456789diuoxXfFeEgGaAcspn%-+#*.hljztL\"";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(printfChars)); i++) {
+		if (chars == printfChars[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean verifySpecifier(char chars) {
+	char printfChars[DIM] = "diuoxXfFeEgGaAcsp";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(printfChars)); i++) {
+		if (chars == printfChars[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean isToWrite(char arith[DIM]) {
+	char noAnswer[16] = "NO_ANSWERS_FILE";
+	int h = 0;
+	if (noAnswer[h] == arith[h]) {
+		while (noAnswer[h] == arith[h]) {
+			h++;
+		}
+		h--;
+		if (h == strlen(arith) && strlen(arith) == strlen(noAnswer)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+boolean verifyPrefix(char prefix[DIM]) {
+	char prefixes[DIM] = "Y,Z,E,P,T,G,M,k,h,da,d,c,m,u,n,p,f,a,z,y,";
+	int i = 0, j = 0;
+	for (i = 0; prefix[i] != '\0'; i++) {
+		for (j = 0; prefixes[j] != '\0'; j++) {
+			if (prefix[i] == prefixes[j] && i == 0) {
+				while (prefix[i] == prefixes[j]) {
+					i++; j++;
+				}
+				if (prefix[i] == '\0'&&prefixes[j] == ',') {
+					return true;
+				}
+				i = 0;
+			}
+		}
+	}
+	return false;
+}
+
+boolean firstLetterFunction(char letter) {
+	char letters[100] = "castlrqgd";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(letters)); i++) {
+		if (letter == letters[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean searchExtension(char filename[DIM], char extension[DIM]) {
+	int i = abs((int)strlen(filename)) - 1, j = abs((int)strlen(extension)) - 1;
+	while (extension[j] == filename[i]) {
+		i--; j--;
+	}
+	i++; j++;
+	if (extension[j] == filename[i] && extension[j] == '.') {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+boolean readyToSolve(char paTh[DIM]) {
+	FILE *openTxt = NULL;
+	int i = 0, lastchar = 0, j = 0;
+	char data[DIM] = "", checkFlag[DIM] = "", flagToTest[DIM] = "", flag[20] = "SOLVE_NOW";
+	if (paTh[0] == '\"'&&paTh[strlen(paTh) - 1] == '\"') {
+		paTh[strlen(paTh) - 1] = '\0';
+		while (paTh[i + 1] != '\0') {
+			paTh[i] = paTh[i + 1];
+			i++;
+		}
+		paTh[i] = '\0';
+	}
+	openTxt = fopen(paTh, "r");
+	if (openTxt != NULL) {
+		for (i = 0; (data[i] = fgetc(openTxt)) != EOF; i++) {
+			if (data[i] == '\n') {
+				lastchar = i;
+			}
+		}
+		data[i] = '\0';
+		j = 0;
+		for (i = lastchar + 1; data[i] != '\0'; i++) {
+			flagToTest[j] = data[i];
+			j++;
+		}
+		flagToTest[j] = '\0';
+		j = 0;
+		while (flag[j] == flagToTest[j]) {
+			j++;
+
+		}
+		j--;
+		if (flag[j] == '\0'&&flagToTest[j] == '\0') {
+			fclose(openTxt);
+			openTxt = fopen(paTh, "w");
+			data[lastchar] = '\0';
+			fprintf(openTxt, "%s", data);
+			fclose(openTxt);
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean isEqual(char to_find[DIM], char string[DIM]) {
+	int i = 0;
+	while (to_find[i] == string[i] && string[i] != '\0') {
+		i++;
+	}
+	if (to_find[i] == string[i] && to_find[i] == '\0') {
+		return true;
+	}
+	return false;
+}
+
+boolean isContained(char to_find[DIM], char string[DIM]) {
+	int i = 0, j = 0;
+	if (abs((int)strlen(to_find)) > abs((int)strlen(string)) || abs((int)strlen(to_find)) == 0 && abs((int)strlen(string)) != 0 || abs((int)strlen(string)) == 0) {
+		return false;
+	}
+	else {
+		while (string[i] != '\0'&&i < abs((int)strlen(string))) {
+			while (to_find[0] != string[i] && string[i] != '\0'&&i < abs((int)strlen(string))) {
+				i++;
+			}
+			if (to_find[0] == string[i] && i < abs((int)strlen(string))) {
+				resultR = i;
+				j = 0;
+				while (to_find[j] == string[i] && string[i] != '\0'&&to_find[j] != '\0'&&i < abs((int)strlen(string)) && j < abs((int)strlen(to_find))) {
+					i++; j++;
+				}
+				resultI = i;
+			}
+			if (j == abs((int)strlen(to_find))) {
+				return true;
+			}
+			else {
+				return false;
+			}
+			i++;
+		}
+	}
+	return false;
 }

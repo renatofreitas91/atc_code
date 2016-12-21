@@ -1,6 +1,8 @@
 
+
 #include "stdafx.h"
 #include "atc_functions.h"
+
 
 void colors() {
 	FILE *open;
@@ -72,6 +74,48 @@ void window() {
 	open = fopen(toOpen, "w");
 	fprintf(open, "%G\n%G\n%G\n%G\n", x, y, width, height);
 	fclose(open);
+}
+
+void mode() {
+	FILE *open;
+	int option = 0;
+	char value[DIM] = "";
+	while (option != 1 && option != 2 && option != 3) {
+		_flushall();
+		printf("radian -> 1\ndegree -> 2\ngradian -> 3\n");
+		gets_s(value);
+		option = (int)solveNow(value, 0, 0);
+		if (option > 3 || option < 1) {
+			printf("Error, incorrect choice.\n");
+		}
+	}
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\mode.txt", atcPath);
+	open = fopen(toOpen, "w");
+	fprintf(open, "%d", option);
+	fclose(open);
+}
+
+void about2() {
+	system("title Advanced Trigonometry Calculator v1.8.8");
+	system("MODE con cols=90 lines=15");
+	cls();
+	FILE *open = NULL;
+	char about[15000] = "";
+	int i;
+	while (open == NULL) {
+		open = fopen("About execution of application.txt", "a+");
+	}
+	for (i = 0; (about[i] = fgetc(open)) != EOF; i++) {
+	}
+	about[i] = '\0';
+	printf("%s\n\n     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS \n\n", about);
+	gets_s(about);
+	int Window = 3, Dimensions = 2;
+	applySettings(Window);
+	applySettings(Dimensions);
+	system("title Advanced Trigonometry Calculator v1.8.8                                                             ==) Enter data (==              ");
+
 }
 
 int applySettings(int toDo) {
@@ -168,26 +212,6 @@ int applySettings(int toDo) {
 	return 0;
 }
 
-void mode() {
-	FILE *open;
-	int option = 0;
-	char value[DIM] = "";
-	while (option != 1 && option != 2 && option != 3) {
-		_flushall();
-		printf("radian -> 1\ndegree -> 2\ngradian -> 3\n");
-		gets_s(value);
-		option = (int)solveNow(value, 0, 0);
-		if (option > 3 || option < 1) {
-			printf("Error, incorrect choice.\n");
-		}
-	}
-	char toOpen[DIM] = "";
-	sprintf(toOpen, "%s\\mode.txt", atcPath);
-	open = fopen(toOpen, "w");
-	fprintf(open, "%d", option);
-	fclose(open);
-}
-
 boolean about() {
 	ShowConsoleCursor(FALSE);
 	system("title Advanced Trigonometry Calculator v1.8.8");
@@ -280,24 +304,3 @@ boolean about() {
 	return continu;
 }
 
-void about2() {
-	system("title Advanced Trigonometry Calculator v1.8.8");
-	system("MODE con cols=90 lines=15");
-	cls();
-	FILE *open = NULL;
-	char about[15000] = "";
-	int i;
-	while (open == NULL) {
-		open = fopen("About execution of application.txt", "a+");
-	}
-	for (i = 0; (about[i] = fgetc(open)) != EOF; i++) {
-	}
-	about[i] = '\0';
-	printf("%s\n\n     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS \n\n", about);
-	gets_s(about);
-	int Window = 3, Dimensions = 2;
-	applySettings(Window);
-	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v1.8.8                                                             ==) Enter data (==              ");
-
-}

@@ -3,339 +3,6 @@
 #include "stdafx.h"
 
 
-double binaryToDecimal(char binary[DIM]) {
-	char binary2[DIM] = "", floa[DIM] = "";
-	double decimal = 0, negDec = 0, flo = 0;
-	int count = 0, j = 0, i = 0, f = 0, g = 0, h = 0, count1 = 0, d = 0, k = 0;
-	while (binary[d] != '\0'&&binary[d] != '.') { d++; }
-	d--;
-	if (binary[0] == '-') {
-		while (binary[k] != '\0') {
-			binary[k] = binary[k + 1];
-			k++;
-		}
-		k = 0;
-		while (binary[k] == '0') {
-			d--;
-			k++;
-		}
-		negDec = pot(2.000, d*1.000, 1);
-	}
-	while (binary[i] != '\0'&&binary[i] != '.') {
-		i++;
-	}
-	i--;
-	count = i;
-	h = i;
-	while (binary[h] != '\0') {
-		floa[g] = binary[h + 2];
-		g++;
-		h++;
-	}
-	g--;
-	count1 = g;
-	while (i >= 0) {
-		binary2[j] = binary[i];
-		i--;
-		j++;
-	}
-	binary2[j] = '\0';
-	while (i <= count) {
-		if (binary2[i] == '1') {
-			decimal = decimal + pot(2.000, i, 1);
-		}
-		i++;
-	}
-	h = -1;
-	g = 0;
-	while (g <= count1) {
-		if (floa[g] == '1') {
-			flo = flo + pot(2.000, h, 1);
-		}
-		g++;
-		h--;
-	}
-	decimal = decimal + flo;
-	if (negDec > 0) {
-		decimal = (decimal - negDec);
-		if (flo > 0) {
-			double f = fl(decimal);
-			f = 1 - f;
-			decimal = returnDeciPart(decimal) - f;
-		}
-	}
-	return decimal;
-}
-
-double octalToDecimal(char octal[DIM]) {
-	char octal2[DIM], floa[DIM] = "";
-	int count = 0, j = 0, i = 0, h = 0, g = 0, count1, d = 0, k = 0;
-	double decimal = 0, flo = 0, negDec = 0;
-	while (octal[d] != '\0'&&octal[d] != '.') { d++; }
-	d--;
-	if (octal[0] == '-') {
-		while (octal[k] != '\0') {
-			octal[k] = octal[k + 1];
-			k++;
-		}
-		k = 0;
-		while (octal[k] == '0') {
-			d--;
-			k++;
-		}
-		negDec = pot(8.000, d*1.000, 1);
-	}
-	while (octal[i] != '\0'&&octal[i] != '.') {
-		i++;
-	}
-	i--;
-	count = i;
-	h = i;
-	while (octal[h] != '\0') {
-		floa[g] = octal[h + 2];
-		g++;
-		h++;
-	}
-	g--;
-	count1 = g;
-	while (i >= 0) {
-		octal2[j] = octal[i];
-		i--;
-		j++;
-	}
-	octal2[j] = '\0';
-	while (i <= count) {
-		if (octal2[i] == '1') {
-			decimal = decimal + pot(8.000, i, 1);
-		}
-		if (octal2[i] == '2') {
-			decimal = decimal + 2 * pot(8.000, i, 1);
-		}
-		if (octal2[i] == '3') {
-			decimal = decimal + 3 * pot(8.000, i, 1);
-		}
-		if (octal2[i] == '4') {
-			decimal = decimal + 4 * pot(8.000, i, 1);
-		}
-		if (octal2[i] == '5') {
-			decimal = decimal + 5 * pot(8.000, i, 1);
-		}
-		if (octal2[i] == '6') {
-			decimal = decimal + 6 * pot(8.000, i, 1);
-		}
-		if (octal2[i] == '7') {
-			decimal = decimal + 7 * pot(8.000, i, 1);
-		}
-
-		i++;
-	}
-	h = -1;
-	g = 0;
-	while (g <= count1) {
-		if (floa[g] == '1') {
-			flo = flo + pot(8.000, h, 1);
-		}
-		if (floa[g] == '2') {
-			flo = flo + 2 * pot(8.000, h, 1);
-		}
-		if (floa[g] == '3') {
-			flo = flo + 3 * pot(8.000, h, 1);
-		}
-		if (floa[g] == '4') {
-			flo = flo + 4 * pot(8.000, h, 1);
-		}
-		if (floa[g] == '5') {
-			flo = flo + 5 * pot(8.000, h, 1);
-		}
-		if (floa[g] == '6') {
-			flo = flo + 6 * pot(8.000, h, 1);
-		}
-		if (floa[g] == '7') {
-			flo = flo + 7 * pot(8.000, h, 1);
-		}
-		g++;
-		h--;
-	}
-	decimal = decimal + flo;
-	if (negDec > 0) {
-		decimal = (decimal - negDec);
-		if (flo > 0) {
-			double f = fl(decimal);
-			f = 1 - f;
-			decimal = returnDeciPart(decimal) - f;
-		}
-	}
-	return decimal;
-}
-
-double hexadecimalToDecimal(char hexadecimal[DIM]) {
-	char hexadecimal2[DIM], floa[DIM];
-	int count = 0, j = 0, i = 0, h = 0, g = 0, count1 = 0, k = 0, d = 0;
-	double decimal = 0, flo = 0, negDec = 0;
-	while (hexadecimal[d] != '\0'&&hexadecimal[d] != '.') { d++; }
-	d--;
-	if (hexadecimal[0] == '-') {
-		while (hexadecimal[k] != '\0') {
-			hexadecimal[k] = hexadecimal[k + 1];
-			k++;
-		}
-		k = 0;
-		while (hexadecimal[k] == '0') {
-			d--;
-			k++;
-		}
-		negDec = pot(16.000, d*1.000, 1);
-	}
-	while (hexadecimal[i] != '\0'&&hexadecimal[i] != '.') {
-		if (hexadecimal[i] == 'a') {
-			hexadecimal[i] = 'A';
-		}
-		if (hexadecimal[i] == 'b') {
-			hexadecimal[i] = 'B';
-		}
-		if (hexadecimal[i] == 'c') {
-			hexadecimal[i] = 'C';
-		}
-		if (hexadecimal[i] == 'd') {
-			hexadecimal[i] = 'D';
-		}
-		if (hexadecimal[i] == 'e') {
-			hexadecimal[i] = 'E';
-		}
-		if (hexadecimal[i] == 'f') {
-			hexadecimal[i] = 'F';
-		}
-		i++;
-
-	}
-	i--;
-	count = i;
-	h = i;
-	while (hexadecimal[h] != '\0') {
-		floa[g] = hexadecimal[h + 2];
-		g++;
-		h++;
-	}
-	g--;
-	count1 = g;
-
-	while (i >= 0) {
-		hexadecimal2[j] = hexadecimal[i];
-		i--;
-		j++;
-	}
-	hexadecimal2[j] = '\0';
-	while (i <= count) {
-		if (hexadecimal2[i] == '1') {
-			decimal = decimal + pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == '2') {
-			decimal = decimal + 2 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == '3') {
-			decimal = decimal + 3 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == '4') {
-			decimal = decimal + 4 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == '5') {
-			decimal = decimal + 5 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == '6') {
-			decimal = decimal + 6 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == '7') {
-			decimal = decimal + 7 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == '8') {
-			decimal = decimal + 8 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == '9') {
-			decimal = decimal + 9 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == 'A') {
-			decimal = decimal + 10 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == 'B') {
-			decimal = decimal + 11 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == 'C') {
-			decimal = decimal + 12 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == 'D') {
-			decimal = decimal + 13 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == 'E') {
-			decimal = decimal + 14 * pot(16.000, i, 1);
-		}
-		if (hexadecimal2[i] == 'F') {
-			decimal = decimal + 15 * pot(16.000, i, 1);
-		}
-
-		i++;
-	}
-	h = -1;
-	g = 0;
-	while (g <= count1) {
-		if (floa[g] == '1') {
-			flo = flo + pot(16.000, h, 1);
-		}
-		if (floa[g] == '2') {
-			flo = flo + 2 * pot(16.000, h, 1);
-		}
-		if (floa[g] == '3') {
-			flo = flo + 3 * pot(16.000, h, 1);
-		}
-		if (floa[g] == '4') {
-			flo = flo + 4 * pot(16.000, h, 1);
-		}
-		if (floa[g] == '5') {
-			flo = flo + 5 * pot(16.000, h, 1);
-		}
-		if (floa[g] == '6') {
-			flo = flo + 6 * pot(16.000, h, 1);
-		}
-		if (floa[g] == '7') {
-			flo = flo + 7 * pot(16.000, h, 1);
-		}
-		if (floa[g] == '8') {
-			flo = flo + 8 * pot(16.000, h, 1);
-		}
-		if (floa[g] == '9') {
-			flo = flo + 9 * pot(16.000, h, 1);
-		}
-		if (floa[g] == 'A') {
-			flo = flo + 10 * pot(16.000, h, 1);
-		}
-		if (floa[g] == 'B') {
-			flo = flo + 11 * pot(16.000, h, 1);
-		}
-		if (floa[g] == 'C') {
-			flo = flo + 12 * pot(16.000, h, 1);
-		}
-		if (floa[g] == 'D') {
-			flo = flo + 13 * pot(16.000, h, 1);
-		}
-		if (floa[g] == 'E') {
-			flo = flo + 14 * pot(16.000, h, 1);
-		}
-		if (floa[g] == 'F') {
-			flo = flo + 15 * pot(16.000, h, 1);
-		}
-		g++;
-		h--;
-	}
-	decimal = decimal + flo;
-	if (negDec > 0) {
-		decimal = (negDec - decimal)*-1;
-		if (flo > 0) {
-			double f = fl(decimal);
-			f = 1 - f;
-			decimal = returnDeciPart(decimal) - f;
-		}
-	}
-	return decimal;
-}
 
 void decimalToBinary(double decimal, char path[DIM], int bp) {
 	FILE *open = NULL;
@@ -1579,4 +1246,338 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 		}
 		fclose(open);
 	}
+}
+
+double binaryToDecimal(char binary[DIM]) {
+	char binary2[DIM] = "", floa[DIM] = "";
+	double decimal = 0, negDec = 0, flo = 0;
+	int count = 0, j = 0, i = 0, f = 0, g = 0, h = 0, count1 = 0, d = 0, k = 0;
+	while (binary[d] != '\0'&&binary[d] != '.') { d++; }
+	d--;
+	if (binary[0] == '-') {
+		while (binary[k] != '\0') {
+			binary[k] = binary[k + 1];
+			k++;
+		}
+		k = 0;
+		while (binary[k] == '0') {
+			d--;
+			k++;
+		}
+		negDec = pot(2.000, d*1.000, 1);
+	}
+	while (binary[i] != '\0'&&binary[i] != '.') {
+		i++;
+	}
+	i--;
+	count = i;
+	h = i;
+	while (binary[h] != '\0') {
+		floa[g] = binary[h + 2];
+		g++;
+		h++;
+	}
+	g--;
+	count1 = g;
+	while (i >= 0) {
+		binary2[j] = binary[i];
+		i--;
+		j++;
+	}
+	binary2[j] = '\0';
+	while (i <= count) {
+		if (binary2[i] == '1') {
+			decimal = decimal + pot(2.000, i, 1);
+		}
+		i++;
+	}
+	h = -1;
+	g = 0;
+	while (g <= count1) {
+		if (floa[g] == '1') {
+			flo = flo + pot(2.000, h, 1);
+		}
+		g++;
+		h--;
+	}
+	decimal = decimal + flo;
+	if (negDec > 0) {
+		decimal = (decimal - negDec);
+		if (flo > 0) {
+			double f = fl(decimal);
+			f = 1 - f;
+			decimal = returnDeciPart(decimal) - f;
+		}
+	}
+	return decimal;
+}
+
+double octalToDecimal(char octal[DIM]) {
+	char octal2[DIM], floa[DIM] = "";
+	int count = 0, j = 0, i = 0, h = 0, g = 0, count1, d = 0, k = 0;
+	double decimal = 0, flo = 0, negDec = 0;
+	while (octal[d] != '\0'&&octal[d] != '.') { d++; }
+	d--;
+	if (octal[0] == '-') {
+		while (octal[k] != '\0') {
+			octal[k] = octal[k + 1];
+			k++;
+		}
+		k = 0;
+		while (octal[k] == '0') {
+			d--;
+			k++;
+		}
+		negDec = pot(8.000, d*1.000, 1);
+	}
+	while (octal[i] != '\0'&&octal[i] != '.') {
+		i++;
+	}
+	i--;
+	count = i;
+	h = i;
+	while (octal[h] != '\0') {
+		floa[g] = octal[h + 2];
+		g++;
+		h++;
+	}
+	g--;
+	count1 = g;
+	while (i >= 0) {
+		octal2[j] = octal[i];
+		i--;
+		j++;
+	}
+	octal2[j] = '\0';
+	while (i <= count) {
+		if (octal2[i] == '1') {
+			decimal = decimal + pot(8.000, i, 1);
+		}
+		if (octal2[i] == '2') {
+			decimal = decimal + 2 * pot(8.000, i, 1);
+		}
+		if (octal2[i] == '3') {
+			decimal = decimal + 3 * pot(8.000, i, 1);
+		}
+		if (octal2[i] == '4') {
+			decimal = decimal + 4 * pot(8.000, i, 1);
+		}
+		if (octal2[i] == '5') {
+			decimal = decimal + 5 * pot(8.000, i, 1);
+		}
+		if (octal2[i] == '6') {
+			decimal = decimal + 6 * pot(8.000, i, 1);
+		}
+		if (octal2[i] == '7') {
+			decimal = decimal + 7 * pot(8.000, i, 1);
+		}
+
+		i++;
+	}
+	h = -1;
+	g = 0;
+	while (g <= count1) {
+		if (floa[g] == '1') {
+			flo = flo + pot(8.000, h, 1);
+		}
+		if (floa[g] == '2') {
+			flo = flo + 2 * pot(8.000, h, 1);
+		}
+		if (floa[g] == '3') {
+			flo = flo + 3 * pot(8.000, h, 1);
+		}
+		if (floa[g] == '4') {
+			flo = flo + 4 * pot(8.000, h, 1);
+		}
+		if (floa[g] == '5') {
+			flo = flo + 5 * pot(8.000, h, 1);
+		}
+		if (floa[g] == '6') {
+			flo = flo + 6 * pot(8.000, h, 1);
+		}
+		if (floa[g] == '7') {
+			flo = flo + 7 * pot(8.000, h, 1);
+		}
+		g++;
+		h--;
+	}
+	decimal = decimal + flo;
+	if (negDec > 0) {
+		decimal = (decimal - negDec);
+		if (flo > 0) {
+			double f = fl(decimal);
+			f = 1 - f;
+			decimal = returnDeciPart(decimal) - f;
+		}
+	}
+	return decimal;
+}
+
+double hexadecimalToDecimal(char hexadecimal[DIM]) {
+	char hexadecimal2[DIM], floa[DIM];
+	int count = 0, j = 0, i = 0, h = 0, g = 0, count1 = 0, k = 0, d = 0;
+	double decimal = 0, flo = 0, negDec = 0;
+	while (hexadecimal[d] != '\0'&&hexadecimal[d] != '.') { d++; }
+	d--;
+	if (hexadecimal[0] == '-') {
+		while (hexadecimal[k] != '\0') {
+			hexadecimal[k] = hexadecimal[k + 1];
+			k++;
+		}
+		k = 0;
+		while (hexadecimal[k] == '0') {
+			d--;
+			k++;
+		}
+		negDec = pot(16.000, d*1.000, 1);
+	}
+	while (hexadecimal[i] != '\0'&&hexadecimal[i] != '.') {
+		if (hexadecimal[i] == 'a') {
+			hexadecimal[i] = 'A';
+		}
+		if (hexadecimal[i] == 'b') {
+			hexadecimal[i] = 'B';
+		}
+		if (hexadecimal[i] == 'c') {
+			hexadecimal[i] = 'C';
+		}
+		if (hexadecimal[i] == 'd') {
+			hexadecimal[i] = 'D';
+		}
+		if (hexadecimal[i] == 'e') {
+			hexadecimal[i] = 'E';
+		}
+		if (hexadecimal[i] == 'f') {
+			hexadecimal[i] = 'F';
+		}
+		i++;
+
+	}
+	i--;
+	count = i;
+	h = i;
+	while (hexadecimal[h] != '\0') {
+		floa[g] = hexadecimal[h + 2];
+		g++;
+		h++;
+	}
+	g--;
+	count1 = g;
+
+	while (i >= 0) {
+		hexadecimal2[j] = hexadecimal[i];
+		i--;
+		j++;
+	}
+	hexadecimal2[j] = '\0';
+	while (i <= count) {
+		if (hexadecimal2[i] == '1') {
+			decimal = decimal + pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == '2') {
+			decimal = decimal + 2 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == '3') {
+			decimal = decimal + 3 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == '4') {
+			decimal = decimal + 4 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == '5') {
+			decimal = decimal + 5 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == '6') {
+			decimal = decimal + 6 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == '7') {
+			decimal = decimal + 7 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == '8') {
+			decimal = decimal + 8 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == '9') {
+			decimal = decimal + 9 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == 'A') {
+			decimal = decimal + 10 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == 'B') {
+			decimal = decimal + 11 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == 'C') {
+			decimal = decimal + 12 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == 'D') {
+			decimal = decimal + 13 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == 'E') {
+			decimal = decimal + 14 * pot(16.000, i, 1);
+		}
+		if (hexadecimal2[i] == 'F') {
+			decimal = decimal + 15 * pot(16.000, i, 1);
+		}
+
+		i++;
+	}
+	h = -1;
+	g = 0;
+	while (g <= count1) {
+		if (floa[g] == '1') {
+			flo = flo + pot(16.000, h, 1);
+		}
+		if (floa[g] == '2') {
+			flo = flo + 2 * pot(16.000, h, 1);
+		}
+		if (floa[g] == '3') {
+			flo = flo + 3 * pot(16.000, h, 1);
+		}
+		if (floa[g] == '4') {
+			flo = flo + 4 * pot(16.000, h, 1);
+		}
+		if (floa[g] == '5') {
+			flo = flo + 5 * pot(16.000, h, 1);
+		}
+		if (floa[g] == '6') {
+			flo = flo + 6 * pot(16.000, h, 1);
+		}
+		if (floa[g] == '7') {
+			flo = flo + 7 * pot(16.000, h, 1);
+		}
+		if (floa[g] == '8') {
+			flo = flo + 8 * pot(16.000, h, 1);
+		}
+		if (floa[g] == '9') {
+			flo = flo + 9 * pot(16.000, h, 1);
+		}
+		if (floa[g] == 'A') {
+			flo = flo + 10 * pot(16.000, h, 1);
+		}
+		if (floa[g] == 'B') {
+			flo = flo + 11 * pot(16.000, h, 1);
+		}
+		if (floa[g] == 'C') {
+			flo = flo + 12 * pot(16.000, h, 1);
+		}
+		if (floa[g] == 'D') {
+			flo = flo + 13 * pot(16.000, h, 1);
+		}
+		if (floa[g] == 'E') {
+			flo = flo + 14 * pot(16.000, h, 1);
+		}
+		if (floa[g] == 'F') {
+			flo = flo + 15 * pot(16.000, h, 1);
+		}
+		g++;
+		h--;
+	}
+	decimal = decimal + flo;
+	if (negDec > 0) {
+		decimal = (negDec - decimal)*-1;
+		if (flo > 0) {
+			double f = fl(decimal);
+			f = 1 - f;
+			decimal = returnDeciPart(decimal) - f;
+		}
+	}
+	return decimal;
 }

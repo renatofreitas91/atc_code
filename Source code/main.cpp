@@ -1,5 +1,8 @@
+
+
 #include "stdafx.h"
 #include "atc_functions.h"
+
 
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
 char atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
@@ -99,6 +102,8 @@ void main(int argc, char *argv[]) {
 					result2 = resultI;
 					verified = 0;
 				}
+				fflush(NULL);
+				sprintf(arithTrig, "");
 			}
 			if (continu != 1) {
 				fclose(fout);
@@ -297,6 +302,8 @@ boolean processTxt(char path[DIM], int re) {
 				else {
 					break;
 				}
+				fflush(NULL);
+				sprintf(arith, "");
 			}
 		}
 		if (fin != NULL) {

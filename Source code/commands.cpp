@@ -1,4 +1,8 @@
+
+
 #include "stdafx.h"
+
+
 
 boolean commands(char arithTrig[DIM], char path[DIM], double result1, double result2) {
 	FILE *fout = NULL, *fclean = NULL;
