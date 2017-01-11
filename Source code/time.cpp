@@ -177,10 +177,10 @@ void Clock(int a)
 		}
 	}
 	if (a == 0) {
-		fprintf(fout, " %d", days);
+		fprintf(fout, " %02d", days);
 	}
 	if (a == 1) {
-		printf(" %d", days);
+		printf(" %02d", days);
 	}
 	if (tim[9] == '1'&&tim[8] != '1') {
 		if (a == 0) {
@@ -219,18 +219,18 @@ void Clock(int a)
 		}
 	}
 	if (a == 0) {
-		fprintf(fout, ", %d,", years);
+		fprintf(fout, ", %04d,", years);
 	}
 	if (a == 1) {
-		printf(", %d,", years);
+		printf(", %04d,", years);
 	}
 	char sec[3] = { tim[17], tim[18], '\0' };
 	seconds = atoi(sec);
 	if (a == 0) {
-		fprintf(fout, " %dh %dm %ds\n", hours, minutes, seconds);
+		fprintf(fout, " %02dh %02dm %02ds\n", hours, minutes, seconds);
 	}
 	if (a == 1) {
-		printf(" %dh %dm %ds\n", hours, minutes, seconds);
+		printf(" %02dh %02dm %02ds\n", hours, minutes, seconds);
 	}
 	fclose(fout);
 }

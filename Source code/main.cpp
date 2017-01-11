@@ -6,7 +6,7 @@
 
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
 char atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
-int Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0;
+int Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0;
 clock_t start_processing, end_processing;
 
 
@@ -22,12 +22,12 @@ void main(int argc, char *argv[]) {
 	if (argc < 2) {
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v1.8.8");
+		system("title Advanced Trigonometry Calculator v1.8.9");
 		continu = about();
 	}
 
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v1.8.8       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v1.8.9       ==) ATC is ready to process data. (==");
 		do {
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
@@ -38,7 +38,7 @@ void main(int argc, char *argv[]) {
 				printf(">");
 				gets_s(trigData);
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v1.8.8       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v1.8.9       ==) Processing... (==");
 			}
 			else {
 				int arG = 1;
@@ -94,7 +94,7 @@ void main(int argc, char *argv[]) {
 					}
 				}
 				arithTrig[i] = '\0';
-				sprintf(fTrig, "%s", arithTrig);
+				sprintf(fTrig, "%s", arithTrig); verbose = 0;
 				main_core(arithTrig, fTrig, fout, path, result1, result2, 1);
 				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 				if (verified == 1) {
@@ -126,7 +126,63 @@ void main(int argc, char *argv[]) {
 			double time_s = qu(time_ms, 1000);
 			double time_ms_final = re(time_ms, 1000);
 			char state[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v1.8.8       ==) Processed in %Gs and %Gms. ATC is ready to process more data. (==", time_s, time_ms_final);
+			time_t hourF;
+			time(&hourF);
+			char *tim;
+			tim = ctime(&hourF);
+			tim[24] = '\0';
+			char hou[3] = { tim[11], tim[12], '\0' };
+			int Hours = atoi(hou);
+			char min[3] = { tim[14], tim[15], '\0' };
+			int Minutes = atoi(min);
+			char sec[3] = { tim[17], tim[18], '\0' };
+			int Seconds = atoi(sec);
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "%s\\history.txt", atcPath);
+			fout = fopen(toOpen, "a+");
+			char yea[5] = { tim[20], tim[21], tim[22], tim[23], '\0' };
+			int years = atoi(yea);
+			char da[3] = { tim[8], tim[9], '\0' };
+			int days = atoi(da);
+			int months = 0;
+			if (tim[4] == 'J'&&tim[5] == 'a'&&tim[6] == 'n') {
+				months = 1;
+			}
+			if (tim[4] == 'F'&&tim[5] == 'e'&&tim[6] == 'b') {
+				months = 2;
+			}
+			if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'r') {
+				months = 3;
+			}
+			if (tim[4] == 'A'&&tim[5] == 'p'&&tim[6] == 'r') {
+				months = 4;
+			}
+			if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'y') {
+				months = 5;
+			}
+			if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'n') {
+				months = 6;
+			}
+			if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'l') {
+				months = 7;
+			}
+			if (tim[4] == 'A'&&tim[5] == 'u'&&tim[6] == 'g') {
+				months = 8;
+			}
+			if (tim[4] == 'S'&&tim[5] == 'e'&&tim[6] == 'p') {
+				months = 9;
+			}
+			if (tim[4] == 'O'&&tim[5] == 'c'&&tim[6] == 't') {
+				months = 10;
+			}
+			if (tim[4] == 'N'&&tim[5] == 'o'&&tim[6] == 'v') {
+				months = 11;
+			}
+			if (tim[4] == 'D'&&tim[5] == 'e'&&tim[6] == 'c') {
+				months = 12;
+			}
+			char toTitle[DIM] = "";
+			sprintf(state, "title Advanced Trigonometry Calculator v1.8.9       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -292,6 +348,7 @@ boolean processTxt(char path[DIM], int re) {
 				}
 				toWrite = isToWrite(arith);
 				if (toWrite == 1) {
+					verbose = 0;
 					main_core(arith, arith, fin, path, result1, result2, 0);
 					if (verified == 1) {
 						result1 = resultR;
@@ -409,7 +466,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				if (isEqual(systR, "INF") || isEqual(systR, "-INF") || isEqual(systI, "INF") || isEqual(systI, "-INF")) {
 					decision = false;
 					if (comment == 1) {
-						printf("\nFunction argument is too big. Unable to process it.\n");
+						printf("\nFunction argument is too big. Try use values in the range [-1.79769E308, 1.79769E308]. ATC is unable to process infinite values on math functions.\n");
 					}
 					return decision;
 				}
@@ -658,7 +715,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 
 					if (funcF != 0.5) {
 						if (validVar == 0) {
-							if (varValidator[0] == 'E' || varValidator[0] == 'B' || varValidator[0] == 'O' || varValidator[0] == 'H' || varValidator[0] == 'P' || varValidator[0] == 'e' || varValidator[0] == 'p'&&varValidator[1] == 'i') {
+							if (varValidator[0] == 'E' || varValidator[0] == 'B' || varValidator[0] == 'O' || varValidator[0] == 'H' || varValidator[0] == 'P' || varValidator[0] == 'e' || varValidator[0] == 'p'&&varValidator[1] == 'i' || varValidator[0] == 'I'&&varValidator[1] == 'N'&&varValidator[2] == 'F') {
 								if (varValidator[0] == 'E' || varValidator[0] == 'B' || varValidator[0] == 'O' || varValidator[0] == 'H' || initialProcessor(varValidator, 0) != 0) {
 									decision = true;
 								}
@@ -721,7 +778,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 							if (isEqual(systR, "INF") || isEqual(systR, "-INF") || isEqual(systI, "INF") || isEqual(systI, "-INF")) {
 								decision = false;
 								if (comment == 1) {
-									printf("\nFunction argument is too big. Unable to process it.\n");
+									printf("\nFunction argument is too big. Try use values in the range [-1.79769E308, 1.79769E308]. ATC is unable to process infinite values on math functions.\n");
 								}
 								return decision;
 							}

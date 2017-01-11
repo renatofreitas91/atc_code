@@ -25,6 +25,27 @@ void numSystemsController() {
 	fclose(open);
 }
 
+void verboseResolutionController() {
+	FILE *open;
+	int state = -1;
+	char c[DIM] = "";
+	while (state != 1 && state != 0) {
+		printf("Enable -> 1\nDisable -> 0\n");
+		gets_s(c);
+		if (strlen(c) == 1) {
+			state = atoi(c);
+			if (state != 1 && state != 0) {
+				printf("Error, incorrect choice.\n");
+			}
+		}
+	}
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
+	open = fopen(toOpen, "w");
+	fprintf(open, "%d", state);
+	fclose(open);
+}
+
 void siPrefixController() {
 	FILE *open;
 	int state = -1;
@@ -2101,7 +2122,7 @@ void on_start() {
 		fclose(open);
 		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 'a'&&onStart[6] == 'l'&&onStart[7] == 'l'&&onStart[8] == '\0') {
 			char toOpen[DIM] = "";
-			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\variables.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&rmdir /Q /S \"%s\\Strings\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
+			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\variables.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"& del \"%s\\verboseResolution.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&rmdir /Q /S \"%s\\Strings\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
 			using namespace std;
 			std::string s = string(toOpen);
 			std::wstring stemp = std::wstring(s.begin(), s.end());

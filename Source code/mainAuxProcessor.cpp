@@ -6,6 +6,7 @@
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);
+	verbose = 0;
 	resultR = 0; resultI;
 	int txt = 0, command = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0;
 	char variable[DIM] = "", getVarName[DIM] = "", getVar[DIM] = "", savefTrig[DIM] = "";
@@ -400,10 +401,32 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				replace("[", "(", expressionF);
 				replace("+0", "", expressionF);
 				sprintf(arithTrig, "%s+0", expressionF);
+
+				char toOpen[DIM] = "";
+				sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
+				open = fopen(toOpen, "r");
+				char verboseRes[DIM] = "";
+				if (open != NULL) {
+					fgets(verboseRes, 10, open);
+					verbose = atoi(verboseRes);
+					fclose(open);
+				}
+				else {
+					verbose = 0;
+				}
+				replace("+0+0+0+0", "", arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+				replace("+0+0", "", arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+				replace("+0+0+0", "", arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+				replace("+0+0", "", arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
 				initialProcessor(arithTrig, result1);
 				if (resultR == 0 && resultI == 0) {
 					initialProcessor(arithTrig, result1);
 				}
+				verbose = 0;
 			}
 		}
 		if (arithTrig[0] != '\0'&&txt != 1) {

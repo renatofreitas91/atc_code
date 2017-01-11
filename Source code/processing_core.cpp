@@ -5,7 +5,9 @@
 
 
 double initialProcessor(char arithTrig[DIM], double result) {
-
+	if (verbose == 1) {
+		printf("\n\n==> initialProcessor <==\n\nExpression: %s", arithTrig);
+	}
 	if (strlen(arithTrig) == 0) {
 		return 0;
 	}
@@ -625,6 +627,10 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	for (RF = 0; RF < c; RF++) {
 		sprintf(simplified, "%s%G%c", simplified, triArith[RF], arTrig[RF]);
 	}
+	sprintf(simplified, "%s%G", simplified, triArith[c]);
+	if (verbose == 1) {
+		printf("\nSimplified expression by initialProcessor: %s\n\n", simplified);
+	}
 	for (so = 0; so < c; so++) {
 		int sa = so;
 		while (arTrig[so] == '*') {
@@ -684,6 +690,9 @@ double initialProcessor(char arithTrig[DIM], double result) {
 }
 
 double arithSolver(char trigon1[DIM], double result) {
+	if (verbose == 1) {
+		printf("\n\n==> arithSolver <==\n\nExpression: %s", trigon1);
+	}
 	resultR = 0; resultI = 0;
 	int i = 0, negImag = 0, j = 0, e = 0, f = 0, h = 0, so = 0, sa = 0, n = 0, c = 0, sig[DIM], sign = 0, s = 0, facto = 0, y = 0, sif = 0, res = 0, v = 0;
 	char number2[DIM] = "", ex[DIM] = "", trigon[DIM] = "", amp[DIM] = "", prefCalc[10] = "";
@@ -786,7 +795,6 @@ double arithSolver(char trigon1[DIM], double result) {
 				number2[y] = number2[y + 1];
 			}
 			number2[y] = '\0';
-
 			ampl[n] = convertToNumber(number2);
 			ampl[n] = ans[(int)ampl[n]];
 			amplI[n] = convertToNumber(number2);
@@ -828,13 +836,11 @@ double arithSolver(char trigon1[DIM], double result) {
 			}
 			number2[0] = '\0';
 		}
-
 		sif = 0;
 		int df = j;
-
 		j = 0;
 		if (number2[0] != 'B'&&number2[0] != 'O'&&number2[0] != 'H'&&number2[0] != 'P') {
-			if (number2[0] == '_'&&number2[1] != 'e'&&number2[1] != 'p'&&number2[1] != 'B'&&number2[1] != 'O'&&number2[1] != 'H') {
+			if (number2[0] == '_'&&number2[1] != 'e'&&number2[1] != 'p'&&number2[1] != 'B'&&number2[1] != 'O'&&number2[1] != 'H' && (number2[1] == 'I'&&number2[2] == 'N'&&number2[3] == 'F') == false) {
 				if (number2[1] == '.') {
 					j = abs((int)strlen(number2));
 					while (j > 1) {
@@ -898,7 +904,7 @@ double arithSolver(char trigon1[DIM], double result) {
 			}
 		}
 		if (number2[1] == 'f' || number2[1] == 'h' || number2[1] == 'j' || number2[1] == 'k' || number2[1] == 'm' || number2[1] == 'n' || number2[1] == 'o' || number2[1] == 'p' &&number2[2] != 'i' || number2[1] == 'u' || number2[1] == 'w' || number2[1] == 'v' || number2[1] == 'y' || number2[1] == 'z' || number2[1] == 'G' || number2[1] == 'I' || number2[1] == 'J' || number2[1] == 'K' || number2[1] == 'L' || number2[1] == 'M' || number2[1] == 'N' || number2[1] == 'Q' || number2[1] == 'R' || number2[1] == 'S' || number2[1] == 'T' || number2[1] == 'U' || number2[1] == 'V' || number2[1] == 'X' || number2[1] == 'Y' || number2[1] == 'Z') {
-			if (number2[0] == '_') {
+			if (number2[0] == '_' && (number2[1] == 'I'&&number2[2] == 'N'&&number2[3] == 'F') == false) {
 				for (j = 0; number2[j + 1] != '\0'; j++) {
 					number2[j] = number2[j + 1];
 				}
@@ -930,6 +936,12 @@ double arithSolver(char trigon1[DIM], double result) {
 		}
 		if (number2[0] == '_'&&number2[1] == 'p'&&number2[2] == 'i') {
 			ampl[n] = (-1)*(M_PI);
+		}
+		if (number2[0] == 'I'&&number2[1] == 'N'&&number2[2] == 'F') {
+			ampl[n] = pot(2.0, 2000.0, 1);
+		}
+		if (number2[0] == '_'&&number2[1] == 'I'&&number2[2] == 'N'&&number2[3] == 'F') {
+			ampl[n] = pot(2.0, 2000.0, 1)*-1;
 		}
 		if (number2[0] == 'e') {
 			ampl[n] = M_E;
@@ -1067,6 +1079,18 @@ double arithSolver(char trigon1[DIM], double result) {
 		}
 
 	}
+
+	char simplified[DIM] = "";
+	int RF = 0;
+	for (RF = 0; RF < c; RF++) {
+		sprintf(simplified, "%s%G%c", simplified, ampl[RF], amp[RF]);
+	}
+	sprintf(simplified, "%s%G", simplified, ampl[c]);
+
+	if (verbose == 1) {
+		printf("\nSimplified expression by arithSolver: %s\n\n", simplified);
+	}
+
 	for (so = 0; so < n; so++) {
 		int sa = so;
 
@@ -1130,6 +1154,9 @@ double arithSolver(char trigon1[DIM], double result) {
 }
 
 double functionProcessor(char trigon[DIM], double result, double amplitude, double res) {
+	if (verbose == 1) {
+		printf("\n\n==> functionProcessor <==\n\nFunction: %s", trigon);
+	}
 	int i = 0, var = 0, j = 0, n = 0, count = 0, opt = 0, l = 0, p = 0, v1, va, cn = 0, s, rad = 1, jg = 1, gon = 0, tri = 0, co = 0, trigono = 0, paren = 1, pare = 0, parent = 0, e = 0, f = 0, kl = 0, ar = 0, deg = 0, type = 0, g = 0;
 	char trig[DIM] = "0", base[DIM], number[DIM] = "0", number1[DIM] = "0", number2[DIM] = "0", op[DIM] = "0", signal = '*', numb[DIM] = "0", sig = '0', point = '0', cieNot[DIM] = "0", arg[DIM] = "0", amp[DIM] = "0", trigon1[DIM] = "0", ex[DIM] = "", eX[DIM] = "", trig1[DIM] = "", function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res,pi,e";
 	double num = 0, v[DIM], vI[DIM], argu[DIM], ampl[DIM], exp = 1, result1 = 0, baLog = 0, dgrt = 0, result2 = resultI, dgrt2 = 0;
@@ -1224,6 +1251,84 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 	v[1] = result;
 	vI[0] = resultR;
 	vI[1] = resultI;
+
+	if (verbose == 1) {
+		puts("\nFunction arguments:\n1st interactor: \n");
+		if (v[0] > 0 && vI[0] > 0) {
+			printf("=%G+%Gi\n", v[0], vI[0]);
+		}
+		else {
+			if (v[0] > 0 && vI[0] < 0) {
+				printf("=%G%Gi\n", v[0], vI[0]);
+			}
+			else {
+				if (v[0] < 0 && vI[0] > 0) {
+					printf("=%G+%Gi\n", v[0], vI[0]);
+				}
+				else {
+					if (v[0] < 0 && vI[0] < 0) {
+						printf("=%G%Gi\n", v[0], vI[0]);
+					}
+					else {
+						if (v[0] == 0 && vI[0] == 0) {
+							printf("=%G\n", v[0]);
+						}
+						else {
+							if (v[0] == 0 && vI[0] != 0) {
+								printf("=%Gi\n", vI[0]);
+							}
+							else {
+								if (v[0] != 0 && vI[0] == 0) {
+									printf("=%G\n", v[0]);
+								}
+								else {
+									printf("=%G+%Gi\n", v[0], vI[0]);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		puts("\n\n2nd interactor: \n");
+		if (v[1] > 0 && vI[1] > 0) {
+			printf("=%G+%Gi\n", v[1], vI[1]);
+		}
+		else {
+			if (v[1] > 0 && vI[1] < 0) {
+				printf("=%G%Gi\n", v[1], vI[1]);
+			}
+			else {
+				if (v[1] < 0 && vI[1] > 0) {
+					printf("=%G+%Gi\n", v[1], vI[1]);
+				}
+				else {
+					if (v[1] < 0 && vI[1] < 0) {
+						printf("=%G%Gi\n", v[1], vI[1]);
+					}
+					else {
+						if (v[1] == 0 && vI[1] == 0) {
+							printf("=%G\n", v[1]);
+						}
+						else {
+							if (v[1] == 0 && vI[1] != 0) {
+								printf("=%Gi\n", vI[1]);
+							}
+							else {
+								if (v[1] != 0 && vI[1] == 0) {
+									printf("=%G\n", v[1]);
+								}
+								else {
+									printf("=%G+%Gi\n", v[1], vI[1]);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	result = 0;
 	op[0] = '0';
 	if (trigon[0] == 'r'&&trigon[1] == 'a'&&trigon[2] == 'd') {
@@ -1687,6 +1792,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc";
 		return result1;
 	}
+
 	if (op[0] == 'a'&&type == 0) {
 		if (deg == 1) {
 			result1 = ((result1 * 180) / M_PI);
@@ -1697,11 +1803,51 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			result2 = result2*(200 / M_PI);
 		}
 	}
+
 	sprintf(trigon, "");
 	result1 = result1*jg;
 	resultR = result1;
-	resultI = result2;
+	resultI = resultI;
 	round_complex();
+	if (verbose == 1) {
+		puts("\nResult of function processing:\n");
+		if (resultR > 0 && resultI > 0) {
+			printf("=%G+%Gi\n", resultR, resultI);
+		}
+		else {
+			if (resultR > 0 && resultI < 0) {
+				printf("=%G%Gi\n", resultR, resultI);
+			}
+			else {
+				if (resultR < 0 && resultI > 0) {
+					printf("=%G+%Gi\n", resultR, resultI);
+				}
+				else {
+					if (resultR < 0 && resultI < 0) {
+						printf("=%G%Gi\n", resultR, resultI);
+					}
+					else {
+						if (resultR == 0 && resultI == 0) {
+							printf("=%G\n", resultR);
+						}
+						else {
+							if (resultR == 0 && resultI != 0) {
+								printf("=%Gi\n", resultI);
+							}
+							else {
+								if (resultR != 0 && resultI == 0) {
+									printf("=%G\n", resultR);
+								}
+								else {
+									printf("=%G+%Gi\n", resultR, resultI);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	return result1;
 }
 
