@@ -5,6 +5,13 @@
 
 
 double initialProcessor(char arithTrig[DIM], double result) {
+	int rasf = abs((int)strlen(arithTrig));
+
+	while (arithTrig[rasf - 2] == '+'&&arithTrig[rasf - 1] == '0') {
+		rasf = rasf - 2;
+		arithTrig[rasf] = '\0';
+	}
+
 	if (verbose == 1) {
 		printf("\n\n==> initialProcessor <==\n\nExpression: %s", arithTrig);
 	}
@@ -625,9 +632,51 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	char simplified[DIM] = "";
 	int RF = 0;
 	for (RF = 0; RF < c; RF++) {
-		sprintf(simplified, "%s%G%c", simplified, triArith[RF], arTrig[RF]);
+		if (triArith[RF] > 0 && triArithI[RF] < 0) {
+			sprintf(simplified, "%s(%G%Gi)%c", simplified, triArith[RF], triArithI[RF], arTrig[RF]);
+		}
+		else {
+			if (triArith[RF] < 0 && triArithI[RF] > 0) {
+				sprintf(simplified, "%s(%G+%Gi)%c", simplified, triArith[RF], triArithI[RF], arTrig[RF]);
+			}
+			else {
+				if (triArith[RF] < 0 && triArithI[RF] < 0) {
+					sprintf(simplified, "%s(%G%Gi)%c", simplified, triArith[RF], triArithI[RF], arTrig[RF]);
+				}
+				else {
+					if (triArith[RF] == 0 && triArithI[RF] == 0) {
+						sprintf(simplified, "%s%G%c", simplified, triArith[RF], arTrig[RF]);
+					}
+					else {
+						if (triArith[RF] == 0 && triArithI[RF] != 0) {
+							sprintf(simplified, "%s%Gi%c", simplified, triArithI[RF], arTrig[RF]);
+						}
+						else {
+							if (triArith[RF] != 0 && triArithI[RF] == 0) {
+								sprintf(simplified, "%s%G%c", simplified, triArith[RF], arTrig[RF]);
+							}
+							else {
+								sprintf(simplified, "%s(%G+%Gi)%c", simplified, triArith[RF], triArithI[RF], arTrig[RF]);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
-	sprintf(simplified, "%s%G", simplified, triArith[c]);
+	if (isContained("+0+", simplified)) {
+		replace("+0+", "", simplified);
+		sprintf(simplified, "%s", expressionF);
+	}
+	rasf = abs((int)strlen(simplified));
+	while (simplified[rasf - 1] == '+'&&simplified[rasf] == '0') {
+		rasf = rasf - 2;
+		simplified[rasf] = '\0';
+	}
+	rasf = abs((int)strlen(simplified));
+	if (simplified[rasf - 1] == '+') {
+		simplified[rasf - 1] = '\0';
+	}
 	if (verbose == 1) {
 		printf("\nSimplified expression by initialProcessor: %s\n\n", simplified);
 	}
@@ -690,6 +739,18 @@ double initialProcessor(char arithTrig[DIM], double result) {
 }
 
 double arithSolver(char trigon1[DIM], double result) {
+	if (isEqual("0", trigon1)) {
+		resultR = 0;
+		resultI = 0;
+		return 0;
+	}
+	int rasf = abs((int)strlen(trigon1));
+
+	while (trigon1[rasf - 2] == '+'&&trigon1[rasf - 1] == '0') {
+		rasf = rasf - 2;
+		trigon1[rasf] = '\0';
+	}
+
 	if (verbose == 1) {
 		printf("\n\n==> arithSolver <==\n\nExpression: %s", trigon1);
 	}
@@ -1082,11 +1143,48 @@ double arithSolver(char trigon1[DIM], double result) {
 
 	char simplified[DIM] = "";
 	int RF = 0;
-	for (RF = 0; RF < c; RF++) {
-		sprintf(simplified, "%s%G%c", simplified, ampl[RF], amp[RF]);
+	for (RF = 0; RF < n; RF++) {
+		if (ampl[RF] > 0 && amplI[RF] < 0) {
+			sprintf(simplified, "%s(%G%Gi)%c", simplified, ampl[RF], amplI[RF], amp[RF]);
+		}
+		else {
+			if (ampl[RF] < 0 && amplI[RF] > 0) {
+				sprintf(simplified, "%s(%G+%Gi)%c", simplified, ampl[RF], amplI[RF], amp[RF]);
+			}
+			else {
+				if (ampl[RF] < 0 && amplI[RF] < 0) {
+					sprintf(simplified, "%s(%G%Gi)%c", simplified, ampl[RF], amplI[RF], amp[RF]);
+				}
+				else {
+					if (ampl[RF] == 0 && amplI[RF] == 0) {
+						sprintf(simplified, "%s%G%c", simplified, ampl[RF], amp[RF]);
+					}
+					else {
+						if (ampl[RF] == 0 && amplI[RF] != 0) {
+							sprintf(simplified, "%s%Gi%c", simplified, amplI[RF], amp[RF]);
+						}
+						else {
+							if (ampl[RF] != 0 && amplI[RF] == 0) {
+								sprintf(simplified, "%s%G%c", simplified, ampl[RF], amp[RF]);
+							}
+							else {
+								sprintf(simplified, "%s(%G+%Gi)%c", simplified, ampl[RF], amplI[RF], amp[RF]);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
-	sprintf(simplified, "%s%G", simplified, ampl[c]);
+	rasf = abs((int)strlen(simplified));
 
+	while (simplified[rasf - 2] == '+'&&simplified[rasf - 1] == '0') {
+		rasf = rasf - 2;
+		simplified[rasf] = '\0';
+	}
+	simplified[abs((int)strlen(simplified))] = '\0';
+	replace("=", "", simplified);
+	sprintf(simplified, "%s", expressionF);
 	if (verbose == 1) {
 		printf("\nSimplified expression by arithSolver: %s\n\n", simplified);
 	}

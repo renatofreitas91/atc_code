@@ -414,14 +414,12 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				else {
 					verbose = 0;
 				}
-				replace("+0+0+0+0", "", arithTrig);
-				sprintf(arithTrig, "%s", expressionF);
-				replace("+0+0", "", arithTrig);
-				sprintf(arithTrig, "%s", expressionF);
-				replace("+0+0+0", "", arithTrig);
-				sprintf(arithTrig, "%s", expressionF);
-				replace("+0+0", "", arithTrig);
-				sprintf(arithTrig, "%s", expressionF);
+				int rasf = abs((int)strlen(arithTrig));
+
+				while (arithTrig[rasf - 2] == '+'&&arithTrig[rasf - 1] == '0') {
+					rasf = rasf - 2;
+					arithTrig[rasf] = '\0';
+				}
 				initialProcessor(arithTrig, result1);
 				if (resultR == 0 && resultI == 0) {
 					initialProcessor(arithTrig, result1);

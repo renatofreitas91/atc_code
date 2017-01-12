@@ -139,7 +139,7 @@ int applySettings(int toDo) {
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\dimensions.txt", atcPath);
 		if (fopen(toOpen, "r") == NULL) {
-			system("MODE con cols=130 lines=57");
+			system("MODE con cols=150 lines=150");
 		}
 		else {
 			open = fopen(toOpen, "r");
