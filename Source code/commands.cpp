@@ -896,7 +896,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			sprintf(commandToExecute, "%s", expressionF);
 			replace("+0", "", commandToExecute);
 			sprintf(commandToExecute, "%s", expressionF);
-			sprintf(comm, "/C \"pause&\"%s\\atc.exe\" \"%s\"&pause\"", atcPath, commandToExecute);
+			sprintf(comm, "/C \"pause&\"%s\\atc.exe\" \"%s\"&pause&exit\"", atcPath, commandToExecute);
 			using namespace std;
 			std::string s = string(comm);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -1172,7 +1172,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			sprintf(commandToExecute, "%s", expressionF);
 			replace("+0", "", commandToExecute);
 			sprintf(commandToExecute, "%s", expressionF);
-			sprintf(comm, "/C \"MODE con cols=69 lines=14&\"%s\\atc.exe\" \"%s\"", atcPath, commandToExecute);
+			sprintf(comm, "/C \"MODE con cols=69 lines=14&\"%s\\atc.exe\" \"%s\"&exit\"", atcPath, commandToExecute);
 			using namespace std;
 			std::string s = string(comm);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -1361,7 +1361,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			sprintf(commandToExecute, "%s", expressionF);
 			replace("+0", "", commandToExecute);
 			sprintf(commandToExecute, "%s", expressionF);
-			sprintf(comm, "/C \"MODE con cols=69 lines=18&\"%s\\atc.exe\" \"%s\"\"", atcPath, commandToExecute);
+			sprintf(comm, "/C \"MODE con cols=69 lines=18&\"%s\\atc.exe\" \"%s\"&exit\"", atcPath, commandToExecute);
 			using namespace std;
 			std::string s = string(comm);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
