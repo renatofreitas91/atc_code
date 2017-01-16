@@ -2855,56 +2855,32 @@ boolean searchExtension(char filename[DIM], char extension[DIM]) {
 }
 
 boolean readyToSolve(char paTh[DIM]) {
-	FILE *openTxt = NULL;
-	int i = 0, lastchar = 0, j = 0;
-	char data[DIM] = "", checkFlag[DIM] = "", flagToTest[DIM] = "", flag[20] = "SOLVE_NOW";
-	if (paTh[0] == '\"'&&paTh[strlen(paTh) - 1] == '\"') {
-		paTh[strlen(paTh) - 1] = '\0';
-		while (paTh[i + 1] != '\0') {
-			paTh[i] = paTh[i + 1];
-			i++;
-		}
-		paTh[i] = '\0';
-	}
-	openTxt = fopen(paTh, "r");
-	if (openTxt != NULL) {
-		for (i = 0; (data[i] = fgetc(openTxt)) != EOF; i++) {
-			if (data[i] == '\n') {
-				lastchar = i;
+	FILE *open = NULL;
+	char pathToFile[DIM] = "", dataFromFile[DIM] = "";
+	int i = 0;
+	replace("\"", "", paTh);
+	replace("\\", "RASF", expressionF);
+	replace("RASF", "\\\\", expressionF);
+	sprintf(pathToFile, "%s", expressionF);
+	open = fopen(pathToFile, "r");
+	if (open != NULL) {
+		for (i = 0; (dataFromFile[i] = fgetc(open)) != EOF; i++);
+		fclose(open);
+		dataFromFile[i] = '\0';
+		boolean has_flag = isContained("SOLVE_NOW", dataFromFile);
+		if (has_flag) {
+			replace("SOLVE_NOW", "", dataFromFile);
+			open = NULL;
+			open = fopen(pathToFile, "w");
+			if (open != NULL) {
+				fprintf(open, "%s", expressionF);
+				fclose(open);
 			}
 		}
-		data[i] = '\0';
-		j = 0;
-		for (i = lastchar + 1; data[i] != '\0'; i++) {
-			flagToTest[j] = data[i];
-			j++;
-		}
-		flagToTest[j] = '\0';
-		j = 0;
-		while (flag[j] == flagToTest[j]) {
-			j++;
-
-		}
-		j--;
-		if (flag[j] == '\0'&&flagToTest[j] == '\0') {
-			fclose(openTxt);
-			openTxt = fopen(paTh, "w");
-			data[lastchar] = '\0';
-			fprintf(openTxt, "%s", data);
-			fclose(openTxt);
-			return true;
-		}
+		return has_flag;
 	}
-	return false;
-}
-
-boolean isEqual(char to_find[DIM], char string[DIM]) {
-	int i = 0;
-	while (to_find[i] == string[i] && string[i] != '\0') {
-		i++;
-	}
-	if (to_find[i] == string[i] && to_find[i] == '\0') {
-		return true;
+	else {
+		return false;
 	}
 	return false;
 }
@@ -2930,11 +2906,19 @@ boolean isContained(char to_find[DIM], char string[DIM]) {
 			if (j == abs((int)strlen(to_find))) {
 				return true;
 			}
-			else {
-				return false;
-			}
 			i++;
 		}
+	}
+	return false;
+}
+
+boolean isEqual(char to_find[DIM], char string[DIM]) {
+	int i = 0;
+	while (to_find[i] == string[i] && string[i] != '\0') {
+		i++;
+	}
+	if (to_find[i] == string[i] && to_find[i] == '\0') {
+		return true;
 	}
 	return false;
 }

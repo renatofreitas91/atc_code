@@ -665,7 +665,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 		}
 	}
 	if (isContained("+0+", simplified)) {
-		replace("+0+", "", simplified);
+		replace("+0+", "+", simplified);
 		sprintf(simplified, "%s", expressionF);
 	}
 	rasf = abs((int)strlen(simplified));
