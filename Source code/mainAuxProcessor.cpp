@@ -399,7 +399,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				replace("(", "[0+", expressionF);
 				replace("]", ")", expressionF);
 				replace("[", "(", expressionF);
-				replace("+0", "", expressionF);
+				replace("+0+", "+", expressionF);
 				sprintf(arithTrig, "%s+0", expressionF);
 
 				char toOpen[DIM] = "";

@@ -415,8 +415,18 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			if (data[i] == ')') {
 				kc++;
 			}
+			if (kc > kg) {
+				break;
+			}
 		}
 		if (kg != kc) {
+			if (kc > kg) {
+				decision = false;
+				if (comment == 1) {
+					printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
+				}
+				return decision;
+			}
 			decision = false;
 			if (comment == 1) {
 				printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
