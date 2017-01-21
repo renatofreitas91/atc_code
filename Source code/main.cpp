@@ -6,7 +6,7 @@
 
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
 char atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
-int Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0;
+int Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
 clock_t start_processing, end_processing;
 
 
@@ -457,30 +457,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				}
 				r = y + 1;
 			}
-
-			int as = 0;
-			char argument[DIM] = "";
-			if (isContained("logb", data) || isContained("rtD", data)) {
-				while (data[r] != ')'&&data[r] != '\0'&&r < abs((int)strlen(data))) {
-					argument[as] = data[r];
-					as++; r++;
-				}
-				argument[as] = '+'; argument[as + 1] = '('; argument[as + 2] = '0'; argument[as + 3] = ')'; argument[as + 4] = '\0';
-				initialProcessor(argument, result1);
-				double argumentR = resultR;
-				double argumentI = resultI;
-				char systR[DIM] = "";
-				sprintf(systR, "%G", argumentR);
-				char systI[DIM] = "";
-				sprintf(systI, "%G", argumentI);
-				if (isEqual(systR, "INF") || isEqual(systR, "-INF") || isEqual(systI, "INF") || isEqual(systI, "-INF")) {
-					decision = false;
-					if (comment == 1) {
-						printf("\nFunction argument is too big. Try use values in the range [-1.79769E308, 1.79769E308]. ATC is unable to process infinite values on math functions.\n");
-					}
-					return decision;
-				}
-			}
 			decision = true;
 			synTest = 1;
 			if (nPlaces != 0) {
@@ -741,54 +717,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 								decision = false;
 								if (comment == 1) {
 									printf("\nThe variable \"%s\" is not created yet.\n", saveVar);
-								}
-								return decision;
-							}
-						}
-					}
-					else {
-						int y = 0;
-						char funcToCheck[DIM] = "";
-						if (isContained("logb", data)) {
-							y = (int)resultR;
-							while (data[y - 1] != 'b'&&data[y] != '('&&data[y] != '\0') {
-								y++;
-							}
-						}
-						if (isContained("rtD", data)) {
-							y = (int)resultR;
-							while (data[y - 1] != 'D'&&data[y] != '('&&data[y] != '\0') {
-								y++;
-							}
-						}
-						replace("?", "", varValidator);
-						sprintf(funcToCheck, "%s", expressionF);
-						if (isContained(funcToCheck, data)) {
-							char argument[DIM] = "";
-							int as = 0;
-							if (y > 0) {
-								r = y + 1;
-							}
-							else {
-								r = (int)resultI + 1;
-							}
-							as = 0;
-							while (data[r] != ')'&&data[r] != '\0'&&r < abs((int)strlen(data))) {
-								argument[as] = data[r];
-								as++; r++;
-							}
-							argument[as] = '+'; argument[as + 1] = '('; argument[as + 2] = '0'; argument[as + 3] = ')'; argument[as + 4] = '\0';
-							initialProcessor(argument, result1);
-							double argumentR = resultR;
-							double argumentI = resultI;
-							char systR[DIM] = "";
-							sprintf(systR, "%G", argumentR);
-							char systI[DIM] = "";
-							sprintf(systI, "%G", argumentI);
-							if (isEqual(systR, "INF") || isEqual(systR, "-INF") || isEqual(systI, "INF") || isEqual(systI, "-INF")) {
-								decision = false;
-								if (comment == 1) {
-									printf("\nFunction argument is too big. Try use values in the range [-1.79769E308, 1.79769E308]. ATC is unable to process infinite values on math functions.\n");
 								}
 								return decision;
 							}

@@ -17,7 +17,7 @@
 #include <math.h>
 #include <dirent.h> 
 extern double ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
-extern int isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
+extern int feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
 extern char atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
 double functionProcessor(char trigon[DIM], double result, double amplitude, double res);
 double initialProcessor(char arithTrig[DIM], double result);
@@ -45,7 +45,7 @@ void pathNameController(char pathName[DIM], char path[DIM]);
 void pathNameToPath(char pathName[DIM]);
 void stringVariableController(char stringVariable[DIM], char string[DIM]);
 void stringVariableToString(char stringVariable[DIM]);
-void matrixToValues(char matrix[DIM], double result);
+int matrixToValues(char matrix[DIM], double result);
 void renamer(char expression[DIM]);
 void variableToMultiply(char expression[DIM]);
 void toMultiply(char expression[DIM], double result1, double result2);
@@ -53,6 +53,7 @@ void print(char text[DIM], double result1, double result2);
 void sprint(char text[DIM], double result1, double result2);
 void customFuncRenamer(char variable[DIM]);
 void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]);
+void calcNow(char toCalc[DIM], double result1, double result2);
 boolean verifyPrefix(char prefix[DIM]);
 boolean processTxt(char path[DIM], int re);
 boolean dataVerifier(char data[DIM], double result1, double result2, int comment, int verify);

@@ -7,6 +7,7 @@
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);
 	verbose = 0;
+	verified = 0;
 	resultR = 0; resultI;
 	int txt = 0, command = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0;
 	char variable[DIM] = "", getVarName[DIM] = "", getVar[DIM] = "", savefTrig[DIM] = "";
@@ -458,7 +459,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				if (var == 1) {
 					variableController(revariable, result1);
 				}
-				if (valGet == 0) {
+				if (valGet == 0 && feedbackValidation == 0) {
 					if (dp == -1) {
 						if (isFromMain == 1) {
 							if (result1 > 0 && result2 > 0) {

@@ -4,7 +4,7 @@
 
 
 
-void matrixToValues(char matrix[DIM], double result) {
+int matrixToValues(char matrix[DIM], double result) {
 	int i = 0, j = 0, k = 0, l = 0;
 	for (i = 0; matrix[i] != '\0'; i++) {
 		if (matrix[i] == ';') {
@@ -24,15 +24,19 @@ void matrixToValues(char matrix[DIM], double result) {
 			}
 			value[l] = '\0';
 			k++;
-			solveNow(value, result, 0);
-			values[i][j] = resultR;
-			valuesS[i][j] = values[i][j];
-			valuesI[i][j] = resultI;
-			valuesSI[i][j] = valuesI[i][j];
-
+			calcNow(value, result, 0);
+			if (verified == 1) {
+				values[i][j] = resultR;
+				valuesS[i][j] = values[i][j];
+				valuesI[i][j] = resultI;
+				valuesSI[i][j] = valuesI[i][j];
+			}
+			else {
+				return 0;
+			}
 		}
 	}
-
+	return 1;
 }
 
 void solveSystem() {

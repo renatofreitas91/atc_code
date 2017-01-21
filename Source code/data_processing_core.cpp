@@ -2922,3 +2922,14 @@ boolean isEqual(char to_find[DIM], char string[DIM]) {
 	}
 	return false;
 }
+
+void calcNow(char toCalc[DIM], double result1, double result2) {
+	char expression[DIM] = "";
+	sprintf(expression, "%s", toCalc);
+	feedbackValidation = 1;
+	(int)solveNow(toCalc, result1, result2);
+	feedbackValidation = 0;
+	if (verified == 0) {
+		printf("Invalid expression: %s\n\n", expression);
+	}
+}

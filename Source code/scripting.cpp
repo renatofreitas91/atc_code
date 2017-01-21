@@ -680,7 +680,7 @@ double solveNow(char toSolveNow[DIM], double result1, double result2) {
 	}
 	double resultFF = 0;
 	isFromSolveNow = 1;
-	main_core(toSolveNow, toSolveNow, fsolveN, path, result1, result2, 0);
+	main_core(toSolveNow, toSolveNow, fsolveN, path, result1, result2, feedbackValidation);
 	sprintf(toSolveNow, "");
 	resultFF = resultR;
 	isFromSolveNow = 0;
