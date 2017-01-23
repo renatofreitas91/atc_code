@@ -1904,8 +1904,9 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 
 	sprintf(trigon, "");
 	result1 = result1*jg;
+	result2 = result2*jg;
 	resultR = result1;
-	resultI = resultI;
+	resultI = result2;
 	round_complex();
 	if (verbose == 1) {
 		puts("\nResult of function processing:\n");

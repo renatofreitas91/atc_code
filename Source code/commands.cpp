@@ -973,6 +973,9 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				fprintf(fout, "\n");
 				ct++;
 			}
+			if (arG > 1) {
+				exit(0);
+			}
 		}
 		puts("");
 		fputs("\n", fout);
@@ -1356,6 +1359,9 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					printf("\n==> Your expression has syntax errors. <==\n\n");
 				}
 			}
+			if (arG > 1) {
+				exit(0);
+			}
 		}
 		arithTrig[0] = '\0'; command = true;
 		ShowConsoleCursor(TRUE);
@@ -1555,6 +1561,9 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				else {
 					printf("\n==> Your expression has syntax errors. <==\n\n");
 				}
+			}
+			if (arG > 1) {
+				exit(0);
 			}
 		}
 		arithTrig[0] = '\0'; command = true;

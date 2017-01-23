@@ -6,7 +6,7 @@
 
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
 char atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
-int Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
+int arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
 clock_t start_processing, end_processing;
 
 
@@ -41,7 +41,7 @@ void main(int argc, char *argv[]) {
 				system("title Advanced Trigonometry Calculator v1.8.9       ==) Processing... (==");
 			}
 			else {
-				int arG = 1;
+			 arG = 1;
 				trigData[0] = '\0';
 				while (arG < argc) {
 					sprintf(trigData, "%s%s", trigData, argv[arG]);
