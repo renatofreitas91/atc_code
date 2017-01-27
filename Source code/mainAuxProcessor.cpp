@@ -391,7 +391,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		verify = dataVerifier(arithTrig, result1, result2, isFromMain, verify);
 	}
 	fclose(fout);
-	if (arithTrig[0] != '\0'&&isFromMain == 1) {
+	if (arithTrig[0] != '\0'&&isFromMain == 1 && feedbackValidation == 0) {
 		Clock(0);
 	}
 	if (continu == 1) {

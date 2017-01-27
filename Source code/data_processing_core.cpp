@@ -2927,10 +2927,11 @@ double calcNow(char toCalc[DIM], double result1, double result2) {
 	char expression[DIM] = "";
 	sprintf(expression, "%s", toCalc);
 	feedbackValidation = 1;
-	(int)solveNow(toCalc, result1, result2);
+	resultR = solveNow(expression, result1, result2);
 	feedbackValidation = 0;
 	if (verified == 0) {
 		printf("Invalid expression: %s\n\n", expression);
 	}
+	sprintf(toCalc, "");
 	return resultR;
 }

@@ -41,7 +41,7 @@ void main(int argc, char *argv[]) {
 				system("title Advanced Trigonometry Calculator v1.8.9       ==) Processing... (==");
 			}
 			else {
-			 arG = 1;
+				arG = 1;
 				trigData[0] = '\0';
 				while (arG < argc) {
 					sprintf(trigData, "%s%s", trigData, argv[arG]);

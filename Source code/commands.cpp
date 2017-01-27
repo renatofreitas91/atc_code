@@ -228,7 +228,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 						double x1R = resultR, x1I = resultI;
 						division(minusR, minusI, twoaR, twoaI);
 						double x2R = resultR, x2I = resultI;
-						if (verified == 1) {
 							if (x1R > 0 && x1I > 0) {
 								printf("x1=%G+%Gi\n", x1R, x1I);
 							}
@@ -303,7 +302,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 							}
 						}
 					}
-				}
 			}
 		}
 		puts(" ");
@@ -734,49 +732,42 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 									Value[v] = '_';
 							}
 							solutionR = calcNow(Value, result1, result2);
-							if (verified == 1) {
-								sprintf(Value, "%G", valuesS[p][count - 1]);
-								for (int v = 0; Value[v]; v++) {
-									if (Value[v] == '-') {
-										Value[v] = '_';
-									}
-									if (Value[v] == '+') {
-										Value[v] = '0';
-									}
+							sprintf(Value, "%G", valuesS[p][count - 1]);
+							for (int v = 0; Value[v]; v++) {
+								if (Value[v] == '-') {
+									Value[v] = '_';
 								}
-								valuesS[p][count - 1] = calcNow(Value, result1, result2);
-								if (verified == 1) {
-
-									sprintf(Value, "%G", solutionI);
-									for (int v = 0; Value[v]; v++) {
-										if (Value[v] == '-')
-											Value[v] = '_';
-									}
-									solutionI = calcNow(Value, result1, result2);
-									if (verified == 1) {
-										sprintf(Value, "%G", valuesSI[p][count - 1]);
-										for (int v = 0; Value[v]; v++) {
-											if (Value[v] == '-') {
-												Value[v] = '_';
-											}
-											if (Value[v] == '+') {
-												Value[v] = '0';
-											}
-										}
-										valuesSI[p][count - 1] = calcNow(Value, result1, result2);
-										if (verified == 1) {
-											if (solutionR != valuesS[p][count - 1] || solutionI != valuesSI[p][count - 1]) {
-												printf("\n==> Unsolvable system. <==\n\n");
-												fprintf(fout, "\n==> Unsolvable system. <==\n\n");
-												correct = 0;
-												break;
-											}
-											solutionR = 0;
-											solutionI = 0;
-										}
-									}
+								if (Value[v] == '+') {
+									Value[v] = '0';
 								}
 							}
+							valuesS[p][count - 1] = calcNow(Value, result1, result2);
+
+
+							sprintf(Value, "%G", solutionI);
+							for (int v = 0; Value[v]; v++) {
+								if (Value[v] == '-')
+									Value[v] = '_';
+							}
+							solutionI = calcNow(Value, result1, result2);
+							sprintf(Value, "%G", valuesSI[p][count - 1]);
+							for (int v = 0; Value[v]; v++) {
+								if (Value[v] == '-') {
+									Value[v] = '_';
+								}
+								if (Value[v] == '+') {
+									Value[v] = '0';
+								}
+							}
+							valuesSI[p][count - 1] = calcNow(Value, result1, result2);
+							if (solutionR != valuesS[p][count - 1] || solutionI != valuesSI[p][count - 1]) {
+								printf("\n==> Unsolvable system. <==\n\n");
+								fprintf(fout, "\n==> Unsolvable system. <==\n\n");
+								correct = 0;
+								break;
+							}
+							solutionR = 0;
+							solutionI = 0;
 						}
 						if (correct == 1) {
 							puts("");
@@ -788,58 +779,56 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 										Value[v] = '_';
 								}
 								values[p][count - 1] = calcNow(Value, result1, result2);
-								if (verified == 1) {
-									if (values[p][count - 1] >= 0 && valuesI[p][count - 1] > 0) {
-										printf("x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
-										fprintf(fout, "x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+								if (values[p][count - 1] >= 0 && valuesI[p][count - 1] > 0) {
+									printf("x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+									fprintf(fout, "x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+								}
+								else {
+									if (values[p][count - 1] >= 0 && valuesI[p][count - 1] < 0) {
+										printf("x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+										fprintf(fout, "x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
 									}
 									else {
-										if (values[p][count - 1] >= 0 && valuesI[p][count - 1] < 0) {
+										if (values[p][count - 1] < 0 && valuesI[p][count - 1] < 0) {
 											printf("x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
 											fprintf(fout, "x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
 										}
 										else {
-											if (values[p][count - 1] < 0 && valuesI[p][count - 1] < 0) {
-												printf("x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
-												fprintf(fout, "x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+											if (values[p][count - 1] < 0 && valuesI[p][count - 1] > 0) {
+												printf("x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+												fprintf(fout, "x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
 											}
 											else {
-												if (values[p][count - 1] < 0 && valuesI[p][count - 1] > 0) {
-													printf("x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
-													fprintf(fout, "x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+												if (values[p][count - 1] == 0 && valuesI[p][count - 1] != 0) {
+													printf("x%d=%Gi\n", p + 1, valuesI[p][count - 1]);
+													fprintf(fout, "x%d=%Gi\n", p + 1, valuesI[p][count - 1]);
 												}
 												else {
-													if (values[p][count - 1] == 0 && valuesI[p][count - 1] != 0) {
-														printf("x%d=%Gi\n", p + 1, valuesI[p][count - 1]);
-														fprintf(fout, "x%d=%Gi\n", p + 1, valuesI[p][count - 1]);
+													if (valuesI[p][count - 1] == 0) {
+														printf("x%d=%G\n", p + 1, values[p][count - 1]);
+														fprintf(fout, "x%d=%G\n", p + 1, values[p][count - 1]);
 													}
-													else {
-														if (valuesI[p][count - 1] == 0) {
-															printf("x%d=%G\n", p + 1, values[p][count - 1]);
-															fprintf(fout, "x%d=%G\n", p + 1, values[p][count - 1]);
-														}
-													}
-
 												}
+
 											}
 										}
 									}
 								}
-								puts("");
-								fputs("", fout);
-								for (vi = 0; vi < count; vi++) {
-									for (vj = 0; vj < count; vj++) {
-										valInd[vi][vj] = 0;
-										values[vi][vj] = 0;
-										valuesS[vi][vj] = 0;
-										valuesSI[vi][vj] = 0;
-										valuesF[vi][vj] = 0;
-										valuesFI[vi][vj] = 0;
-										valuesI[vi][vj] = 0;
-									}
-								}
-								count = 0;
 							}
+							puts("");
+							fputs("", fout);
+							for (vi = 0; vi < count; vi++) {
+								for (vj = 0; vj < count; vj++) {
+									valInd[vi][vj] = 0;
+									values[vi][vj] = 0;
+									valuesS[vi][vj] = 0;
+									valuesSI[vi][vj] = 0;
+									valuesF[vi][vj] = 0;
+									valuesFI[vi][vj] = 0;
+									valuesI[vi][vj] = 0;
+								}
+							}
+							count = 0;
 						}
 					}
 				}
@@ -855,6 +844,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		arithTrig[0] = '\0'; command = true;
 	}
+	
 
 	if (isCommand(arithTrig, "eliminatevariables")) {
 		FILE *open = NULL;
