@@ -53,7 +53,7 @@ void print(char text[DIM], double result1, double result2);
 void sprint(char text[DIM], double result1, double result2);
 void customFuncRenamer(char variable[DIM]);
 void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]);
-void calcNow(char toCalc[DIM], double result1, double result2);
+double calcNow(char toCalc[DIM], double result1, double result2);
 boolean verifyPrefix(char prefix[DIM]);
 boolean processTxt(char path[DIM], int re);
 boolean dataVerifier(char data[DIM], double result1, double result2, int comment, int verify);

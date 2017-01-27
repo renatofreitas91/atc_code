@@ -2923,7 +2923,7 @@ boolean isEqual(char to_find[DIM], char string[DIM]) {
 	return false;
 }
 
-void calcNow(char toCalc[DIM], double result1, double result2) {
+double calcNow(char toCalc[DIM], double result1, double result2) {
 	char expression[DIM] = "";
 	sprintf(expression, "%s", toCalc);
 	feedbackValidation = 1;
@@ -2932,4 +2932,5 @@ void calcNow(char toCalc[DIM], double result1, double result2) {
 	if (verified == 0) {
 		printf("Invalid expression: %s\n\n", expression);
 	}
+	return resultR;
 }

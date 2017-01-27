@@ -219,13 +219,16 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			if (verify == 1) {
 				fprintf(fout, ">%s\n", savefTrig);
 			}
+			if (fout != NULL) {
+				fclose(fout);
+			}
 			command = commands(arithTrig, path, result1, result2);
-			fclose(fout);
+			fflush(NULL);
 			fout = NULL;
 			while (fout == NULL) {
 				fout = fopen(path, "a+");
 			}
-			if (command == 0 && continu) {
+			if (command == false && continu) {
 				main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
 				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 			}

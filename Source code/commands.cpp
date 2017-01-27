@@ -733,43 +733,50 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 								if (Value[v] == '-')
 									Value[v] = '_';
 							}
-							solutionR = solveNow(Value, result1, result2);
-							sprintf(Value, "%G", valuesS[p][count - 1]);
-							for (int v = 0; Value[v]; v++) {
-								if (Value[v] == '-') {
-									Value[v] = '_';
+							solutionR = calcNow(Value, result1, result2);
+							if (verified == 1) {
+								sprintf(Value, "%G", valuesS[p][count - 1]);
+								for (int v = 0; Value[v]; v++) {
+									if (Value[v] == '-') {
+										Value[v] = '_';
+									}
+									if (Value[v] == '+') {
+										Value[v] = '0';
+									}
 								}
-								if (Value[v] == '+') {
-									Value[v] = '0';
-								}
-							}
-							valuesS[p][count - 1] = solveNow(Value, result1, result2);
+								valuesS[p][count - 1] = calcNow(Value, result1, result2);
+								if (verified == 1) {
 
-
-							sprintf(Value, "%G", solutionI);
-							for (int v = 0; Value[v]; v++) {
-								if (Value[v] == '-')
-									Value[v] = '_';
-							}
-							solutionI = solveNow(Value, result1, result2);
-							sprintf(Value, "%G", valuesSI[p][count - 1]);
-							for (int v = 0; Value[v]; v++) {
-								if (Value[v] == '-') {
-									Value[v] = '_';
+									sprintf(Value, "%G", solutionI);
+									for (int v = 0; Value[v]; v++) {
+										if (Value[v] == '-')
+											Value[v] = '_';
+									}
+									solutionI = calcNow(Value, result1, result2);
+									if (verified == 1) {
+										sprintf(Value, "%G", valuesSI[p][count - 1]);
+										for (int v = 0; Value[v]; v++) {
+											if (Value[v] == '-') {
+												Value[v] = '_';
+											}
+											if (Value[v] == '+') {
+												Value[v] = '0';
+											}
+										}
+										valuesSI[p][count - 1] = calcNow(Value, result1, result2);
+										if (verified == 1) {
+											if (solutionR != valuesS[p][count - 1] || solutionI != valuesSI[p][count - 1]) {
+												printf("\n==> Unsolvable system. <==\n\n");
+												fprintf(fout, "\n==> Unsolvable system. <==\n\n");
+												correct = 0;
+												break;
+											}
+											solutionR = 0;
+											solutionI = 0;
+										}
+									}
 								}
-								if (Value[v] == '+') {
-									Value[v] = '0';
-								}
 							}
-							valuesSI[p][count - 1] = solveNow(Value, result1, result2);
-							if (solutionR != valuesS[p][count - 1] || solutionI != valuesSI[p][count - 1]) {
-								printf("\n==> Unsolvable system. <==\n\n");
-								fprintf(fout, "\n==> Unsolvable system. <==\n\n");
-								correct = 0;
-								break;
-							}
-							solutionR = 0;
-							solutionI = 0;
 						}
 						if (correct == 1) {
 							puts("");
@@ -780,57 +787,59 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 									if (Value[v] == '-')
 										Value[v] = '_';
 								}
-								values[p][count - 1] = solveNow(Value, result1, result2);
-								if (values[p][count - 1] >= 0 && valuesI[p][count - 1] > 0) {
-									printf("x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
-									fprintf(fout, "x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
-								}
-								else {
-									if (values[p][count - 1] >= 0 && valuesI[p][count - 1] < 0) {
-										printf("x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
-										fprintf(fout, "x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+								values[p][count - 1] = calcNow(Value, result1, result2);
+								if (verified == 1) {
+									if (values[p][count - 1] >= 0 && valuesI[p][count - 1] > 0) {
+										printf("x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+										fprintf(fout, "x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
 									}
 									else {
-										if (values[p][count - 1] < 0 && valuesI[p][count - 1] < 0) {
+										if (values[p][count - 1] >= 0 && valuesI[p][count - 1] < 0) {
 											printf("x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
 											fprintf(fout, "x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
 										}
 										else {
-											if (values[p][count - 1] < 0 && valuesI[p][count - 1] > 0) {
-												printf("x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
-												fprintf(fout, "x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+											if (values[p][count - 1] < 0 && valuesI[p][count - 1] < 0) {
+												printf("x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+												fprintf(fout, "x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
 											}
 											else {
-												if (values[p][count - 1] == 0 && valuesI[p][count - 1] != 0) {
-													printf("x%d=%Gi\n", p + 1, valuesI[p][count - 1]);
-													fprintf(fout, "x%d=%Gi\n", p + 1, valuesI[p][count - 1]);
+												if (values[p][count - 1] < 0 && valuesI[p][count - 1] > 0) {
+													printf("x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+													fprintf(fout, "x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
 												}
 												else {
-													if (valuesI[p][count - 1] == 0) {
-														printf("x%d=%G\n", p + 1, values[p][count - 1]);
-														fprintf(fout, "x%d=%G\n", p + 1, values[p][count - 1]);
+													if (values[p][count - 1] == 0 && valuesI[p][count - 1] != 0) {
+														printf("x%d=%Gi\n", p + 1, valuesI[p][count - 1]);
+														fprintf(fout, "x%d=%Gi\n", p + 1, valuesI[p][count - 1]);
 													}
-												}
+													else {
+														if (valuesI[p][count - 1] == 0) {
+															printf("x%d=%G\n", p + 1, values[p][count - 1]);
+															fprintf(fout, "x%d=%G\n", p + 1, values[p][count - 1]);
+														}
+													}
 
+												}
 											}
 										}
 									}
 								}
-							}
-							puts("");
-							fputs("", fout);
-							for (vi = 0; vi < count; vi++) {
-								for (vj = 0; vj < count; vj++) {
-									valInd[vi][vj] = 0;
-									values[vi][vj] = 0;
-									valuesS[vi][vj] = 0;
-									valuesSI[vi][vj] = 0;
-									valuesF[vi][vj] = 0;
-									valuesFI[vi][vj] = 0;
-									valuesI[vi][vj] = 0;
+								puts("");
+								fputs("", fout);
+								for (vi = 0; vi < count; vi++) {
+									for (vj = 0; vj < count; vj++) {
+										valInd[vi][vj] = 0;
+										values[vi][vj] = 0;
+										valuesS[vi][vj] = 0;
+										valuesSI[vi][vj] = 0;
+										valuesF[vi][vj] = 0;
+										valuesFI[vi][vj] = 0;
+										valuesI[vi][vj] = 0;
+									}
 								}
+								count = 0;
 							}
-							count = 0;
 						}
 					}
 				}
@@ -932,56 +941,58 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				ct++; i++;
 			}
 			countTimes[ct] = '\0';
-			countT = abs((int)solveNow(countTimes, result1, result2));
-			clock_t start, end;
-			start = clock();
-			ct = 0;
-			while (ct < countT) {
-				char pause[1000] = "";
-				gets_s(pause);
-				end = clock();
-				stopTime = (double)(end - start) / CLOCKS_PER_SEC;
-				int days = (int)qu(stopTime, 86400);
-				int hours = (int)qu(re(stopTime, 86400), 3600);
-				int minutes = (int)qu(re(re(stopTime, 86400), 3600), 60);
-				int seconds = (int)re(re(re(stopTime, 86400), 3600), 60);
-				int miliseconds = (int)(1000 * (stopTime - qu(stopTime, 1)));
-				printf("t%d=", ct + 1);
-				fprintf(fout, "t%d=", ct + 1);
-				if (days != 0) {
-					printf("%dd ", days);
-					fprintf(fout, "%dd ", days);
-				}
-				if (hours != 0) {
-					printf("%dh ", hours);
-					fprintf(fout, "%dh ", hours);
-				}
-				if (minutes != 0) {
-					printf("%dm ", minutes);
-					fprintf(fout, "%dm ", minutes);
-				}
+			countT = abs((int)calcNow(countTimes, result1, result2));
+			if (verified == 1) {
+				clock_t start, end;
+				start = clock();
+				ct = 0;
+				while (ct < countT) {
+					char pause[1000] = "";
+					gets_s(pause);
+					end = clock();
+					stopTime = (double)(end - start) / CLOCKS_PER_SEC;
+					int days = (int)qu(stopTime, 86400);
+					int hours = (int)qu(re(stopTime, 86400), 3600);
+					int minutes = (int)qu(re(re(stopTime, 86400), 3600), 60);
+					int seconds = (int)re(re(re(stopTime, 86400), 3600), 60);
+					int miliseconds = (int)(1000 * (stopTime - qu(stopTime, 1)));
+					printf("t%d=", ct + 1);
+					fprintf(fout, "t%d=", ct + 1);
+					if (days != 0) {
+						printf("%dd ", days);
+						fprintf(fout, "%dd ", days);
+					}
+					if (hours != 0) {
+						printf("%dh ", hours);
+						fprintf(fout, "%dh ", hours);
+					}
+					if (minutes != 0) {
+						printf("%dm ", minutes);
+						fprintf(fout, "%dm ", minutes);
+					}
 
-				if (seconds != 0) {
-					printf("%ds ", seconds);
-					fprintf(fout, "%ds ", seconds);
+					if (seconds != 0) {
+						printf("%ds ", seconds);
+						fprintf(fout, "%ds ", seconds);
+					}
+					if (miliseconds != 0) {
+						printf("%dms ", miliseconds);
+						fprintf(fout, "%dms ", miliseconds);
+					}
+					printf("\n");
+					fprintf(fout, "\n");
+					ct++;
 				}
-				if (miliseconds != 0) {
-					printf("%dms ", miliseconds);
-					fprintf(fout, "%dms ", miliseconds);
+				if (arG > 1) {
+					exit(0);
 				}
-				printf("\n");
-				fprintf(fout, "\n");
-				ct++;
 			}
-			if (arG > 1) {
-				exit(0);
-			}
+			puts("");
+			fputs("\n", fout);
+			command = true;
+			arithTrig[0] = '\0';
+			ShowConsoleCursor(TRUE);
 		}
-		puts("");
-		fputs("\n", fout);
-		command = true;
-		arithTrig[0] = '\0';
-		ShowConsoleCursor(TRUE);
 	}
 
 	if (isCommand(arithTrig, "eliminateresults")) {
@@ -1235,124 +1246,130 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 					i++;
 					timeF[t] = '\0';
-					int hours = (int)solveNow(timeF, result1, result2);
-					sprintf(timeF, "");
-					t = 0;
-					while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
-						timeF[t] = arithTrig[i];
-						t++; i++;
-					}
-					timeF[t] = '\0';
-					i++;
-					int minutes = (int)solveNow(timeF, result1, result2);
-					sprintf(timeF, "");
-					t = 0;
-					while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
-						timeF[t] = arithTrig[i];
-						t++; i++;
-					}
-					timeF[t] = '\0';
-					int seconds = (int)solveNow(timeF, result1, result2);
-					sprintf(timeF, "");
-					clock_t start, end, syn1, syn2;
-					int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
-					int timeActual = 50, timepass = 0, time2syn = 0;
-					start = clock();
-					if (totalTime > 0) {
-						while (timeActual > 0) {
-
-							end = clock();
-							timePassed = (end - start) / CLOCKS_PER_SEC;
-							if (timePassed == 0) {
-								syn1 = clock();
-								while (timepass == timePassed) {
-									end = clock();
-									timePassed = (end - start) / CLOCKS_PER_SEC;
-									Sleep(1);
-								}
-								syn2 = clock();
-								time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
-							}
-							else {
-								Sleep(time2syn - 50);
-								while (timepass == timePassed) {
-									end = clock();
-									timePassed = (end - start) / CLOCKS_PER_SEC;
-									Sleep(3);
-								}
-							}
-							timeActual = totalTime - timePassed;
-							int thours = timeActual / 3600;
-							int tminutes = (timeActual % 3600) / 60;
-							int tseconds = (timeActual % 3600) % 60;
-							timepass = timePassed;
-							time_t hourF;
-							time(&hourF);
-							char *tim;
-							tim = ctime(&hourF);
-							tim[24] = '\0';
-							char hou[3] = { tim[11], tim[12], '\0' };
-							int Hours = atoi(hou);
-							char min[3] = { tim[14], tim[15], '\0' };
-							int Minutes = atoi(min);
-							char sec[3] = { tim[17], tim[18], '\0' };
-							int Seconds = atoi(sec);
-							char toOpen[DIM] = "";
-							sprintf(toOpen, "%s\\history.txt", atcPath);
-							fout = fopen(toOpen, "a+");
-							char yea[5] = { tim[20], tim[21], tim[22], tim[23], '\0' };
-							int years = atoi(yea);
-							char da[3] = { tim[8], tim[9], '\0' };
-							int days = atoi(da);
-							int months = 0;
-							if (tim[4] == 'J'&&tim[5] == 'a'&&tim[6] == 'n') {
-								months = 1;
-							}
-							if (tim[4] == 'F'&&tim[5] == 'e'&&tim[6] == 'b') {
-								months = 2;
-							}
-							if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'r') {
-								months = 3;
-							}
-							if (tim[4] == 'A'&&tim[5] == 'p'&&tim[6] == 'r') {
-								months = 4;
-							}
-							if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'y') {
-								months = 5;
-							}
-							if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'n') {
-								months = 6;
-							}
-							if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'l') {
-								months = 7;
-							}
-							if (tim[4] == 'A'&&tim[5] == 'u'&&tim[6] == 'g') {
-								months = 8;
-							}
-							if (tim[4] == 'S'&&tim[5] == 'e'&&tim[6] == 'p') {
-								months = 9;
-							}
-							if (tim[4] == 'O'&&tim[5] == 'c'&&tim[6] == 't') {
-								months = 10;
-							}
-							if (tim[4] == 'N'&&tim[5] == 'o'&&tim[6] == 'v') {
-								months = 11;
-							}
-							if (tim[4] == 'D'&&tim[5] == 'e'&&tim[6] == 'c') {
-								months = 12;
-							}
-							char toTitle[DIM] = "";
-							sprintf(toTitle, "title Advanced Trigonometry Calculator v1.8.9  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
-							system(toTitle);
-							printTimer(thours, tminutes, tseconds);
+					int hours = (int)calcNow(timeF, result1, result2);
+					if (verified == 1) {
+						sprintf(timeF, "");
+						t = 0;
+						while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
+							timeF[t] = arithTrig[i];
+							t++; i++;
 						}
-					}
-					i = 0;
-					Sleep(400);
-					while (i < 25) {
-						Beep(777, 400);
-						Sleep(400);
+						timeF[t] = '\0';
 						i++;
+						int minutes = (int)calcNow(timeF, result1, result2);
+						if (verified == 1) {
+							sprintf(timeF, "");
+							t = 0;
+							while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+								timeF[t] = arithTrig[i];
+								t++; i++;
+							}
+							timeF[t] = '\0';
+							int seconds = (int)calcNow(timeF, result1, result2);
+							if (verified == 1) {
+								sprintf(timeF, "");
+								clock_t start, end, syn1, syn2;
+								int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
+								int timeActual = 50, timepass = 0, time2syn = 0;
+								start = clock();
+								if (totalTime > 0) {
+									while (timeActual > 0) {
+
+										end = clock();
+										timePassed = (end - start) / CLOCKS_PER_SEC;
+										if (timePassed == 0) {
+											syn1 = clock();
+											while (timepass == timePassed) {
+												end = clock();
+												timePassed = (end - start) / CLOCKS_PER_SEC;
+												Sleep(1);
+											}
+											syn2 = clock();
+											time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
+										}
+										else {
+											Sleep(time2syn - 50);
+											while (timepass == timePassed) {
+												end = clock();
+												timePassed = (end - start) / CLOCKS_PER_SEC;
+												Sleep(3);
+											}
+										}
+										timeActual = totalTime - timePassed;
+										int thours = timeActual / 3600;
+										int tminutes = (timeActual % 3600) / 60;
+										int tseconds = (timeActual % 3600) % 60;
+										timepass = timePassed;
+										time_t hourF;
+										time(&hourF);
+										char *tim;
+										tim = ctime(&hourF);
+										tim[24] = '\0';
+										char hou[3] = { tim[11], tim[12], '\0' };
+										int Hours = atoi(hou);
+										char min[3] = { tim[14], tim[15], '\0' };
+										int Minutes = atoi(min);
+										char sec[3] = { tim[17], tim[18], '\0' };
+										int Seconds = atoi(sec);
+										char toOpen[DIM] = "";
+										sprintf(toOpen, "%s\\history.txt", atcPath);
+										fout = fopen(toOpen, "a+");
+										char yea[5] = { tim[20], tim[21], tim[22], tim[23], '\0' };
+										int years = atoi(yea);
+										char da[3] = { tim[8], tim[9], '\0' };
+										int days = atoi(da);
+										int months = 0;
+										if (tim[4] == 'J'&&tim[5] == 'a'&&tim[6] == 'n') {
+											months = 1;
+										}
+										if (tim[4] == 'F'&&tim[5] == 'e'&&tim[6] == 'b') {
+											months = 2;
+										}
+										if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'r') {
+											months = 3;
+										}
+										if (tim[4] == 'A'&&tim[5] == 'p'&&tim[6] == 'r') {
+											months = 4;
+										}
+										if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'y') {
+											months = 5;
+										}
+										if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'n') {
+											months = 6;
+										}
+										if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'l') {
+											months = 7;
+										}
+										if (tim[4] == 'A'&&tim[5] == 'u'&&tim[6] == 'g') {
+											months = 8;
+										}
+										if (tim[4] == 'S'&&tim[5] == 'e'&&tim[6] == 'p') {
+											months = 9;
+										}
+										if (tim[4] == 'O'&&tim[5] == 'c'&&tim[6] == 't') {
+											months = 10;
+										}
+										if (tim[4] == 'N'&&tim[5] == 'o'&&tim[6] == 'v') {
+											months = 11;
+										}
+										if (tim[4] == 'D'&&tim[5] == 'e'&&tim[6] == 'c') {
+											months = 12;
+										}
+										char toTitle[DIM] = "";
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.8.9  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										system(toTitle);
+										printTimer(thours, tminutes, tseconds);
+									}
+								}
+								i = 0;
+								Sleep(400);
+								while (i < 25) {
+									Beep(777, 400);
+									Sleep(400);
+									i++;
+								}
+							}
+						}
 					}
 				}
 				else {
@@ -1432,131 +1449,136 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 					i++;
 					timE[t] = '\0';
-					int hours = (int)solveNow(timE, result1, result2);
-					sprintf(timE, "");
-					t = 0;
-					while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0') {
-						timE[t] = arithTrig[i];
-						t++; i++;
-					}
-					timE[t] = '\0';
-					i++;
-					int minutes = (int)solveNow(timE, result1, result2);
-					sprintf(timE, "");
-					t = 0;
-					while (arithTrig[i] != ')'&&arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
-						timE[t] = arithTrig[i];
-						t++; i++;
-					}
-					timE[t] = '\0';
-					int seconds = (int)solveNow(timE, result1, result2);
-					sprintf(timE, "");
-					clock_t start, end, syn1, syn2;
-					int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
-					int timeActual = 50, timepass = 0, time2syn = 0;
-					int sec = 0;
-					char seco[3] = "";
-					char *tim;
-					time_t hour1;
-					time(&hour1);
-					tim = ctime(&hour1);
-					tim[24] = '\0';
-					seco[0] = tim[17]; seco[1] = tim[18]; seco[2] = '\0';
-					sec = atoi(seco);
-					wait(sec);
-					start = clock();
-					if (totalTime > 0) {
-						while (timeActual > 0) {
+					int hours = (int)calcNow(timE, result1, result2);
+					if (verified == 1) {
+						sprintf(timE, "");
+						t = 0;
+						while (arithTrig[i] != ':'&&arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+							timE[t] = arithTrig[i];
+							t++; i++;
+						}
+						timE[t] = '\0';
+						i++;
+						int minutes = (int)calcNow(timE, result1, result2);
+						if (verified == 1) {
+							sprintf(timE, "");
+							t = 0;
+							while (arithTrig[i] != ')'&&arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
+								timE[t] = arithTrig[i];
+								t++; i++;
+							}
+							timE[t] = '\0';
+							int seconds = (int)calcNow(timE, result1, result2);
+							if (verified == 1) {
+								sprintf(timE, "");
+								clock_t start, end, syn1, syn2;
+								int timePassed = 0, totalTime = hours * 3600 + minutes * 60 + seconds;
+								int timeActual = 50, timepass = 0, time2syn = 0;
+								int sec = 0;
+								char seco[3] = "";
+								char *tim;
+								time_t hour1;
+								time(&hour1);
+								tim = ctime(&hour1);
+								tim[24] = '\0';
+								seco[0] = tim[17]; seco[1] = tim[18]; seco[2] = '\0';
+								sec = atoi(seco);
+								wait(sec);
+								start = clock();
+								if (totalTime > 0) {
+									while (timeActual > 0) {
 
-							end = clock();
-							timePassed = (end - start) / CLOCKS_PER_SEC;
-							if (timePassed == 0) {
-								syn1 = clock();
-								while (timepass == timePassed) {
-									end = clock();
-									timePassed = (end - start) / CLOCKS_PER_SEC;
-									Sleep(1);
+										end = clock();
+										timePassed = (end - start) / CLOCKS_PER_SEC;
+										if (timePassed == 0) {
+											syn1 = clock();
+											while (timepass == timePassed) {
+												end = clock();
+												timePassed = (end - start) / CLOCKS_PER_SEC;
+												Sleep(1);
+											}
+											syn2 = clock();
+											time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
+										}
+										else {
+											Sleep(time2syn - 50);
+											while (timepass == timePassed) {
+												end = clock();
+												timePassed = (end - start) / CLOCKS_PER_SEC;
+												Sleep(3);
+											}
+										}
+										timeActual = totalTime - timePassed;
+										int thours = timeActual / 3600;
+										int tminutes = (timeActual % 3600) / 60;
+										int tseconds = (timeActual % 3600) % 60;
+										if (tseconds == -1) { tseconds = 0; }
+										timepass = timePassed;
+										time_t hour;
+										time(&hour);
+										char *tim;
+										tim = ctime(&hour);
+										tim[24] = '\0';
+										char hou[3] = { tim[11], tim[12], '\0' };
+										int Hours = atoi(hou);
+										char min[3] = { tim[14], tim[15], '\0' };
+										int Minutes = atoi(min);
+										char sec[3] = { tim[17], tim[18], '\0' };
+										int Seconds = atoi(sec);
+										char toOpen[DIM] = "";
+										sprintf(toOpen, "%s\\history.txt", atcPath);
+										fout = fopen(toOpen, "a+");
+										char yea[5] = { tim[20], tim[21], tim[22], tim[23], '\0' };
+										int years = atoi(yea);
+										char da[3] = { tim[8], tim[9], '\0' };
+										int days = atoi(da);
+										int months = 0;
+										if (tim[4] == 'J'&&tim[5] == 'a'&&tim[6] == 'n') {
+											months = 1;
+										}
+										if (tim[4] == 'F'&&tim[5] == 'e'&&tim[6] == 'b') {
+											months = 2;
+										}
+										if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'r') {
+											months = 3;
+										}
+										if (tim[4] == 'A'&&tim[5] == 'p'&&tim[6] == 'r') {
+											months = 4;
+										}
+										if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'y') {
+											months = 5;
+										}
+										if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'n') {
+											months = 6;
+										}
+										if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'l') {
+											months = 7;
+										}
+										if (tim[4] == 'A'&&tim[5] == 'u'&&tim[6] == 'g') {
+											months = 8;
+										}
+										if (tim[4] == 'S'&&tim[5] == 'e'&&tim[6] == 'p') {
+											months = 9;
+										}
+										if (tim[4] == 'O'&&tim[5] == 'c'&&tim[6] == 't') {
+											months = 10;
+										}
+										if (tim[4] == 'N'&&tim[5] == 'o'&&tim[6] == 'v') {
+											months = 11;
+										}
+										if (tim[4] == 'D'&&tim[5] == 'e'&&tim[6] == 'c') {
+											months = 12;
+										}
+										char toTitle[DIM] = "";
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.8.9 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										system(toTitle);
+										printTimer(Hours, Minutes, Seconds);
+										printf("\n\n%02d:%02d:%02d\n\n", thours, tminutes, tseconds);
+									}
 								}
-								syn2 = clock();
-								time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
 							}
-							else {
-								Sleep(time2syn - 50);
-								while (timepass == timePassed) {
-									end = clock();
-									timePassed = (end - start) / CLOCKS_PER_SEC;
-									Sleep(3);
-								}
-							}
-							timeActual = totalTime - timePassed;
-							int thours = timeActual / 3600;
-							int tminutes = (timeActual % 3600) / 60;
-							int tseconds = (timeActual % 3600) % 60;
-							if (tseconds == -1) { tseconds = 0; }
-							timepass = timePassed;
-							time_t hour;
-							time(&hour);
-							char *tim;
-							tim = ctime(&hour);
-							tim[24] = '\0';
-							char hou[3] = { tim[11], tim[12], '\0' };
-							int Hours = atoi(hou);
-							char min[3] = { tim[14], tim[15], '\0' };
-							int Minutes = atoi(min);
-							char sec[3] = { tim[17], tim[18], '\0' };
-							int Seconds = atoi(sec);
-							char toOpen[DIM] = "";
-							sprintf(toOpen, "%s\\history.txt", atcPath);
-							fout = fopen(toOpen, "a+");
-							char yea[5] = { tim[20], tim[21], tim[22], tim[23], '\0' };
-							int years = atoi(yea);
-							char da[3] = { tim[8], tim[9], '\0' };
-							int days = atoi(da);
-							int months = 0;
-							if (tim[4] == 'J'&&tim[5] == 'a'&&tim[6] == 'n') {
-								months = 1;
-							}
-							if (tim[4] == 'F'&&tim[5] == 'e'&&tim[6] == 'b') {
-								months = 2;
-							}
-							if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'r') {
-								months = 3;
-							}
-							if (tim[4] == 'A'&&tim[5] == 'p'&&tim[6] == 'r') {
-								months = 4;
-							}
-							if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'y') {
-								months = 5;
-							}
-							if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'n') {
-								months = 6;
-							}
-							if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'l') {
-								months = 7;
-							}
-							if (tim[4] == 'A'&&tim[5] == 'u'&&tim[6] == 'g') {
-								months = 8;
-							}
-							if (tim[4] == 'S'&&tim[5] == 'e'&&tim[6] == 'p') {
-								months = 9;
-							}
-							if (tim[4] == 'O'&&tim[5] == 'c'&&tim[6] == 't') {
-								months = 10;
-							}
-							if (tim[4] == 'N'&&tim[5] == 'o'&&tim[6] == 'v') {
-								months = 11;
-							}
-							if (tim[4] == 'D'&&tim[5] == 'e'&&tim[6] == 'c') {
-								months = 12;
-							}
-							char toTitle[DIM] = "";
-							sprintf(toTitle, "title Advanced Trigonometry Calculator v1.8.9 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
-							system(toTitle);
-							printTimer(Hours, Minutes, Seconds);
-							printf("\n\n%02d:%02d:%02d\n\n", thours, tminutes, tseconds);
 						}
 					}
-
 				}
 				else {
 					printf("\n==> Your expression has syntax errors. <==\n\n");
@@ -1642,23 +1664,26 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 				if (arithTrig[i] == '-') {
 					Day[r] = '+'; Day[r + 1] = '0'; Day[r + 2] = '\0';
-					day = solveNow(Day, result1, result2);
-					dayS = day;
-					r = 0;
-					i++;
-					char Day[DIM] = "";
-					while (arithTrig[i] != 'y'&&arithTrig[i] != 'm'&&arithTrig[i] != 'a'&&i < limit&&arithTrig[i] != '\0') {
-						Day[r] = arithTrig[i];
-						r++; i++;
+					day = calcNow(Day, result1, result2);
+					if (verified == 1) {
+						dayS = day;
+						r = 0;
+						i++;
+						char Day[DIM] = "";
+						while (arithTrig[i] != 'y'&&arithTrig[i] != 'm'&&arithTrig[i] != 'a'&&i < limit&&arithTrig[i] != '\0') {
+							Day[r] = arithTrig[i];
+							r++; i++;
+						}
+						Day[r] = '+'; Day[r + 1] = '0'; Day[r + 2] = '\0';
+						day1 = calcNow(Day, result1, result2);
+						if (verified == 1) {
+							day1S = day1;
+						}
 					}
-					Day[r] = '+'; Day[r + 1] = '0'; Day[r + 2] = '\0';
-					day1 = solveNow(Day, result1, result2);
-					day1S = day1;
 				}
 				else {
 					Day[r] = '+'; Day[r + 1] = '0'; Day[r + 2] = '\0';
-					day = solveNow(Day, result1, result2);
-
+					day = calcNow(Day, result1, result2);
 				}
 			}
 
@@ -1677,23 +1702,26 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 				if (arithTrig[i] == '-') {
 					Month[r] = '+'; Month[r + 1] = '0'; Month[r + 2] = '\0';
-					month = solveNow(Month, result1, result2);
-					monthS = month;
-					r = 0;
-					i++;
-					char Month[DIM] = "";
-					while (arithTrig[i] != 'y'&&arithTrig[i] != 'd'&&arithTrig[i] != 'a'&&i < limit&&arithTrig[i] != '\0') {
-						Month[r] = arithTrig[i];
-						r++; i++;
+					month = calcNow(Month, result1, result2);
+					if (verified == 1) {
+						monthS = month;
+						r = 0;
+						i++;
+						char Month[DIM] = "";
+						while (arithTrig[i] != 'y'&&arithTrig[i] != 'd'&&arithTrig[i] != 'a'&&i < limit&&arithTrig[i] != '\0') {
+							Month[r] = arithTrig[i];
+							r++; i++;
+						}
+						Month[r] = '+'; Month[r + 1] = '0'; Month[r + 2] = '\0';
+						month1 = calcNow(Month, result1, result2);
+						if (verified == 1) {
+							month1S = month1;
+						}
 					}
-					Month[r] = '+'; Month[r + 1] = '0'; Month[r + 2] = '\0';
-					month1 = solveNow(Month, result1, result2);
-					month1S = month1;
 				}
 				else {
 					Month[r] = '+'; Month[r + 1] = '0'; Month[r + 2] = '\0';
-					month = solveNow(Month, result1, result2);
-
+					month = calcNow(Month, result1, result2);
 				}
 			}
 			if ((arithTrig[i] == 'y' || arithTrig[i] == 'a') && year == 0) {
@@ -1711,23 +1739,27 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 				if (arithTrig[i] == '-') {
 					Year[r] = '+'; Year[r + 1] = '0'; Year[r + 2] = '\0';
-					year = solveNow(Year, result1, result2);
-					yearS = year;
-					r = 0;
-					i++;
-					char Year[DIM] = "";
-					while (arithTrig[i] != 'm'&&arithTrig[i] != 'd'&&i < limit&&arithTrig[i] != '\0') {
-						Year[r] = arithTrig[i];
-						r++; i++;
+					year = calcNow(Year, result1, result2);
+					if (verified == 1) {
+						yearS = year;
+						r = 0;
+						i++;
+						char Year[DIM] = "";
+						while (arithTrig[i] != 'm'&&arithTrig[i] != 'd'&&i < limit&&arithTrig[i] != '\0') {
+							Year[r] = arithTrig[i];
+							r++; i++;
+						}
+						Year[r] = '+'; Year[r + 1] = '0'; Year[r + 2] = '\0';
+						year1 = calcNow(Year, result1, result2);
+						if (verified == 1) {
+							year1S = year1;
+						}
 					}
-					Year[r] = '+'; Year[r + 1] = '0'; Year[r + 2] = '\0';
-					year1 = solveNow(Year, result1, result2);
-					year1S = year1;
 
 				}
 				else {
 					Year[r] = '+'; Year[r + 1] = '0'; Year[r + 2] = '\0';
-					year = solveNow(Year, result1, result2);
+					year = calcNow(Year, result1, result2);
 
 				}
 			}
@@ -1735,257 +1767,265 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				i++;
 			}
 		}
-		if (day1 == 0) {
-			if (month > 12) {
-				plusYears = qu(month, 12);
-				year = year + plusYears;
-				month = qu(re(month, 12), 1);
-			}
-			if (month == 0) {
-				month = 12;
-				year--;
-			}
-
-
-			while (day > 29 && (qu(re(year, 4), 1) == 0 && (qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day > 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day > 31 || day > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
-
-				if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
-					day = day - 31;
-
-				}
-				else {
-					if (month == 2) {
-						if ((qu(re(year, 4), 1) == 0 && qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) {
-							day = day - 29;
-
-						}
-						else {
-							day = day - 28;
-
-						}
-
-					}
-
-
-					else {
-						day = day - 30;
-
-					}
-
-				}
-
-				month++;
+		if (verified == 1) {
+			if (day1 == 0) {
 				if (month > 12) {
-					year++;
+					plusYears = qu(month, 12);
+					year = year + plusYears;
 					month = qu(re(month, 12), 1);
 				}
+				if (month == 0) {
+					month = 12;
+					year--;
+				}
 
 
+				while (day > 29 && (qu(re(year, 4), 1) == 0 && (qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day > 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day > 31 || day > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
 
-			}
-		}
-		else {
+					if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+						day = day - 31;
+
+					}
+					else {
+						if (month == 2) {
+							if ((qu(re(year, 4), 1) == 0 && qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) {
+								day = day - 29;
+
+							}
+							else {
+								day = day - 28;
+
+							}
+
+						}
 
 
-			while (day1 > 29 && (qu(re(year, 4), 1) == 0 && (qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day1 > 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31 || day1 > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
-				if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31) {
-					day1 = day1 - 31;
+						else {
+							day = day - 30;
+
+						}
+
+					}
+
+					month++;
+					if (month > 12) {
+						year++;
+						month = qu(re(month, 12), 1);
+					}
+
 
 
 				}
-				else {
-					if (month == 2) {
-						if (qu(re(year, 4), 1) == 0) {
-							if (qu(re(year, 400), 1) == 0 && day1 > 29) {
-								day1 = day1 - 29;
+			}
+			else {
+
+
+				while (day1 > 29 && (qu(re(year, 4), 1) == 0 && (qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day1 > 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31 || day1 > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
+					if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31) {
+						day1 = day1 - 31;
+
+
+					}
+					else {
+						if (month == 2) {
+							if (qu(re(year, 4), 1) == 0) {
+								if (qu(re(year, 400), 1) == 0 && day1 > 29) {
+									day1 = day1 - 29;
+								}
+								else {
+									if (qu(re(year, 100), 1) == 0 && day1 > 28) {
+										day1 = day1 - 28;
+									}
+									else {
+										if (day1 > 29) {
+											day1 = day1 - 29;
+										}
+									}
+								}
 							}
 							else {
-								if (qu(re(year, 100), 1) == 0 && day1 > 28) {
+								if (day1 > 28) {
 									day1 = day1 - 28;
 								}
-								else {
-									if (day1 > 29) {
-										day1 = day1 - 29;
-									}
-								}
 							}
+
 						}
+
+
 						else {
-							if (day1 > 28) {
-								day1 = day1 - 28;
+							if (day1 > 30) {
+								day1 = day1 - 30;
 							}
 						}
 
 					}
+					month--;
+					if (month == 0) {
+						year--;
+						month = 12;
+					}
+
+				}
 
 
+				day = day - day1;
+				if (day < 0) {
+					month--;
+					int sumDay = 0;
+
+
+					if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31) {
+						sumDay = 31;
+
+					}
 					else {
-						if (day1 > 30) {
-							day1 = day1 - 30;
-						}
-					}
-
-				}
-				month--;
-				if (month == 0) {
-					year--;
-					month = 12;
-				}
-
-			}
-
-
-			day = day - day1;
-			if (day < 0) {
-				month--;
-				int sumDay = 0;
-
-
-				if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31) {
-					sumDay = 31;
-
-				}
-				else {
-					if (month == 2) {
-						if (qu(re(year, 4), 1) == 0) {
-							if (qu(re(year, 400), 1) == 0) {
-								sumDay = 29;
-							}
-							else {
-								if (qu(re(year, 100), 1) == 0) {
-									sumDay = 28;
-								}
-								else {
+						if (month == 2) {
+							if (qu(re(year, 4), 1) == 0) {
+								if (qu(re(year, 400), 1) == 0) {
 									sumDay = 29;
 								}
-							}
-						}
-						else {
-							sumDay = 28;
-						}
-
-					}
-
-
-					else {
-						sumDay = 30;
-					}
-
-				}
-
-
-				day = sumDay + day;
-			}
-
-			year = year - year1;
-
-			month = month - month1;
-
-			if (month > 12) {
-				plusYears = qu(month, 12);
-				year = year + plusYears;
-				month = qu(re(month, 12), 1);
-				if (month == 0) {
-					month = 12;
-				}
-			}
-			else {
-				if (month <= 0) {
-					plusYears = qu((month - 12), 12);
-					year = year + plusYears;
-					month = 12 - abs(qu(re(month, 12), 1));
-					if (month == 0) {
-						month = 12;
-						year++;
-					}
-				}
-			}
-
-			day = day - datePreciser(day + day1S, month + month1S, year + year1S, dayS, monthS, yearS);
-
-
-		}
-		char tim[DIM] = "";
-		sprintf(tim, "%G", day);
-		int daY = (int)solveNow(tim, result1, result2);
-		sprintf(tim, "%G", month);
-		int montH = (int)solveNow(tim, result1, result2);
-		sprintf(tim, "%G", year);
-		int yeaR = (int)solveNow(tim, result1, result2);
-		if (daY < 1 || daY>31) {
-			printf("\nError entering the day.\n ==> In a month, the days only vary between 1 and 31.\n\n");
-			fprintf(fout, "\nError entering the day.\n ==> In a month, the days only vary between 1 and 31.\n\n");
-		}
-		else {
-			if (montH < 1 || montH>12) {
-				printf("\nError entering the month.\n ==> In a year, the months only vary between 1 and 12.\n\n");
-				fprintf(fout, "\nError entering the month.\n == > In a year, the months only vary between 1 and 12.\n\n");
-			}
-			else {
-				if (yeaR < 1760) {
-					printf("\nError entering the year.\n ==> The minimal year to evaluate is 1760.\n\n");
-					fprintf(fout, "\nError entering the year.\n ==> The minimal year to evaluate is 1760.\n\n");
-				}
-				else {
-					if ((montH == 2 || montH == 4 || montH == 6 || montH == 9 || montH == 11) && daY == 31) {
-						printf("\nError entering the month.\n ==> The entered month doesn't have the duration of 31 days.\n\n");
-						fprintf(fout, "\nError entering the month.\n == > The entered month doesn't have the duration of 31 days.\n\n");
-					}
-					else {
-						if (montH == 2 && daY > 29) {
-							printf("\nError entering the day.\n ==> The month of February has a maximal duration of 29 days.\n\n");
-							fprintf(fout, "\nError entering the day.\n ==> The month of February has a maximal duration of 29 days.\n\n");
-						}
-						else {
-							if ((montH == 2 && daY == 29) && (yeaR % 4 != 0 && yeaR % 400 != 0)) {
-								printf("\nError entering the day.\n ==> The month of February in %d has a maximal duration of 28 days.\n\n", yeaR);
-								fprintf(fout, "\nError entering the day.\n ==> The month of February in %d has a maximal duration of 28 days.\n\n", yeaR);
+								else {
+									if (qu(re(year, 100), 1) == 0) {
+										sumDay = 28;
+									}
+									else {
+										sumDay = 29;
+									}
+								}
 							}
 							else {
-								printf("y%dm%dd%d=", yeaR, montH, daY);
-								int h = 0;
-								h = ((int)(daY + floor((((montH + 1) * 26) / 10)*1.000) + yeaR + floor((yeaR / 4)*1.0000) + 6 * floor((yeaR / 100)*1.0000) + floor((yeaR / 400)*1.0000)) % 7);
-								if (montH < 3) {
-									if (montH == 1) {
-										montH = 13;
+								sumDay = 28;
+							}
+
+						}
+
+
+						else {
+							sumDay = 30;
+						}
+
+					}
+
+
+					day = sumDay + day;
+				}
+
+				year = year - year1;
+
+				month = month - month1;
+
+				if (month > 12) {
+					plusYears = qu(month, 12);
+					year = year + plusYears;
+					month = qu(re(month, 12), 1);
+					if (month == 0) {
+						month = 12;
+					}
+				}
+				else {
+					if (month <= 0) {
+						plusYears = qu((month - 12), 12);
+						year = year + plusYears;
+						month = 12 - abs(qu(re(month, 12), 1));
+						if (month == 0) {
+							month = 12;
+							year++;
+						}
+					}
+				}
+
+				day = day - datePreciser(day + day1S, month + month1S, year + year1S, dayS, monthS, yearS);
+
+
+			}
+			char tim[DIM] = "";
+			sprintf(tim, "%G", day);
+			int daY = (int)calcNow(tim, result1, result2);
+			if (verified == 1) {
+				sprintf(tim, "%G", month);
+				int montH = (int)calcNow(tim, result1, result2);
+				if (verified == 1) {
+					sprintf(tim, "%G", year);
+					int yeaR = (int)calcNow(tim, result1, result2);
+					if (verified == 1) {
+						if (daY < 1 || daY>31) {
+							printf("\nError entering the day.\n ==> In a month, the days only vary between 1 and 31.\n\n");
+							fprintf(fout, "\nError entering the day.\n ==> In a month, the days only vary between 1 and 31.\n\n");
+						}
+						else {
+							if (montH < 1 || montH>12) {
+								printf("\nError entering the month.\n ==> In a year, the months only vary between 1 and 12.\n\n");
+								fprintf(fout, "\nError entering the month.\n == > In a year, the months only vary between 1 and 12.\n\n");
+							}
+							else {
+								if (yeaR < 1760) {
+									printf("\nError entering the year.\n ==> The minimal year to evaluate is 1760.\n\n");
+									fprintf(fout, "\nError entering the year.\n ==> The minimal year to evaluate is 1760.\n\n");
+								}
+								else {
+									if ((montH == 2 || montH == 4 || montH == 6 || montH == 9 || montH == 11) && daY == 31) {
+										printf("\nError entering the month.\n ==> The entered month doesn't have the duration of 31 days.\n\n");
+										fprintf(fout, "\nError entering the month.\n == > The entered month doesn't have the duration of 31 days.\n\n");
 									}
-									if (montH == 2) {
-										montH = 14;
+									else {
+										if (montH == 2 && daY > 29) {
+											printf("\nError entering the day.\n ==> The month of February has a maximal duration of 29 days.\n\n");
+											fprintf(fout, "\nError entering the day.\n ==> The month of February has a maximal duration of 29 days.\n\n");
+										}
+										else {
+											if ((montH == 2 && daY == 29) && (yeaR % 4 != 0 && yeaR % 400 != 0)) {
+												printf("\nError entering the day.\n ==> The month of February in %d has a maximal duration of 28 days.\n\n", yeaR);
+												fprintf(fout, "\nError entering the day.\n ==> The month of February in %d has a maximal duration of 28 days.\n\n", yeaR);
+											}
+											else {
+												printf("y%dm%dd%d=", yeaR, montH, daY);
+												int h = 0;
+												h = ((int)(daY + floor((((montH + 1) * 26) / 10)*1.000) + yeaR + floor((yeaR / 4)*1.0000) + 6 * floor((yeaR / 100)*1.0000) + floor((yeaR / 400)*1.0000)) % 7);
+												if (montH < 3) {
+													if (montH == 1) {
+														montH = 13;
+													}
+													if (montH == 2) {
+														montH = 14;
+													}
+													yeaR--;
+													h = ((int)(daY + floor((((montH + 1) * 26) / 10)*1.000) + (yeaR)+floor(((yeaR) / 4)*1.0000) + 6 * floor(((yeaR) / 100)*1.0000) + floor(((yeaR) / 400)*1.0000)) % 7);
+
+												}
+
+												if (h == 1) {
+													printf("Sunday\n\n");
+													fprintf(fout, "Sunday\n\n");
+												}
+												if (h == 2) {
+													printf("Monday\n\n");
+													fprintf(fout, "Monday\n\n");
+												}
+												if (h == 3) {
+													printf("Tuesday\n\n");
+													fprintf(fout, "Tuesday\n\n");
+												}
+												if (h == 4) {
+													printf("Wednesday\n\n");
+													fprintf(fout, "Wednesday\n\n");
+												}
+												if (h == 5) {
+													printf("Thursday\n\n");
+													fprintf(fout, "Thursday\n\n");
+												}
+												if (h == 6) {
+													printf("Friday\n\n");
+													fprintf(fout, "Friday\n\n");
+												}
+												if (h == 0) {
+													printf("Saturday\n\n");
+													fprintf(fout, "Saturday\n\n");
+												}
+
+											}
+										}
 									}
-									yeaR--;
-									h = ((int)(daY + floor((((montH + 1) * 26) / 10)*1.000) + (yeaR)+floor(((yeaR) / 4)*1.0000) + 6 * floor(((yeaR) / 100)*1.0000) + floor(((yeaR) / 400)*1.0000)) % 7);
-
 								}
-
-								if (h == 1) {
-									printf("Sunday\n\n");
-									fprintf(fout, "Sunday\n\n");
-								}
-								if (h == 2) {
-									printf("Monday\n\n");
-									fprintf(fout, "Monday\n\n");
-								}
-								if (h == 3) {
-									printf("Tuesday\n\n");
-									fprintf(fout, "Tuesday\n\n");
-								}
-								if (h == 4) {
-									printf("Wednesday\n\n");
-									fprintf(fout, "Wednesday\n\n");
-								}
-								if (h == 5) {
-									printf("Thursday\n\n");
-									fprintf(fout, "Thursday\n\n");
-								}
-								if (h == 6) {
-									printf("Friday\n\n");
-									fprintf(fout, "Friday\n\n");
-								}
-								if (h == 0) {
-									printf("Saturday\n\n");
-									fprintf(fout, "Saturday\n\n");
-								}
-
 							}
 						}
 					}
@@ -2114,7 +2154,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 				ye[k] = '\0';
 				if (countR == countL) {
-					year = (int)solveNow(ye, result1, result2);
+					year = (int)calcNow(ye, result1, result2);
 				}
 
 			}
@@ -2141,7 +2181,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 					ye[k] = '\0';
 					if (countR == countL) {
-						year = (int)solveNow(ye, result1, result2);
+						year = (int)calcNow(ye, result1, result2);
 					}
 
 
@@ -2157,92 +2197,93 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 			}
 			arithTrig[0] = '\0'; command = true;
-
-			if (year > 1759) {
-				char toOpen[DIM] = "";
-				sprintf(toOpen, "%s\\calendar.txt", atcPath);
-				Calendar(toOpen, year);
-				for (s = 0; calendarStr[s] != '\0'; s++) {
-					calendar[s] = calendarStr[s];
-				}
-				calendar[s] = '\0';
-				char cald[DIM] = "";
-				int yu = 0, liN = 0, liR = 0;
-				for (s = 0; s < abs((int)strlen(calendar)); s++) {
-					liR = 0;
-					liN = 0;
-					while (calendar[s] != '\n'&&s < abs((int)strlen(calendar))) {
-						cald[yu] = calendar[s];
-						yu++; s++;
-						liN++;
+			if (verified == 1) {
+				if (year > 1759) {
+					char toOpen[DIM] = "";
+					sprintf(toOpen, "%s\\calendar.txt", atcPath);
+					Calendar(toOpen, year);
+					for (s = 0; calendarStr[s] != '\0'; s++) {
+						calendar[s] = calendarStr[s];
 					}
-					liR = 124 - liN;
-					while (liR > 0) {
-						cald[yu] = ' ';
+					calendar[s] = '\0';
+					char cald[DIM] = "";
+					int yu = 0, liN = 0, liR = 0;
+					for (s = 0; s < abs((int)strlen(calendar)); s++) {
+						liR = 0;
+						liN = 0;
+						while (calendar[s] != '\n'&&s < abs((int)strlen(calendar))) {
+							cald[yu] = calendar[s];
+							yu++; s++;
+							liN++;
+						}
+						liR = 124 - liN;
+						while (liR > 0) {
+							cald[yu] = ' ';
+							yu++;
+							liR--;
+						}
+						cald[yu] = '\n';
 						yu++;
-						liR--;
 					}
-					cald[yu] = '\n';
-					yu++;
-				}
-				cald[yu] = '\0';
-				int ca = 0;
-				for (yu = 0; cald[yu] != '\0'; yu++) {
-					calendar[yu] = cald[yu];
-					if (calendar[yu] == '\n') {
-						ca++;
-					}
-					if (calendar[yu] == ' ' && ca % 2 == 0 && ca >= 10) {
-						calendar[yu] = 176;
-					}
-					if (calendar[yu] == ' ' && (ca % 2 == 1 || ca < 10)) {
-						calendar[yu] = 177;
-					}
-					if (calendar[yu] == '|') {
-						calendar[yu] = 179;
-					}
-				}
-				calendar[yu] = '\0';
-
-				ca = 0;
-				for (s = 0; calendar[s] != '\0'; s++) {
-					if (calendar[s] == '\n') {
-						ca++;
-						if (ca > 4) {
-							calendar[s + 28] = 179;
-							calendar[s + 34] = 179;
-							calendar[s + 49] = 179;
-							calendar[s + 55] = 179;
-							calendar[s + 70] = 179;
-							calendar[s + 76] = 179;
-							calendar[s + 91] = 179;
-							calendar[s + 97] = 179;
-							calendar[s + 112] = 179;
-							calendar[s + 118] = 179;
+					cald[yu] = '\0';
+					int ca = 0;
+					for (yu = 0; cald[yu] != '\0'; yu++) {
+						calendar[yu] = cald[yu];
+						if (calendar[yu] == '\n') {
+							ca++;
+						}
+						if (calendar[yu] == ' ' && ca % 2 == 0 && ca >= 10) {
+							calendar[yu] = 176;
+						}
+						if (calendar[yu] == ' ' && (ca % 2 == 1 || ca < 10)) {
+							calendar[yu] = 177;
+						}
+						if (calendar[yu] == '|') {
+							calendar[yu] = 179;
 						}
 					}
+					calendar[yu] = '\0';
 
-				}
+					ca = 0;
+					for (s = 0; calendar[s] != '\0'; s++) {
+						if (calendar[s] == '\n') {
+							ca++;
+							if (ca > 4) {
+								calendar[s + 28] = 179;
+								calendar[s + 34] = 179;
+								calendar[s + 49] = 179;
+								calendar[s + 55] = 179;
+								calendar[s + 70] = 179;
+								calendar[s + 76] = 179;
+								calendar[s + 91] = 179;
+								calendar[s + 97] = 179;
+								calendar[s + 112] = 179;
+								calendar[s + 118] = 179;
+							}
+						}
 
-				for (s = 0; calendar[s] != '\0'; s++) {
-					if (calendar[s] == 's'&&calendar[s + 3] == 'd'&&calendar[s + 4] == 'o') {
-						calendar[s + 1] = 'a';
 					}
-					if (calendar[s] == 'm'&&calendar[s + 1] == 'a'&&calendar[s + 2] == 'r'&&calendar[s + 4] == 'o') {
-						calendar[s + 3] = 'c';
+
+					for (s = 0; calendar[s] != '\0'; s++) {
+						if (calendar[s] == 's'&&calendar[s + 3] == 'd'&&calendar[s + 4] == 'o') {
+							calendar[s + 1] = 'a';
+						}
+						if (calendar[s] == 'm'&&calendar[s + 1] == 'a'&&calendar[s + 2] == 'r'&&calendar[s + 4] == 'o') {
+							calendar[s + 3] = 'c';
+						}
 					}
-				}
-				calendar[s] = '\0';
-				printf("\n");
-				printf("%s\n\n", calendar);
+					calendar[s] = '\0';
+					printf("\n");
+					printf("%s\n\n", calendar);
 
-				for (s = 0; calendarStr[s] != '\0'; s++) {
-					calendar[s] = calendarStr[s];
-				}
-				calendar[s] = '\0';
+					for (s = 0; calendarStr[s] != '\0'; s++) {
+						calendar[s] = calendarStr[s];
+					}
+					calendar[s] = '\0';
 
-				fprintf(fout, "\n");
-				fprintf(fout, "%s\n\n", calendar);
+					fprintf(fout, "\n");
+					fprintf(fout, "%s\n\n", calendar);
+				}
 			}
 			else {
 				printf("\n");
@@ -2252,7 +2293,9 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 		}
 	}
-	fclose(fout);
+	if (fout != NULL) {
+		fclose(fout);
+	}
 	return command;
 }
 
