@@ -2187,7 +2187,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 			}
 			arithTrig[0] = '\0'; command = true;
-			if (verified == 1) {
 				if (year > 1759) {
 					char toOpen[DIM] = "";
 					sprintf(toOpen, "%s\\calendar.txt", atcPath);
@@ -2274,7 +2273,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					fprintf(fout, "\n");
 					fprintf(fout, "%s\n\n", calendar);
 				}
-			}
 			else {
 				printf("\n");
 				printf("Please enter years after 1759\n\n");
