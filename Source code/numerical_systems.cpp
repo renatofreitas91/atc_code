@@ -373,7 +373,7 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 			decimal1 = quotient;
 			i++;
 		}
-		octal[i] = (char)+'0'; i++;
+		octal[i] = (char)(quotient + '0'); i++;
 		octal[i] = '\0';
 		i--;
 		while (i != -1) {

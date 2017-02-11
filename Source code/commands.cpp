@@ -14,6 +14,21 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	int i = 0, r = 0, year = 0, s = 0;
 	boolean command = false;
 	i = 0;
+
+	if (isCommand(arithTrig, "atcProg")) {
+		command = true;
+		if (arithTrig[7] == '(') {
+			int tDev = 8,tGet=0;
+			char exprDev[DIM] = "";
+				while ((arithTrig[tDev] == ')'&&arithTrig[tDev+1]=='+'&&arithTrig[tDev + 2] == '0'&&arithTrig[tDev + 3] == '\0')==false&& arithTrig[tDev] != '\0') {
+					exprDev[tGet] = arithTrig[tDev];
+					tGet++; tDev++;
+				}
+				exprDev[tGet] = '\0';
+				atcProg(exprDev);
+		}
+		puts(" ");
+	}
 	if (isCommand(arithTrig, "donate")) {
 		command = true;
 		puts(" ");
@@ -228,72 +243,71 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 						double x1R = resultR, x1I = resultI;
 						division(minusR, minusI, twoaR, twoaI);
 						double x2R = resultR, x2I = resultI;
-							if (x1R > 0 && x1I > 0) {
-								printf("x1=%G+%Gi\n", x1R, x1I);
+						if (x1R > 0 && x1I > 0) {
+							printf("x1=%G+%Gi\n", x1R, x1I);
+						}
+						else {
+							if (x1R > 0 && x1I < 0) {
+								printf("x1=%G%Gi\n", x1R, x1I);
 							}
 							else {
-								if (x1R > 0 && x1I < 0) {
-									printf("x1=%G%Gi\n", x1R, x1I);
+								if (x1R < 0 && x1I > 0) {
+									printf("x1=%G+%Gi\n", x1R, x1I);
 								}
 								else {
-									if (x1R < 0 && x1I > 0) {
-										printf("x1=%G+%Gi\n", x1R, x1I);
+									if (x1R < 0 && x1I < 0) {
+										printf("x1=%G%Gi\n", x1R, x1I);
 									}
 									else {
-										if (x1R < 0 && x1I < 0) {
-											printf("x1=%G%Gi\n", x1R, x1I);
+										if (x1R == 0 && x1I == 0) {
+											printf("x1=%G\n", x1R);
 										}
 										else {
-											if (x1R == 0 && x1I == 0) {
-												printf("x1=%G\n", x1R);
+											if (x1R == 0 && x1I != 0) {
+												printf("x1=%Gi\n", x1I);
 											}
 											else {
-												if (x1R == 0 && x1I != 0) {
-													printf("x1=%Gi\n", x1I);
+												if (x1R != 0 && x1I == 0) {
+													printf("x1=%G\n", x1R);
 												}
 												else {
-													if (x1R != 0 && x1I == 0) {
-														printf("x1=%G\n", x1R);
-													}
-													else {
-														printf("x1=%G+%Gi\n", x1R, x1I);
-													}
+													printf("x1=%G+%Gi\n", x1R, x1I);
 												}
 											}
 										}
 									}
 								}
 							}
-							if (x2R > 0 && x2I > 0) {
-								printf("x2=%G+%Gi\n", x2R, x2I);
+						}
+						if (x2R > 0 && x2I > 0) {
+							printf("x2=%G+%Gi\n", x2R, x2I);
+						}
+						else {
+							if (x2R > 0 && x2I < 0) {
+								printf("x2=%G%Gi\n", x2R, x2I);
 							}
 							else {
-								if (x2R > 0 && x2I < 0) {
-									printf("x2=%G%Gi\n", x2R, x2I);
+								if (x2R < 0 && x2I > 0) {
+									printf("x2=%G+%Gi\n", x2R, x2I);
 								}
 								else {
-									if (x2R < 0 && x2I > 0) {
-										printf("x2=%G+%Gi\n", x2R, x2I);
+									if (x2R < 0 && x2I < 0) {
+										printf("x2=%G%Gi\n", x2R, x2I);
 									}
 									else {
-										if (x2R < 0 && x2I < 0) {
-											printf("x2=%G%Gi\n", x2R, x2I);
+										if (x2R == 0 && x2I == 0) {
+											printf("x2=%G\n", x2R);
 										}
 										else {
-											if (x2R == 0 && x2I == 0) {
-												printf("x2=%G\n", x2R);
+											if (x2R == 0 && x2I != 0) {
+												printf("x2=%Gi\n", x2I);
 											}
 											else {
-												if (x2R == 0 && x2I != 0) {
-													printf("x2=%Gi\n", x2I);
+												if (x2R != 0 && x2I == 0) {
+													printf("x2=%G\n", x2R);
 												}
 												else {
-													if (x2R != 0 && x2I == 0) {
-														printf("x2=%G\n", x2R);
-													}
-													else {
-														printf("x2=%G+%Gi\n", x2R, x2I);
-													}
+													printf("x2=%G+%Gi\n", x2R, x2I);
 												}
 											}
 										}
@@ -302,6 +316,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 							}
 						}
 					}
+				}
 			}
 		}
 		puts(" ");
@@ -844,7 +859,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		arithTrig[0] = '\0'; command = true;
 	}
-	
+
 
 	if (isCommand(arithTrig, "eliminatevariables")) {
 		FILE *open = NULL;
@@ -2187,92 +2202,92 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 			}
 			arithTrig[0] = '\0'; command = true;
-				if (year > 1759) {
-					char toOpen[DIM] = "";
-					sprintf(toOpen, "%s\\calendar.txt", atcPath);
-					Calendar(toOpen, year);
-					for (s = 0; calendarStr[s] != '\0'; s++) {
-						calendar[s] = calendarStr[s];
-					}
-					calendar[s] = '\0';
-					char cald[DIM] = "";
-					int yu = 0, liN = 0, liR = 0;
-					for (s = 0; s < abs((int)strlen(calendar)); s++) {
-						liR = 0;
-						liN = 0;
-						while (calendar[s] != '\n'&&s < abs((int)strlen(calendar))) {
-							cald[yu] = calendar[s];
-							yu++; s++;
-							liN++;
-						}
-						liR = 124 - liN;
-						while (liR > 0) {
-							cald[yu] = ' ';
-							yu++;
-							liR--;
-						}
-						cald[yu] = '\n';
-						yu++;
-					}
-					cald[yu] = '\0';
-					int ca = 0;
-					for (yu = 0; cald[yu] != '\0'; yu++) {
-						calendar[yu] = cald[yu];
-						if (calendar[yu] == '\n') {
-							ca++;
-						}
-						if (calendar[yu] == ' ' && ca % 2 == 0 && ca >= 10) {
-							calendar[yu] = 176;
-						}
-						if (calendar[yu] == ' ' && (ca % 2 == 1 || ca < 10)) {
-							calendar[yu] = 177;
-						}
-						if (calendar[yu] == '|') {
-							calendar[yu] = 179;
-						}
-					}
-					calendar[yu] = '\0';
-
-					ca = 0;
-					for (s = 0; calendar[s] != '\0'; s++) {
-						if (calendar[s] == '\n') {
-							ca++;
-							if (ca > 4) {
-								calendar[s + 28] = 179;
-								calendar[s + 34] = 179;
-								calendar[s + 49] = 179;
-								calendar[s + 55] = 179;
-								calendar[s + 70] = 179;
-								calendar[s + 76] = 179;
-								calendar[s + 91] = 179;
-								calendar[s + 97] = 179;
-								calendar[s + 112] = 179;
-								calendar[s + 118] = 179;
-							}
-						}
-
-					}
-
-					for (s = 0; calendar[s] != '\0'; s++) {
-						if (calendar[s] == 's'&&calendar[s + 3] == 'd'&&calendar[s + 4] == 'o') {
-							calendar[s + 1] = 'a';
-						}
-						if (calendar[s] == 'm'&&calendar[s + 1] == 'a'&&calendar[s + 2] == 'r'&&calendar[s + 4] == 'o') {
-							calendar[s + 3] = 'c';
-						}
-					}
-					calendar[s] = '\0';
-					printf("\n");
-					printf("%s\n\n", calendar);
-
-					for (s = 0; calendarStr[s] != '\0'; s++) {
-						calendar[s] = calendarStr[s];
-					}
-					calendar[s] = '\0';
-
-					fprintf(fout, "\n");
-					fprintf(fout, "%s\n\n", calendar);
+			if (year > 1759) {
+				char toOpen[DIM] = "";
+				sprintf(toOpen, "%s\\calendar.txt", atcPath);
+				Calendar(toOpen, year);
+				for (s = 0; calendarStr[s] != '\0'; s++) {
+					calendar[s] = calendarStr[s];
 				}
+				calendar[s] = '\0';
+				char cald[DIM] = "";
+				int yu = 0, liN = 0, liR = 0;
+				for (s = 0; s < abs((int)strlen(calendar)); s++) {
+					liR = 0;
+					liN = 0;
+					while (calendar[s] != '\n'&&s < abs((int)strlen(calendar))) {
+						cald[yu] = calendar[s];
+						yu++; s++;
+						liN++;
+					}
+					liR = 124 - liN;
+					while (liR > 0) {
+						cald[yu] = ' ';
+						yu++;
+						liR--;
+					}
+					cald[yu] = '\n';
+					yu++;
+				}
+				cald[yu] = '\0';
+				int ca = 0;
+				for (yu = 0; cald[yu] != '\0'; yu++) {
+					calendar[yu] = cald[yu];
+					if (calendar[yu] == '\n') {
+						ca++;
+					}
+					if (calendar[yu] == ' ' && ca % 2 == 0 && ca >= 10) {
+						calendar[yu] = (char)176;
+					}
+					if (calendar[yu] == ' ' && (ca % 2 == 1 || ca < 10)) {
+						calendar[yu] = (char)177;
+					}
+					if (calendar[yu] == '|') {
+						calendar[yu] = (char)179;
+					}
+				}
+				calendar[yu] = '\0';
+
+				ca = 0;
+				for (s = 0; calendar[s] != '\0'; s++) {
+					if (calendar[s] == '\n') {
+						ca++;
+						if (ca > 4) {
+							calendar[s + 28] = (char)179;
+							calendar[s + 34] = (char)179;
+							calendar[s + 49] = (char)179;
+							calendar[s + 55] = (char)179;
+							calendar[s + 70] = (char)179;
+							calendar[s + 76] = (char)179;
+							calendar[s + 91] = (char)179;
+							calendar[s + 97] = (char)179;
+							calendar[s + 112] = (char)179;
+							calendar[s + 118] = (char)179;
+						}
+					}
+
+				}
+
+				for (s = 0; calendar[s] != '\0'; s++) {
+					if (calendar[s] == 's'&&calendar[s + 3] == 'd'&&calendar[s + 4] == 'o') {
+						calendar[s + 1] = 'a';
+					}
+					if (calendar[s] == 'm'&&calendar[s + 1] == 'a'&&calendar[s + 2] == 'r'&&calendar[s + 4] == 'o') {
+						calendar[s + 3] = 'c';
+					}
+				}
+				calendar[s] = '\0';
+				printf("\n");
+				printf("%s\n\n", calendar);
+
+				for (s = 0; calendarStr[s] != '\0'; s++) {
+					calendar[s] = calendarStr[s];
+				}
+				calendar[s] = '\0';
+
+				fprintf(fout, "\n");
+				fprintf(fout, "%s\n\n", calendar);
+			}
 			else {
 				printf("\n");
 				printf("Please enter years after 1759\n\n");

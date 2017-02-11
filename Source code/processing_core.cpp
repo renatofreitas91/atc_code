@@ -1535,7 +1535,9 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 	if (op[i - 1] == 't'&&op[i - 2] == 'c'&&op[i - 3] == 'a'&&op[i - 4] == 'f') {
 		h = 1;
 	}
-	if (h == 0 && op[0] != 'a') {
+	char funC[10] = "";
+	sprintf(funC, "%s,", op);
+	if (h == 0 && op[0] != 'a'&&isContained(funC, "cos, acos, sin, asin, tan, atan, sec, asec, cosec, acosec, cotan, acotan,")) {
 		if (rad == 1) {
 			v[7] = ((v[1] * 180) / M_PI);
 			if (v[7] < 0) {
@@ -1556,7 +1558,8 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 					vI[7] = re(vI[7], 360);
 				}
 			}
-
+			v[1] = v[7] * M_PI / 180;
+			vI[1] = vI[7] * M_PI / 180;
 		}
 		if (deg == 1) {
 			v[7] = v[1];
@@ -1579,6 +1582,8 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 				}
 
 			}
+			v[1] = v[7];
+			vI[1] = vI[7];
 		}
 		if (gon == 1) {
 			v[7] = v[1] * 0.9;
@@ -1600,6 +1605,8 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 					vI[7] = re(vI[7], 360);
 				}
 			}
+			v[1] = v[7] * M_PI / 180;
+			vI[1] = vI[7] * M_PI / 180;
 		}
 	}
 	if (isEqual("log", op)) {

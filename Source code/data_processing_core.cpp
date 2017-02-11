@@ -2135,7 +2135,7 @@ void on_start() {
 		}
 		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 's'&&onStart[6] == 'e'&&onStart[7] == 't'&&onStart[8] == 't'&&onStart[9] == 'i'&&onStart[10] == 'n'&&onStart[11] == 'g'&&onStart[12] == 's'&&onStart[13] == '\0') {
 			char toOpen[DIM] = "";
-			sprintf(toOpen, "/C \"del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
+			sprintf(toOpen, "/C \"del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\verboseResolution.txt\"&del \"%s\\onStart.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
 			using namespace std;
 			std::string s = string(toOpen);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -2940,3 +2940,49 @@ double calcNow(char toCalc[DIM], double result1, double result2) {
 	}
 	return resultR;
 }
+
+void complexNumber(double a, double b) {
+	processingOK = -1;
+	verify = 0;
+	printf(" ==> Your function argument: ");
+	if (a > 0 && b > 0) {
+		printf("%G+%Gi\n", a, b);
+	}
+	else {
+		if (a > 0 && b < 0) {
+			printf("%G%Gi\n", a, b);
+		}
+		else {
+			if (a < 0 && b > 0) {
+				printf("%G+%Gi\n", a, b);
+			}
+			else {
+				if (a < 0 && b < 0) {
+					printf("%G%Gi\n", a, b);
+				}
+				else {
+					if (a == 0 && b == 0) {
+						printf("%G\n", a);
+					}
+					else {
+						if (a == 0 && b != 0) {
+							printf("%Gi\n", b);
+						}
+						else {
+							if (a != 0 && b == 0) {
+								printf("%G\n", a);
+							}
+							else {
+								printf("%G+%Gi\n", a, b);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	resultR = -7; resultI = -7;
+	puts("\n");
+}
+
+

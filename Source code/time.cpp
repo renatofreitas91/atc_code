@@ -180,7 +180,7 @@ void Clock(int a)
 		fprintf(fout, " %02d", days);
 	}
 	if (a == 1) {
-		printf(" %02d", days);
+		printf(" %d", days);
 	}
 	if (tim[9] == '1'&&tim[8] != '1') {
 		if (a == 0) {

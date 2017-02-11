@@ -6,7 +6,7 @@
 
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
 char atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
-int arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
+int processingOK = 1, isFromMain = 0, verify = 0, arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
 clock_t start_processing, end_processing;
 
 
@@ -68,7 +68,7 @@ void main(int argc, char *argv[]) {
 					fout = fopen(path, "a+");
 				}
 				varRename[0] = '\0'; revariable[0] = '\0';
-				validVar = 1;
+				validVar = 1; 	processingOK = 1;
 				fTrig[0] = '\0';
 				i = 0;
 				int fl = 1, fr = 0;

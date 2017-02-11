@@ -689,3 +689,16 @@ double solveNow(char toSolveNow[DIM], double result1, double result2) {
 	}
 	return resultFF;
 }
+
+double atcProg(char exprDev[DIM]) {
+	FILE *atcDev = NULL;
+	char path[DIM] = "";
+	sprintf(path, "%s\\temp.txt", atcPath);
+	while (atcDev == NULL) {
+		atcDev = fopen(path, "w");
+	}
+	fputs(exprDev, atcDev);
+	fclose(atcDev);
+	processTxt(path, rf);
+	return resultR;
+}

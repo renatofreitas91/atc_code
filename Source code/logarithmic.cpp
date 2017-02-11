@@ -10,9 +10,17 @@ void complex_log(double a, double b) {
 		resultI = 0;
 	}
 	else {
-		resultR = 0; resultI = 0;
-		resultR = ln(pot(pot(a, 2.0, 1) + pot(b, 2.0, 1), 0.5, 1));
-		resultI = atan2(b, a);
+		if (a >= mINF && a <= INF&& b >= mINF && b <= INF) {
+			resultR = 0; resultI = 0;
+			resultR = ln(pot(pot(a, 2.0, 1) + pot(b, 2.0, 1), 0.5, 1));
+			resultI = atan2(b, a);
+		}
+		else {
+			if (rasf > 0) {
+				printf("\nError in function domain.\n\n ==> For complex natural logarithm function the valid domain is [-INF, INF].\n\n");
+				complexNumber(a, b);
+			}
+		}
 	}
 }
 

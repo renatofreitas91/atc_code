@@ -2,12 +2,13 @@
 
 #include "stdafx.h"
 
-
+int rasf = 0;
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);
 	verbose = 0;
 	verified = 0;
+	rasf = 0;
 	resultR = 0; resultI;
 	int txt = 0, command = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0;
 	char variable[DIM] = "", getVarName[DIM] = "", getVar[DIM] = "", savefTrig[DIM] = "";
@@ -164,7 +165,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			arithTrig[i] = '+'; arithTrig[i + 1] = '0'; arithTrig[i + 2] = '\0';
 		}
 
-		int verify = 0;
+		verify = 0;
 		for (s = 0; arithTrig[s] != '\0'; s++) {
 			if (arithTrig[s] == 'B' || arithTrig[s] == 'O' || arithTrig[s] == 'H' || arithTrig[s] == '_' || arithTrig[s] == '{' || arithTrig[s] == '[' || arithTrig[s] == '(' || arithTrig[s] == '+' || arithTrig[s] == '-' || arithTrig[s] == '*' || arithTrig[s] == '/' || arithTrig[s] == '^' || arithTrig[s] == '0' || arithTrig[s] == '1' || arithTrig[s] == '2' || arithTrig[s] == '3' || arithTrig[s] == '4' || arithTrig[s] == '5' || arithTrig[s] == '6' || arithTrig[s] == '7' || arithTrig[s] == '8' || arithTrig[s] == '9' || (arithTrig[s] == 'r'&&arithTrig[s + 1] == 'e'&&arithTrig[s + 2] == 's') || (arithTrig[s] == 'a'&&arithTrig[s + 1] == 'n'&&arithTrig[s + 2] == 's') || (arithTrig[s] == 'e' && ((arithTrig[s + 1] == 'e' || arithTrig[s + 1] == '\0'&&s == 0 || arithTrig[s + 1] == ')' || arithTrig[s + 1] == 'p' || arithTrig[s - 1] == '_') || (arithTrig[s - 1] == 'e' || arithTrig[s - 1] == '(' || arithTrig[s - 1] == 'i'&&arithTrig[s - 2] != 't'))) || (arithTrig[s] == 'p'&&arithTrig[s + 1] == 'i' && ((arithTrig[s + 2] == 'e' || arithTrig[s + 2] == '\0'&&s == 0 || arithTrig[s + 2] == ')' || arithTrig[s + 2] == 'p' || arithTrig[s - 1] == '_') || (arithTrig[s - 1] == 'e' || arithTrig[s - 1] == '(' || arithTrig[s - 1] == 'i')))) {
 				verify = 1;
@@ -418,7 +419,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				else {
 					verbose = 0;
 				}
-				int rasf = abs((int)strlen(arithTrig));
+				rasf = abs((int)strlen(arithTrig));
 
 				while (arithTrig[rasf - 2] == '+'&&arithTrig[rasf - 1] == '0') {
 					rasf = rasf - 2;
@@ -431,7 +432,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				verbose = 0;
 			}
 		}
-		if (arithTrig[0] != '\0'&&txt != 1) {
+		if (arithTrig[0] != '\0'&&txt != 1 && processingOK == 1) {
 			if (verify == 1) {
 				if (res == '+') {
 					sum(result1, result2, resultR, resultI);
