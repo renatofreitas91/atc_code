@@ -51,22 +51,30 @@ void dimensions() {
 
 void window() {
 	FILE *open;
-	double x, y, width, height;
+	double x = 601, y = 601, width = 2001, height = 2001;
 	char value[DIM] = " ";
 	HWND w;
 	w = GetConsoleWindow();
-	printf("X-axis value: ");
-	gets_s(value);
-	x = arithSolver(value, 0);
-	printf("Y-axis value: ");
-	gets_s(value);
-	y = arithSolver(value, 0);
-	printf("Width value: ");
-	gets_s(value);
-	width = arithSolver(value, 0);
-	printf("Height value: ");
-	gets_s(value);
-	height = arithSolver(value, 0);
+	while (x > 600 || x < 0) {
+		printf("X-axis value -> [0, 600]: ");
+		gets_s(value);
+		x = calcNow(value, 0, 0);
+	}
+	while (y > 600 || y < 0) {
+		printf("Y-axis value -> [0, 600]: ");
+		gets_s(value);
+		y = calcNow(value, 0, 0);
+	}
+	while (width > 2000 || width < 200) {
+		printf("Width value -> [200, 2000]: ");
+		gets_s(value);
+		width = calcNow(value, 0, 0);
+	}
+	while (height > 2000 || height < 200) {
+		printf("Height value -> [200, 2000]: ");
+		gets_s(value);
+		height = calcNow(value, 0, 0);
+	}
 	printf("\n");
 	MoveWindow(w, (int)x, (int)y, (int)width, (int)height, FALSE);
 	char toOpen[DIM] = "";
@@ -97,7 +105,7 @@ void mode() {
 }
 
 void about2() {
-	system("title Advanced Trigonometry Calculator v1.8.9");
+	system("title Advanced Trigonometry Calculator v1.9.0");
 	system("MODE con cols=90 lines=15");
 	cls();
 	FILE *open = NULL;
@@ -114,7 +122,7 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v1.8.9                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v1.9.0                                                             ==) Enter data (==              ");
 
 }
 
@@ -214,7 +222,7 @@ int applySettings(int toDo) {
 
 boolean about() {
 	ShowConsoleCursor(FALSE);
-	system("title Advanced Trigonometry Calculator v1.8.9");
+	system("title Advanced Trigonometry Calculator v1.9.0");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
@@ -244,8 +252,8 @@ boolean about() {
 	puts("");
 	printf("                                     %c%c    %c%c%c     %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("                                    %c %c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177);
-	printf("                             %c   %c %c  %c    %c%c%c     %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                              %c %c     %c   %c   %c       %c \n", 177, 177, 177, 177, 177, 177);
+	printf("                             %c   %c %c  %c    %c%c%c%c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                              %c %c     %c       %c   %c   %c \n", 177, 177, 177, 177, 177, 177);
 	printf("                               %c      %c %c  %c%c%c  %c  %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n            To know how to use this application please enter \"user guide\"\n\n");

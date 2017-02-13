@@ -426,9 +426,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					arithTrig[rasf] = '\0';
 				}
 				initialProcessor(arithTrig, result1);
-				if (resultR == 0 && resultI == 0) {
-					initialProcessor(arithTrig, result1);
-				}
 				verbose = 0;
 			}
 		}

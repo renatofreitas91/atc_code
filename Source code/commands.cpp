@@ -18,14 +18,14 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	if (isCommand(arithTrig, "atcProg")) {
 		command = true;
 		if (arithTrig[7] == '(') {
-			int tDev = 8,tGet=0;
+			int tDev = 8, tGet = 0;
 			char exprDev[DIM] = "";
-				while ((arithTrig[tDev] == ')'&&arithTrig[tDev+1]=='+'&&arithTrig[tDev + 2] == '0'&&arithTrig[tDev + 3] == '\0')==false&& arithTrig[tDev] != '\0') {
-					exprDev[tGet] = arithTrig[tDev];
-					tGet++; tDev++;
-				}
-				exprDev[tGet] = '\0';
-				atcProg(exprDev);
+			while ((arithTrig[tDev] == ')'&&arithTrig[tDev + 1] == '+'&&arithTrig[tDev + 2] == '0'&&arithTrig[tDev + 3] == '\0') == false && arithTrig[tDev] != '\0') {
+				exprDev[tGet] = arithTrig[tDev];
+				tGet++; tDev++;
+			}
+			exprDev[tGet] = '\0';
+			atcProg(exprDev);
 		}
 		puts(" ");
 	}
@@ -1361,7 +1361,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.8.9  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.0  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(thours, tminutes, tseconds);
 									}
@@ -1575,7 +1575,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.8.9 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.0 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n\n%02d:%02d:%02d\n\n", thours, tminutes, tseconds);

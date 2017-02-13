@@ -8,7 +8,7 @@ double mINF = INF *-1;
 
 void cotan(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x == 0 && y == 0 || x == M_PI && y == 0 || x == -M_PI&& y == 0) {
+	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For cotangent function the valid domain is {x| x != 0 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
 			complexNumber(x, y);
@@ -23,7 +23,7 @@ void cotan(double x, double y) {
 
 void sec(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x == M_PI / 2 && y == 0 || x == M_PI * 3 / 2 && y == 0 || x == -M_PI / 2 && y == 0 || x == -M_PI * 3 / 2 && y == 0) {
+	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For secant function the valid domain is {x| x != pi/2 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
 			complexNumber(x, y);
@@ -38,7 +38,7 @@ void sec(double x, double y) {
 
 void cosec(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x == 0 && y == 0 || x == M_PI && y == 0 || x == -M_PI&& y == 0) {
+	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For cosecant function the valid domain is {x| x != 0 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
 			complexNumber(x, y);
@@ -53,7 +53,7 @@ void cosec(double x, double y) {
 
 void arcosec(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF && (x >= -1 && x <= 1) == false) {
+	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		complex_asin(resultR, resultI);
 		round_complex();
@@ -68,7 +68,7 @@ void arcosec(double x, double y) {
 
 void arcsec(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF && (x >= -1 && x <= 1) == false) {
+	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		complex_acos(resultR, resultI);
 		round_complex();
@@ -138,7 +138,7 @@ void complex_sin(double x, double y) {
 
 void complex_tan(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x == M_PI / 2 && y == 0 || x == M_PI * 3 / 2 && y == 0 || x == -M_PI / 2 && y == 0 || x == -M_PI * 3 / 2 && y == 0) {
+	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For tangent function the valid domain is {x| x != pi/2 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
 			complexNumber(x, y);
@@ -157,7 +157,7 @@ void complex_tan(double x, double y) {
 
 void complex_asin(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= -1 && x <= 1 && y >= -1 && y <= 1) {
+	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
 		double radicandR = 1 - pot(x, 2.0, 1) + pot(y, 2.0, 1);
 		double radicandI = -1 * 2 * x*y;
 		exponentiation(radicandR, radicandI, 1 / 2.0, 0.0, 1);
@@ -178,7 +178,7 @@ void complex_asin(double x, double y) {
 
 void complex_acos(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= -1 && x <= 1 && y >= -1 && y <= 1) {
+	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
 		double radicandR = -1 * pot(x, 2.0, 1) + pot(y, 2.0, 1) + 1;
 		double radicandI = -2 * x*y;
 		exponentiation(radicandR, radicandI, 1 / 2.0, 0.0, 1);

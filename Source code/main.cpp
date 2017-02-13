@@ -6,7 +6,7 @@
 
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
 char atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
-int processingOK = 1, isFromMain = 0, verify = 0, arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
+int processingOK = 1, isFromMain = 0, solutioned = 0, verify = 0, arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
 clock_t start_processing, end_processing;
 
 
@@ -22,12 +22,12 @@ void main(int argc, char *argv[]) {
 	if (argc < 2) {
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v1.8.9");
+		system("title Advanced Trigonometry Calculator v1.9.0");
 		continu = about();
 	}
 
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v1.8.9       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v1.9.0       ==) ATC is ready to process data. (==");
 		do {
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
@@ -38,7 +38,7 @@ void main(int argc, char *argv[]) {
 				printf(">");
 				gets_s(trigData);
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v1.8.9       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v1.9.0       ==) Processing... (==");
 			}
 			else {
 				arG = 1;
@@ -182,7 +182,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v1.8.9       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v1.9.0       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
