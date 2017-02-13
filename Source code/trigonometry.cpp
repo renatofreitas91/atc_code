@@ -9,45 +9,45 @@ double mINF = INF *-1;
 void cotan(double x, double y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+		complex_tan(x, y);
+		division(1.0, 0.0, resultR, resultI);
+		round_complex();
+	}
+	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For cotangent function the valid domain is {x| x != 0 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
 			complexNumber(x, y);
 		}
-	}
-	else {
-		complex_tan(x, y);
-		division(1.0, 0.0, resultR, resultI);
-		round_complex();
 	}
 }
 
 void sec(double x, double y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+		complex_cos(x, y);
+		division(1.0, 0.0, resultR, resultI);
+		round_complex();
+	}
+	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For secant function the valid domain is {x| x != pi/2 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
 			complexNumber(x, y);
 		}
-	}
-	else {
-		complex_cos(x, y);
-		division(1.0, 0.0, resultR, resultI);
-		round_complex();
 	}
 }
 
 void cosec(double x, double y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+		complex_sin(x, y);
+		division(1.0, 0.0, resultR, resultI);
+		round_complex();
+	}
+	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For cosecant function the valid domain is {x| x != 0 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
 			complexNumber(x, y);
 		}
-	}
-	else {
-		complex_sin(x, y);
-		division(1.0, 0.0, resultR, resultI);
-		round_complex();
 	}
 }
 
@@ -139,12 +139,6 @@ void complex_sin(double x, double y) {
 void complex_tan(double x, double y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
-		if (rasf > 0) {
-			printf("\nError in function domain.\n\n ==> For tangent function the valid domain is {x| x != pi/2 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
-			complexNumber(x, y);
-		}
-	}
-	else {
 		complex_sin(x, y);
 		double numR = resultR, numI = resultI;
 		complex_cos(x, y);
@@ -152,6 +146,12 @@ void complex_tan(double x, double y) {
 		division(numR, numI, denR, denI);
 		char response[DIM] = "";
 		round_complex();
+	}
+	else {
+		if (rasf > 0) {
+			printf("\nError in function domain.\n\n ==> For tangent function the valid domain is {x| x != pi/2 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
+			complexNumber(x, y);
+		}
 	}
 }
 
