@@ -18,15 +18,17 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	if (strlen(arithTrig) == 0) {
 		return 0;
 	}
-
 	char arTrig[DIM] = "", trigon[DIM] = "", trig[DIM] = "", paRect[DIM] = "", cN[DIM] = "", ex[DIM] = "", art[DIM] = "";
-	int facto = 0, sig[DIM], s = 0, rectPar = 0, h = 0, i = 0, rePar = 0, so = 0, j = 0, g = 0, count = 0, e = 0, d = 0, th = 0, f = 0, trigo = 1, trigono = 0, co = 0, k = 0, l = 0, tr = 0, pa = 0, paren = 1, pare = 0, tg = 0, p = 0, a = 0, c = 1, r = 0, iN = 0, iL = 0;
+	int parent[DIM], facto = 0, sig[DIM], s = 0, rectPar = 0, h = 0, i = 0, rePar = 0, so = 0, j = 0, g = 0, count = 0, e = 0, d = 0, th = 0, f = 0, trigo = 1, trigono = 0, co = 0, k = 0, l = 0, tr = 0, pa = 0, paren = 1, pare = 0, tg = 0, p = 0, a = 0, c = 1, r = 0, iN = 0, iL = 0;
 	double triArith[DIM], triArithI[DIM], exp = 1, result1, result2, amplitude = 1;
 
 	for (s = 0; s < abs((int)strlen(arithTrig)); s++) {
 		triArith[s] = 0;
 		triArithI[s] = 0;
 		sig[s] = -1;
+	}
+	for (s = 0; s < DIM; s++) {
+		parent[s] = 0;
 	}
 	for (i = 0; arithTrig[i] != '\0'; i++) {
 		if (arithTrig[i] == 'x') {
@@ -52,6 +54,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	if (arithTrig[i - 1] == ')'&&arithTrig[i - 2] == '0'&&arithTrig[i - 3] == '(') {
 		arithTrig[i] = '\0';
 	}
+
 	for (s = 0; arithTrig[s] != '\0'; s++) {
 		if (arithTrig[s] == '+'&&arithTrig[s - 1] == 'E'&&arithTrig[s - 2] != 'P') {
 			r = s;
@@ -313,7 +316,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	}
 	int cp = 0, mark = 0;
 	c = 0; d = 0; k = 0; l = 0; h = 0;
-	int parent[DIM];
 	for (s = 0; arithTrig[s] != '\0'&&s < abs((int)strlen(arithTrig)); s++) {
 		if (arithTrig[s] == '(') {
 			d = 0;
@@ -456,14 +458,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				}
 
 				pas[a] = '\0';
-				isContained(")", pas);
-				int rightPar = (int)resultR;
-				isContained("(", pas);
-				int leftPar = (int)resultR;
-				if (rightPar < leftPar) {
-					int pasN = rightPar;
-					pas[pasN] = '+'; pas[pasN + 1] = '('; pas[pasN + 2] = '0'; pas[pasN + 3] = ')'; pas[pasN + 4] = '\0';
-				}
 				int kl = 0;
 				for (de = 0; pas[de] != '\0'; de++) {
 					if (pas[de] == '(' || pas[de] == ')') {
@@ -498,7 +492,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					}
 				}
 				if (kl == 1) {
-
 					triArith[b] = initialProcessor(pas, result);
 					triArithI[b] = resultI;
 					sig[b] = 1;
@@ -664,10 +657,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 			}
 		}
 	}
-	if (isContained("+0+", simplified)) {
-		replace("+0+", "+", simplified);
-		sprintf(simplified, "%s", expressionF);
-	}
+
 	rasf = abs((int)strlen(simplified));
 	while (simplified[rasf - 1] == '+'&&simplified[rasf] == '0') {
 		rasf = rasf - 2;

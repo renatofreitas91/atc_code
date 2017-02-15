@@ -399,13 +399,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		_flushall();
 		if (cleanhistory == 0) {
 			if (arithTrig[0] != '\0'&&verify == 1) {
-				sprintf(expressionF, "%s", arithTrig);
-				replace(")", "+0]", expressionF);
-				replace("(", "[0+", expressionF);
-				replace("]", ")", expressionF);
-				replace("[", "(", expressionF);
-				replace("+0+", "+", expressionF);
-				sprintf(arithTrig, "%s+0", expressionF);
 
 				char toOpen[DIM] = "";
 				sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);

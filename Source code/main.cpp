@@ -433,6 +433,83 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			}
 			return decision;
 		}
+		else {
+			int cp = 0, mark = 0;
+			int c = 0, d = 0, k = 0, l = 0, h = 0, s = 0;
+			int parent[DIM];
+			for (s = 0; data[s] != '\0'&&s < abs((int)strlen(data)); s++) {
+				if (data[s] == '(') {
+					d = 0;
+					c++;
+					parent[s] = c;
+					d = 1;
+					k = c;
+				}
+				else {
+					if (data[s] == ')') {
+						d = 0;
+						h = 0;
+						l = 2;
+						do {
+							l = 0;
+							h = 0;
+							while (h < abs((int)strlen(data))) {
+								if (parent[h] == k) {
+									l++;
+								}
+								if (l == 2) {
+									l = 0;
+									k--;
+								}
+								h++;
+							}
+
+						} while (l == 2);
+						h = 0;
+						while (l != 1 && h < abs((int)strlen(data))) {
+							h = 0;
+							l = 0;
+							while (h < abs((int)strlen(data))) {
+								if (parent[h] == k) {
+									l++;
+								}
+								if (l == 2) {
+									k--;
+									h = 0;
+									l = 0;
+								}
+								h++;
+							}
+						}
+						parent[s] = k;
+					}
+					else {
+						parent[s] = 0;
+					}
+				}
+			}
+			int klp = s, savePar = 0;
+			data[s] = '\0';
+			for (s = 0; data[s] != '\0'; s++) {
+				if (parent[s + 1] == parent[s] + 1 && parent[s] != 0) {
+					savePar = s;
+					s++;
+					while (parent[s] != parent[savePar]) {
+						s++;
+					}
+					if (parent[s - 1] == parent[s] + 1 && parent[s - 1] != 0) {
+						decision = false;
+						if (comment == 1) {
+							printf("\nError in parentheses. \n ==> You have entered more parentheses than ATC needs. Be careful with duplicate parentheses, i.e. '))' and '(('.\n");
+						}
+						return decision;
+					}
+					else {
+						s = savePar;
+					}
+				}
+			}
+		}
 		int j = 0, k = 0, l = 0, kr = 0, kl = 0, v = 0, cChars = 0, fr = 0, ra = 0, nDot = 0, g = 0, d = 0, w = 0, y = 0, t = 0, space = 0;
 		char function[DIM] = "", variable[DIM] = "", expression[DIM] = "", text[DIM] = "", value[DIM] = "", saveVar[DIM] = "";
 		char validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_";
