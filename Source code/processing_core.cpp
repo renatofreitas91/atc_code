@@ -1245,10 +1245,10 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 	if (verbose == 1) {
 		printf("\n\n==> functionProcessor <==\n\nFunction: %s", trigon);
 	}
-	int i = 0, var = 0, j = 0, n = 0, count = 0, opt = 0, l = 0, p = 0, v1, va, cn = 0, s, rad = 1, jg = 1, gon = 0, tri = 0, co = 0, trigono = 0, paren = 1, pare = 0, parent = 0, e = 0, f = 0, kl = 0, ar = 0, deg = 0, type = 0, g = 0;
+	int i = 0, var = 0, j = 0, n = 0, count = 0, opt = 0, l = 0, p = 0, cn = 0, s, rad = 1, jg = 1, gon = 0, tri = 0, co = 0, trigono = 0, paren = 1, pare = 0, parent = 0, e = 0, f = 0, kl = 0, ar = 0, deg = 0, type = 0, g = 0;
 	char trig[DIM] = "0", base[DIM], number[DIM] = "0", number1[DIM] = "0", number2[DIM] = "0", op[DIM] = "0", signal = '*', numb[DIM] = "0", sig = '0', point = '0', cieNot[DIM] = "0", arg[DIM] = "0", amp[DIM] = "0", trigon1[DIM] = "0", ex[DIM] = "", eX[DIM] = "", trig1[DIM] = "", function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res,pi,e";
 	double num = 0, v[DIM], vI[DIM], argu[DIM], ampl[DIM], exp = 1, result1 = 0, baLog = 0, dgrt = 0, result2 = resultI, dgrt2 = 0;
-	char userFunc[DIM] = "", atcFunc[DIM] = "", funcU[DIM] = "";
+	char userFunc[DIM] = "", atcFunc[DIM] = "", funcU[DIM] = "",saveUsrFunc[DIM]="";
 	sprintf(function, "%s%s", function, usRFuncTrans);
 	for (i = 0; trigon[i] != '?'&&trigon[i] != '\0'; i++) {
 		atcFunc[i] = trigon[i];
@@ -1256,32 +1256,23 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 	atcFunc[i] = '\0';
 
 	if (atcFunc[0] == 'a'&&atcFunc[1] == 't'&&atcFunc[2] == 'c'&&atcFunc[3] == '_') {
+		sprintf(saveUsrFunc, "%s", usRFuncTrans);
 		for (i = 0; atcFunc[i + 4] != '\0'; i++) {
 			atcFunc[i] = atcFunc[i + 4];
 		}
 		atcFunc[i] = '\0';
-		int k = 0, p = 0, y = 0;
-		for (i = 0; atcFunc[i] != '\0'; i++) {
-			for (j = 0; usRFuncTrans[j] != '\0'; j++) {
-				if (atcFunc[i] == usRFuncTrans[j]) {
-					k = 0;
-					p = j;
-					y = i;
-					while (atcFunc[y] == usRFuncTrans[j]) {
-						k++;
-						j++; y++;
-					}
-					if (k == strlen(atcFunc) && (usRFuncTrans[j] == ',' || usRFuncTrans[j] == '\0')) {
-						k = 0;
-						while (usRFunctions[p] != ','&&usRFunctions[p] != '\0') {
-							atcFunc[k] = usRFunctions[p];
-							p++; k++;
-						}
-						atcFunc[k] = '\0';
-					}
-				}
+		char propFunc[DIM] = "";
+		sprintf(propFunc, "%s,", atcFunc);
+		if (isContained(propFunc, usRFuncTrans)) {
+			int start = strStart;
+			int end = strEnd;
+			int k = 0;
+			int y = start;
+			while (y < end - 1) {
+				atcFunc[k] = usRFunctions[y];
+				y++; k++;
 			}
-
+			atcFunc[k] = '\0';
 		}
 		int hi = 0;
 		for (hi = 0; atcFunc[hi] != '\0'; hi++) {
@@ -1292,10 +1283,14 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		char directory[MAX_PATH] = "";
 		char comm[300] = "";
 		sprintf(userFunc, "%s\\User functions\\%s.txt", atcPath, atcFunc);
+		if (open != NULL) {
+			fclose(open);
+			open = NULL;
+		}
 		open = fopen(userFunc, "r");
 		if (open != NULL) {
 			fclose(open);
-			sprintf(function, "%s,atc_%s", function, atcFunc);
+			sprintf(function, "%satc_%s", function, atcFunc);
 		}
 	}
 	for (i = 0; trigon[i] != '\0'; i++) {
@@ -1418,7 +1413,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 	}
 
 	result = 0;
-	op[0] = '0';
 	if (trigon[0] == 'r'&&trigon[1] == 'a'&&trigon[2] == 'd') {
 		rad = 1;
 		deg = 0;
@@ -1454,7 +1448,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			}
 			trigon[i] = '\0';
 		}
-		if ((isEqual("rtDD", op)) || (isEqual("logbb", trigon))) {
+		if ((isEqual("rtDD", trigon)) || (isEqual("logbb", trigon))) {
 			return 0.5;
 		}
 		for (i = 0; function[i] != '\0'; i++) {
@@ -1495,35 +1489,12 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		}
 
 	}
-	i = 0; j = 0;
-	n = 0;
-	for (i; i < trigon[i] != '\0'&&trigon[i] != '('; i++) {
-		if (trigon[i] == 'r'&&trigon[i + 1] == 'e'&&trigon[i + 2] == 's'&&trigon[i + 3] != 't') {
-			i = i + 3;
-		}
-		if (trigon[i] == 'l' || trigon[i] == 'f' || trigon[i] == 'v' || trigon[i] == 'h' || trigon[i] == 't' || trigon[i] == 'e'&&trigon[i + 1] != '='&&trigon[i + 1] != '^' || trigon[i + 1] == 's' || trigon[i] == 'c' || trigon[i] == 'a' || trigon[i] == 'i' || trigon[i] == 'n' || trigon[i] == 's' || trigon[i] == 'o' || trigon[i] == 'r' || trigon[i] == 'g' || trigon[i] == '=' || trigon[i] == 'q' || trigon[i] == 'u' || trigon[i] == 'b' || trigon[i] == '_' || verifyLetter(trigon[i]) == 1) {
-			if (n == 0) {
-				va = i;
-			}
-			op[n] = trigon[i];
-			n++;
-			va++;
-		}
-	}
-	if (op[n - 1] == 'e') {
-		op[n - 1] = '\0';
-		va--;
-	}
-	va--;
-	v1 = va;
+	sprintf(op, "%s", trigon);
 	int h = 0;
 	for (i = 0; op[i] != '\0'; i++) {
 		if (op[i] == 'h') {
 			h = 1;
 		}
-	}
-	if (op[i - 1] == 't'&&op[i - 2] == 'c'&&op[i - 3] == 'a'&&op[i - 4] == 'f') {
-		h = 1;
 	}
 	char funC[10] = "";
 	sprintf(funC, "%s,", op);
@@ -1864,7 +1835,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		result1 = v[0] * arcfact(v[1]);
 		type = 1;
 	}
-	if (op[0] == 'a'&&op[1] == 't'&&op[2] == 'c'&&op[3] == '_') {
+	if (trigon[0] == 'a'&&trigon[1] == 't'&&trigon[2] == 'c'&&trigon[3] == '_') {
 		char comm[300] = "";
 		if (atcFunc[0] == 'a'&&atcFunc[1] == 't'&&atcFunc[2] == 'c'&&atcFunc[3] == '_') {
 			for (i = 0; atcFunc[i + 4] != '\0'; i++) {
@@ -1872,16 +1843,16 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			}
 			atcFunc[i] = '\0';
 		}
-		char txtSolved[DIM] = "";
-		sprintf(userFunc, "%s\\User functions\\%s.txt", atcPath, funcU);
-		sprintf(txtSolved, "del \"%s\\User functions\\%s_answers.txt\"", atcPath, funcU);
+
 		resultR = v[1];
 		resultI = vI[1];
 		variableController("Input", resultR);
 		processTxt(userFunc, (int)res);
 		result1 = resultR;
 		result2 = resultI;
-
+		char txtSolved[DIM] = "";
+		sprintf(userFunc, "%s\\User functions\\%s.txt", atcPath, funcU);
+		sprintf(txtSolved, "del \"%s\\User functions\\%s_answers.txt\"", atcPath, funcU);
 		system(txtSolved);
 		type = 1;
 		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc";

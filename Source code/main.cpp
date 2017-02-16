@@ -193,7 +193,8 @@ boolean processTxt(char path[DIM], int re) {
 	double result1 = 0, result2 = 0, anstxt[DIM], anstxtI[DIM];
 	FILE *fin = NULL, *fout = NULL, *open = NULL, *read = NULL;
 	char addBar[DIM] = "", savePath[DIM] = "", arith[DIM] = "", sendFunc[DIM] = "", resp[30] = "_answers.txt", varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
-	int tD = 0, i, j, cP = 0, k, d, e, f, space = 0, v = 0, l = 0, m = 0, re1 = 0, save_rf = rf, toWrite = 1;
+	int tD = 0, i, j, cP = 0, k, d, e, f, space = 0, v = 0, l = 0, m = 0, re1 = 0, save_rf = rf;
+	boolean toWrite = true;
 	rf = 0;
 	i = 0;
 	while (path[i] != '\0') {
@@ -347,7 +348,7 @@ boolean processTxt(char path[DIM], int re) {
 					fin = fopen(path, "a+");
 				}
 				toWrite = isToWrite(arith);
-				if (toWrite == 1) {
+				if (toWrite) {
 					verbose = 0;
 					main_core(arith, arith, fin, path, result1, result2, 0);
 					if (verified == 1) {
@@ -383,7 +384,7 @@ boolean processTxt(char path[DIM], int re) {
 	expressionF[h] = '\0';
 	if (fin != NULL) { fclose(fin); }if (fout != NULL) { fclose(fout); }if (open != NULL) { fclose(open); } if (read != NULL) { fclose(read); }
 	rf = save_rf;
-	if (toWrite == 0) {
+	if (!toWrite) {
 		char eliminate[200] = "";
 		if (savePath[0] == '\"') {
 			int y = 0;
@@ -520,14 +521,14 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			char funcToCheck[DIM] = "";
 			if (isContained("logb", data)) {
 
-				y = (int)resultR;
+				y = strStart;
 				while ((data[y - 1] == 'b'&&data[y] == '(') == false && data[y] != '\0') {
 					y++;
 				}
 				r = y + 1;
 			}
 			if (isContained("rtD", data)) {
-				y = (int)resultR;
+				y = strStart;
 				while ((data[y - 1] == 'D'&&data[y] == '(') == false && data[y] != '\0') {
 					y++;
 
