@@ -2797,7 +2797,6 @@ boolean verifySpecifier(char chars) {
 }
 
 boolean isToWrite(char arith[DIM]) {
-	puts(arith);
 	char noAnswer[16] = "NO_ANSWERS_FILE";
 	int h = 0;
 	if (noAnswer[h] == arith[h]) {
@@ -2806,7 +2805,6 @@ boolean isToWrite(char arith[DIM]) {
 		}
 		h--;
 		if (h == strlen(arith) && strlen(arith) == strlen(noAnswer)) {
-			puts("Entrou");
 			return false;
 		}
 	}
