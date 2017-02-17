@@ -754,8 +754,9 @@ double arithSolver(char trigon1[DIM], double result) {
 	if (trigon1[i - 1] != '=') {
 		trigon1[i] = '='; trigon1[i + 1] = '\0';
 	}
+	i = 0;
 	for (i = 0; trigon1[i] != '\0'; i++) {
-		if (trigon1[i] == '-' && (trigon1[i - 1] == 'B' || trigon1[i - 1] == 'O' || trigon1[i - 1] == 'H') && (i - 1 == 0 || trigon1[i - 2] == '+' || trigon1[i - 2] == '-' || trigon1[i - 2] == '*' || trigon1[i - 2] == '/' || trigon1[i - 2] == '^')) {
+		if (trigon1[i] == '-' && (trigon1[i - 1] == 'B' || trigon1[i - 1] == 'O' || trigon1[i - 1] == 'H') && (trigon1[i - 2] == '_' || trigon1[i - 2] == '+' || trigon1[i - 2] == '-' || trigon1[i - 2] == '*' || trigon1[i - 2] == '/' || trigon1[i - 2] == '^' || i - 1 == 0)) {
 			trigon1[i] = '_';
 		}
 	}
@@ -763,13 +764,22 @@ double arithSolver(char trigon1[DIM], double result) {
 	j = 0;
 	for (i = 0; trigon1[i] != '\0'; i++) {
 		if (trigon1[i] != '*'&&trigon1[i] != '+'&&trigon1[i] != '-'&&trigon1[i] != '/'&&trigon1[i] != '^'&&trigon1[i] != '=') {
-			if (trigon1[i] == '_' && (trigon1[i + 1] == 'B' || trigon1[i + 1] == 'O' || trigon1[i + 1] == 'H') && trigon1[i + 2] == '-') {
+			if (trigon1[i] == '_') {
+				number2[j] = trigon1[i];
+				j++; i++;
+			}
+			if ((trigon1[i] == 'B' || trigon1[i] == 'O' || trigon1[i] == 'H') && trigon1[i + 1] == '-') {
 				number2[j] = trigon1[i];
 				j++; i++;
 				number2[j] = trigon1[i];
 				j++; i++;
 				number2[j] = trigon1[i];
 				j++; i++;
+				while (trigon1[i] != '*'&&trigon1[i] != '+'&&trigon1[i] != '-'&&trigon1[i] != '/'&&trigon1[i] != '^'&&trigon1[i] != '=') {
+					number2[j] = trigon1[i];
+					j++; i++;
+				}
+				number2[j] = '\0';
 			}
 			while (trigon1[i] != '*'&&trigon1[i] != '+'&&trigon1[i] != '-'&&trigon1[i] != '/'&&trigon1[i] != '^'&&trigon1[i] != '=') {
 				if (((trigon1[i] == 'B' || trigon1[i] == 'O' || trigon1[i] == 'H') && trigon1[i + 1] != '-' && trigon1[i + 1] != '+'&&trigon1[i + 1] != '*'&&trigon1[i + 1] != '/'&&trigon1[i + 1] != '^'&&trigon1[i + 1] != '=') || (trigon1[i] == 'E'&&trigon1[i + 1] != '=')) {
