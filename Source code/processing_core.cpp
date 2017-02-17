@@ -763,8 +763,16 @@ double arithSolver(char trigon1[DIM], double result) {
 	j = 0;
 	for (i = 0; trigon1[i] != '\0'; i++) {
 		if (trigon1[i] != '*'&&trigon1[i] != '+'&&trigon1[i] != '-'&&trigon1[i] != '/'&&trigon1[i] != '^'&&trigon1[i] != '=') {
+			if (trigon1[i] == '_' && (trigon1[i + 1] == 'B' || trigon1[i + 1] == 'O' || trigon1[i + 1] == 'H') && trigon1[i + 2] == '-') {
+				number2[j] = trigon1[i];
+				j++; i++;
+				number2[j] = trigon1[i];
+				j++; i++;
+				number2[j] = trigon1[i];
+				j++; i++;
+			}
 			while (trigon1[i] != '*'&&trigon1[i] != '+'&&trigon1[i] != '-'&&trigon1[i] != '/'&&trigon1[i] != '^'&&trigon1[i] != '=') {
-				if (((trigon1[i] == 'B' || trigon1[i] == 'O' || trigon1[i] == 'H') && trigon1[i + 1] != '-'&&trigon1[i + 1] != '+'&&trigon1[i + 1] != '*'&&trigon1[i + 1] != '/'&&trigon1[i + 1] != '^'&&trigon1[i + 1] != '=') || (trigon1[i] == 'E'&&trigon1[i + 1] != '=')) {
+				if (((trigon1[i] == 'B' || trigon1[i] == 'O' || trigon1[i] == 'H') && trigon1[i + 1] != '-' && trigon1[i + 1] != '+'&&trigon1[i + 1] != '*'&&trigon1[i + 1] != '/'&&trigon1[i + 1] != '^'&&trigon1[i + 1] != '=') || (trigon1[i] == 'E'&&trigon1[i + 1] != '=')) {
 					number2[j] = trigon1[i];
 					number2[j + 1] = trigon1[i + 1];
 					j = j + 2; i = i + 2;
@@ -1004,12 +1012,40 @@ double arithSolver(char trigon1[DIM], double result) {
 			ampl[n] = numericalSystems(number2);
 		}
 		if (number2[0] == '_' && (number2[1] == 'B' || number2[1] == 'O' || number2[1] == 'H')) {
-			replace("B.", "B0.", number2);
-			sprintf(number2, "%s", expressionF);
-			replace("B_.", "B_0.", number2);
-			sprintf(number2, "%s", expressionF);
 			for (j = 0; number2[j] != '\0'; j++) {
 				number2[j] = number2[j + 1];
+			}
+			number2[j] = '\0';
+
+			if (number2[0] == 'B') {
+				if (isContained("B.", number2)) {
+					replace("B.", "B0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
+				if (isContained("B_.", number2)) {
+					replace("B_.", "B_0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
+			}
+			if (number2[0] == 'O') {
+				if (isContained("O.", number2)) {
+					replace("O.", "O0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
+				if (isContained("O_.", number2)) {
+					replace("O_.", "O_0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
+			}
+			if (number2[0] == 'H') {
+				if (isContained("H.", number2)) {
+					replace("H.", "H0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
+				if (isContained("H_.", number2)) {
+					replace("H_.", "H_0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
 			}
 			ampl[n] = numericalSystems(number2)*-1;
 		}
