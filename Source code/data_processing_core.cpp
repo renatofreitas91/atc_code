@@ -2123,7 +2123,7 @@ void on_start() {
 		fclose(open);
 		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 'a'&&onStart[6] == 'l'&&onStart[7] == 'l'&&onStart[8] == '\0') {
 			char toOpen[DIM] = "";
-			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\variables.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"& del \"%s\\verboseResolution.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&rmdir /Q /S \"%s\\Strings\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);			
+			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\variables.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"& del \"%s\\verboseResolution.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&rmdir /Q /S \"%s\\Strings\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
 			using namespace std;
 			std::string s = string(toOpen);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -2797,18 +2797,12 @@ boolean verifySpecifier(char chars) {
 }
 
 boolean isToWrite(char arith[DIM]) {
-	char noAnswer[16] = "NO_ANSWERS_FILE";
-	int h = 0;
-	if (noAnswer[h] == arith[h]) {
-		while (noAnswer[h] == arith[h]) {
-			h++;
-		}
-		h--;
-		if (h == strlen(arith) && strlen(arith) == strlen(noAnswer)) {
-			return false;
-		}
+	if (isEqual("NO_ANSWERS_FILE", arith)) {
+		return false;
 	}
-	return true;
+	else {
+		return true;
+	}
 }
 
 boolean verifyPrefix(char prefix[DIM]) {

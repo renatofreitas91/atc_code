@@ -971,9 +971,43 @@ double arithSolver(char trigon1[DIM], double result) {
 			}
 		}
 		if (number2[0] == 'B' || number2[0] == 'O' || number2[0] == 'H') {
+			if (number2[0] == 'B') {
+				if (isContained("B.", number2)) {
+					replace("B.", "B0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
+				if (isContained("B_.", number2)) {
+					replace("B_.", "B_0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
+			}
+			if (number2[0] == 'O') {
+				if (isContained("O.", number2)) {
+					replace("O.", "O0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
+				if (isContained("O_.", number2)) {
+					replace("O_.", "O_0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
+			}
+			if (number2[0] == 'H') {
+				if (isContained("H.", number2)) {
+					replace("H.", "H0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
+				if (isContained("H_.", number2)) {
+					replace("H_.", "H_0.", number2);
+					sprintf(number2, "%s", expressionF);
+				}
+			}
 			ampl[n] = numericalSystems(number2);
 		}
 		if (number2[0] == '_' && (number2[1] == 'B' || number2[1] == 'O' || number2[1] == 'H')) {
+			replace("B.", "B0.", number2);
+			sprintf(number2, "%s", expressionF);
+			replace("B_.", "B_0.", number2);
+			sprintf(number2, "%s", expressionF);
 			for (j = 0; number2[j] != '\0'; j++) {
 				number2[j] = number2[j + 1];
 			}
