@@ -51,9 +51,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 		}
 	}
 	arithTrig[i] = '+'; arithTrig[i + 1] = '('; arithTrig[i + 2] = '0'; arithTrig[i + 3] = ')'; arithTrig[i + 4] = '\0';
-	if (arithTrig[i - 1] == ')'&&arithTrig[i - 2] == '0'&&arithTrig[i - 3] == '(') {
-		arithTrig[i] = '\0';
-	}
 
 	for (s = 0; arithTrig[s] != '\0'; s++) {
 		if (arithTrig[s] == '+'&&arithTrig[s - 1] == 'E'&&arithTrig[s - 2] != 'P') {
@@ -549,7 +546,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					asdf = triArith[so + 1];
 					asdfI = triArithI[so + 1];
 					if (sig[so] == -1) {
-						if (triArith[so] < 0 || triArithI[so]) {
+						if (triArith[so] < 0 || triArithI[so] < 0) {
 							sig[so] = 0;
 						}
 						else { sig[so] = 1; }
@@ -557,11 +554,11 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					exponentiation(triArith[so], triArithI[so], asdf, asdfI, sig[so]);
 					asdf = resultR;
 					asdfI = resultI;
-					triArith[so + 1] = 0;
-					triArith[so] = 0;
+					triArith[so + 1] = 1;
+					triArith[so] = 1;
 					triArithI[so + 1] = 0;
 					triArithI[so] = 0;
-					arTrig[so] = '+';
+					arTrig[so] = '*';
 					so--;
 					a = 2;
 				}
@@ -582,8 +579,8 @@ double initialProcessor(char arithTrig[DIM], double result) {
 								exponentiation(triArith[so], triArithI[so], asdf, asdfI, sig[so]);
 								asdf = resultR;
 								asdfI = resultI;
-								triArith[so] = 0; triArithI[so] = 0;
-								arTrig[so] = '+';
+								triArith[so] = 1; triArithI[so] = 0;
+								arTrig[so] = '*';
 								so--;
 
 								if (arTrig[so] != '^') {
@@ -614,8 +611,8 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					}
 					exponentiation(triArith[sa], triArithI[sa], triArith[so + 1], triArithI[so + 1], sig[sa]);
 					triArith[sa] = resultR; triArithI[sa] = resultI;
-					triArith[so + 1] = 0; triArithI[so + 1] = 0;
-					arTrig[so] = '+';
+					triArith[so + 1] = 1; triArithI[so + 1] = 0;
+					arTrig[so] = '*';
 					so = so + 1;
 				}
 			}
@@ -683,7 +680,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 			division(triArith[sa], triArithI[sa], triArith[so + 1], triArithI[so + 1]);
 			triArith[sa] = resultR; triArithI[sa] = resultI;
 			triArith[so + 1] = 0; triArithI[so + 1] = 0;
-			arTrig[so] = '+';
+			arTrig[so] = '-';
 			so++;
 		}
 	}
@@ -1136,7 +1133,7 @@ double arithSolver(char trigon1[DIM], double result) {
 				if (amp[so + 1] != '^'&&amp[so - 1] == '^'&&a != 2) {
 					asdf = ampl[so + 1];
 					asdfI = amplI[so + 1];
-					if (ampl[so] < 0) {
+					if (ampl[so] < 0 || amplI[so] < 0) {
 						sig[so] = 0;
 					}
 					else { sig[so] = 1; }
@@ -1144,11 +1141,11 @@ double arithSolver(char trigon1[DIM], double result) {
 					exponentiation(ampl[so], amplI[so], asdf, asdfI, sig[so]);
 					asdf = resultR;
 					asdfI = resultI;
-					ampl[so + 1] = 0;
+					ampl[so + 1] = 1;
 					ampl[so] = 1;
 					amplI[so + 1] = 0;
 					amplI[so] = 0;
-					amp[so] = '+';
+					amp[so] = '*';
 					so--;
 					a = 2;
 				}
@@ -1168,9 +1165,9 @@ double arithSolver(char trigon1[DIM], double result) {
 								exponentiation(ampl[so], amplI[so], asdf, asdfI, sig[so]);
 								asdf = resultR;
 								asdfI = resultI;
-								ampl[so] = 0;
+								ampl[so] = 1;
 								amplI[so] = 0;
-								amp[so] = '+';
+								amp[so] = '*';
 								so--;
 
 								if (amp[so] != '^') {
@@ -1201,9 +1198,9 @@ double arithSolver(char trigon1[DIM], double result) {
 					exponentiation(ampl[sa], amplI[sa], ampl[so + 1], amplI[so + 1], sig[sa]);
 					ampl[sa] = resultR;
 					amplI[sa] = resultI;
-					ampl[so + 1] = 0;
+					ampl[so + 1] = 1;
 					amplI[so + 1] = 0;
-					amp[so] = '+';
+					amp[so] = '*';
 					so++;
 				}
 			}
@@ -1277,7 +1274,7 @@ double arithSolver(char trigon1[DIM], double result) {
 			amplI[sa] = resultI;
 			ampl[so + 1] = 0;
 			amplI[so + 1] = 0;
-			amp[so] = '+';
+			amp[so] = '-';
 			so++;
 		}
 	}
@@ -1379,7 +1376,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			break;
 		}
 	}
-	v[0] = 0; v[1] = 0; v[7] = 0;
+	v[0] = 0; v[1] = 0; v[7] = 0; vI[0] = 0; vI[1] = 0; vI[7] = 0;
 	if (trigon[0] == '_') {
 		jg = -1;
 		for (s = 0; trigon[s] != '\0'; s++) {

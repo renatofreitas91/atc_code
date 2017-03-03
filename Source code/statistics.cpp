@@ -80,10 +80,15 @@ double qfunc(double x) {
 		return result;
 	}
 	else {
-		if (rasf > 0) {
-			printf("\nError in function domain.\n\n ==> For Q-function the valid domain is [-INF, INF].\n\n");
-			complexNumber(x, 0);
-			return -7.0;
+		if (x == 0) {
+			return 0.5;
+		}
+		else {
+			if (rasf > 0) {
+				printf("\nError in function domain.\n\n ==> For Q-function the valid domain is [-INF, INF].\n\n");
+				complexNumber(x, 0);
+				return -7.0;
+			}
 		}
 	}
 	return 0;
