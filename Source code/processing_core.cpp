@@ -669,18 +669,21 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	}
 	for (so = 0; so < c; so++) {
 		int sa = so;
-		while (arTrig[so] == '*') {
-			multiplication(triArith[sa], triArithI[sa], triArith[so + 1], triArithI[so + 1]);
-			triArith[sa] = resultR; triArithI[sa] = resultI;
-			triArith[so + 1] = 0; triArithI[so + 1] = 0;
-			arTrig[so] = '+';
-			so++;
-		}
 		while (arTrig[so] == '/') {
 			division(triArith[sa], triArithI[sa], triArith[so + 1], triArithI[so + 1]);
 			triArith[sa] = resultR; triArithI[sa] = resultI;
-			triArith[so + 1] = 0; triArithI[so + 1] = 0;
-			arTrig[so] = '-';
+			triArith[so + 1] = 1; triArithI[so + 1] = 0;
+			arTrig[so] = '*';
+			so++;
+		}
+	}
+	for (so = 0; so < c; so++) {
+		int sa = so;
+		while (arTrig[so] == '*') {
+			multiplication(triArith[sa], triArithI[sa], triArith[so + 1], triArithI[so + 1]);
+			triArith[sa] = resultR; triArithI[sa] = resultI;
+			triArith[so + 1] = 1; triArithI[so + 1] = 0;
+			arTrig[so] = '*';
 			so++;
 		}
 	}
@@ -1258,26 +1261,31 @@ double arithSolver(char trigon1[DIM], double result) {
 
 	for (so = 0; so < n; so++) {
 		int sa = so;
+		while (amp[so] == '/') {
+			division(ampl[sa], amplI[sa], ampl[so + 1], amplI[so + 1]);
+			ampl[sa] = resultR;
+			amplI[sa] = resultI;
+			ampl[so + 1] = 1;
+			amplI[so + 1] = 0;
+			amp[so] = '*';
+			so++;
+
+		}
+	}
+	for (so = 0; so < n; so++) {
+		int sa = so;
 
 		while (amp[so] == '*') {
 			multiplication(ampl[sa], amplI[sa], ampl[so + 1], amplI[so + 1]);
 			ampl[sa] = resultR;
 			amplI[sa] = resultI;
-			ampl[so + 1] = 0;
+			ampl[so + 1] = 1;
 			amplI[so + 1] = 0;
-			amp[so] = '+';
-			so++;
-		}
-		while (amp[so] == '/') {
-			division(ampl[sa], amplI[sa], ampl[so + 1], amplI[so + 1]);
-			ampl[sa] = resultR;
-			amplI[sa] = resultI;
-			ampl[so + 1] = 0;
-			amplI[so + 1] = 0;
-			amp[so] = '-';
+			amp[so] = '*';
 			so++;
 		}
 	}
+
 	for (h = 0; h < n; h++) {
 		if (h == 0) {
 			result1 = ampl[0];
