@@ -229,7 +229,6 @@ boolean about() {
 	system("MODE con cols=84 lines=40");
 	_flushall();
 	char exit[DIM] = "";
-	int i;
 	boolean continu = true;
 	puts("\n\n\n\n");
 	printf("                   %c%c%c  %c%c%c%c  %c   %c  %c%c%c  %c   %c  %c%c%c  %c%c%c%c%c %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
@@ -256,48 +255,18 @@ boolean about() {
 	printf("                              %c %c     %c       %c   %c   %c \n", 177, 177, 177, 177, 177, 177);
 	printf("                               %c      %c %c  %c%c%c  %c  %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 
-	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n            To know how to use this application please enter \"user guide\"\n\n");
+	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n         To support the development of this application please enter \"donate\"\n\n            To know how to use this application please enter \"user guide\"\n\n");
 	printf("     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS\n\n");
 	gets_s(exit);
-	for (i = 0; exit[i] != '\0'; i++) {
-		if (exit[i] == 'A') {
-			exit[i] = 'a';
-		}
-		if (exit[i] == 'E'&&exit[i + 1] == 'N' || exit[i] == 'E'&&exit[i - 1] == 'l' || exit[i] == 'E'&&exit[i - 1] == 'L' || exit[i] == 'E'&&exit[i + 1] == 'n' || exit[i + 1] == 'E'&&exit[i + 1] == 'C' || exit[i] == 'E'&&exit[i + 1] == 'c' || exit[i] == 'E'&&exit[i + 1] == 'C'&&exit[i + 2] == 'H' || exit[i] == 'E'&&exit[i + 1] == 'c'&&exit[i + 2] == 'H' || exit[i] == 'E'&&exit[i + 1] == 'C'&&exit[i + 2] == 'h' || exit[i] == 'E'&&exit[i + 1] == 'x' || exit[i] == 'E'&&exit[i + 1] == 'X') {
-			exit[i] = 'e';
-		}
-		if (exit[i] == 'C') {
-			exit[i] = 'c';
-		}
-		if (exit[i] == 'R') {
-			exit[i] = 'r';
-		}
-		if (exit[i] == 'F') {
-			exit[i] = 'f';
-		}
-		if (exit[i] == 'H') {
-			exit[i] = 'h';
-		}
-		if (exit[i] == 'X'&&exit[i + 1] == 'i' || exit[i] == 'X'&&exit[i + 1] == 'I') {
-			exit[i] = 'x';
-		}
-		if (exit[i] == 'I') {
-			exit[i] = 'i';
-		}
-		if (exit[i] == 'T') {
-			exit[i] = 't';
-		}
-		if (exit[i] == 'S') {
-			exit[i] = 's';
-		}
+
+	if (isEqual(exit, "user guide")) {
+		puts(" ");
+		ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator - User Guide.pdf"), NULL, NULL, SW_SHOW);
 	}
-	for (i = 0; exit[i] != '\0'; i++) {
-		if (exit[i] == 's'&&exit[i + 1] == 'o'&&exit[i + 2] == 'b'&&exit[i + 3] == 'r'&&exit[i + 4] == 'e' || exit[i] == 'a'&&exit[i + 1] == 'b'&&exit[i + 2] == 'o'&&exit[i + 3] == 'u'&&exit[i + 4] == 't') {
-			about2();
-		}
-		if (exit[i] == 'u'&&exit[i + 1] == 's'&&exit[i + 2] == 'e'&&exit[i + 3] == 'r'&&exit[i + 4] == ' '&&exit[i + 5] == 'g'&&exit[i + 6] == 'u'&&exit[i + 7] == 'i'&&exit[i + 8] == 'd'&&exit[i + 9] == 'e' || exit[i] == 'm'&&exit[i + 1] == 'a' && exit[i + 2] == 'n' || exit[i + 3] == 'u'&&exit[i + 4] == 'a'&&exit[i + 5] == 'l') {
-			ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator - User Guide.pdf"), NULL, NULL, SW_SHOW);
-		}
+
+	if (isEqual(exit, "donate")) {
+		puts(" ");
+		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/p/advantrigoncalc/donate/?source=navbar\""), NULL, SW_SHOW);
 	}
 
 	if (continu) {
