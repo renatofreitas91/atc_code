@@ -8,6 +8,10 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	if (isContained("_", arithTrig)) {
 		replace("_", "(0-1)*", arithTrig);
 		sprintf(arithTrig, "%s", expressionF);
+		if (isContained("atc(0-1)*", arithTrig)) {
+			replace("atc(0-1)*", "atc_", arithTrig);
+			sprintf(arithTrig, "%s", expressionF);
+		}
 	}
 	int rasf = abs((int)strlen(arithTrig));
 
