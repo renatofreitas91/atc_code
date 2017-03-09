@@ -5,14 +5,6 @@
 
 
 double initialProcessor(char arithTrig[DIM], double result) {
-	if (isContained("_", arithTrig)) {
-		replace("_", "(0-1)*", arithTrig);
-		sprintf(arithTrig, "%s", expressionF);
-		if (isContained("atc(0-1)*", arithTrig)) {
-			replace("atc(0-1)*", "atc_", arithTrig);
-			sprintf(arithTrig, "%s", expressionF);
-		}
-	}
 	int rasf = abs((int)strlen(arithTrig));
 
 	while (arithTrig[rasf - 2] == '+'&&arithTrig[rasf - 1] == '0') {
@@ -554,7 +546,10 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					asdf = triArith[so + 1];
 					asdfI = triArithI[so + 1];
 					if (sig[so] == -1) {
-						sig[so] = 1;
+						if (triArith[so] < 0 || triArithI[so] < 0) {
+							sig[so] = 0;
+						}
+						else { sig[so] = 1; }
 					}
 					exponentiation(triArith[so], triArithI[so], asdf, asdfI, sig[so]);
 					asdf = resultR;
@@ -576,7 +571,10 @@ double initialProcessor(char arithTrig[DIM], double result) {
 						if (a == 2) {
 							while (a != 1) {
 								if (sig[so] == -1) {
-									sig[so] = 1;
+									if (triArith[so] < 0 || triArithI[so] < 0) {
+										sig[so] = 0;
+									}
+									else { sig[so] = 1; }
 								}
 								exponentiation(triArith[so], triArithI[so], asdf, asdfI, sig[so]);
 								asdf = resultR;
@@ -606,7 +604,10 @@ double initialProcessor(char arithTrig[DIM], double result) {
 			if (arTrig[so] == '^'&&arTrig[so + 1] != '^') {
 				while (arTrig[so] == '^') {
 					if (sig[sa] == -1) {
-						sig[sa] = 1;
+						if (triArith[sa] < 0 || triArithI[sa] < 0) {
+							sig[sa] = 0;
+						}
+						else { sig[sa] = 1; }
 					}
 					exponentiation(triArith[sa], triArithI[sa], triArith[so + 1], triArithI[so + 1], sig[sa]);
 					triArith[sa] = resultR; triArithI[sa] = resultI;
@@ -1135,7 +1136,10 @@ double arithSolver(char trigon1[DIM], double result) {
 				if (amp[so + 1] != '^'&&amp[so - 1] == '^'&&a != 2) {
 					asdf = ampl[so + 1];
 					asdfI = amplI[so + 1];
-					sig[so] = 1;
+					if (ampl[so] < 0 || amplI[so] < 0) {
+						sig[so] = 0;
+					}
+					else { sig[so] = 1; }
 
 					exponentiation(ampl[so], amplI[so], asdf, asdfI, sig[so]);
 					asdf = resultR;
@@ -1156,7 +1160,10 @@ double arithSolver(char trigon1[DIM], double result) {
 					else {
 						if (a == 2) {
 							while (a != 1) {
-								sig[so] = 1;
+								if (ampl[so] < 0 || amplI[so] < 0) {
+									sig[so] = 0;
+								}
+								else { sig[so] = 1; }
 
 								exponentiation(ampl[so], amplI[so], asdf, asdfI, sig[so]);
 								asdf = resultR;
@@ -1186,7 +1193,10 @@ double arithSolver(char trigon1[DIM], double result) {
 		else {
 			if (amp[so] == '^'&&amp[so + 1] != '^') {
 				while (amp[so] == '^') {
-					sig[sa] = 1;
+					if (ampl[sa] < 0 || amplI[sa] < 0) {
+						sig[sa] = 0;
+					}
+					else { sig[sa] = 1; }
 
 					exponentiation(ampl[sa], amplI[sa], ampl[so + 1], amplI[so + 1], sig[sa]);
 					ampl[sa] = resultR;
