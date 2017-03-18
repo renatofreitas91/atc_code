@@ -89,12 +89,13 @@ void mode() {
 	int option = 0;
 	char value[DIM] = "";
 	while (option != 1 && option != 2 && option != 3) {
-		_flushall();
 		printf("radian -> 1\ndegree -> 2\ngradian -> 3\n");
 		gets_s(value);
-		option = (int)solveNow(value, 0, 0);
-		if (option > 3 || option < 1) {
-			printf("Error, incorrect choice.\n");
+		if (strlen(value) == 1) {
+			option = atoi(value);
+			if (option > 3 || option < 1) {
+				printf("Error, incorrect choice.\n");
+			}
 		}
 	}
 	char toOpen[DIM] = "";

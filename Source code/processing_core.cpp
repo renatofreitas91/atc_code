@@ -1650,8 +1650,8 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 					vI[7] = re(vI[7], 360);
 				}
 			}
-			v[1] = v[7] * M_PI / 180;
-			vI[1] = vI[7] * M_PI / 180;
+			v[1] = v[7] * 1 / 0.9;
+			vI[1] = vI[7] * 1 / 0.9;
 		}
 	}
 	if (isEqual("log", op)) {
