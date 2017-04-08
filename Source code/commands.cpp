@@ -29,6 +29,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		puts(" ");
 	}
+
 	if (isCommand(arithTrig, "donate")) {
 		command = true;
 		puts(" ");

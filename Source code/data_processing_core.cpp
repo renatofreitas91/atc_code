@@ -736,8 +736,6 @@ void variableToMultiply(char expression[DIM]) {
 				i = v;
 			}
 
-
-
 		}
 		i++;
 	}
@@ -1830,9 +1828,46 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	}
 	arithTrig[i] = '\0';
 	for (i = 0; arithTrig[i] != '\0'; i++) {
+		if (verifyLetter(arithTrig[i])) {
+			letterScan[i] = arithTrig[i];
+		}
+		else {
+			letterScan[i] = ' ';
+		}
+	}
+	letterScan[i] = '\0';
+	i = 0;
+	j = 0;
+	char varCandidate[DIM] = "";
+	for (i = 0; letterScan[i] != '\0'; i++) {
+		if (verifyLetter(letterScan[i])) {
+			j = 0;
+			while (verifyLetter(letterScan[i])) {
+				varCandidate[j] = letterScan[i];
+				i++; j++;
+			}
+			varCandidate[j] = '\0';
+			processVariable(varCandidate);
+			if (validVar == 1) {
+				char saveExpression[DIM] = "";
+				sprintf(saveExpression, "%s", arithTrig);
+				char replaceVariable[DIM] = "";
+				char finalReplace[DIM] = "";
+				sprintf(finalReplace, "(%s)", varCandidate);
+				if (!isContained(finalReplace, arithTrig)) {
+					sprintf(replaceVariable, "(sgdgfg)");
+					replace(varCandidate, replaceVariable, saveExpression);
+					replace("sgdgfg", varCandidate, expressionF);
+					sprintf(arithTrig, "%s", expressionF);
+				}
+			}
+		}
+	}
+	for (i = 0; arithTrig[i] != '\0'; i++) {
 		expressionF[i] = arithTrig[i];
 	}
 	expressionF[i] = '\0';
+
 }
 
 void openTxt() {
