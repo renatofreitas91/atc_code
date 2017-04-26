@@ -1855,9 +1855,9 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				char finalReplace[DIM] = "";
 				sprintf(finalReplace, "(%s)", varCandidate);
 				if (!isContained(finalReplace, arithTrig)) {
-					sprintf(replaceVariable, "(sgdgfg)");
+					sprintf(replaceVariable, "(\\\\\\\\)");
 					replace(varCandidate, replaceVariable, saveExpression);
-					replace("sgdgfg", varCandidate, expressionF);
+					replace("\\\\\\\\", varCandidate, expressionF);
 					sprintf(arithTrig, "%s", expressionF);
 				}
 			}
