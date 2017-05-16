@@ -67,4 +67,3 @@ boolean readyToSolve(char paTh[DIM]);
 boolean isEqual(char to_find[DIM], char string[DIM]);
 boolean isContained(char to_find[DIM], char string[DIM]);
 double atcProg(char expression[DIM]);
-

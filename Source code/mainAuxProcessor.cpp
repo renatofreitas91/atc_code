@@ -375,13 +375,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 	}
 	s = 0;
 	if (verify == 1) {
-		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (arithTrig[i] == 'x') {
-				arithTrig[i] = '*';
-			}
-
-		}
-		arithTrig[i] = '\0';
 		synTest = 0;
 		manageExpression(arithTrig, result1, result2, verify);
 		for (i = 0; expressionF[i] != '\0'; i++) {

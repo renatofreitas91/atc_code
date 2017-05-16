@@ -1787,10 +1787,8 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	paTrig[s] = '\0';
 
 	s = 0;
-
-	s = 0;
 	for (s; paTrig[s] != '\0'; s++) {
-		if ((paTrig[s] == 'e'&&paTrig[s + 1] != 'b' || paTrig[s] == 'i'&&paTrig[s - 1] == 'p'&&paTrig[s + 1] != 'b' || paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == '.') && (paTrig[s + 1] == '#' || paTrig[s + 1] == 'w' || paTrig[s + 1] == 'y' || paTrig[s + 1] == 'u' || paTrig[s + 1] == 'o' || paTrig[s + 1] == 'p' || paTrig[s + 1] == 'f' || paTrig[s + 1] == 'h' || paTrig[s + 1] == 'j' || paTrig[s + 1] == 'k' || paTrig[s + 1] == 'z' || paTrig[s + 1] == 'x' || paTrig[s + 1] == 'v' || paTrig[s + 1] == 'm' || paTrig[s + 1] == 'Q' || paTrig[s + 1] == 'W' || paTrig[s + 1] == 'R' || paTrig[s + 1] == 'T' || paTrig[s + 1] == 'Y' || paTrig[s + 1] == 'U' || paTrig[s + 1] == 'I' || paTrig[s + 1] == 'S' || paTrig[s + 1] == 'G' || paTrig[s + 1] == 'J' || paTrig[s + 1] == 'K' || paTrig[s + 1] == 'L' || paTrig[s + 1] == 'Z' || paTrig[s + 1] == 'X' || paTrig[s + 1] == 'V' || paTrig[s + 1] == 'N' || paTrig[s + 1] == 'M')) {
+		if ((paTrig[s] == 'e'&&paTrig[s + 1] != 'b' || paTrig[s] == 'i'&&paTrig[s - 1] == 'p'&&paTrig[s + 1] != 'b' || paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == '.') && (paTrig[s + 1] == '#' || paTrig[s + 1] == 'w' || paTrig[s + 1] == 'y' || paTrig[s + 1] == 'u' || paTrig[s + 1] == 'o' || paTrig[s + 1] == 'p' || paTrig[s + 1] == 'f' || paTrig[s + 1] == 'h' || paTrig[s + 1] == 'j' || paTrig[s + 1] == 'k' || paTrig[s + 1] == 'z' || paTrig[s + 1] == 'v' || paTrig[s + 1] == 'm' || paTrig[s + 1] == 'Q' || paTrig[s + 1] == 'W' || paTrig[s + 1] == 'R' || paTrig[s + 1] == 'T' || paTrig[s + 1] == 'Y' || paTrig[s + 1] == 'U' || paTrig[s + 1] == 'I' || paTrig[s + 1] == 'S' || paTrig[s + 1] == 'G' || paTrig[s + 1] == 'J' || paTrig[s + 1] == 'K' || paTrig[s + 1] == 'L' || paTrig[s + 1] == 'Z' || paTrig[s + 1] == 'X' || paTrig[s + 1] == 'V' || paTrig[s + 1] == 'N' || paTrig[s + 1] == 'M')) {
 			s++;
 			arithTrig[s] = '*';
 			for (s; paTrig[s] != '\0'; s++) {
@@ -1805,6 +1803,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			s = 0;
 		}
 	}
+
 	s = 0;
 	for (s; paTrig[s] != '\0'; s++) {
 		if ((paTrig[s + 1] == 'e'&&paTrig[s] != 'b' || paTrig[s + 1] == 'p'&&paTrig[s + 2] == 'i'&&paTrig[s] != 'b' || paTrig[s + 1] == '1' || paTrig[s + 1] == '2' || paTrig[s + 1] == '3' || paTrig[s + 1] == '4' || paTrig[s + 1] == '5' || paTrig[s + 1] == '6' || paTrig[s + 1] == '7' || paTrig[s + 1] == '8' || paTrig[s + 1] == '9' || paTrig[s + 1] == '0' || paTrig[s + 1] == '.') && (paTrig[s] == 'q' || paTrig[s] == 'w' || paTrig[s] == 't' || paTrig[s] == 'y' || paTrig[s] == 'u' || paTrig[s] == 'o' || paTrig[s] == 'p' || paTrig[s] == 'a' || paTrig[s] == 'f' || paTrig[s] == 'h' || paTrig[s] == 'j' || paTrig[s] == 'k' || paTrig[s] == 'l' || paTrig[s] == 'z' || paTrig[s] == 'c' || paTrig[s] == 'v' || paTrig[s] == 'n' || paTrig[s] == 'm' || paTrig[s] == 'Q' || paTrig[s] == 'W' || paTrig[s] == 'R' || paTrig[s] == 'T' || paTrig[s] == 'Y' || paTrig[s] == 'U' || paTrig[s] == 'I' || paTrig[s] == 'S' || paTrig[s] == 'G' || paTrig[s] == 'J' || paTrig[s] == 'K' || paTrig[s] == 'L' || paTrig[s] == 'Z' || paTrig[s] == 'X' || paTrig[s] == 'V' || paTrig[s] == 'N' || paTrig[s] == 'M')) {
@@ -1822,6 +1821,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			s = 0;
 		}
 	}
+
 	toMultiply(arithTrig, result1, result2);
 	for (i = 0; expressionF[i] != '\0'; i++) {
 		arithTrig[i] = expressionF[i];
@@ -1863,6 +1863,12 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 		}
 	}
+	for (i = 0; arithTrig[i] != '\0'; i++) {
+		if (arithTrig[i] == 'x') {
+			arithTrig[i] = '*';
+		}
+	}
+	arithTrig[i] = '\0';
 	for (i = 0; arithTrig[i] != '\0'; i++) {
 		expressionF[i] = arithTrig[i];
 	}
