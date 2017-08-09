@@ -18,6 +18,7 @@ void complex_cosh(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For hyperbolic cosine function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -38,6 +39,7 @@ void complex_sinh(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For hyperbolic sine function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -56,6 +58,7 @@ void complex_tanh(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For hyperbolic tangent function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -70,6 +73,7 @@ void cotanh(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For hyperbolic cotangent function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -85,6 +89,7 @@ void sech(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For hyperbolic secant function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -100,6 +105,7 @@ void cosech(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For hyperbolic cosecant function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -118,6 +124,7 @@ void arsinh(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc hyperbolic sine function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -136,10 +143,10 @@ void arcosh(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc hyperbolic cosine function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
-
 }
 
 void artanh(double x, double y) {
@@ -155,10 +162,10 @@ void artanh(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc hyperbolic tangent function the valid domain is [-1, 1].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
-
 }
 
 void arcoth(double x, double y) {
@@ -171,10 +178,10 @@ void arcoth(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc hyperbolic cotangent function the valid domain is [-INF, -1] U [1, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
-
 }
 
 void arsech(double x, double y) {
@@ -187,10 +194,10 @@ void arsech(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc hyperbolic secant function the valid domain is [0, 1].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
-
 }
 
 void arcsch(double x, double y) {
@@ -203,6 +210,7 @@ void arcsch(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc hyperbolic cosecant function the valid domain is [-INF, INF] ^ != 0.\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}

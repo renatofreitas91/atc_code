@@ -18,6 +18,7 @@ void complex_log(double a, double b) {
 		else {
 			if (rasf > 0) {
 				printf("\nError in function domain.\n\n ==> For complex natural logarithm function the valid domain is [-INF, INF].\n\n");
+				printf(" ==> Your function argument: ");
 				complexNumber(a, b);
 			}
 		}

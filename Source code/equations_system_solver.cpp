@@ -2,8 +2,6 @@
 
 #include "stdafx.h"
 
-
-
 int matrixToValues(char matrix[DIM], double result) {
 	int i = 0, j = 0, k = 0, l = 0;
 	for (i = 0; matrix[i] != '\0'; i++) {
@@ -70,7 +68,6 @@ void solveSystem() {
 					}
 				}
 			}
-
 		}
 		if (countVal != 1) {
 			i = 0;
@@ -121,16 +118,12 @@ void rearrangeValues() {
 			}
 		}
 	}
-
-
 	for (i = 0; i < count - 1; i++) {
 		weight[i] = 0;
 		for (j = 0; j < count - 1; j++) {
 			weight[i] = (int)(weight[i] + valInd[i][j]);
 		}
 	}
-
-
 	double valSave = 0;
 	int arrangeOrder[DIM], equa[DIM];
 	for (i = 0; i < count - 1; i++) {
@@ -160,7 +153,6 @@ void rearrangeValues() {
 			valuesFI[i][j] = valuesI[arrangeOrder[i]][j];
 		}
 	}
-
 	for (i = 0; i < count - 1; i++) {
 		for (j = 0; j < count; j++) {
 			values[i][j] = valuesF[i][j];
@@ -190,17 +182,4 @@ void getSolutions() {
 		iS--;
 		i = iS - 1;
 	}
-}
-
-void showValues() {
-	int i = 0, j = 0;
-	puts(".......................................");
-	for (i = 0; i < count - 1; i++) {
-		for (j = 0; j < count; j++) {
-			printf("%G+%Gi|", values[i][j], valuesI[i][j]);
-		}
-		printf("\n");
-	}
-	puts(".......................................");
-
 }

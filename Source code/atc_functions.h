@@ -19,6 +19,7 @@ void getATCPath();
 void toSolve(int re);
 void ShowConsoleCursor(BOOL bShow);
 void verboseResolutionController();
+void complexNumber(double a, double b);
 boolean letterVariables(char letter);
 boolean firstLetterVariable(char letter);
 boolean verifyLetter(char letter);

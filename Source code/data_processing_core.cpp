@@ -4,19 +4,14 @@
 
 int strStart = 0, strEnd = 0;
 
-
 void numSystemsController() {
 	FILE *open;
 	int state = -1;
-	char c[DIM] = "";
 	while (state != 1 && state != 0) {
 		printf("Enable -> 1\nDisable -> 0\n");
-		gets_s(c);
-		if (strlen(c) == 1) {
-			state = atoi(c);
-			if (state != 1 && state != 0) {
-				printf("Error, incorrect choice.\n");
-			}
+		state = (int)getValue();
+		if (state != 1 && state != 0) {
+			printf("Error, incorrect choice.\n");
 		}
 	}
 	char toOpen[DIM] = "";
@@ -29,15 +24,11 @@ void numSystemsController() {
 void verboseResolutionController() {
 	FILE *open;
 	int state = -1;
-	char c[DIM] = "";
 	while (state != 1 && state != 0) {
 		printf("Enable -> 1\nDisable -> 0\n");
-		gets_s(c);
-		if (strlen(c) == 1) {
-			state = atoi(c);
-			if (state != 1 && state != 0) {
-				printf("Error, incorrect choice.\n");
-			}
+		state = (int)getValue();
+		if (state != 1 && state != 0) {
+			printf("Error, incorrect choice.\n");
 		}
 	}
 	char toOpen[DIM] = "";
@@ -50,15 +41,11 @@ void verboseResolutionController() {
 void siPrefixController() {
 	FILE *open;
 	int state = -1;
-	char c[DIM] = "";
 	while (state != 1 && state != 0) {
 		printf("Enable -> 1\nDisable -> 0\n");
-		gets_s(c);
-		if (strlen(c) == 1) {
-			state = atoi(c);
-			if (state != 1 && state != 0) {
-				printf("Error, incorrect choice.\n");
-			}
+		state = (int)getValue();
+		if (state != 1 && state != 0) {
+			printf("Error, incorrect choice.\n");
 		}
 	}
 	char toOpen[DIM] = "";
@@ -71,15 +58,11 @@ void siPrefixController() {
 void actualTimeController() {
 	FILE *open;
 	int state = -1;
-	char c[DIM] = "";
 	while (state != 1 && state != 0) {
 		printf("Enable -> 1\nDisable -> 0\n");
-		gets_s(c);
-		if (strlen(c) == 1) {
-			state = atoi(c);
-			if (state != 1 && state != 0) {
-				printf("Error, incorrect choice.\n");
-			}
+		state = (int)getValue();
+		if (state != 1 && state != 0) {
+			printf("Error, incorrect choice.\n");
 		}
 	}
 	char toOpen[DIM] = "";
@@ -184,15 +167,11 @@ void prefixDeterminator(double n, char path[DIM]) {
 	sprintf(toOpen, "%s\\history.txt", atcPath);
 	double result = 0;
 	FILE *open;
-
 	int a = 0;
-
-
 	open = fopen(path, "a+");
 	if (isEqual(path, toOpen)) {
 		a = 1;
 	}
-
 	int y = 0;
 	if (n < 0) {
 		n = n*-1;
@@ -408,30 +387,28 @@ void prefixDeterminator(double n, char path[DIM]) {
 }
 
 void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]) {
-	int i = 0, j = 0, k = 0, m = 0;
-	char toChange[DIM] = "";
-	sprintf(toChange, "%s", string);
-	if (isContained(toReplace, toChange)) {
-		while (isContained(toReplace, toChange)) {
-			j = 0; k = 0;
-			sprintf(expressionF, "");
-			i = strStart;
-			while (j < i) {
-				expressionF[j] = toChange[j]; j++;
+	char expression[DIM] = "", expressionG[DIM] = "";
+	sprintf(expression, "%s", string);
+	sprintf(expressionG, "%s", string);
+	do {
+		if (isContained(toReplace, expressionG)) {
+			int i = strStart, j = 0;
+			while (j < abs((int)strlen(replacement)))
+			{
+				expression[i] = replacement[j];
+				i++; j++;
 			}
-			expressionF[j] = '\0'; m = j;
-			while (k < abs((int)strlen(replacement))) {
-				expressionF[j] = replacement[k]; j++; k++;
+			int g = strEnd;
+			while (expression[g] != '\0') {
+				expression[i] = expressionG[g];
+				g++;
+				i++;
 			}
-			expressionF[j] = '\0';
-			m = m + abs((int)strlen(toReplace));
-			while (m < abs((int)strlen(toChange))) {
-				expressionF[j] = toChange[m]; j++; m++;
-			}
-			expressionF[j] = '\0';
-			sprintf(toChange, "%s", expressionF);
+			expression[i] = '\0';
 		}
-	}
+		sprintf(expressionG, "%s", expression);
+	} while (isContained(toReplace, expressionG));
+	sprintf(expressionF, "%s", expressionG);
 }
 
 void renamer(char expression[DIM]) {
@@ -459,7 +436,6 @@ void renamer(char expression[DIM]) {
 			}
 			j = 0;
 		}
-
 	}
 	for (i = 0; expression[i] != '\0'&&i < abs((int)strlen(expression)); i++) {
 		expressionF[i] = expression[i];
@@ -468,8 +444,7 @@ void renamer(char expression[DIM]) {
 }
 
 void variableRenamer(char variable[DIM]) {
-	varRename[0] = '\0';
-
+	sprintf(varRename, "");
 	char vari[DIM] = "";
 	int i = 0, j = 0;
 	FILE *open = NULL;
@@ -533,9 +508,7 @@ void pathNameToPath(char pathName[DIM]) {
 						k++; i++;
 					}
 					pathNAme[k] = '\0';
-
 				}
-
 			}
 			else {
 				j = 0;
@@ -575,7 +548,6 @@ void pathNameController(char pathName[DIM], char path[DIM]) {
 				w = abs((int)strlen(pathName)) + abs((int)strlen(paName)) + 3;
 				for (l = y; data[l + w] != '\0'; l++) {
 					data[l] = data[l + w];
-
 				}
 				data[l] = '\0';
 				fclose(save);
@@ -583,7 +555,6 @@ void pathNameController(char pathName[DIM], char path[DIM]) {
 				fputs(data, save);
 				fclose(save);
 			}
-
 		}
 		else {
 			j = 0;
@@ -619,12 +590,10 @@ void stringVariableToString(char stringVariable[DIM]) {
 				if (j == strlen(stringVariable) && data[i] == '\n') {
 					char directory[MAX_PATH] = "";
 					sprintf(directory, "%s\\Strings\\%s.txt", atcPath, stringVariable);
-
 					open = fopen(directory, "a+");
 					for (k = 0; (variableSTring[k] = fgetc(open)) != EOF; k++);
 					variableSTring[k] = '\0';
 					fclose(open);
-
 				}
 			}
 		}
@@ -656,7 +625,6 @@ void stringVariableController(char stringVariable[DIM], char string[DIM]) {
 				w = abs((int)strlen(stringVariable)) + 3;
 				for (l = y; data[l + w] != '\0'; l++) {
 					data[l] = data[l + w];
-
 				}
 				data[l] = '\0';
 				fclose(save);
@@ -664,7 +632,6 @@ void stringVariableController(char stringVariable[DIM], char string[DIM]) {
 				fputs(data, save);
 				fclose(save);
 			}
-
 		}
 		else {
 			j = 0;
@@ -705,7 +672,6 @@ void variableToMultiply(char expression[DIM]) {
 						variable[k] = varRename[k];
 					}
 					variable[k] = '\0';
-
 					processVariable(variable);
 				}
 				for (d = 0; saveVariable[d] != '\0'; d++) {
@@ -735,7 +701,6 @@ void variableToMultiply(char expression[DIM]) {
 				}
 				i = v;
 			}
-
 		}
 		i++;
 	}
@@ -763,7 +728,6 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 					j++; i++;
 				}
 			}
-
 			else {
 				if (verifyLetter(expression[i - 1]) == 0 && firstLetterVariable(expression[i])) {
 					while (verifyLetter(expression[i]) && expression[i] != '\0') {
@@ -773,7 +737,6 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 					value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
 					synTest = 0;
 					verify = dataVerifier(value, result1, result2, 0, verify);
-
 				}
 				else {
 					if (verifyLetter(expression[i - 1]) == 0 && firstLetterFunction(expression[i])) {
@@ -836,7 +799,6 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 							}
 							synTest = 0;
 							verify = dataVerifier(value, result1, result2, 0, verify);
-
 							if (verify == 1 && firstLetterFunction(value[j]) == false && verifyLetter(value[j]) && value[j] != 'i') {
 								j++; i++;
 								while (verify == 1 && expression[i] != '\0') {
@@ -858,14 +820,12 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 									}
 									i--;
 								}
-
 							}
 							else {
 								value[j] = expression[i];
 								value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
 								synTest = 0;
 								verify = dataVerifier(value, result1, result2, 0, verify);
-
 								if (verify == 0) {
 									j++; i++;
 									while (verify == 0 && expression[i] != '\0') {
@@ -886,7 +846,6 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 										value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
 										j++;
 									}
-
 								}
 								else {
 									i++;
@@ -898,7 +857,6 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 			}
 		}
 	}
-
 	for (i = 0; value[i] != '\0'; i++) {
 		expressionF[i] = value[i];
 	}
@@ -938,15 +896,12 @@ void customFuncRenamer(char variable[DIM]) {
 			}
 		}
 		else {
-			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'x' || variable[i] == 'b' || variable[i] == 'D') {
+			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'b' || variable[i] == 'D') {
 				if (variable[i] == 'i') {
 					revariable[i] = 'o';
 				}
 				if (variable[i] == 'e') {
 					revariable[i] = 'w';
-				}
-				if (variable[i] == 'x') {
-					revariable[i] = 'y';
 				}
 				if (variable[i] == 'b') {
 					revariable[i] = 'u';
@@ -971,7 +926,7 @@ void customFuncRenamer(char variable[DIM]) {
 					}
 				}
 				else {
-					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'F' || variable[i] == 'P') {
+					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'P') {
 						if (variable[i] == 'A') {
 							revariable[i] = 'Q';
 						}
@@ -983,9 +938,6 @@ void customFuncRenamer(char variable[DIM]) {
 						}
 						if (variable[i] == 'E') {
 							revariable[i] = 'Y';
-						}
-						if (variable[i] == 'F') {
-							revariable[i] = 'U';
 						}
 						if (variable[i] == 'P') {
 							revariable[i] = 'S';
@@ -1113,7 +1065,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 				arithTrig[i] = '*'; arithTrig[i + 1] = '1';
 				i = abs((int)strlen(arithTrig));
-
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
@@ -1128,7 +1079,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	}
 	arithTrig[i] = '\0';
 	int needAst = 1;
-
 	needAst = 1;
 	while (needAst == 1) {
 		needAst = 0;
@@ -1163,7 +1113,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				arithTrig[i] = '*';
 			}
 		}
-
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2])) {
 				needAst = 1;
@@ -1186,7 +1135,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 
 			}
 		}
-
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != 'b'&&arithTrig[i - 1] != 'D'&&arithTrig[i - 2] != 't'&&arithTrig[i - 3] != 'r' && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2]) == false) {
 				needAst = 1;
@@ -1214,8 +1162,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 		}
 	}
-
-
 	renamer(arithTrig);
 	for (i = 0; expressionF[i] != '\0'; i++) {
 		arithTrig[i] = expressionF[i];
@@ -1247,8 +1193,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 			}
 			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2])) {
-
-
 				j = i;
 				i = abs((int)strlen(arithTrig));
 				while (i > j) {
@@ -1263,7 +1207,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					i--;
 				}
 				arithTrig[i] = '*';
-
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
@@ -1288,7 +1231,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					}
 				}
 			}
-
 			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p'&& arithTrig[i + 1] == 'i'&&verifyLetter(arithTrig[i + 2])) {
 				needAst = 1;
 			}
@@ -1299,7 +1241,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		arithTrig[i] = expressionF[i];
 	}
 	arithTrig[i] = '\0';
-
 	needOne = 1;
 	while (needOne == 1) {
 		needOne = 0;
@@ -1313,7 +1254,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 				arithTrig[i] = '*';
 				i = abs((int)strlen(arithTrig));
-
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
@@ -1335,7 +1275,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 				arithTrig[i] = '1';
 				i = abs((int)strlen(arithTrig));
-
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
@@ -1399,7 +1338,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					else {
 						function[y] = '\0';
 						valRenamedVar = 0;
-
 						n = 0, m = 0;
 						m = 0;
 						for (n = 0; function[n] != '\0'&&n < abs((int)strlen(function)); n++) {
@@ -1423,13 +1361,8 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 						if (valRenamedVar == 1) {
 							isFunc = 0;
 						}
-
 					}
-
 				}
-
-
-
 				if (isFunc == 0 && napier == 0) {
 					int l = 0;
 					for (l = 0; l < abs((int)strlen(arithTrig)); l++) {
@@ -1442,7 +1375,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 							arithTrig[i] = arithTrig[i - 1];
 							i--;
 						}
-
 						arithTrig[i] = '*';
 						j = j + 2;
 						i = abs((int)strlen(arithTrig));
@@ -1452,12 +1384,10 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 						}
 						arithTrig[i] = '*';
 					}
-
 				}
 				if (napier == 1) {
 					n = 0; m = 0;
 					for (n = 0; arithTrig[n] != '\0'; n++) {
-
 						if (arithTrig[n] == functionP[m]) {
 							m = 0;
 							while (arithTrig[n] == functionP[m]) {
@@ -1471,7 +1401,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 										arithTrig[nc] = arithTrig[nc - 1];
 										nc--;
 									}
-
 									arithTrig[nj] = '*';
 									z = abs((int)strlen(arithTrig));
 									nj = n + 2;
@@ -1482,11 +1411,9 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 										}
 										if (arithTrig[z] != '\0') {
 											arithTrig[z] = '*';
-
 										}
 									}
 								}
-
 							}
 						}
 					}
@@ -1527,7 +1454,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		arithTrig[i] = expressionF[i];
 	}
 	arithTrig[i] = '\0';
-
 	char paTrig[DIM] = "";
 	int u = 0;
 	for (u = 0; arithTrig[u] != '\0'; u++) {
@@ -1567,8 +1493,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					toVal[v] = '?'; toVal[v + 1] = '\0';
 					check = functionProcessor(toVal, 0, 0, 0);
 				}
-
-
 				if (check != 0.5) {
 					arithTrig[u] = '*';
 					for (u; paTrig[u] != '\0'; u++) {
@@ -1584,8 +1508,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 			}
 		}
-
-
 	}
 	needAst = 1;
 	while (needAst == 1) {
@@ -1626,7 +1548,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if ((verifyLetter(arithTrig[i - 1]) || verifyNumber(arithTrig[i - 1])) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D'&& arithTrig[i - 1] != 'b'&& arithTrig[i] == 'i'&&arithTrig[i - 1] != '1'&&arithTrig[i - 1] != '('&&verifyLetter(arithTrig[i + 1]) == 0) {
-
 				j = i;
 				i = abs((int)strlen(arithTrig)) + 1;
 				while (i > j) {
@@ -1635,10 +1556,8 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 				arithTrig[i] = '*'; arithTrig[i + 1] = '1';
 				i = abs((int)strlen(arithTrig));
-
 			}
 		}
-
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if ((verifyLetter(arithTrig[i - 1]) || verifyNumber(arithTrig[i - 1])) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D'&& arithTrig[i - 1] != 'b'&& arithTrig[i] == 'i'&&arithTrig[i - 1] != '1'&&arithTrig[i - 1] != '('&&verifyLetter(arithTrig[i + 1]) == 0) {
 				needAst = 1;
@@ -1658,17 +1577,14 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 				arithTrig[i] = '*'; arithTrig[i + 1] = '1';
 				i = abs((int)strlen(arithTrig));
-
 			}
 		}
-
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if (arithTrig[i - 1] == ')' && arithTrig[i] == 'i'&&verifyLetter(arithTrig[i + 1]) == 0) {
 				needAst = 1;
 			}
 		}
 	}
-
 	needAst = 1;
 	while (needAst == 1) {
 		needAst = 0;
@@ -1697,17 +1613,12 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 			}
 		}
-
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&&arithTrig[i + 1] == '(') {
 				needAst = 1;
 			}
 		}
 	}
-
-
-
-
 	renamer(arithTrig);
 	for (i = 0; expressionF[i] != '\0'; i++) {
 		arithTrig[i] = expressionF[i];
@@ -1726,14 +1637,12 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 				arithTrig[i] = '1'; arithTrig[i + 1] = '*';
 			}
-
 		}
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if (verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& arithTrig[i + 1] != '1' && (verifyLetter(arithTrig[i + 1]) || verifyNumber(arithTrig[i + 1]))) {
 				needAst = 1;
 			}
-
 		}
 	}
 	needOne = 1;
@@ -1749,7 +1658,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 				arithTrig[i] = '1';
 				i = abs((int)strlen(arithTrig));
-
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
@@ -1772,20 +1680,17 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				arithTrig[i] = '*';
 			}
 		}
-
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if (arithTrig[i - 1] == '1' && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D'&&arithTrig[i + 1] != 'b' || verifyNumber(arithTrig[i + 1]))) {
 				needAst = 1;
 			}
 		}
 	}
-
 	s = 0;
 	for (s = 0; arithTrig[s] != '\0'; s++) {
 		paTrig[s] = arithTrig[s];
 	}
 	paTrig[s] = '\0';
-
 	s = 0;
 	for (s; paTrig[s] != '\0'; s++) {
 		if ((paTrig[s] == 'e'&&paTrig[s + 1] != 'b' || paTrig[s] == 'i'&&paTrig[s - 1] == 'p'&&paTrig[s + 1] != 'b' || paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == '.') && (paTrig[s + 1] == '#' || paTrig[s + 1] == 'w' || paTrig[s + 1] == 'y' || paTrig[s + 1] == 'u' || paTrig[s + 1] == 'o' || paTrig[s + 1] == 'p' || paTrig[s + 1] == 'f' || paTrig[s + 1] == 'h' || paTrig[s + 1] == 'j' || paTrig[s + 1] == 'k' || paTrig[s + 1] == 'z' || paTrig[s + 1] == 'v' || paTrig[s + 1] == 'm' || paTrig[s + 1] == 'Q' || paTrig[s + 1] == 'W' || paTrig[s + 1] == 'R' || paTrig[s + 1] == 'T' || paTrig[s + 1] == 'Y' || paTrig[s + 1] == 'U' || paTrig[s + 1] == 'I' || paTrig[s + 1] == 'S' || paTrig[s + 1] == 'G' || paTrig[s + 1] == 'J' || paTrig[s + 1] == 'K' || paTrig[s + 1] == 'L' || paTrig[s + 1] == 'Z' || paTrig[s + 1] == 'X' || paTrig[s + 1] == 'V' || paTrig[s + 1] == 'N' || paTrig[s + 1] == 'M')) {
@@ -1803,7 +1708,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			s = 0;
 		}
 	}
-
 	s = 0;
 	for (s; paTrig[s] != '\0'; s++) {
 		if ((paTrig[s + 1] == 'e'&&paTrig[s] != 'b' || paTrig[s + 1] == 'p'&&paTrig[s + 2] == 'i'&&paTrig[s] != 'b' || paTrig[s + 1] == '1' || paTrig[s + 1] == '2' || paTrig[s + 1] == '3' || paTrig[s + 1] == '4' || paTrig[s + 1] == '5' || paTrig[s + 1] == '6' || paTrig[s + 1] == '7' || paTrig[s + 1] == '8' || paTrig[s + 1] == '9' || paTrig[s + 1] == '0' || paTrig[s + 1] == '.') && (paTrig[s] == 'q' || paTrig[s] == 'w' || paTrig[s] == 't' || paTrig[s] == 'y' || paTrig[s] == 'u' || paTrig[s] == 'o' || paTrig[s] == 'p' || paTrig[s] == 'a' || paTrig[s] == 'f' || paTrig[s] == 'h' || paTrig[s] == 'j' || paTrig[s] == 'k' || paTrig[s] == 'l' || paTrig[s] == 'z' || paTrig[s] == 'c' || paTrig[s] == 'v' || paTrig[s] == 'n' || paTrig[s] == 'm' || paTrig[s] == 'Q' || paTrig[s] == 'W' || paTrig[s] == 'R' || paTrig[s] == 'T' || paTrig[s] == 'Y' || paTrig[s] == 'U' || paTrig[s] == 'I' || paTrig[s] == 'S' || paTrig[s] == 'G' || paTrig[s] == 'J' || paTrig[s] == 'K' || paTrig[s] == 'L' || paTrig[s] == 'Z' || paTrig[s] == 'X' || paTrig[s] == 'V' || paTrig[s] == 'N' || paTrig[s] == 'M')) {
@@ -1821,7 +1725,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			s = 0;
 		}
 	}
-
 	toMultiply(arithTrig, result1, result2);
 	for (i = 0; expressionF[i] != '\0'; i++) {
 		arithTrig[i] = expressionF[i];
@@ -1848,32 +1751,55 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 			varCandidate[j] = '\0';
 			processVariable(varCandidate);
-			if (validVar == 1) {
-				char saveExpression[DIM] = "";
-				sprintf(saveExpression, "%s", arithTrig);
-				char replaceVariable[DIM] = "";
-				char finalReplace[DIM] = "";
-				sprintf(finalReplace, "(%s)", varCandidate);
-				if (!isContained(finalReplace, arithTrig)) {
+			char replaceVariable[DIM] = "";
+			char finalReplace[DIM] = "";
+			sprintf(finalReplace, "(%s)", varCandidate);
+			if (validVar == 1 && isContained(finalReplace, arithTrig) == false || isContained("(res)", arithTrig) == false && isContained("res", arithTrig)) {
+				if (isContained("res", arithTrig)) {
+					if (arithTrig[strEnd] != 't') {
+						replace("res", "(\\\\\\\\)", arithTrig);
+						replace("\\\\\\\\", "res", expressionF);
+						sprintf(arithTrig, "%s", expressionF);
+					}
+				}
+				else {
 					sprintf(replaceVariable, "(\\\\\\\\)");
-					replace(varCandidate, replaceVariable, saveExpression);
+					replace(varCandidate, replaceVariable, arithTrig);
 					replace("\\\\\\\\", varCandidate, expressionF);
 					sprintf(arithTrig, "%s", expressionF);
 				}
 			}
 		}
 	}
-	for (i = 0; arithTrig[i] != '\0'; i++) {
-		if (arithTrig[i] == 'x') {
-			arithTrig[i] = '*';
+	if (isContained("#", arithTrig)) {
+		int i = strStart + 1, v = 1;
+		char result_name[DIM] = "";
+		result_name[0] = arithTrig[strStart];
+		while (verifyNumber(arithTrig[i])) {
+			result_name[v] = arithTrig[i];
+			v++; i++;
 		}
+		result_name[v] = '\0';
+		char replacement[DIM] = "";
+		sprintf(replacement, "(////////)");
+		replace(result_name, replacement, arithTrig);
+		replace("////////", result_name, expressionF);
+		sprintf(arithTrig, "%s", expressionF);
 	}
-	arithTrig[i] = '\0';
-	for (i = 0; arithTrig[i] != '\0'; i++) {
-		expressionF[i] = arithTrig[i];
+	if (isContained("B", arithTrig) || isContained("O", arithTrig) || isContained("H", arithTrig)) {
+		int i = strStart, v = 0;
+		char result_name[DIM] = "";
+		while (verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') {
+			result_name[v] = arithTrig[i];
+			v++; i++;
+		}
+		result_name[v] = '\0';
+		char replacement[DIM] = "";
+		sprintf(replacement, "(////////)");
+		replace(result_name, replacement, arithTrig);
+		replace("////////", result_name, expressionF);
+		sprintf(arithTrig, "%s", expressionF);
 	}
-	expressionF[i] = '\0';
-
 }
 
 void openTxt() {
@@ -1890,54 +1816,36 @@ void openTxt() {
 void cls()
 {
 	HANDLE hConsole;
-
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	COORD coordScreen = { 0, 0 };    // home for the cursor 
+	COORD coordScreen = { 0, 0 };
 	DWORD cCharsWritten;
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	DWORD dwConSize;
-
-	// Get the number of character cells in the current buffer. 
-
 	if (!GetConsoleScreenBufferInfo(hConsole, &csbi))
 	{
 		return;
 	}
-
 	dwConSize = csbi.dwSize.X * csbi.dwSize.Y;
-
-	// Fill the entire screen with blanks.
-
-	if (!FillConsoleOutputCharacter(hConsole,        // Handle to console screen buffer 
-		(TCHAR) ' ',     // Character to write to the buffer
-		dwConSize,       // Number of cells to write 
-		coordScreen,     // Coordinates of first cell 
-		&cCharsWritten))// Receive number of characters written
+	if (!FillConsoleOutputCharacter(hConsole,
+		(TCHAR) ' ',
+		dwConSize,
+		coordScreen,
+		&cCharsWritten))
 	{
 		return;
 	}
-
-	// Get the current text attribute.
-
 	if (!GetConsoleScreenBufferInfo(hConsole, &csbi))
 	{
 		return;
 	}
-
-	// Set the buffer's attributes accordingly.
-
-	if (!FillConsoleOutputAttribute(hConsole,         // Handle to console screen buffer 
-		csbi.wAttributes, // Character attributes to use
-		dwConSize,        // Number of cells to set attribute 
-		coordScreen,      // Coordinates of first cell 
-		&cCharsWritten)) // Receive number of characters written
+	if (!FillConsoleOutputAttribute(hConsole,
+		csbi.wAttributes,
+		dwConSize,
+		coordScreen,
+		&cCharsWritten))
 	{
 		return;
 	}
-
-	// Put the cursor at its home coordinates.
-
 	SetConsoleCursorPosition(hConsole, coordScreen);
 }
 
@@ -1954,7 +1862,6 @@ void addATCPath() {
 		test = fopen(testPath, "r");
 		tested = 1;
 	}
-
 	if (open == NULL || (test == NULL&&open != NULL&&tested == 1)) {
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"echo %PATH% > PATH_paths.txt\""), NULL, SW_SHOW);
 		Sleep(200);
@@ -2086,9 +1993,7 @@ void toSolve(int re) {
 						}
 					}
 				}
-
 			}
-
 			for (k = 0; txtFiles[k + 1] != '\0'; k++) {
 				txtFiles[k] = txtFiles[k + 1];
 			}
@@ -2098,8 +2003,7 @@ void toSolve(int re) {
 			if (numFiles > 0) {
 				printf("\n==> ATC has detected %d file(s) in the \"To solve\" folder. <==\n\nDo you want to solve the file(s)? (Yes -> 1 / No -> 0)\n", numFiles);
 				while (action != 0 && action != 1) {
-					gets_s(option);
-					action = (int)convertToNumber(option);
+					action = (int)getValue();
 					if (action != 0 && action != 1) {
 						puts("(Yes -> 1 / No -> 0)");
 					}
@@ -2128,8 +2032,7 @@ void toSolve(int re) {
 				int disable = -1;
 				printf("Do you want to disable the feature? (Yes -> 1 / No -> 0)\n");
 				while (disable != 0 && disable != 1) {
-					gets_s(option);
-					disable = (int)convertToNumber(option);
+					disable = (int)getValue();
 					if (disable != 0 && disable != 1) {
 						puts("(Yes -> 1 / No -> 0)");
 					}
@@ -2143,7 +2046,6 @@ void toSolve(int re) {
 					fclose(dis);
 					puts("==> To enable the feature later enter \"enable txt detector\" <==\n");
 				}
-
 			}
 		}
 	}
@@ -2189,7 +2091,6 @@ void on_start() {
 			applySettings(Dimensions);
 		}
 	}
-
 }
 
 void ShowConsoleCursor(BOOL bShow)
@@ -2222,7 +2123,6 @@ bool IsPreviousToWindowsVista()
 			previousToVista = true;
 		}
 	}
-
 	return previousToVista;
 }
 
@@ -2306,7 +2206,6 @@ int variableValidator(char variable[DIM]) {
 		return h;
 	}
 	revariable[0] = '\0';
-
 	FILE *var = NULL, *var1 = NULL;
 	i = 0;
 	abc = abs((int)strlen(variable));
@@ -2346,34 +2245,25 @@ int variableValidator(char variable[DIM]) {
 			h = 1;
 		}
 		else {
-			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'x' || variable[i] == 'D' || variable[i] == 'b') {
-
+			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'D' || variable[i] == 'b') {
 				if (variable[i] == 'i') {
 					revariable[i] = 'o';
 				}
-
 				if (variable[i] == 'e') {
 					revariable[i] = 'w';
 				}
-
-				if (variable[i] == 'x') {
-					revariable[i] = 'y';
-				}
-
 				if (variable[i] == 'D') {
 					revariable[i] = 'T';
 					if (isEqual("b", variable)) {
 						return 2;
 					}
 				}
-
 				if (variable[i] == 'b') {
 					revariable[i] = 'u';
 					if (isEqual("b", variable)) {
 						return 2;
 					}
 				}
-
 				h = 1;
 			}
 			else {
@@ -2393,7 +2283,7 @@ int variableValidator(char variable[DIM]) {
 					h = 1;
 				}
 				else {
-					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'F' || variable[i] == 'P') {
+					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'P') {
 						if (variable[i] == 'A') {
 							revariable[i] = 'Q';
 						}
@@ -2405,9 +2295,6 @@ int variableValidator(char variable[DIM]) {
 						}
 						if (variable[i] == 'E') {
 							revariable[i] = 'Y';
-						}
-						if (variable[i] == 'F') {
-							revariable[i] = 'U';
 						}
 						if (variable[i] == 'P') {
 							revariable[i] = 'S';
@@ -2421,15 +2308,13 @@ int variableValidator(char variable[DIM]) {
 			}
 		}
 	}
-
 	revariable[i] = '\0';
 	i = 0;
-
 	variable[abc] = '\0';
 	processVariable(variable);
 	variable[abc] = '\0';
 	arith = arithSolver(variable, 0);
-	if ((variable[0] == 'E' || variable[0] == 'B' || variable[0] == 'O' || variable[0] == 'H' || variable[0] == 'P' || variable[0] == 'x') && variable[1] == '=') {
+	if ((variable[0] == 'E' || variable[0] == 'B' || variable[0] == 'O' || variable[0] == 'H' || variable[0] == 'P') && variable[1] == '=') {
 		arith = 10;
 	}
 	variable[abc] = '\0';
@@ -2587,7 +2472,6 @@ double numericalSystems(char numSystem[DIM]) {
 		}
 	}
 	numSystem[i - 1] = '\0';
-
 	if (system == 'B') {
 		result = binaryToDecimal(numSystem);
 	}
@@ -2722,7 +2606,6 @@ double convertToNumber(char number[DIM]) {
 			number[m + 2] = '\0';
 		}
 	}
-
 	i = 0;
 	while (number[i] != '.'&&number[i] != '\0') {
 		i++;
@@ -2755,13 +2638,12 @@ double convertToNumber(char number[DIM]) {
 		result = result + num*pot(10.0, i*-1, 1);
 		i++;
 	}
-
 	result = result*pot(10.0, exp*sig, 1);
 	return result;
 }
 
 boolean firstLetterVariable(char letter) {
-	char letters[100] = "QWRTYUISGJKLZXVNMwyuofhjkzvnmp";
+	char letters[100] = "QWRTYUISGJKLZXVNMwyuofhjkxzvnmp";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(letters)); i++) {
 		if (letter == letters[i]) {
@@ -2772,7 +2654,7 @@ boolean firstLetterVariable(char letter) {
 }
 
 boolean letterVariables(char letter) {
-	char letters[100] = "QWRTYUIOSGHJKLZXVNMqwrtyuopasdfghjklzcvnm";
+	char letters[100] = "QWRTYUIOSGHJKLZXVNMqwrtyuopasxdfghjklzcvnm";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(letters)); i++) {
 		if (letter == letters[i]) {
@@ -2934,11 +2816,23 @@ boolean isContained(char to_find[DIM], char string[DIM]) {
 			if (to_find[0] == string[i] && i < abs((int)strlen(string))) {
 				strStart = i;
 				j = 0;
+				if (to_find[0] == string[i] && string[i] == string[i + 1] && to_find[0] != to_find[1]) {
+					while (to_find[0] == string[i]) {
+						i++;
+					}
+					strStart = i - 1;
+					if (to_find[1] == string[i]) {
+						i++;
+						j = j + 2;
+					}
+				}
 				while (to_find[j] == string[i] && string[i] != '\0'&&to_find[j] != '\0'&&i < abs((int)strlen(string)) && j < abs((int)strlen(to_find))) {
-					i++; j++;
+					i++;
+					j++;
 				}
 				strEnd = i;
 			}
+
 			if (j == abs((int)strlen(to_find))) {
 				return true;
 			}
@@ -2964,12 +2858,12 @@ double calcNow(char toCalc[DIM], double result1, double result2) {
 		char expression[DIM] = "";
 		sprintf(expression, "%s", toCalc);
 		feedbackValidation = 1;
+		resultR = 0; resultI = 0;
 		resultR = solveNow(expression, result1, result2);
 		feedbackValidation = 0;
 		if (verified == 0) {
 			printf("Invalid expression: %s\n\n", expression);
 		}
-		sprintf(toCalc, "");
 	}
 	else {
 		verified = 1; resultR = 0; resultI = 0;
@@ -2980,7 +2874,6 @@ double calcNow(char toCalc[DIM], double result1, double result2) {
 void complexNumber(double a, double b) {
 	processingOK = -1;
 	verify = 0;
-	printf(" ==> Your function argument: ");
 	if (a > 0 && b > 0) {
 		printf("%G+%Gi\n", a, b);
 	}
@@ -3020,5 +2913,6 @@ void complexNumber(double a, double b) {
 	resultR = -7; resultI = -7;
 	puts("\n");
 }
+
 
 

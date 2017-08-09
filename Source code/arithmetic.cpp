@@ -3,7 +3,6 @@
 #include "stdafx.h"
 #include "calc.h"
 
-
 void sum(double numR, double numI, double denR, double denI) {
 	resultR = numR + denR;
 	resultI = numI + denI;
@@ -46,7 +45,6 @@ void qu_complex(double dividend, double dividendI, double divider, double divide
 	char *pointer;
 	int i = 0;
 	division(dividend, dividendI, divider, dividerI);
-
 	sprintf(quot, "%f", resultR);
 	while (quot[i] != '.') {
 		quo[i] = quot[i];
@@ -78,11 +76,9 @@ void round_complex() {
 			numeriSys = atoi(numSys);
 			fclose(open);
 		}
-
 		double norm = sqrt(pow(resultR, 2.0) + pow(resultI, 2.0));
 		char response[DIM] = "";
 		char *ty;
-
 		if (numeriSys == 1) {
 			sprintf(response, "%G", norm);
 			norm = strtod(response, &ty);
@@ -211,7 +207,6 @@ double pot(double base, double exponent, int sig) {
 	else {
 		result = rt((double)base, 1 / (double)exponent, sig);
 	}
-
 	return result;
 }
 
@@ -241,7 +236,6 @@ double rt(double radicand, double degree, int sig) {
 				i = 0;
 				precision = precision / 10;
 			}
-
 			if (j == 1) {
 				result = 1 / result;
 				j = 0;
@@ -289,7 +283,6 @@ double multi(double multip) {
 		mu = mu*-1;
 	}
 	return mu;
-
 }
 
 double quo(double quotient) {

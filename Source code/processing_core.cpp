@@ -2,16 +2,12 @@
 
 #include "stdafx.h"
 
-
-
 double initialProcessor(char arithTrig[DIM], double result) {
 	int rasf = abs((int)strlen(arithTrig));
-
 	while (arithTrig[rasf - 2] == '+'&&arithTrig[rasf - 1] == '0') {
 		rasf = rasf - 2;
 		arithTrig[rasf] = '\0';
 	}
-
 	if (verbose == 1) {
 		printf("\n\n==> initialProcessor <==\n\nExpression: %s", arithTrig);
 	}
@@ -21,19 +17,15 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	char arTrig[DIM] = "", trigon[DIM] = "", trig[DIM] = "", paRect[DIM] = "", cN[DIM] = "", ex[DIM] = "", art[DIM] = "";
 	int parent[DIM], facto = 0, sig[DIM], s = 0, rectPar = 0, h = 0, i = 0, rePar = 0, so = 0, j = 0, g = 0, count = 0, e = 0, d = 0, th = 0, f = 0, trigo = 1, trigono = 0, co = 0, k = 0, l = 0, tr = 0, pa = 0, paren = 1, pare = 0, tg = 0, p = 0, a = 0, c = 1, r = 0, iN = 0, iL = 0;
 	double triArith[DIM], triArithI[DIM], exp = 1, result1, result2, amplitude = 1;
-
 	for (s = 0; s < abs((int)strlen(arithTrig)); s++) {
 		triArith[s] = 0;
 		triArithI[s] = 0;
 		sig[s] = -1;
 	}
-	for (s = 0; s < DIM; s++) {
+	for (s = 0; s < maxLength; s++) {
 		parent[s] = 0;
 	}
 	for (i = 0; arithTrig[i] != '\0'; i++) {
-		if (arithTrig[i] == 'x') {
-			arithTrig[i] = '*';
-		}
 		if (arithTrig[i] == '[' || arithTrig[i] == '{') {
 			arithTrig[i] = '(';
 		}
@@ -51,7 +43,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 		}
 	}
 	arithTrig[i] = '+'; arithTrig[i + 1] = '('; arithTrig[i + 2] = '0'; arithTrig[i + 3] = ')'; arithTrig[i + 4] = '\0';
-
 	for (s = 0; arithTrig[s] != '\0'; s++) {
 		if (arithTrig[s] == '+'&&arithTrig[s - 1] == 'E'&&arithTrig[s - 2] != 'P') {
 			r = s;
@@ -72,10 +63,8 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	}
 	paTrig[s] = '\0';
 	s = 0;
-
-	s = 0;
 	for (s; paTrig[s] != '\0'; s++) {
-		if ((paTrig[s] == 'E' || paTrig[s] == 'P') && (s == 0 || paTrig[s - 1] == '_' || paTrig[s - 1] == '*' || paTrig[s - 1] == 'x' || paTrig[s - 1] == '/' || paTrig[s - 1] == '^' || paTrig[s - 1] == '+' || (paTrig[s - 1] == '-'&&paTrig[s - 2] != 'H') || paTrig[s - 1] == '(')) {
+		if ((paTrig[s] == 'E' || paTrig[s] == 'P') && (s == 0 || paTrig[s - 1] == '_' || paTrig[s - 1] == '*' || paTrig[s - 1] == '/' || paTrig[s - 1] == '^' || paTrig[s - 1] == '+' || (paTrig[s - 1] == '-'&&paTrig[s - 2] != 'H') || paTrig[s - 1] == '(')) {
 			arithTrig[s] = '1';
 			for (s; paTrig[s] != '\0'; s++) {
 				arithTrig[s + 1] = paTrig[s];
@@ -453,7 +442,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					pas[a] = arithTrig[i];
 					a++; i++;
 				}
-
 				pas[a] = '\0';
 				int kl = 0;
 				for (de = 0; pas[de] != '\0'; de++) {
@@ -505,10 +493,8 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					}
 					ju = 0;
 				}
-
 				b++;
 			}
-
 		}
 		arTrig[c] = '=';
 	}
@@ -531,7 +517,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 			}
 		}
 	}
-
 	a = 0;
 	int fr;
 	so = 0;
@@ -546,7 +531,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					asdf = triArith[so + 1];
 					asdfI = triArithI[so + 1];
 					if (sig[so] == -1) {
-						if (triArith[so] < 0 || triArithI[so] < 0) {
+						if ((triArith[so] < 0 || triArithI[so] < 0) && !equationSolverRunning) {
 							sig[so] = 0;
 						}
 						else { sig[so] = 1; }
@@ -571,7 +556,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 						if (a == 2) {
 							while (a != 1) {
 								if (sig[so] == -1) {
-									if (triArith[so] < 0 || triArithI[so] < 0) {
+									if ((triArith[so] < 0 || triArithI[so] < 0) && !equationSolverRunning) {
 										sig[so] = 0;
 									}
 									else { sig[so] = 1; }
@@ -582,7 +567,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 								triArith[so] = 1; triArithI[so] = 0;
 								arTrig[so] = '*';
 								so--;
-
 								if (arTrig[so] != '^') {
 									a = 1;
 									so = fr++;
@@ -590,21 +574,18 @@ double initialProcessor(char arithTrig[DIM], double result) {
 							}
 						}
 					}
-
-
 				}
 				if (a == 1) {
 					triArith[sa] = asdf; a = 0;
 					triArithI[sa] = asdfI;
 				}
-
 			}
 		}
 		else {
 			if (arTrig[so] == '^'&&arTrig[so + 1] != '^') {
 				while (arTrig[so] == '^') {
 					if (sig[sa] == -1) {
-						if (triArith[sa] < 0 || triArithI[sa] < 0) {
+						if ((triArith[sa] < 0 || triArithI[sa] < 0) && !equationSolverRunning) {
 							sig[sa] = 0;
 						}
 						else { sig[sa] = 1; }
@@ -617,7 +598,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				}
 			}
 		}
-
 	}
 	char simplified[DIM] = "";
 	int RF = 0;
@@ -654,7 +634,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 			}
 		}
 	}
-
 	rasf = abs((int)strlen(simplified));
 	while (simplified[rasf - 1] == '+'&&simplified[rasf] == '0') {
 		rasf = rasf - 2;
@@ -735,12 +714,10 @@ double arithSolver(char trigon1[DIM], double result) {
 		return 0;
 	}
 	int rasf = abs((int)strlen(trigon1));
-
 	while (trigon1[rasf - 2] == '+'&&trigon1[rasf - 1] == '0') {
 		rasf = rasf - 2;
 		trigon1[rasf] = '\0';
 	}
-
 	if (verbose == 1) {
 		printf("\n\n==> arithSolver <==\n\nExpression: %s", trigon1);
 	}
@@ -918,7 +895,6 @@ double arithSolver(char trigon1[DIM], double result) {
 					}
 					number2[j] = '0';
 				}
-
 				for (j = 0; number2[j] != '\0'; j++) {
 					number2[j] = number2[j + 1];
 				}
@@ -930,7 +906,6 @@ double arithSolver(char trigon1[DIM], double result) {
 						}
 					}
 				}
-
 				if (res == 0) {
 					ampl[n] = -1 * convertToNumber(number2);
 				}
@@ -949,7 +924,7 @@ double arithSolver(char trigon1[DIM], double result) {
 			number2[df] = '\0';
 		}
 		double var = 0;
-		if (number2[0] == 'f' || number2[0] == 'h' || number2[0] == 'j' || number2[0] == 'k' || number2[0] == 'm' || number2[0] == 'n' || number2[0] == 'o' || number2[0] == 'p' || number2[0] == 'u' || number2[0] == 'w' || number2[0] == 'v' || number2[0] == 'y' || number2[0] == 'z' || number2[0] == 'G' || number2[0] == 'I' || number2[0] == 'J' || number2[0] == 'K' || number2[0] == 'L' || number2[0] == 'M' || number2[0] == 'N' || number2[0] == 'Q' || number2[0] == 'R' || number2[0] == 'S' || number2[0] == 'T' || number2[0] == 'U' || number2[0] == 'V' || number2[0] == 'X' || number2[0] == 'Y' || number2[0] == 'Z') {
+		if (number2[0] == 'f' || number2[0] == 'h' || number2[0] == 'j' || number2[0] == 'k' || number2[0] == 'm' || number2[0] == 'n' || number2[0] == 'o' || number2[0] == 'p' || number2[0] == 'u' || number2[0] == 'w' || number2[0] == 'v' || number2[0] == 'y' || number2[0] == 'z' || number2[0] == 'G' || number2[0] == 'I' || number2[0] == 'J' || number2[0] == 'K' || number2[0] == 'L' || number2[0] == 'M' || number2[0] == 'N' || number2[0] == 'Q' || number2[0] == 'R' || number2[0] == 'S' || number2[0] == 'T' || number2[0] == 'U' || number2[0] == 'V' || number2[0] == 'X' || number2[0] == 'Y' || number2[0] == 'Z' || number2[0] == 'x') {
 			for (j = 0; number2[j] != '\0'; j++) {
 				if (number2[j] == '.') {
 					number2[j] = '\0';
@@ -972,7 +947,7 @@ double arithSolver(char trigon1[DIM], double result) {
 				}
 			}
 		}
-		if (number2[1] == 'f' || number2[1] == 'h' || number2[1] == 'j' || number2[1] == 'k' || number2[1] == 'm' || number2[1] == 'n' || number2[1] == 'o' || number2[1] == 'p' &&number2[2] != 'i' || number2[1] == 'u' || number2[1] == 'w' || number2[1] == 'v' || number2[1] == 'y' || number2[1] == 'z' || number2[1] == 'G' || number2[1] == 'I' || number2[1] == 'J' || number2[1] == 'K' || number2[1] == 'L' || number2[1] == 'M' || number2[1] == 'N' || number2[1] == 'Q' || number2[1] == 'R' || number2[1] == 'S' || number2[1] == 'T' || number2[1] == 'U' || number2[1] == 'V' || number2[1] == 'X' || number2[1] == 'Y' || number2[1] == 'Z') {
+		if (number2[1] == 'f' || number2[1] == 'h' || number2[1] == 'j' || number2[1] == 'k' || number2[1] == 'm' || number2[1] == 'n' || number2[1] == 'o' || number2[1] == 'p' &&number2[2] != 'i' || number2[1] == 'u' || number2[1] == 'w' || number2[1] == 'v' || number2[1] == 'y' || number2[1] == 'z' || number2[1] == 'G' || number2[1] == 'I' || number2[1] == 'J' || number2[1] == 'K' || number2[1] == 'L' || number2[1] == 'M' || number2[1] == 'N' || number2[1] == 'Q' || number2[1] == 'R' || number2[1] == 'S' || number2[1] == 'T' || number2[1] == 'U' || number2[1] == 'V' || number2[1] == 'X' || number2[1] == 'Y' || number2[1] == 'Z' || number2[0] == 'x') {
 			if (number2[0] == '_' && (number2[1] == 'I'&&number2[2] == 'N'&&number2[3] == 'F') == false) {
 				for (j = 0; number2[j + 1] != '\0'; j++) {
 					number2[j] = number2[j + 1];
@@ -984,8 +959,14 @@ double arithSolver(char trigon1[DIM], double result) {
 						number2[j] = '\0';
 					}
 				}
-				var = processVariable(number2);
-				if (var != 0) { ampl[n] = var; if (sign == 1) { sign = 0; ampl[n] = ampl[n] * -1; } }
+				processVariable(number2);
+				ampl[n] = resultR;
+				amplI[n] = resultI;
+				if (sign == 1) {
+					sign = 0;
+					ampl[n] = ampl[n] * -1;
+					amplI[n] = amplI[n] * -1;
+				}
 			}
 		}
 		if (number2[0] == 'B' || number2[0] == 'O' || number2[0] == 'H') {
@@ -1026,7 +1007,6 @@ double arithSolver(char trigon1[DIM], double result) {
 				number2[j] = number2[j + 1];
 			}
 			number2[j] = '\0';
-
 			if (number2[0] == 'B') {
 				if (isContained("B.", number2)) {
 					replace("B.", "B0.", number2);
@@ -1068,12 +1048,6 @@ double arithSolver(char trigon1[DIM], double result) {
 		if (number2[0] == '_'&&number2[1] == 'p'&&number2[2] == 'i') {
 			ampl[n] = (-1)*(M_PI);
 		}
-		if (number2[0] == 'I'&&number2[1] == 'N'&&number2[2] == 'F') {
-			ampl[n] = pot(2.0, 2000.0, 1);
-		}
-		if (number2[0] == '_'&&number2[1] == 'I'&&number2[2] == 'N'&&number2[3] == 'F') {
-			ampl[n] = pot(2.0, 2000.0, 1)*-1;
-		}
 		if (number2[0] == 'e') {
 			ampl[n] = M_E;
 		}
@@ -1083,11 +1057,19 @@ double arithSolver(char trigon1[DIM], double result) {
 		if (number2[0] == 'r'&&number2[1] == 'e'&&number2[2] == 's' || number2[0] == '['&&number2[1] == 'r'&&number2[2] == 'e'&&number2[3] == 's') {
 			ampl[n] = ansRV;
 			amplI[n] = ansIV;
+			if (equationSolverRunning || solverRunning) {
+				ampl[n] = xValuesR;
+				amplI[n] = xValuesI;
+			}
 			complex = 2;
 		}
 		if (number2[0] == '_'&&number2[1] == 'r'&&number2[2] == 'e'&&number2[3] == 's' || number2[0] == '['&&number2[1] == '_'&&number2[2] == 'r'&&number2[3] == 'e'&&number2[4] == 's') {
 			ampl[n] = ansRV*-1;
 			amplI[n] = ansIV*-1;
+			if (equationSolverRunning || solverRunning) {
+				ampl[n] = xValuesR*-1;
+				amplI[n] = xValuesI*-1;
+			}
 			complex = 2;
 		}
 		if (facto > 0) {
@@ -1122,7 +1104,6 @@ double arithSolver(char trigon1[DIM], double result) {
 		char trigon1[] = "";
 		res = 0;
 	}
-
 	int a = 0;
 	int fr;
 	so = 0;
@@ -1140,7 +1121,6 @@ double arithSolver(char trigon1[DIM], double result) {
 						sig[so] = 0;
 					}
 					else { sig[so] = 1; }
-
 					exponentiation(ampl[so], amplI[so], asdf, asdfI, sig[so]);
 					asdf = resultR;
 					asdfI = resultI;
@@ -1160,11 +1140,10 @@ double arithSolver(char trigon1[DIM], double result) {
 					else {
 						if (a == 2) {
 							while (a != 1) {
-								if (ampl[so] < 0 || amplI[so] < 0) {
+								if ((ampl[so] < 0 || amplI[so] < 0) && !equationSolverRunning) {
 									sig[so] = 0;
 								}
 								else { sig[so] = 1; }
-
 								exponentiation(ampl[so], amplI[so], asdf, asdfI, sig[so]);
 								asdf = resultR;
 								asdfI = resultI;
@@ -1172,7 +1151,6 @@ double arithSolver(char trigon1[DIM], double result) {
 								amplI[so] = 0;
 								amp[so] = '*';
 								so--;
-
 								if (amp[so] != '^') {
 									a = 1;
 									so = fr++;
@@ -1180,24 +1158,20 @@ double arithSolver(char trigon1[DIM], double result) {
 							}
 						}
 					}
-
-
 				}
 				if (a == 1) {
 					ampl[sa] = asdf; a = 0;
 					amplI[sa] = asdfI;
 				}
-
 			}
 		}
 		else {
 			if (amp[so] == '^'&&amp[so + 1] != '^') {
 				while (amp[so] == '^') {
-					if (ampl[sa] < 0 || amplI[sa] < 0) {
+					if ((ampl[sa] < 0 || amplI[sa] < 0) && !equationSolverRunning) {
 						sig[sa] = 0;
 					}
 					else { sig[sa] = 1; }
-
 					exponentiation(ampl[sa], amplI[sa], ampl[so + 1], amplI[so + 1], sig[sa]);
 					ampl[sa] = resultR;
 					amplI[sa] = resultI;
@@ -1208,9 +1182,7 @@ double arithSolver(char trigon1[DIM], double result) {
 				}
 			}
 		}
-
 	}
-
 	char simplified[DIM] = "";
 	int RF = 0;
 	for (RF = 0; RF < n; RF++) {
@@ -1247,7 +1219,6 @@ double arithSolver(char trigon1[DIM], double result) {
 		}
 	}
 	rasf = abs((int)strlen(simplified));
-
 	while (simplified[rasf - 2] == '+'&&simplified[rasf - 1] == '0') {
 		rasf = rasf - 2;
 		simplified[rasf] = '\0';
@@ -1258,7 +1229,6 @@ double arithSolver(char trigon1[DIM], double result) {
 	if (verbose == 1) {
 		printf("\nSimplified expression by arithSolver: %s\n\n", simplified);
 	}
-
 	for (so = 0; so < n; so++) {
 		int sa = so;
 		while (amp[so] == '/') {
@@ -1269,12 +1239,10 @@ double arithSolver(char trigon1[DIM], double result) {
 			amplI[so + 1] = 0;
 			amp[so] = '*';
 			so++;
-
 		}
 	}
 	for (so = 0; so < n; so++) {
 		int sa = so;
-
 		while (amp[so] == '*') {
 			multiplication(ampl[sa], amplI[sa], ampl[so + 1], amplI[so + 1]);
 			ampl[sa] = resultR;
@@ -1285,7 +1253,6 @@ double arithSolver(char trigon1[DIM], double result) {
 			so++;
 		}
 	}
-
 	for (h = 0; h < n; h++) {
 		if (h == 0) {
 			result1 = ampl[0];
@@ -1339,7 +1306,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		atcFunc[i] = trigon[i];
 	}
 	atcFunc[i] = '\0';
-
 	if (atcFunc[0] == 'a'&&atcFunc[1] == 't'&&atcFunc[2] == 'c'&&atcFunc[3] == '_') {
 		for (i = 0; atcFunc[i + 4] != '\0'; i++) {
 			atcFunc[i] = atcFunc[i + 4];
@@ -1409,7 +1375,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			gon = 0;
 		}
 	}
-	for (s = 0; s < DIM; s++) {
+	for (s = 0; s < maxLength; s++) {
 		v[s] = 0;
 		argu[s] = 0;
 		ampl[s] = 0;
@@ -1495,7 +1461,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			}
 		}
 	}
-
 	result = 0;
 	if (trigon[0] == 'r'&&trigon[1] == 'a'&&trigon[2] == 'd') {
 		rad = 1;
@@ -1524,7 +1489,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		}
 		trigon[s] = '\0';
 	}
-
 	if (var == 1) {
 		if (trigon[0] == 'a'&&trigon[1] == 't'&&trigon[2] == 'c'&&trigon[3] == '_') {
 			for (i = 0; trigon[i + 4] != '\0'; i++) {
@@ -1552,7 +1516,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			}
 		}
 	}
-
 	i = 0; j = 0;
 	for (s = 0; trigon[s] != '\0'; s++) {
 		if (((trigon[s - 1] == 'g'&&trigon[s] == 'b') && trigon[s - 1] != 'c') || (trigon[s - 1] == 't'&&trigon[s] == 'D')) {
@@ -1571,7 +1534,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			resultI = 0; resultR = 0; baLog = 0;
 			trigon[j] = '\0';
 		}
-
 	}
 	sprintf(op, "%s", trigon);
 	int h = 0;
@@ -1616,7 +1578,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 					v[7] = re(v[7], 360);
 				}
 			}
-
 			vI[7] = vI[1];
 			if (vI[7] < 0) {
 				vI[7] = re(vI[7], -360);
@@ -1625,7 +1586,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 				if (vI[7] >= 0) {
 					vI[7] = re(vI[7], 360);
 				}
-
 			}
 			v[1] = v[7];
 			vI[1] = vI[7];
@@ -1640,7 +1600,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 					v[7] = re(v[7], 360);
 				}
 			}
-
 			vI[7] = vI[1] * 0.9;
 			if (vI[7] < 0) {
 				vI[7] = re(vI[7], -360);
@@ -1802,7 +1761,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			result1 = v[0] * sqrt(1 - (cos(v[1])*cos(v[1])));
 		}
 	}
-
 	if (isEqual("sinh", op)) {
 		complex_sinh(v[1], vI[1]);
 		result1 = resultR;
@@ -1813,7 +1771,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		result1 = resultR;
 		result2 = resultI;
 	}
-
 	if (isEqual("tan", op)) {
 		if (deg == 1) {
 			v[1] = ((v[1] * M_PI) / 180);
@@ -1927,7 +1884,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			}
 			atcFunc[i] = '\0';
 		}
-
 		resultR = v[1];
 		resultI = vI[1];
 		variableController("Input", resultR);
@@ -1942,7 +1898,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc";
 		return result1;
 	}
-
 	if (op[0] == 'a'&&type == 0) {
 		if (deg == 1) {
 			result1 = ((result1 * 180) / M_PI);
@@ -1953,7 +1908,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			result2 = result2*(200 / M_PI);
 		}
 	}
-
 	sprintf(trigon, "");
 	result1 = result1*jg;
 	result2 = result2*jg;
@@ -2001,5 +1955,3 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 	}
 	return result1;
 }
-
-

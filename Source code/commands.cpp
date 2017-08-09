@@ -2,8 +2,6 @@
 
 #include "stdafx.h"
 
-
-
 boolean commands(char arithTrig[DIM], char path[DIM], double result1, double result2) {
 	FILE *fout = NULL, *fclean = NULL;
 	char stringV[DIM] = "";
@@ -14,7 +12,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	int i = 0, r = 0, year = 0, s = 0;
 	boolean command = false;
 	i = 0;
-
 	if (isCommand(arithTrig, "atcProg")) {
 		command = true;
 		if (arithTrig[7] == '(') {
@@ -29,25 +26,31 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		puts(" ");
 	}
-
 	if (isCommand(arithTrig, "donate")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/p/advantrigoncalc/donate/?source=navbar\""), NULL, SW_SHOW);
 	}
-
 	if (isCommand(arithTrig, "atcfacebook")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://www.facebook.com/advantrigoncalc/\""), NULL, SW_SHOW);
 	}
-
 	if (isCommand(arithTrig, "atcsourceforge")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/projects/advantrigoncalc/\""), NULL, SW_SHOW);
 	}
-
+	if (isCommand(arithTrig, "trianglesrectanglessolver")) {
+		command = true;
+		trianglesRectanglesSolver();
+		puts("");
+	}
+	if (isCommand(arithTrig, "arithmeticmatrixsolver")) {
+		command = true;
+		arithmeticMatrixSolver();
+		puts("");
+	}
 	if (isCommand(arithTrig, "atcfromcmd")) {
 		command = true;
 		char comm[300] = "";
@@ -60,7 +63,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		puts("\n==> You can now run cmd.exe and enter e.g. \"atc time\" <==\n");
 		puts("");
 	}
-
 	if (isCommand(arithTrig, "atcovercmd")) {
 		command = true;
 		puts("\n==> ATC is ready to process data. <==\n");
@@ -150,7 +152,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 
 		} while (continu == 1);
 	}
-
 	if (isCommand(arithTrig, "autosolvetxt")) {
 		command = true;
 		int p = 0;
@@ -169,160 +170,56 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		printf("\n==> Close the file with the answers to continue. <==\n\n");
 		fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
 		openTxt();
-
 	}
-
-	if (isCommand(arithTrig, "solvequadraticequation") && arithTrig[i + 22] == '(') {
+	if (isCommand(arithTrig, "solver") && arithTrig[i + 6] == '(') {
 		command = true;
-		char values[DIM] = "", value[DIM] = "", saveValue[DIM] = "";
-		int v = 0, ct = 0;
-		double aR = 0, aI = 0, bR = 0, bI = 0, cR = 0, cI = 0;
-		i = 23;
-		while (arithTrig[i] != '\0'&&arithTrig[i] != ')') {
-			if (arithTrig[i] == '\\') {
-				ct++;
-			}
-			values[v] = arithTrig[i];
-			v++; i++;
-		}
-		values[v] = '\0';
-		if (ct != 2) {
-			puts("\nError: You must include a, b and c values.\n");
+		solverRunning = true;
+		if (!isContained("x", arithTrig)) {
+			puts("\n\n Error: No 'x' detected in your entered expression.\n\n");
 		}
 		else {
-			puts(" ");
-			v = 0;
-			i = 0;
-			while (values[i] != '\\') {
-				value[v] = values[i];
-				i++; v++;
+			int h = 7;
+			char expression[DIM] = "";
+			while ((arithTrig[h] == ')'&&arithTrig[h + 1] == '+'&&arithTrig[h + 2] == '0'&&arithTrig[h + 3] == '\0') == false) {
+				expression[h - 7] = arithTrig[h];
+				h++;
 			}
-			value[v] = '\0';
-			calcNow(value, result1, result2);
-			if (verified == 1) {
-				aR = resultR;
-				aI = resultI;
-				i++; v = 0;
-				while (values[i] != '\\') {
-					value[v] = values[i];
-					i++; v++;
-				}
-				value[v] = '\0';
-				calcNow(value, result1, result2);
-				if (verified == 1) {
-					bR = resultR;
-					bI = resultI;
-					i++; v = 0;
-					while (values[i] != '\0') {
-						value[v] = values[i];
-						i++; v++;
-					}
-					value[v] = '\0';
-					calcNow(value, result1, result2);
-					if (verified == 1) {
-						cR = resultR;
-						cI = resultI;
-						multiplication(-1, 0, bR, bI);
-						double minusbR = resultR, minusbI = resultI;
-						multiplication(bR, bI, bR, bI);
-						double bRquad = resultR, bIquad = resultI;
-						multiplication(aR, aI, cR, cI);
-						double acR = resultR, acI = resultI;
-						multiplication(2, 0, aR, aI);
-						double twoaR = resultR, twoaI = resultI;
-						multiplication(4, 0, acR, acI);
-						double fouracR = resultR, fouracI = resultI;
-						subtraction(bRquad, bIquad, fouracR, fouracI);
-						double radicandR = resultR, radicandI = resultI;
-						exponentiation(radicandR, radicandI, 0.5, 0, 1);
-						double sqrtR = resultR, sqrtI = resultI;
-						subtraction(minusbR, minusbI, sqrtR, sqrtI);
-						double minusR = resultR, minusI = resultI;
-						sum(minusbR, minusbI, sqrtR, sqrtI);
-						double plusR = resultR, plusI = resultI;
-						division(plusR, plusI, twoaR, twoaI);
-						double x1R = resultR, x1I = resultI;
-						division(minusR, minusI, twoaR, twoaI);
-						double x2R = resultR, x2I = resultI;
-						if (x1R > 0 && x1I > 0) {
-							printf("x1=%G+%Gi\n", x1R, x1I);
-						}
-						else {
-							if (x1R > 0 && x1I < 0) {
-								printf("x1=%G%Gi\n", x1R, x1I);
-							}
-							else {
-								if (x1R < 0 && x1I > 0) {
-									printf("x1=%G+%Gi\n", x1R, x1I);
-								}
-								else {
-									if (x1R < 0 && x1I < 0) {
-										printf("x1=%G%Gi\n", x1R, x1I);
-									}
-									else {
-										if (x1R == 0 && x1I == 0) {
-											printf("x1=%G\n", x1R);
-										}
-										else {
-											if (x1R == 0 && x1I != 0) {
-												printf("x1=%Gi\n", x1I);
-											}
-											else {
-												if (x1R != 0 && x1I == 0) {
-													printf("x1=%G\n", x1R);
-												}
-												else {
-													printf("x1=%G+%Gi\n", x1R, x1I);
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-						if (x2R > 0 && x2I > 0) {
-							printf("x2=%G+%Gi\n", x2R, x2I);
-						}
-						else {
-							if (x2R > 0 && x2I < 0) {
-								printf("x2=%G%Gi\n", x2R, x2I);
-							}
-							else {
-								if (x2R < 0 && x2I > 0) {
-									printf("x2=%G+%Gi\n", x2R, x2I);
-								}
-								else {
-									if (x2R < 0 && x2I < 0) {
-										printf("x2=%G%Gi\n", x2R, x2I);
-									}
-									else {
-										if (x2R == 0 && x2I == 0) {
-											printf("x2=%G\n", x2R);
-										}
-										else {
-											if (x2R == 0 && x2I != 0) {
-												printf("x2=%Gi\n", x2I);
-											}
-											else {
-												if (x2R != 0 && x2I == 0) {
-													printf("x2=%G\n", x2R);
-												}
-												else {
-													printf("x2=%G+%Gi\n", x2R, x2I);
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+			expression[h - 7] = '\0';
+			replace("x", "res", expression);
+			sprintf(expression, "%s", expressionF);
+			solver(expression);
+			printf("\n\nx=");
+			if (realSolver == false) {
+				resultR = resultR*-1; resultI = resultI*-1;
 			}
+			else {
+				realSolver = false;
+			}
+			complexNumber(resultR, resultI);
 		}
-		puts(" ");
+		solverRunning = false;
 	}
-
+	if (isCommand(arithTrig, "solveequation")) {
+		command = true;
+		puts("");
+		if (arithTrig[13] == '(') {
+			int tDev = 14, tGet = 0;
+			char exprDev[DIM] = "";
+			while ((arithTrig[tDev] == ')'&&arithTrig[tDev + 1] == '+'&&arithTrig[tDev + 2] == '0'&&arithTrig[tDev + 3] == '\0') == false && arithTrig[tDev] != '\0') {
+				exprDev[tGet] = arithTrig[tDev];
+				tGet++; tDev++;
+			}
+			exprDev[tGet] = '\0';
+			equationSolver(exprDev);
+		}
+		puts("");
+	}
+	if (isCommand(arithTrig, "solvequadraticequation") && arithTrig[i + 22] == '(') {
+		puts("");
+		command = true;
+		solveQuadraticEquation(arithTrig, result1, result2, 1);
+		puts("");
+	}
 	if (isCommand(arithTrig, "sprint") && arithTrig[i + 6] == '(') {
 		char vaString[DIM] = "";
 		int x = 0, y = 0;
@@ -337,7 +234,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		puts(" ");
 		arithTrig[0] = '\0'; command = true;
 	}
-
 	if (isCommand(arithTrig, "print") && arithTrig[i + 5] == '(') {
 		char vaString[DIM] = "";
 		int x = 0, y = 0;
@@ -367,7 +263,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		arithTrig[0] = '\0'; command = true;
 	}
-
 	if (isCommand(arithTrig, "logoff")) {
 		continu = 0;
 		command = true;
@@ -378,14 +273,12 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			system("C:\\WINDOWS\\System32\\shutdown /l");
 		}
 	}
-
 	if (isCommand(arithTrig, "enabletxtdetector")) {
 		command = true;
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del disable_txt_detector.txt\""), NULL, SW_SHOW);
 		Sleep(200);
 		puts(" ");
 	}
-
 	if (isCommand(arithTrig, "history")) {
 		command = true;
 		puts(" ");
@@ -394,7 +287,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		sprintf(path4ATC, "notepad.exe %s\\history.txt", atcPath);
 		system(path4ATC);
 	}
-
 	if (isCommand(arithTrig, "resetall")) {
 		command = true;
 		puts(" ");
@@ -406,7 +298,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fclose(start);
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
 	}
-
 	if (isCommand(arithTrig, "resetsettings")) {
 		command = true;
 		puts(" ");
@@ -418,7 +309,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fclose(start);
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
 	}
-
 	if (isCommand(arithTrig, "atcfolder")) {
 		command = true;
 		char comm[300] = "";
@@ -429,9 +319,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		LPCWSTR sw = stemp.c_str();
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
-
 	}
-
 	if (isCommand(arithTrig, "sourcecode")) {
 		command = true;
 		char comm[300] = "";
@@ -443,7 +331,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
-
 	if (isCommand(arithTrig, "scriptsexamples")) {
 		command = true;
 		char comm[300] = "";
@@ -455,7 +342,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
-
 	if (isCommand(arithTrig, "strings")) {
 		command = true;
 		char comm[300] = "";
@@ -467,7 +353,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
-
 	if (isCommand(arithTrig, "userfunctions")) {
 		command = true;
 		char comm[300] = "";
@@ -479,7 +364,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
-
 	if (isCommand(arithTrig, "tosolve")) {
 		command = true;
 		char comm[300] = "";
@@ -491,7 +375,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
-
 	if (isCommand(arithTrig, "restartatc")) {
 		command = true;
 		continu = 0;
@@ -503,7 +386,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		LPCWSTR sw = stemp.c_str();
 		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 	}
-
 	if (isCommand(arithTrig, "runatc")) {
 		command = true;
 		puts(" ");
@@ -515,31 +397,26 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		LPCWSTR sw = stemp.c_str();
 		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 	}
-
 	if (isCommand(arithTrig, "updateportable")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Advanced%20Trigonometry%20Calculator.zip/download\""), NULL, SW_SHOW);
 	}
-
 	if (isCommand(arithTrig, "update")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator.exe/download\""), NULL, SW_SHOW);
 	}
-
 	if (isCommand(arithTrig, "updatex64")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator%20x64.exe/download\""), NULL, SW_SHOW);
 	}
-
 	if (isCommand(arithTrig, "userguide")) {
 		command = true;
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator - User Guide.pdf"), NULL, NULL, SW_SHOW);
 	}
-
 	if (isCommand(arithTrig, "sleep")) {
 		command = true;
 		puts(" ");
@@ -547,13 +424,11 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		Sleep(5000);
 		system("C:\\WINDOWS\\System32\\Rundll32.exe powrprof.dll,SetSuspendState Sleep");
 	}
-
 	if (isCommand(arithTrig, "lock")) {
 		command = true;
 		puts(" ");
 		system("C:\\WINDOWS\\System32\\Rundll32.exe User32.dll,LockWorkStation");
 	}
-
 	if (isCommand(arithTrig, "hibernate")) {
 		command = true;
 		puts(" ");
@@ -561,7 +436,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		Sleep(5000);
 		system("C:\\WINDOWS\\System32\\rundll32.exe PowrProf.dll,SetSuspendState Hibernate");
 	}
-
 	if (isCommand(arithTrig, "shutdown")) {
 		continu = 0;
 		command = true;
@@ -572,7 +446,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			system("C:\\WINDOWS\\System32\\shutdown /s");
 		}
 	}
-
 	if (isCommand(arithTrig, "shutdownnow")) {
 		continu = 0;
 		command = true;
@@ -583,7 +456,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			system("C:\\WINDOWS\\System32\\shutdown /s /t 0");
 		}
 	}
-
 	if (isCommand(arithTrig, "restartpc")) {
 		continu = 0;
 		command = true;
@@ -594,7 +466,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			system("C:\\WINDOWS\\System32\\shutdown /r");
 		}
 	}
-
 	if (isCommand(arithTrig, "restartpcnow")) {
 		continu = 0;
 		command = true;
@@ -605,26 +476,22 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			system("C:\\WINDOWS\\System32\\shutdown /r /t 0");
 		}
 	}
-
 	if (isCommand(arithTrig, "exit")) {
 		continu = 0;
 		fprintf(fout, "\n");
 		command = true;
 	}
-
 	if (isCommand(arithTrig, "clean")) {
 		cls(); command = true;
 		arithTrig[0] = '\0';
 		fprintf(fout, "\n");
 	}
-
 	if (isCommand(arithTrig, "about")) {
 		arithTrig[0] = '\0'; command = true;
 		cls();
 		about2();
 		fprintf(fout, "\n");
 	}
-
 	if (isCommand(arithTrig, "mode")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of mode <==\n\n");
@@ -633,7 +500,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(fout, "\n");
 		printf("\n");
 	}
-
 	if (isCommand(arithTrig, "cleanhistory")) {
 		fclean = NULL;
 		while (fclean == NULL) {
@@ -645,31 +511,26 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		arithTrig[0] = '\0';
 		cleanhistory = 1;
 	}
-
 	if (isCommand(arithTrig, "colors")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of background and text colors <==\n\n");
 		fprintf(fout, "\n==> Configuration of background and text colors <==\n\n");
 		colors();
 	}
-
 	if (isCommand(arithTrig, "dimensions")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Dimensional configuration of the application window <==\n\n");
 		fprintf(fout, "\n==> Dimensional configuration of the application window <==\n\n");
 		dimensions();
 	}
-
 	if (isCommand(arithTrig, "window")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of the position, width and height of the application window <==\n\n");
 		fprintf(fout, "\n==> Configuration of the position, width and height of the application window <==\n\n");
 		window();
 	}
-
 	if (isCommand(arithTrig, "solveequationssystem") && arithTrig[i + 20] == '(') {
 		int correct = 1, vi = 0, vj = 0;
-
 		count = 2;
 		if (arithTrig[i + 25] == '(') {
 			i = i + 26;
@@ -735,12 +596,9 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 							solutionI = 0;
 							for (q = 0; q < count; q++) {
 								multiplication(valuesS[p][q], valuesSI[p][q], values[q][count - 1], valuesI[q][count - 1]);
-
 								solutionR = solutionR + resultR;
 								solutionI = solutionI + resultI;
-
 							}
-
 							char Value[DIM] = "";
 							sprintf(Value, "%G", solutionR);
 							for (int v = 0; Value[v]; v++) {
@@ -758,8 +616,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 								}
 							}
 							valuesS[p][count - 1] = calcNow(Value, result1, result2);
-
-
 							sprintf(Value, "%G", solutionI);
 							for (int v = 0; Value[v]; v++) {
 								if (Value[v] == '-')
@@ -825,7 +681,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 														fprintf(fout, "x%d=%G\n", p + 1, values[p][count - 1]);
 													}
 												}
-
 											}
 										}
 									}
@@ -860,8 +715,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		arithTrig[0] = '\0'; command = true;
 	}
-
-
 	if (isCommand(arithTrig, "eliminatevariables")) {
 		FILE *open = NULL;
 		int r = 0;
@@ -890,7 +743,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 		}
 	}
-
 	if (isCommand(arithTrig, "eliminatestrings")) {
 		FILE *open = NULL;
 		int r = 0;
@@ -910,7 +762,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			arithTrig[0] = '\0';
 		}
 	}
-
 	if (isCommand(arithTrig, "stopwatch") && arithTrig[i + 9] == '(' || isCommand(arithTrig, "runstopwatch") && arithTrig[i + 12] == '(') {
 		if (isCommand(arithTrig, "runstopwatch")) {
 			command = true;
@@ -1000,7 +851,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			ShowConsoleCursor(TRUE);
 		}
 	}
-
 	if (isCommand(arithTrig, "eliminateresults")) {
 		r = 0; command = true;
 		while (r < rf) {
@@ -1013,7 +863,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(fout, "\n==> The results were eliminated successfully. <==\n\n");
 		arithTrig[0] = '\0';
 	}
-
 	if (isCommand(arithTrig, "seestrings")) {
 		FILE *open = NULL;
 		int r = 0;
@@ -1041,7 +890,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			arithTrig[0] = '\0';
 		}
 	}
-
 	if (isCommand(arithTrig, "seevariables")) {
 		FILE *open = NULL;
 		int r = 0;
@@ -1069,7 +917,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			arithTrig[0] = '\0';
 		}
 	}
-
 	if (isCommand(arithTrig, "eliminateabbreviations")) {
 		FILE *open = NULL;	 command = true;
 		char toOpen[DIM] = "";
@@ -1082,7 +929,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		arithTrig[0] = '\0';
 		fclose(open);
 	}
-
 	if (isCommand(arithTrig, "seeabbreviations")) {
 		FILE *open = NULL;	   command = true;
 		char toOpen[DIM] = "";
@@ -1105,7 +951,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		fclose(open);
 	}
-
 	if (isCommand(arithTrig, "seeresults")) {
 		arithTrig[0] = '\0'; command = true;
 		if (rf > 0) {
@@ -1141,8 +986,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					printf("#%d=%G\n", r, ans[r]);
 					fprintf(fout, "#%d=%G\n", r, ans[r]);
 				}
-
-
 				r++;
 			}
 			printf("\n");
@@ -1152,9 +995,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			printf("\n==> No calculated result! <==\n\n");
 			fprintf(fout, "\n==> No calculated result! <==\n\n");
 		}
-
 	}
-
 	if (isCommand(arithTrig, "renamedvariables")) {
 		arithTrig[0] = '\0'; command = true;
 		FILE *open = NULL;
@@ -1181,7 +1022,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 		}
 	}
-
 	if (isCommand(arithTrig, "numericalsystems")) {
 		char arithTrig[DIM] = ""; command = true;
 		arithTrig[0] = '\0';
@@ -1191,7 +1031,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(fout, "\n");
 		printf("\n");
 	}
-
 	if (isCommand(arithTrig, "timer") && arithTrig[i + 5] == '(' || isCommand(arithTrig, "runtimer") && arithTrig[i + 8] == '(') {
 		if (isCommand(arithTrig, "runtimer")) {
 			command = true;
@@ -1280,7 +1119,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 								start = clock();
 								if (totalTime > 0) {
 									while (timeActual > 0) {
-
 										end = clock();
 										timePassed = (end - start) / CLOCKS_PER_SEC;
 										if (timePassed == 0) {
@@ -1362,7 +1200,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.0  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.1  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(thours, tminutes, tseconds);
 									}
@@ -1389,7 +1227,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		arithTrig[0] = '\0'; command = true;
 		ShowConsoleCursor(TRUE);
 	}
-
 	if (isCommand(arithTrig, "clock") && arithTrig[i + 5] == '(' || isCommand(arithTrig, "runclock") && arithTrig[i + 8] == '(') {
 		if (isCommand(arithTrig, "runclock")) {
 			command = true;
@@ -1415,7 +1252,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			else {
 				if (arithTrig[i + 5] == '(') {
 					i = i + 6;
-
 				}
 			}
 			int t = i, p = 0;
@@ -1493,7 +1329,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 								start = clock();
 								if (totalTime > 0) {
 									while (timeActual > 0) {
-
 										end = clock();
 										timePassed = (end - start) / CLOCKS_PER_SEC;
 										if (timePassed == 0) {
@@ -1576,7 +1411,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.0 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.1 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n\n%02d:%02d:%02d\n\n", thours, tminutes, tseconds);
@@ -1597,7 +1432,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		arithTrig[0] = '\0'; command = true;
 		ShowConsoleCursor(TRUE);
 	}
-
 	if (isCommand(arithTrig, "verboseresolution")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of verbose resolution <==\n\n");
@@ -1606,7 +1440,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(fout, "\n");
 		printf("\n");
 	}
-
 	if (isCommand(arithTrig, "siprefixes")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of SI prefixes response <==\n\n");
@@ -1615,13 +1448,12 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(fout, "\n");
 		printf("\n");
 	}
-
 	if (isCommand(arithTrig, "time")) {
 		arithTrig[0] = '\0'; command = true;
+		puts("");
 		Clock(1);
 		puts("");
 	}
-
 	if (isCommand(arithTrig, "actualtimeresponse")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of actual time response <==\n\n");
@@ -1630,7 +1462,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(fout, "\n");
 		printf("\n");
 	}
-
 	if (isCommand(arithTrig, "dayofweek") && arithTrig[i + 9] == '(') {
 		arithTrig[0] = '\0'; command = true;
 		char Day[DIM] = "", Month[DIM] = "", Year[DIM] = "";
@@ -1692,7 +1523,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					day = calcNow(Day, result1, result2);
 				}
 			}
-
 			if (arithTrig[i] == 'm'&&month == 0) {
 				r = 0;
 				i++;
@@ -1761,12 +1591,10 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 							year1S = year1;
 						}
 					}
-
 				}
 				else {
 					Year[r] = '+'; Year[r + 1] = '0'; Year[r + 2] = '\0';
 					year = calcNow(Year, result1, result2);
-
 				}
 			}
 			if (arithTrig[i] != 'd'&&arithTrig[i] != 'm'&&arithTrig[i] != 'y'&&arithTrig[i] != 'a') {
@@ -1784,53 +1612,34 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					month = 12;
 					year--;
 				}
-
-
 				while (day > 29 && (qu(re(year, 4), 1) == 0 && (qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day > 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day > 31 || day > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
-
 					if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
 						day = day - 31;
-
 					}
 					else {
 						if (month == 2) {
 							if ((qu(re(year, 4), 1) == 0 && qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) {
 								day = day - 29;
-
 							}
 							else {
 								day = day - 28;
-
 							}
-
 						}
-
-
 						else {
 							day = day - 30;
-
 						}
-
 					}
-
 					month++;
 					if (month > 12) {
 						year++;
 						month = qu(re(month, 12), 1);
 					}
-
-
-
 				}
 			}
 			else {
-
-
 				while (day1 > 29 && (qu(re(year, 4), 1) == 0 && (qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day1 > 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31 || day1 > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
 					if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31) {
 						day1 = day1 - 31;
-
-
 					}
 					else {
 						if (month == 2) {
@@ -1854,35 +1663,25 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 									day1 = day1 - 28;
 								}
 							}
-
 						}
-
-
 						else {
 							if (day1 > 30) {
 								day1 = day1 - 30;
 							}
 						}
-
 					}
 					month--;
 					if (month == 0) {
 						year--;
 						month = 12;
 					}
-
 				}
-
-
 				day = day - day1;
 				if (day < 0) {
 					month--;
 					int sumDay = 0;
-
-
 					if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day1 > 31) {
 						sumDay = 31;
-
 					}
 					else {
 						if (month == 2) {
@@ -1902,24 +1701,15 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 							else {
 								sumDay = 28;
 							}
-
 						}
-
-
 						else {
 							sumDay = 30;
 						}
-
 					}
-
-
 					day = sumDay + day;
 				}
-
 				year = year - year1;
-
 				month = month - month1;
-
 				if (month > 12) {
 					plusYears = qu(month, 12);
 					year = year + plusYears;
@@ -1939,10 +1729,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 						}
 					}
 				}
-
 				day = day - datePreciser(day + day1S, month + month1S, year + year1S, dayS, monthS, yearS);
-
-
 			}
 			char tim[DIM] = "";
 			sprintf(tim, "%G", day);
@@ -1998,7 +1785,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 													h = ((int)(daY + floor((((montH + 1) * 26) / 10)*1.000) + (yeaR)+floor(((yeaR) / 4)*1.0000) + 6 * floor(((yeaR) / 100)*1.0000) + floor(((yeaR) / 400)*1.0000)) % 7);
 
 												}
-
 												if (h == 1) {
 													printf("Sunday\n\n");
 													fprintf(fout, "Sunday\n\n");
@@ -2027,7 +1813,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 													printf("Saturday\n\n");
 													fprintf(fout, "Saturday\n\n");
 												}
-
 											}
 										}
 									}
@@ -2039,7 +1824,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 		}
 	}
-
 	if (isCommand(arithTrig, "predefinetxt")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Drag to here the file to predefine and press the button \"Enter\" <==\n");
@@ -2065,7 +1849,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		printf("\n");
 		fprintf(fout, "\n");
 	}
-
 	if (isCommand(arithTrig, "solvetxt") && (arithTrig[i + 10] == '\0' || arithTrig[i + 8] == '(')) {
 		arithTrig[0] = '\0'; command = true;
 		FILE *readPred = NULL;
@@ -2121,11 +1904,9 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 					openTxt();
 				}
-
 			}
 		}
 	}
-
 	if (isCommand(arithTrig, "calendar") && (arithTrig[i + 8] == '(' || arithTrig[i + 8] == '+')) {
 		char ye[100], calendar[DIM];
 		int k = 0;
@@ -2162,7 +1943,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				if (countR == countL) {
 					year = (int)calcNow(ye, result1, result2);
 				}
-
 			}
 			else {
 				if (arithTrig[i + 10] == '(' || arithTrig[i + 10] == '[' || arithTrig[i + 10] == '{') {
@@ -2189,8 +1969,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					if (countR == countL) {
 						year = (int)calcNow(ye, result1, result2);
 					}
-
-
 				}
 				else {
 					time_t hour;
@@ -2248,7 +2026,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 				}
 				calendar[yu] = '\0';
-
 				ca = 0;
 				for (s = 0; calendar[s] != '\0'; s++) {
 					if (calendar[s] == '\n') {
@@ -2266,9 +2043,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 							calendar[s + 118] = (char)179;
 						}
 					}
-
 				}
-
 				for (s = 0; calendar[s] != '\0'; s++) {
 					if (calendar[s] == 's'&&calendar[s + 3] == 'd'&&calendar[s + 4] == 'o') {
 						calendar[s + 1] = 'a';
@@ -2280,12 +2055,10 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				calendar[s] = '\0';
 				printf("\n");
 				printf("%s\n\n", calendar);
-
 				for (s = 0; calendarStr[s] != '\0'; s++) {
 					calendar[s] = calendarStr[s];
 				}
 				calendar[s] = '\0';
-
 				fprintf(fout, "\n");
 				fprintf(fout, "%s\n\n", calendar);
 			}

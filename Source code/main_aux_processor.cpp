@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-int rasf = 0;
+int rasf = 0, maxLength = 0;
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);
@@ -105,7 +105,6 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				arithTrig[0] = '\0';
 			}
 		}
-
 		if (arithTrig[0] != '\0') {
 			command = 1;
 			boolean toWrite = processTxt(arithTrig, rf);
@@ -117,7 +116,6 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			arithTrig[0] = '\0';
 		}
 	}
-
 	if (str == 1) {
 		str = 0;
 		int p = 0;
@@ -230,12 +228,12 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				fout = fopen(path, "a+");
 			}
 			if (command == false && continu) {
+
 				main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
 				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 			}
 		}
 	}
-
 	return result1;
 }
 
@@ -244,13 +242,12 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 	int  g = 0, Dimensions = 2, Window = 3, r = 0, i = 0, s = 0;
 	char exit[DIM] = "", res, varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm", saveArithTr[DIM] = "";;
 	res = arithTrig[0];
-	if (res == '+' || res == '-' || res == '/' || res == '*' || res == 'x' || res == '^') {
+	if (res == '+' || res == '-' || res == '/' || res == '*' || res == '^') {
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			arithTrig[i] = arithTrig[i + 1];
 		}
 	}
 	if (var == 1) {
-
 		for (i = 0; arithTrig[i] != '='&&arithTrig[i] != '\0'; i++) {
 			variable[i] = arithTrig[i];
 		}
@@ -282,7 +279,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		}
 		sprintf(arithTrig, "%s", saveArithTr);
 	}
-
 	char dP[DIM] = "", bP[DIM] = "", oP[DIM] = "", hP[DIM] = "";
 	int dp = -1, bp = -1, op = -1, hp = -1;
 	while ((arithTrig[0] == 'd' &&arithTrig[1] == 'p' || arithTrig[0] == 'b' &&arithTrig[1] == 'p' || arithTrig[0] == 'o' &&arithTrig[1] == 'p' || arithTrig[0] == 'h' &&arithTrig[1] == 'p') && arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
@@ -392,7 +388,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		_flushall();
 		if (cleanhistory == 0) {
 			if (arithTrig[0] != '\0'&&verify == 1) {
-
 				char toOpen[DIM] = "";
 				sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
 				open = fopen(toOpen, "r");
@@ -406,11 +401,11 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					verbose = 0;
 				}
 				rasf = abs((int)strlen(arithTrig));
-
 				while (arithTrig[rasf - 2] == '+'&&arithTrig[rasf - 1] == '0') {
 					rasf = rasf - 2;
 					arithTrig[rasf] = '\0';
 				}
+				maxLength = (int)strlen(arithTrig);
 				initialProcessor(arithTrig, result1);
 				verbose = 0;
 			}
@@ -426,7 +421,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				if (res == '/') {
 					division(result1, result2, resultR, resultI);
 				}
-				if (res == '*' || res == 'x') {
+				if (res == '*') {
 					multiplication(result1, result2, resultR, resultI);
 				}
 				if (res == '^') {
@@ -579,8 +574,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 								printf(dP, result1);
 							}
 						}
-
-
 						if (fout != NULL) {
 							fclose(fout);
 						}
@@ -675,7 +668,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 												decimalToBinary(result1, path, bp);
 												decimalToOctal(result1, path, op);
 												decimalToHexadecimal(result1, path, hp);
-
 												open = fopen(path, "a+");
 												fputs("\nImaginary part:\n", open);
 												if (isFromMain == 1) {
@@ -685,7 +677,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 												decimalToBinary(result2, path, bp);
 												decimalToOctal(result2, path, op);
 												decimalToHexadecimal(result2, path, hp);
-
 											}
 											else {
 												if (result2 != 0) {

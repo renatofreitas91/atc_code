@@ -2,8 +2,6 @@
 
 #include "stdafx.h"
 
-
-
 void print(char text[DIM], double result1, double result2) {
 	int i = 0, j = 0, varAndValues = 0, k = 0, var2Print = 0, g = 0, valP = 0, l = 0, chChar = 0, b = 0, nV = 0, nC = 0;
 	char toPrint[DIM], listValues[DIM], listText[DIM], varType[DIM], printing[DIM], varValue[DIM], finalString[DIM] = "";
@@ -19,7 +17,6 @@ void print(char text[DIM], double result1, double result2) {
 	if (text[i + 1] == ',') {
 		varAndValues = 1;
 	}
-
 	int v = 0;
 	if (varAndValues == 0) {
 		while (v < abs((int)strlen(listText))) {
@@ -31,8 +28,6 @@ void print(char text[DIM], double result1, double result2) {
 		}
 		listText[v] = '\0';
 	}
-
-
 	for (i = 0; listText[i] != '\0'; i++) {
 		if (listText[i] == '\\'&&listText[i + 1] == 'n') {
 			chChar = 1;
@@ -47,8 +42,6 @@ void print(char text[DIM], double result1, double result2) {
 			chChar = 1;
 		}
 	}
-
-
 	while (chChar == 1) {
 		for (i = 0; listText[i] != '\0'; i++) {
 			if (listText[i] == '\\'&&listText[i + 1] == 'n') {
@@ -150,7 +143,6 @@ void print(char text[DIM], double result1, double result2) {
 						break;
 					}
 				}
-
 				if (var2Print == 1) {
 					j = 0;
 					while (!(listText[i] == '%'&&verify4Printf(listText[i + 1])) && listText[i + 1] != '\0') {
@@ -249,7 +241,6 @@ void print(char text[DIM], double result1, double result2) {
 								}
 								index[h] = '\0';
 								int Index = (int)solveNow(index, result1, result2);
-
 								renamer(string);
 								for (h = 0; expressionF[h] != '\0'; h++) {
 									string[h] = expressionF[h];
@@ -289,10 +280,8 @@ void print(char text[DIM], double result1, double result2) {
 						_set_printf_count_output(0);
 						value = 0;
 					}
-
 					i--;
 				}
-
 				if (var2Print == 2) {
 					j = 0;
 					while (!(listText[i - 1] == '%'&&verify4Printf(listText[i]) == 0) && listText[i] != '\0') {
@@ -324,8 +313,6 @@ void print(char text[DIM], double result1, double result2) {
 		}
 		puts(listText);
 	}
-
-
 }
 
 void sprint(char text[DIM], double result1, double result2) {
@@ -355,10 +342,6 @@ void sprint(char text[DIM], double result1, double result2) {
 	if (text[i + 1] == ',') {
 		varAndValues = 1;
 	}
-
-
-
-
 	for (i = 0; listText[i] != '\0'; i++) {
 		if (listText[i] == '\\'&&listText[i + 1] == 'n') {
 			chChar = 1;
@@ -373,8 +356,6 @@ void sprint(char text[DIM], double result1, double result2) {
 			chChar = 1;
 		}
 	}
-
-
 	while (chChar == 1) {
 		for (i = 0; listText[i] != '\0'; i++) {
 			if (listText[i] == '\\'&&listText[i + 1] == 'n') {
@@ -475,7 +456,6 @@ void sprint(char text[DIM], double result1, double result2) {
 						break;
 					}
 				}
-
 				if (var2Print == 1) {
 					j = 0;
 					while (!(listText[i] == '%'&&verify4Printf(listText[i + 1])) && listText[i + 1] != '\0') {
@@ -628,10 +608,8 @@ void sprint(char text[DIM], double result1, double result2) {
 						_set_printf_count_output(0);
 						value = 0;
 					}
-
 					i--;
 				}
-
 				if (var2Print == 2) {
 					j = 0;
 					while (!(listText[i - 1] == '%'&&verify4Printf(listText[i]) == 0) && listText[i] != '\0') {
@@ -667,8 +645,6 @@ void sprint(char text[DIM], double result1, double result2) {
 		}
 		stringVariableController(variable, listText);
 	}
-
-
 }
 
 double solveNow(char toSolveNow[DIM], double result1, double result2) {
@@ -700,5 +676,12 @@ double atcProg(char exprDev[DIM]) {
 	fputs(exprDev, atcDev);
 	fclose(atcDev);
 	processTxt(path, rf);
+	return resultR;
+}
+
+double getValue() {
+	char value[DIM] = "";
+	gets_s(value);
+	atcProg(value);
 	return resultR;
 }

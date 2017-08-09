@@ -16,6 +16,7 @@ void cotan(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For cotangent function the valid domain is {x| x != 0 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -31,6 +32,7 @@ void sec(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For secant function the valid domain is {x| x != pi/2 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -46,6 +48,7 @@ void cosec(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For cosecant function the valid domain is {x| x != 0 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -61,6 +64,7 @@ void arcosec(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc cosecant function the valid domain is [-INF, INF] ^ != [-1, 1].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -76,6 +80,7 @@ void arcsec(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc secant function the valid domain is ]-INF, INF[ ^ != [-1, 1].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -91,6 +96,7 @@ void arcotg(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc cotangent function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -111,6 +117,7 @@ void complex_cos(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For cosine function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -131,6 +138,7 @@ void complex_sin(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For sine function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -150,6 +158,7 @@ void complex_tan(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For tangent function the valid domain is {x| x != pi/2 + kpi, k = ..., -1, 0, 1, ...}  \n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -171,6 +180,7 @@ void complex_asin(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc sine function the valid domain is [-1, 1].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -193,6 +203,7 @@ void complex_acos(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc cosine function the valid domain is [-1, 1].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}
@@ -211,6 +222,7 @@ void complex_atan(double x, double y) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For arc tangent function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
 		}
 	}

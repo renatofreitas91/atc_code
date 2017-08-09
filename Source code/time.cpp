@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-
+char calendarStr[DIM] = "";
 
 void Clock(int a)
 {
@@ -388,7 +388,6 @@ void printTimer(int hours, int minutes, int seconds) {
 				sprintf(text, " %c%c%c%c \n", 219, 219, 177, 177);
 				sprintf(display, "%s%s", display, text);
 			}
-
 			if (tiIn[i] == ':') {
 				if (j == 0 || j == 4 || j == 2) {
 					sprintf(text, "   ");
@@ -399,7 +398,6 @@ void printTimer(int hours, int minutes, int seconds) {
 					sprintf(display, "%s%s", display, text);
 				}
 			}
-
 			if (tiIn[i] == '0') {
 				if (j == 0 || j == 4) {
 					sprintf(text, "%c%c%c%c%c%c%c ", 219, 219, 219, 219, 219, 219, 219);
@@ -412,7 +410,6 @@ void printTimer(int hours, int minutes, int seconds) {
 				if (j == 2) {
 					sprintf(text, "%c%c%c%c%c%c%c ", 219, 219, 177, 177, 177, 219, 219);
 					sprintf(display, "%s%s", display, text);
-
 				}
 			}
 			if (tiIn[i] == '1') {
@@ -424,7 +421,6 @@ void printTimer(int hours, int minutes, int seconds) {
 					sprintf(text, "%c%c   %c%c ", 177, 177, 219, 219);
 					sprintf(display, "%s%s", display, text);
 				}
-
 			}
 			if (tiIn[i] == '2') {
 				if (j == 0 || j == 2 || j == 4) {
@@ -439,7 +435,6 @@ void printTimer(int hours, int minutes, int seconds) {
 					sprintf(text, "%c%c   %c%c ", 219, 219, 177, 177);
 					sprintf(display, "%s%s", display, text);
 				}
-
 			}
 			if (tiIn[i] == '3') {
 				if (j == 0 || j == 4 || j == 2) {
@@ -450,7 +445,6 @@ void printTimer(int hours, int minutes, int seconds) {
 					sprintf(text, "%c%c   %c%c ", 177, 177, 219, 219);
 					sprintf(display, "%s%s", display, text);
 				}
-
 			}
 			if (tiIn[i] == '4') {
 				if (j == 0) {
@@ -473,7 +467,6 @@ void printTimer(int hours, int minutes, int seconds) {
 					sprintf(text, "%c%c%c%c%c%c%c ", 177, 177, 177, 177, 177, 219, 219);
 					sprintf(display, "%s%s", display, text);
 				}
-
 			}
 			if (tiIn[i] == '5') {
 				if (j == 0 || j == 2 || j == 4) {
@@ -488,7 +481,6 @@ void printTimer(int hours, int minutes, int seconds) {
 					sprintf(text, "%c%c   %c%c ", 177, 177, 219, 219);
 					sprintf(display, "%s%s", display, text);
 				}
-
 			}
 			if (tiIn[i] == '6') {
 				if (j == 0 || j == 2 || j == 4) {
@@ -499,12 +491,10 @@ void printTimer(int hours, int minutes, int seconds) {
 					sprintf(text, "%c%c   %c%c ", 219, 219, 177, 177);
 					sprintf(display, "%s%s", display, text);
 				}
-
 				if (j == 3) {
 					sprintf(text, "%c%c   %c%c ", 219, 219, 219, 219);
 					sprintf(display, "%s%s", display, text);
 				}
-
 			}
 			if (tiIn[i] == '7') {
 				if (j == 0) {
@@ -523,8 +513,6 @@ void printTimer(int hours, int minutes, int seconds) {
 					sprintf(text, "%c%c%c%c%c%c%c ", 177, 177, 177, 177, 177, 219, 219);
 					sprintf(display, "%s%s", display, text);
 				}
-
-
 			}
 			if (tiIn[i] == '8') {
 				if (j == 0 || j == 4 || j == 2) {
@@ -535,8 +523,6 @@ void printTimer(int hours, int minutes, int seconds) {
 					sprintf(text, "%c%c   %c%c ", 219, 219, 219, 219);
 					sprintf(display, "%s%s", display, text);
 				}
-
-
 			}
 			if (tiIn[i] == '9') {
 				if (j == 0 || j == 2 || j == 4) {
@@ -551,9 +537,7 @@ void printTimer(int hours, int minutes, int seconds) {
 					sprintf(text, "%c%c   %c%c ", 177, 177, 219, 219);
 					sprintf(display, "%s%s", display, text);
 				}
-
 			}
-
 		}
 		j++;
 	}
@@ -590,12 +574,9 @@ void wait(int seconds) {
 	}
 }
 
-char calendarStr[DIM] = "";
-
 int datePreciser(double day, double month, double year, double dayS, double monthS, double yearS) {
 	int plusYears = 0, k = 10, count = -1, flag = 1;
 	double dayF = day, monthF = month, yearF = year, dayFF = day;
-
 	while (day != dayS&&k > 0) {
 		day = dayF; month = monthF; year = yearF;
 		if (month > 12) {
@@ -607,42 +588,28 @@ int datePreciser(double day, double month, double year, double dayS, double mont
 			month = 12;
 			year--;
 		}
-
-
 		while (day > 29 && (qu(re(year, 4), 1) == 0 && (qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) && month == 2 || day > 28 && month == 2 && (qu(re(year, 4), 1) != 0 || qu(re(year, 100), 1) == 0 && qu(re(year, 400), 1) != 0) || (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day > 31 || day > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
-
 			if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
 				day = day - 31;
-
 			}
 			else {
 				if (month == 2) {
 					if ((qu(re(year, 4), 1) == 0 && qu(re(year, 100), 1) != 0) || qu(re(year, 400), 1) == 0) {
 						day = day - 29;
-
 					}
 					else {
 						day = day - 28;
-
 					}
-
 				}
-
-
 				else {
 					day = day - 30;
-
 				}
-
 			}
-
 			month++;
 			if (month > 12) {
 				year++;
 				month = qu(re(month, 12), 1);
 			}
-
-
 		}
 		if (flag == 1) {
 			dayF--;

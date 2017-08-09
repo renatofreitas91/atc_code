@@ -36,11 +36,9 @@ void dimensions() {
 	char lins[DIM] = "", cols[DIM] = "", express[DIM] = "MODE con cols=";
 	int i = 0, e = 0, toDo = 2;
 	printf("\nNumber of lines: ");
-	gets_s(lins);
-	nlins = arithSolver(lins, 0);
+	nlins = getValue();
 	printf("Number of columns: ");
-	gets_s(cols);
-	ncols = arithSolver(cols, 0);
+	ncols = getValue();
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
 	open = fopen(toOpen, "w");
@@ -57,23 +55,19 @@ void window() {
 	w = GetConsoleWindow();
 	while (x > 600 || x < 0) {
 		printf("X-axis value -> [0, 600]: ");
-		gets_s(value);
-		x = calcNow(value, 0, 0);
+		x = getValue();
 	}
 	while (y > 600 || y < 0) {
 		printf("Y-axis value -> [0, 600]: ");
-		gets_s(value);
-		y = calcNow(value, 0, 0);
+		y = getValue();
 	}
 	while (width > 2000 || width < 200) {
 		printf("Width value -> [200, 2000]: ");
-		gets_s(value);
-		width = calcNow(value, 0, 0);
+		width = getValue();
 	}
 	while (height > 2000 || height < 200) {
 		printf("Height value -> [200, 2000]: ");
-		gets_s(value);
-		height = calcNow(value, 0, 0);
+		height = getValue();
 	}
 	printf("\n");
 	MoveWindow(w, (int)x, (int)y, (int)width, (int)height, FALSE);
@@ -90,13 +84,10 @@ void mode() {
 	char value[DIM] = "";
 	while (option != 1 && option != 2 && option != 3) {
 		printf("radian -> 1\ndegree -> 2\ngradian -> 3\n");
-		gets_s(value);
-		if (strlen(value) == 1) {
-			option = atoi(value);
+		option = (int)getValue();
 			if (option > 3 || option < 1) {
 				printf("Error, incorrect choice.\n");
 			}
-		}
 	}
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\mode.txt", atcPath);
@@ -106,7 +97,7 @@ void mode() {
 }
 
 void about2() {
-	system("title Advanced Trigonometry Calculator v1.9.0");
+	system("title Advanced Trigonometry Calculator v1.9.1");
 	system("MODE con cols=90 lines=15");
 	cls();
 	FILE *open = NULL;
@@ -123,8 +114,7 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v1.9.0                                                             ==) Enter data (==              ");
-
+	system("title Advanced Trigonometry Calculator v1.9.1                                                             ==) Enter data (==              ");
 }
 
 int applySettings(int toDo) {
@@ -223,7 +213,7 @@ int applySettings(int toDo) {
 
 boolean about() {
 	ShowConsoleCursor(FALSE);
-	system("title Advanced Trigonometry Calculator v1.9.0");
+	system("title Advanced Trigonometry Calculator v1.9.1");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
@@ -250,26 +240,22 @@ boolean about() {
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("                                     %c%c    %c%c%c     %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                                    %c %c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177);
-	printf("                             %c   %c %c  %c    %c%c%c%c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                              %c %c     %c       %c   %c   %c \n", 177, 177, 177, 177, 177, 177);
-	printf("                               %c      %c %c  %c%c%c  %c  %c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-
+	printf("                                     %c%c    %c%c%c      %c%c\n", 177, 177, 177, 177, 177, 177, 177);
+	printf("                                    %c %c   %c   %c    %c %c\n", 177, 177, 177, 177, 177, 177);
+	printf("                             %c   %c %c  %c    %c%c%c%c   %c  %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                              %c %c     %c       %c      %c \n", 177, 177, 177, 177, 177);
+	printf("                               %c      %c %c  %c%c%c  %c    %c  \n", 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n         To support the development of this application please enter \"donate\"\n\n            To know how to use this application please enter \"user guide\"\n\n");
 	printf("     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS\n\n");
 	gets_s(exit);
-
 	if (isEqual(exit, "user guide")) {
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator - User Guide.pdf"), NULL, NULL, SW_SHOW);
 	}
-
 	if (isEqual(exit, "donate")) {
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/p/advantrigoncalc/donate/?source=navbar\""), NULL, SW_SHOW);
 	}
-
 	if (continu) {
 		cls();
 	}

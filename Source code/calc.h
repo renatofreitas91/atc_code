@@ -54,3 +54,5 @@ void subtraction(double numR, double numI, double denR, double denI);
 void multiplication(double numR, double numI, double denR, double denI);
 void division(double numR, double numI, double denR, double denI);
 void exponentiation(double a, double b, double c, double d, int sig);
+void trianglesRectanglesSolver();
+void arithmeticMatrixSolver();

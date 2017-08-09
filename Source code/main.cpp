@@ -3,12 +3,10 @@
 #include "stdafx.h"
 #include "atc_functions.h"
 
-
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
 char atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
-int processingOK = 1, isFromMain = 0, solutioned = 0, verify = 0, arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
+int processingOK = 1, executedSolver = 0, isFromMain = 0, solutioned = 0, verify = 0, arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
 clock_t start_processing, end_processing;
-
 
 void main(int argc, char *argv[]) {
 	char dataToSolve[DIM] = "";
@@ -16,19 +14,18 @@ void main(int argc, char *argv[]) {
 	int Colors = 1, tD = 0, i = 0;
 	char  path[DIM] = "", trigData[DIM] = "";
 	double result1 = 0, result2 = 0;
-
 	getATCPath();
-
 	if (argc < 2) {
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v1.9.0");
+		system("title Advanced Trigonometry Calculator v1.9.1");
 		continu = about();
 	}
-
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v1.9.0       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v1.9.1       ==) ATC is ready to process data. (==");
 		do {
+			resultR = pot(2.0, 200.0, 1);
+			variableController("INF", 0);
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
 			fflush(NULL);
@@ -36,9 +33,13 @@ void main(int argc, char *argv[]) {
 			if (argc < 2) {
 				sprintf(trigData, "");
 				printf(">");
+				if (executedSolver == 1) {
+					executedSolver = 0;
+					cls();
+				}
 				gets_s(trigData);
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v1.9.0       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v1.9.1       ==) Processing... (==");
 			}
 			else {
 				arG = 1;
@@ -51,7 +52,6 @@ void main(int argc, char *argv[]) {
 			}
 			sprintf(path, "%s\\history.txt", atcPath);
 			toSolve(rf);
-
 			for (tD = 0; trigData[tD] != 0; tD++) {
 				if (trigData[tD] == '{' || trigData[tD] == '[') {
 					trigData[tD] = '(';
@@ -182,7 +182,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v1.9.0       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v1.9.1       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -226,7 +226,6 @@ boolean processTxt(char path[DIM], int re) {
 		}
 	}
 	j = 0;
-
 	for (i = 0; path[i] != '\0'; i++) {
 		if (path[i] != '\\') {
 			addBar[j] = path[i];
@@ -292,7 +291,8 @@ boolean processTxt(char path[DIM], int re) {
 		tD = 0;
 		char variable[DIM] = "";
 		for (k = 0; k < cP; k++) {
-
+			resultR = pot(2.0, 200.0, 1);
+			variableController("INF", 0);
 			char trigData[DIM] = "";
 			tD = 0;
 			e = 0;
@@ -406,7 +406,6 @@ boolean processTxt(char path[DIM], int re) {
 
 boolean dataVerifier(char data[DIM], double result1, double result2, int comment, int verify) {
 	boolean decision = true;
-
 	if (abs((int)strlen(data)) > 0) {
 		int kg = 0, kc = 0, i = 0;
 		for (i = 0; data[i] != '\0'; i++) {
@@ -495,7 +494,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				if (parent[s + 1] == parent[s] + 1 && parent[s] != 0) {
 					savePar = s;
 					s++;
-					while (parent[s] != parent[savePar]) {
+					while (parent[s] != parent[savePar] && s < abs((int)strlen(data))) {
 						s++;
 					}
 					if (parent[s - 1] == parent[s] + 1 && parent[s - 1] != 0) {
@@ -621,9 +620,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 							}
 							return decision;
 						}
-
 					}
-
 					if (data[w - 1] == 'H') {
 						if (data[w] == '_' || data[w] == '-') {
 							w++;
@@ -647,9 +644,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 							}
 							return decision;
 						}
-
 					}
-
 					if (data[w - 1] == 'P') {
 						y = 0;
 						while (data[w] != '+'&&data[w] != '-'&&data[w] != '*'&&data[w] != '/'&&data[w] != '^'&&data[w] != ')'&&data[w - 1] != 'b'&&data[w] != '('&&data[w - 1] != 'D'&&data[w] != '('&&data[w] != '\0') {
@@ -681,9 +676,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 							return decision;
 						}
 					}
-
 				}
-
 			}
 			w = abs((int)strlen(data)) - 4;
 			if ((data[w - 1] == '+' || data[w - 1] == '-' || data[w - 1] == '*' || data[w - 1] == '/' || data[w - 1] == '^') && data[w] == '+'&&data[w + 1] == '0'&&data[w + 2] == '+'&&data[w + 3] == '0'&&data[w + 4] == '\0') {
@@ -723,7 +716,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 						u++; p++;
 					}
 				}
-
 				while (verifyLetter(data[u]) == 1 && (data[u] == 'b'&&data[u - 1] == 'g') == false && (data[u] == 'D'&&data[u - 1] == 't') == false && data[u] != '\0') {
 					varValidator[p] = data[u];
 					u++; p++;
@@ -744,7 +736,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					saveVar[p] = varValidator[p];
 				}
 				saveVar[p] = '\0';
-
 				if (strlen(varValidator) > 0) {
 					processVariable(varValidator);
 					int df = p;
@@ -772,11 +763,8 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					}
 					char saveExpr[DIM] = "";
 					sprintf(saveExpr, "%s", varValidator);
-
-
 					double funcF = functionProcessor(varValidator, 2, 7, 12);
 					sprintf(varValidator, "%s", saveExpr);
-
 					if (funcF != 0.5) {
 						if (validVar == 0) {
 							if (varValidator[0] == 'E' || varValidator[0] == 'B' || varValidator[0] == 'O' || varValidator[0] == 'H' || varValidator[0] == 'P' || varValidator[0] == 'e' || varValidator[0] == 'p'&&varValidator[1] == 'i' || varValidator[0] == 'I'&&varValidator[1] == 'N'&&varValidator[2] == 'F') {
@@ -803,8 +791,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				}
 			}
 		}
-
-
 		for (d = 0; data[d] != '\0'; d++) {
 			g = 0; nDot = 0;
 			while ((data[d] == '.' || data[d] == '0' || data[d] == '1' || data[d] == '2' || data[d] == '3' || data[d] == '4' || data[d] == '5' || data[d] == '6' || data[d] == '7' || data[d] == '8' || data[d] == '9' || data[d] == 'A' || data[d] == 'B' || data[d] == 'C' || data[d] == 'D' || data[d] == 'E' || data[d] == 'F') && data[d] != '\0') {
@@ -846,7 +832,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			}
 			return decision;
 		}
-		if ((data[0] == '+' || data[0] == '-' || data[0] == '*' || data[0] == 'x' || data[0] == '/' || data[0] == '^') && (data[1] == '0'&&data[2] == '\0')) {
+		if ((data[0] == '+' || data[0] == '-' || data[0] == '*' || data[0] == '/' || data[0] == '^') && (data[1] == '0'&&data[2] == '\0')) {
 			decision = false;
 			if (comment == 1) {
 				puts("\nYou are trying relate the previous expression with zero (0).\n");
@@ -857,7 +843,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			if ((data[i - 1] == 'O' || data[i - 1] == 'H' || data[i - 1] == 'B') && data[i] == '_') {
 				data[i] = '-';
 			}
-
 			if (data[i] == 'A' || data[i] == 'B' || data[i] == 'C' || (data[i] == 'D' && (data[i - 1] == 't' || data[i + 1] == '(')) || data[i] == 'E' || data[i] == 'F' || data[i] == 'O' || data[i] == 'H' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '0' || data[i] == '.' || data[i] == '_' || data[i] == '!') {
 				v = 1;
 				break;
@@ -914,7 +899,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			}
 			if (data[i] == '(') {
 				kl++;
-				if (data[i + 1] == '+' || data[i + 1] == '-' || data[i + 1] == '*' || data[i + 1] == 'x' || data[i + 1] == '/' || data[i + 1] == '^' || data[i + 1] == '!') {
+				if (data[i + 1] == '+' || data[i + 1] == '-' || data[i + 1] == '*' || data[i + 1] == '/' || data[i + 1] == '^' || data[i + 1] == '!') {
 					decision = false;
 					if (comment == 1) {
 						puts("\nYou entered an arithmetic symbol next to \"(\".\n");
@@ -924,7 +909,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			}
 			if (data[i] == ')') {
 				kr++;
-				if (data[i - 1] == '+' || data[i - 1] == '-' || data[i - 1] == '*' || data[i - 1] == 'x' || data[i - 1] == '/' || data[i - 1] == '^') {
+				if (data[i - 1] == '+' || data[i - 1] == '-' || data[i - 1] == '*' || data[i - 1] == '/' || data[i - 1] == '^') {
 					decision = false;
 					if (comment == 1) {
 						puts("\nYou entered an arithmetic symbol previous to \")\".\n");
@@ -943,9 +928,9 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				decision = true;
 				i = i + 3;
 			}
-			if (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == 'x' || data[i] == '^' || data[i] == 'e' || data[i] == 'p'&&data[i + 1] == 'i' || data[i - 1] == 'p'&&data[i] == 'i') {
+			if (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p'&&data[i + 1] == 'i' || data[i - 1] == 'p'&&data[i] == 'i') {
 				j = 0;
-				while (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == 'x' || data[i] == '^' || data[i] == 'e' || data[i] == 'p'&&data[i + 1] == 'i' || data[i - 1] == 'p'&&data[i] == 'i') {
+				while (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p'&&data[i + 1] == 'i' || data[i - 1] == 'p'&&data[i] == 'i') {
 					i++;
 					decision = true;
 					j++;
@@ -955,7 +940,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				decision = true;
 				i = i + 3;
 			}
-
 			if (data[i] == 'a' || data[i] == 's'&&data[i - 1] != 'e'&&data[i - 2] != 'r' || data[i] == 'c' || data[i] == 't' || data[i] == 'g' || data[i] == 'd' || data[i] == 'l' || data[i] == 'q' || data[i] == 'r') {
 				decision = true;
 				j = 0;
@@ -1103,9 +1087,9 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					return decision;
 				}
 			}
-			if (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == 'x' || data[i] == '^' || data[i] == 'e' || data[i] == 'p'&&data[i + 1] == 'i' || data[i - 1] == 'p'&&data[i] == 'i') {
+			if (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p'&&data[i + 1] == 'i' || data[i - 1] == 'p'&&data[i] == 'i') {
 				j = 0;
-				while ((data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == 'x' || data[i] == '^' || data[i] == 'e' || data[i] == 'p'&&data[i + 1] == 'i' || data[i - 1] == 'p'&&data[i] == 'i') && data[i] != '\0') {
+				while ((data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p'&&data[i + 1] == 'i' || data[i - 1] == 'p'&&data[i] == 'i') && data[i] != '\0') {
 					i++;
 					decision = true;
 					j++;

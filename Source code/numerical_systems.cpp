@@ -2,8 +2,6 @@
 
 #include "stdafx.h"
 
-
-
 void decimalToBinary(double decimal, char path[DIM], int bp) {
 	FILE *open = NULL;
 	int i = 0, j = 0, rest = 0, h = 0, res = 0, ct = 0, cou, c = 0;
@@ -267,30 +265,29 @@ void decimalToBinary(double decimal, char path[DIM], int bp) {
 				i++;
 			}
 		}
-
 		while (open == NULL) {
 			open = fopen(path, "a+");
 		}
 		if (multi(decimal) == 0) {
 			if (decimal >= 0 && decimal2 >= 0) {
-				fprintf(open, "In binary=%sx10^%s\n", binary2, binaryexp);
+				fprintf(open, "In binary=%s*10^%s\n", binary2, binaryexp);
 				if (isEqual(path, toOpen))
-					printf("In binary=%sx10^%s\n", binary2, binaryexp);
+					printf("In binary=%s*10^%s\n", binary2, binaryexp);
 			}
 			if (decimal < 0 && decimal2 < 0) {
-				fprintf(open, "In binary=-%sx10^-%s\n", binary2, binaryexp);
+				fprintf(open, "In binary=-%s*10^-%s\n", binary2, binaryexp);
 				if (isEqual(path, toOpen))
-					printf("In binary=-%sx10^-%s\n", binary2, binaryexp);
+					printf("In binary=-%s*10^-%s\n", binary2, binaryexp);
 			}
 			if (decimal >= 0 && decimal2 < 0) {
-				fprintf(open, "In binary=%sx10^-%s\n", binary2, binaryexp);
+				fprintf(open, "In binary=%s*10^-%s\n", binary2, binaryexp);
 				if (isEqual(path, toOpen))
-					printf("In binary=%sx10^-%s\n", binary2, binaryexp);
+					printf("In binary=%s*10^-%s\n", binary2, binaryexp);
 			}
 			if (decimal < 0 && decimal2 >= 0) {
-				fprintf(open, "In binary=-%sx10^%s\n", binary2, binaryexp);
+				fprintf(open, "In binary=-%s*10^%s\n", binary2, binaryexp);
 				if (isEqual(path, toOpen))
-					printf("In binary=-%sx10^%s\n", binary2, binaryexp);
+					printf("In binary=-%s*10^%s\n", binary2, binaryexp);
 			}
 		}
 		else {
@@ -305,24 +302,24 @@ void decimalToBinary(double decimal, char path[DIM], int bp) {
 				binary2[i] = '\0';
 			}
 			if (decimal >= 0 && decimal2 >= 0) {
-				fprintf(open, "In binary=%sx10^%s\n", binary2, binaryexp);
+				fprintf(open, "In binary=%s*10^%s\n", binary2, binaryexp);
 				if (isEqual(path, toOpen))
-					printf("In binary=%sx10^%s\n", binary2, binaryexp);
+					printf("In binary=%s*10^%s\n", binary2, binaryexp);
 			}
 			if (decimal < 0 && decimal2 < 0) {
-				fprintf(open, "In binary=-%sx10^-%s\n", binary2, binaryexp);
+				fprintf(open, "In binary=-%s*10^-%s\n", binary2, binaryexp);
 				if (isEqual(path, toOpen))
-					printf("In binary=-%sx10^-%s\n", binary2, binaryexp);
+					printf("In binary=-%s*10^-%s\n", binary2, binaryexp);
 			}
 			if (decimal >= 0 && decimal2 < 0) {
-				fprintf(open, "In binary=%sx10^-%s\n", binary2, binaryexp);
+				fprintf(open, "In binary=%s*10^-%s\n", binary2, binaryexp);
 				if (isEqual(path, toOpen))
-					printf("In binary=%sx10^-%s\n", binary2, binaryexp);
+					printf("In binary=%s*10^-%s\n", binary2, binaryexp);
 			}
 			if (decimal < 0 && decimal2 >= 0) {
-				fprintf(open, "In binary=-%sx10^%s\n", binary2, binaryexp);
+				fprintf(open, "In binary=-%s*10^%s\n", binary2, binaryexp);
 				if (isEqual(path, toOpen))
-					printf("In binary=-%sx10^%s\n", binary2, binaryexp);
+					printf("In binary=-%s*10^%s\n", binary2, binaryexp);
 			}
 		}
 		fclose(open);
@@ -525,7 +522,6 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 		octal[0] = '\0';
 		quotient = 8; quotient1 = 8; mult = 0;
 		c = 0; j = 0; i = 0; rest = 0; cou = 15; res = 0;
-
 		decimal2 = sN1;
 		decimal1 = decimal2;
 		if (decimal2 < 0) {
@@ -558,7 +554,6 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 			j++;
 		}
 		octalexp[j] = '\0';
-
 		mult = multi(decimal2);
 		if (mult < 0) {
 			mult = mult*-1;
@@ -598,24 +593,24 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 		}
 		if (multi(decimal) == 0) {
 			if (decimal >= 0 && decimal2 >= 0) {
-				fprintf(open, "In octal=%sx10^%s\n", octal2, octalexp);
+				fprintf(open, "In octal=%s*10^%s\n", octal2, octalexp);
 				if (isEqual(path, toOpen))
-					printf("In octal=%sx10^%s\n", octal2, octalexp);
+					printf("In octal=%s*10^%s\n", octal2, octalexp);
 			}
 			if (decimal < 0 && decimal2 < 0) {
-				fprintf(open, "In octal=-%sx10^-%s\n", octal2, octalexp);
+				fprintf(open, "In octal=-%s*10^-%s\n", octal2, octalexp);
 				if (isEqual(path, toOpen))
-					printf("In octal=-%sx10^-%s\n", octal2, octalexp);
+					printf("In octal=-%s*10^-%s\n", octal2, octalexp);
 			}
 			if (decimal >= 0 && decimal2 < 0) {
-				fprintf(open, "In octal=%sx10^-%s\n", octal2, octalexp);
+				fprintf(open, "In octal=%s*10^-%s\n", octal2, octalexp);
 				if (isEqual(path, toOpen))
-					printf("In octal=%sx10^-%s\n", octal2, octalexp);
+					printf("In octal=%s*10^-%s\n", octal2, octalexp);
 			}
 			if (decimal < 0 && decimal2 >= 0) {
-				fprintf(open, "In octal=-%sx10^%s\n", octal2, octalexp);
+				fprintf(open, "In octal=-%s*10^%s\n", octal2, octalexp);
 				if (isEqual(path, toOpen))
-					printf("In octal=-%sx10^%s\n", octal2, octalexp);
+					printf("In octal=-%s*10^%s\n", octal2, octalexp);
 			}
 		}
 		else {
@@ -630,24 +625,24 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 				octal2[i] = '\0';
 			}
 			if (decimal >= 0 && decimal2 >= 0) {
-				fprintf(open, "In octal=%sx10^%s\n", octal2, octalexp);
+				fprintf(open, "In octal=%s*10^%s\n", octal2, octalexp);
 				if (isEqual(path, toOpen))
-					printf("In octal=%sx10^%s\n", octal2, octalexp);
+					printf("In octal=%s*10^%s\n", octal2, octalexp);
 			}
 			if (decimal < 0 && decimal2 < 0) {
-				fprintf(open, "In octal=-%sx10^-%s\n", octal2, octalexp);
+				fprintf(open, "In octal=-%s*10^-%s\n", octal2, octalexp);
 				if (isEqual(path, toOpen))
-					printf("In octal=-%sx10^-%s\n", octal2, octalexp);
+					printf("In octal=-%s*10^-%s\n", octal2, octalexp);
 			}
 			if (decimal >= 0 && decimal2 < 0) {
-				fprintf(open, "In octal=%sx10^-%s\n", octal2, octalexp);
+				fprintf(open, "In octal=%s*10^-%s\n", octal2, octalexp);
 				if (isEqual(path, toOpen))
-					printf("In octal=%sx10^-%s\n", octal2, octalexp);
+					printf("In octal=%s*10^-%s\n", octal2, octalexp);
 			}
 			if (decimal < 0 && decimal2 >= 0) {
-				fprintf(open, "In octal=-%sx10^%s\n", octal2, octalexp);
+				fprintf(open, "In octal=-%s*10^%s\n", octal2, octalexp);
 				if (isEqual(path, toOpen))
-					printf("In octal=-%sx10^%s\n", octal2, octalexp);
+					printf("In octal=-%s*10^%s\n", octal2, octalexp);
 			}
 		}
 		fclose(open);
@@ -947,7 +942,6 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 			j++;
 		}
 		hexadecimal2[j] = '\0';
-
 		mult = multi(decimal);
 		if (mult < 0) {
 			mult = mult*-1;
@@ -1031,7 +1025,6 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 		res = 0; cou = 0; c = 0; rest = 0; i = 0; j = 0;
 		decimal2 = sN1;
 		decimal1 = decimal2;
-
 		if (decimal2 < 0) {
 			c = 0;
 			decimal1 = decimal1*-1;
@@ -1108,7 +1101,6 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 			j++;
 		}
 		hexadecimalexp[j] = '\0';
-
 		mult = multi(decimal2);
 		if (mult < 0) {
 			mult = mult*-1;
@@ -1192,24 +1184,24 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 		}
 		if (multi(decimal) == 0) {
 			if (decimal >= 0 && decimal2 >= 0) {
-				fprintf(open, "In hexadecimal=%sx10^%s\n", hexadecimal2, hexadecimalexp);
+				fprintf(open, "In hexadecimal=%s*10^%s\n", hexadecimal2, hexadecimalexp);
 				if (isEqual(path, toOpen))
-					printf("In hexadecimal=%sx10^%s\n", hexadecimal2, hexadecimalexp);
+					printf("In hexadecimal=%s*10^%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal < 0 && decimal2 < 0) {
-				fprintf(open, "In hexadecimal=-%sx10^-%s\n", hexadecimal2, hexadecimalexp);
+				fprintf(open, "In hexadecimal=-%s*10^-%s\n", hexadecimal2, hexadecimalexp);
 				if (isEqual(path, toOpen))
-					printf("In hexadecimal=-%sx10^-%s\n", hexadecimal2, hexadecimalexp);
+					printf("In hexadecimal=-%s*10^-%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal >= 0 && decimal2 < 0) {
-				fprintf(open, "In hexadecimal=-%sx10^-%s\n", hexadecimal2, hexadecimalexp);
+				fprintf(open, "In hexadecimal=-%s*10^-%s\n", hexadecimal2, hexadecimalexp);
 				if (isEqual(path, toOpen))
-					printf("In hexadecimal=%sx10^-%s\n", hexadecimal2, hexadecimalexp);
+					printf("In hexadecimal=%s*10^-%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal < 0 && decimal2 >= 0) {
-				fprintf(open, "In hexadecimal=-%sx10^%s\n", hexadecimal2, hexadecimalexp);
+				fprintf(open, "In hexadecimal=-%s*10^%s\n", hexadecimal2, hexadecimalexp);
 				if (isEqual(path, toOpen))
-					printf("In hexadecimal=-%sx10^%s\n", hexadecimal2, hexadecimalexp);
+					printf("In hexadecimal=-%s*10^%s\n", hexadecimal2, hexadecimalexp);
 			}
 		}
 		else {
@@ -1224,24 +1216,24 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 				hexadecimal2[i] = '\0';
 			}
 			if (decimal >= 0 && decimal2 >= 0) {
-				fprintf(open, "In hexadecimal=%sx10^%s\n", hexadecimal2, hexadecimalexp);
+				fprintf(open, "In hexadecimal=%s*10^%s\n", hexadecimal2, hexadecimalexp);
 				if (isEqual(path, toOpen))
-					printf("In hexadecimal=%sx10^%s\n", hexadecimal2, hexadecimalexp);
+					printf("In hexadecimal=%s*10^%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal < 0 && decimal2 < 0) {
-				fprintf(open, "In hexadecimal=-%sx10^-%s\n", hexadecimal2, hexadecimalexp);
+				fprintf(open, "In hexadecimal=-%s*10^-%s\n", hexadecimal2, hexadecimalexp);
 				if (isEqual(path, toOpen))
-					printf("In hexadecimal=-%sx10^-%s\n", hexadecimal2, hexadecimalexp);
+					printf("In hexadecimal=-%s*10^-%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal >= 0 && decimal2 < 0) {
-				fprintf(open, "In hexadecimal=%sx10^-%s\n", hexadecimal2, hexadecimalexp);
+				fprintf(open, "In hexadecimal=%s*10^-%s\n", hexadecimal2, hexadecimalexp);
 				if (isEqual(path, toOpen))
-					printf("In hexadecimal=%sx10^-%s\n", hexadecimal2, hexadecimalexp);
+					printf("In hexadecimal=%s*10^-%s\n", hexadecimal2, hexadecimalexp);
 			}
 			if (decimal < 0 && decimal2 >= 0) {
-				fprintf(open, "In hexadecimal=-%sx10^%s\n", hexadecimal2, hexadecimalexp);
+				fprintf(open, "In hexadecimal=-%s*10^%s\n", hexadecimal2, hexadecimalexp);
 				if (isEqual(path, toOpen))
-					printf("In hexadecimal=-%sx10^%s\n", hexadecimal2, hexadecimalexp);
+					printf("In hexadecimal=-%s*10^%s\n", hexadecimal2, hexadecimalexp);
 			}
 		}
 		fclose(open);
@@ -1371,7 +1363,6 @@ double octalToDecimal(char octal[DIM]) {
 		if (octal2[i] == '7') {
 			decimal = decimal + 7 * pot(8.000, i, 1);
 		}
-
 		i++;
 	}
 	h = -1;
@@ -1451,7 +1442,6 @@ double hexadecimalToDecimal(char hexadecimal[DIM]) {
 			hexadecimal[i] = 'F';
 		}
 		i++;
-
 	}
 	i--;
 	count = i;
@@ -1463,7 +1453,6 @@ double hexadecimalToDecimal(char hexadecimal[DIM]) {
 	}
 	g--;
 	count1 = g;
-
 	while (i >= 0) {
 		hexadecimal2[j] = hexadecimal[i];
 		i--;
@@ -1516,7 +1505,6 @@ double hexadecimalToDecimal(char hexadecimal[DIM]) {
 		if (hexadecimal2[i] == 'F') {
 			decimal = decimal + 15 * pot(16.000, i, 1);
 		}
-
 		i++;
 	}
 	h = -1;

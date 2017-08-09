@@ -3,7 +3,6 @@
 #include "calc.h"
 #include "stdafx.h"
 
-
 double gerrorc(double q) {
 	if (q >= mINF && q <= INF) {
 		double result = 0;
@@ -13,6 +12,7 @@ double gerrorc(double q) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For Gauss complementary error function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(q, 0);
 			return -7.0;
 		}
@@ -30,6 +30,7 @@ double gerrorcinv(double a) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For Gauss complementary inverser error function the valid domain is [0, 2].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(a, 0);
 			return -7.0;
 		}
@@ -46,13 +47,13 @@ double gerror(double q) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For Gauss error function the valid domain is [-INF, INF].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(q, 0);
 			return -7.0;
 		}
 	}
 	return 0;
 }
-
 
 double gerrorinv(double e) {
 	double result = 0;
@@ -65,6 +66,7 @@ double gerrorinv(double e) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For Gauss error function the valid domain is [-1, 1].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(e, 0);
 			return -7.0;
 		}
@@ -86,6 +88,7 @@ double qfunc(double x) {
 		else {
 			if (rasf > 0) {
 				printf("\nError in function domain.\n\n ==> For Q-function the valid domain is [-INF, INF].\n\n");
+				printf(" ==> Your function argument: ");
 				complexNumber(x, 0);
 				return -7.0;
 			}
@@ -104,6 +107,7 @@ double qfuncinv(double p) {
 	else {
 		if (rasf > 0) {
 			printf("\nError in function domain.\n\n ==> For inverse Q-function the valid domain is [0, 1].\n\n");
+			printf(" ==> Your function argument: ");
 			complexNumber(p, 0);
 			return -7.0;
 		}
