@@ -228,7 +228,6 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				fout = fopen(path, "a+");
 			}
 			if (command == false && continu) {
-
 				main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
 				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 			}
@@ -407,6 +406,15 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				}
 				maxLength = (int)strlen(arithTrig);
 				initialProcessor(arithTrig, result1);
+				if (resultR == 0 && solverRunning == false) {
+					initialProcessor(arithTrig, result1);
+				}
+				if (resultR == 0 && solverRunning == false) {
+					initialProcessor(arithTrig, result1);
+				}
+				if (resultR == 0 && solverRunning == false) {
+					initialProcessor(arithTrig, result1);
+				}
 				verbose = 0;
 			}
 		}

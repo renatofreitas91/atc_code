@@ -173,7 +173,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	}
 	if (isCommand(arithTrig, "solver") && arithTrig[i + 6] == '(') {
 		command = true;
-		solverRunning = true;
 		if (!isContained("x", arithTrig)) {
 			puts("\n\n Error: No 'x' detected in your entered expression.\n\n");
 		}
@@ -189,15 +188,8 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			sprintf(expression, "%s", expressionF);
 			solver(expression);
 			printf("\n\nx=");
-			if (realSolver == false) {
-				resultR = resultR*-1; resultI = resultI*-1;
-			}
-			else {
-				realSolver = false;
-			}
 			complexNumber(resultR, resultI);
 		}
-		solverRunning = false;
 	}
 	if (isCommand(arithTrig, "solveequation")) {
 		command = true;

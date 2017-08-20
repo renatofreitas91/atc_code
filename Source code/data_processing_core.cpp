@@ -1781,10 +1781,14 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		}
 		result_name[v] = '\0';
 		char replacement[DIM] = "";
-		sprintf(replacement, "(////////)");
-		replace(result_name, replacement, arithTrig);
-		replace("////////", result_name, expressionF);
-		sprintf(arithTrig, "%s", expressionF);
+		char finalReplacement[DIM] = "";
+		sprintf(finalReplacement, "(%s)", result_name);
+		if (!isContained(finalReplacement, arithTrig)) {
+			sprintf(replacement, "(////////)");
+			replace(result_name, replacement, arithTrig);
+			replace("////////", result_name, expressionF);
+			sprintf(arithTrig, "%s", expressionF);
+		}
 	}
 	if (isContained("B", arithTrig) || isContained("O", arithTrig) || isContained("H", arithTrig)) {
 		int i = strStart, v = 0;
@@ -1795,12 +1799,17 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		}
 		result_name[v] = '\0';
 		char replacement[DIM] = "";
-		sprintf(replacement, "(////////)");
-		replace(result_name, replacement, arithTrig);
-		replace("////////", result_name, expressionF);
-		sprintf(arithTrig, "%s", expressionF);
+		char finalReplacement[DIM] = "";
+		sprintf(finalReplacement, "(%s)", result_name);
+		if (!isContained(finalReplacement, arithTrig)) {
+			sprintf(replacement, "(////////)");
+			replace(result_name, replacement, arithTrig);
+			replace("////////", result_name, expressionF);
+			sprintf(arithTrig, "%s", expressionF);
+		}
 	}
 }
+
 
 void openTxt() {
 	FILE *open = NULL;
@@ -2283,7 +2292,7 @@ int variableValidator(char variable[DIM]) {
 					h = 1;
 				}
 				else {
-					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'P') {
+					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'P' || (variable[i - 2] == 'I'&&variable[i - 1] == 'N') == false && variable[i] == 'F') {
 						if (variable[i] == 'A') {
 							revariable[i] = 'Q';
 						}
@@ -2295,6 +2304,9 @@ int variableValidator(char variable[DIM]) {
 						}
 						if (variable[i] == 'E') {
 							revariable[i] = 'Y';
+						}
+						if (variable[i] == 'F') {
+							revariable[i] = 'U';
 						}
 						if (variable[i] == 'P') {
 							revariable[i] = 'S';

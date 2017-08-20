@@ -76,7 +76,7 @@ void equationSolver(char equation[DIM]) {
 		}
 		else {
 			double rootR = solver(toCalcX);
-			double rootI = 0;
+			double rootI = resultI;
 			if (rootR > 0 && rootI > 0) {
 				printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
 			}
