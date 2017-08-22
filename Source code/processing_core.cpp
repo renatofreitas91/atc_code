@@ -402,7 +402,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					a = 0; if (arithTrig[i] == '_'&&arithTrig[i + 1] != 's'&&arithTrig[i + 1] != 'c'&&arithTrig[i + 1] != 't'&&arithTrig[i + 1] != 'a'&&arithTrig[i + 1] != 'l'&&arithTrig[i + 1] != 'd'&&arithTrig[i + 1] != 'r'&&arithTrig[i + 1] != 'g') {
 						pas[a] = arithTrig[i]; a++; i++;
 					}
-					while (arithTrig[i] != '+'&&arithTrig[i] != '-'&&arithTrig[i] != '*'&&arithTrig[i] != '/'&&arithTrig[i] != '^'&&arithTrig[i] != '!') {
+					while (arithTrig[i] != '+'&&arithTrig[i] != '-'&&arithTrig[i] != '*'&&arithTrig[i] != '/'&&arithTrig[i] != '^'&&arithTrig[i] != '!'&&arithTrig[i] != ')'&&arithTrig[i] != '(') {
 						pas[a] = arithTrig[i];
 						a++;
 						i++;
