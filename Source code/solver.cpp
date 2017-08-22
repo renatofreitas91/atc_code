@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 double xValuesR = 0, xValuesI = 0;
-boolean solverRunning = false, realSolver = false;
+boolean solverRunning = false;
 
 double solver(char expression[DIM]) {
 	solverRunning = true;

@@ -390,22 +390,21 @@ void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]) {
 	char expression[DIM] = "", expressionG[DIM] = "";
 	sprintf(expression, "%s", string);
 	sprintf(expressionG, "%s", string);
+	isContained(toReplace, expressionG);
 	do {
-		if (isContained(toReplace, expressionG)) {
-			int i = strStart, j = 0;
-			while (j < abs((int)strlen(replacement)))
-			{
-				expression[i] = replacement[j];
-				i++; j++;
-			}
-			int g = strEnd;
-			while (expression[g] != '\0') {
-				expression[i] = expressionG[g];
-				g++;
-				i++;
-			}
-			expression[i] = '\0';
+		int i = strStart, j = 0;
+		while (j < abs((int)strlen(replacement)))
+		{
+			expression[i] = replacement[j];
+			i++; j++;
 		}
+		int g = strEnd;
+		while (expression[g] != '\0') {
+			expression[i] = expressionG[g];
+			g++;
+			i++;
+		}
+		expression[i] = '\0';
 		sprintf(expressionG, "%s", expression);
 	} while (isContained(toReplace, expressionG));
 	sprintf(expressionF, "%s", expressionG);
@@ -2878,38 +2877,23 @@ boolean readyToSolve(char paTh[DIM]) {
 
 boolean isContained(char to_find[DIM], char string[DIM]) {
 	int i = 0, j = 0;
-	if (abs((int)strlen(to_find)) > abs((int)strlen(string)) || abs((int)strlen(to_find)) == 0 && abs((int)strlen(string)) != 0 || abs((int)strlen(string)) == 0) {
-		return false;
-	}
-	else {
-		while (string[i] != '\0'&&i < abs((int)strlen(string))) {
-			while (to_find[0] != string[i] && string[i] != '\0'&&i < abs((int)strlen(string))) {
-				i++;
-			}
-			if (to_find[0] == string[i] && i < abs((int)strlen(string))) {
+	for (i = 0; i < abs((int)strlen(string)); i++) {
+		for (j = 0; j < abs((int)strlen(to_find)); j++) {
+			if (to_find[j] == string[i] && j == 0) {
 				strStart = i;
-				j = 0;
-				if (to_find[0] == string[i] && string[i] == string[i + 1] && to_find[0] != to_find[1]) {
-					while (to_find[0] == string[i]) {
-						i++;
-					}
-					strStart = i - 1;
-					if (to_find[1] == string[i]) {
-						i++;
-						j = j + 2;
-					}
-				}
-				while (to_find[j] == string[i] && string[i] != '\0'&&to_find[j] != '\0'&&i < abs((int)strlen(string)) && j < abs((int)strlen(to_find))) {
-					i++;
+				while (to_find[j] == string[i] && to_find[j] != '\0'&&string[i] != '\0') {
 					j++;
+					i++;
 				}
-				strEnd = i;
+				if (j == strlen(to_find)) {
+					strEnd = i;
+					return true;
+				}
+				else {
+					i = strStart;
+					break;
+				}
 			}
-
-			if (j == abs((int)strlen(to_find))) {
-				return true;
-			}
-			i++;
 		}
 	}
 	return false;
