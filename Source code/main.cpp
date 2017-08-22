@@ -437,6 +437,9 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			int cp = 0, mark = 0;
 			int c = 0, d = 0, k = 0, l = 0, h = 0, s = 0;
 			int parent[DIM];
+			for (s = 0; s < maxLength; s++) {
+				parent[s] = 0;
+			}
 			for (s = 0; data[s] != '\0'&&s < abs((int)strlen(data)); s++) {
 				if (data[s] == '(') {
 					d = 0;
