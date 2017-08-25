@@ -17,6 +17,8 @@ double rt(double radicand, double degree, int sig);
 double arcfact(double f);
 double arg(double a, double b);
 double fact(double d);
+double getValue();
+void currentSettings();
 void cotan(double x, double y);
 void sec(double x, double y);
 void cosec(double x, double y);

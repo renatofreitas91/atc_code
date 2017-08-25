@@ -2123,6 +2123,193 @@ void toSolve(int re) {
 	}
 }
 
+void currentSettings() {
+	solving = false;
+	FILE *open = NULL;
+	puts("");
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\mode.txt", atcPath);
+	open = fopen(toOpen, "r");
+	char info[DIM] = "";
+	int state = 0;
+	if (open != NULL) {
+		fgets(info, 200, open);
+		fclose(open);
+		state = (int)calcNow(info, 0, 0);
+		switch (state) {
+		case 1:
+			puts("Mode------------------------------------> RADIAN Degree Gradian | Info: Enter \"mode\" to change.");
+			break;
+		case 2:
+			puts("Mode------------------------------------> Radian DEGREE Gradian | Info: Enter \"mode\" to change.");
+			break;
+		case 3:
+			puts("Mode------------------------------------> Radian Degree GRADIAN | Info: Enter \"mode\" to change.");
+			break;
+		}
+	}
+	else {
+		puts("Mode------------------------------------> Radian DEGREE Gradian | Info: Enter \"mode\" to change.");
+	}
+	open = NULL;
+	sprintf(toOpen, "%s\\numSystems.txt", atcPath);
+	open = fopen(toOpen, "r");
+	if (open != NULL) {
+		fgets(info, 200, open);
+		fclose(open);
+		state = (int)calcNow(info, 0, 0);
+		switch (state) {
+		case 0:
+			puts("Numerical Systems Response--------------> Enabled DISABLED | Info: Enter \"numerical systems\" to change.");
+			break;
+		case 1:
+			puts("Numerical Systems Response--------------> ENABLED Disabled | Info: Enter \"numerical systems\" to change.");
+			break;
+		}
+	}
+	else {
+		puts("Numerical Systems Response--------------> Enabled DISABLED | Info: Enter \"numerical systems\" to change.");
+	}
+	open = NULL;
+	sprintf(toOpen, "%s\\siPrefixes.txt", atcPath);
+	open = fopen(toOpen, "r");
+	if (open != NULL) {
+		fgets(info, 200, open);
+		fclose(open);
+		state = (int)calcNow(info, 0, 0);
+		switch (state) {
+		case 0:
+			puts("SI Prefixes Response--------------------> Enabled DISABLED | Info: Enter \"si prefixes\" to change.");
+			break;
+		case 1:
+			puts("SI Prefixes Response--------------------> ENABLED Disabled | Info: Enter \"si prefixes\" to change.");
+			break;
+		}
+	}
+	else {
+		puts("SI Prefixes Response--------------------> Enabled DISABLED | Info: Enter \"si prefixes\" to change.");
+	}
+	open = NULL;
+	sprintf(toOpen, "%s\\actualTime.txt", atcPath);
+	open = fopen(toOpen, "r");
+	if (open != NULL) {
+		fgets(info, 200, open);
+		fclose(open);
+		state = (int)calcNow(info, 0, 0);
+		switch (state) {
+		case 0:
+			puts("Actual Time Response--------------------> Enabled DISABLED | Info: Enter \"actual time response\" to change.");
+			break;
+		case 1:
+			puts("Actual Time Response--------------------> ENABLED Disabled | Info: Enter \"actual time response\" to change.");
+			break;
+		}
+	}
+	else {
+		puts("Actual Time Response--------------------> Enabled DISABLED | Info: Enter \"actual time response\" to change.");
+	}
+	open = NULL;
+	sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
+	open = fopen(toOpen, "r");
+	if (open != NULL) {
+		fgets(info, 200, open);
+		fclose(open);
+		state = (int)calcNow(info, 0, 0);
+		switch (state) {
+		case 0:
+			puts("Verbose Resolution----------------------> Enabled DISABLED | Info: Enter \"verbose resolution\" to change.");
+			break;
+		case 1:
+			puts("Verbose Resolution----------------------> ENABLED Disabled | Info: Enter \"verbose resolution\" to change.");
+			break;
+		}
+	}
+	else {
+		puts("Verbose Resolution----------------------> Enabled DISABLED | Info: Enter \"verbose resolution\" to change.");
+	}
+	open = NULL;
+	sprintf(toOpen, "%s\\colors.txt", atcPath);
+	open = fopen(toOpen, "r");
+	if (open != NULL) {
+		fgets(info, 200, open);
+		fclose(open);
+		printf("Colors----------------------------------> Text: "); idColorToName(info[7]); printf(" - Background: "); idColorToName(info[6]); printf(" | Info: Enter \"colors\" to change.\n");
+	}
+	else {
+		puts("Colors----------------------------------> Text: AQUA - Background: WHITE | Info: Enter \"colors\" to change.");
+	}
+	open = NULL;
+	sprintf(toOpen, "%s\\window.txt", atcPath);
+	open = fopen(toOpen, "r");
+	int i = 0, e = 0, x, y, width, height, a = 1;
+	char value[10] = "";
+	if (open != NULL) {
+		for (i = 0; (info[i] = fgetc(open)) != EOF; i++) {
+			value[e] = info[i];
+			if (info[i] != '\n') {
+				e++;
+			}
+			if (value[e] == '\n'&&a == 1) {
+				value[e] = '\0';
+				x = atoi(value);
+				a = 2; e = 0;
+			}
+			if (value[e] == '\n'&&a == 2) {
+				value[e] = '\0';
+				y = atoi(value);
+				a = 3; e = 0;
+			}
+			if (value[e] == '\n'&&a == 3) {
+				value[e] = '\0';
+				width = atoi(value);
+				a = 4; e = 0;
+			}
+			if (value[e] == '\n'&&a == 4) {
+				value[e] = '\0';
+				height = atoi(value);
+				a = 5; e = 0;
+			}
+		}
+		printf("Window----------------------------------> x: %d - y: %d - Width: %d - Height: %d | Info: Enter \"window\" to change.\n", x, y, width, height);
+	}
+	else {
+		puts("Window----------------------------------> x: 0 - y: 0 - Width: 1000 - Height: 1000 | Info: Enter \"window\" to change.");
+	}
+	open = NULL;
+	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+	open = fopen(toOpen, "r");
+	if (open != NULL) {
+		int lines = 0, columns = 0;
+		fgets(info, 200, open);
+		fclose(open);
+		isContained("con cols=", info);
+		i = strEnd;
+		int j = 0;
+		while (verifyNumber(info[i])) {
+			value[j] = info[i];
+			j++;
+			i++;
+		}
+		value[j] = '\0';
+		columns = atoi(value);
+		isContained("lines=", info);
+		i = strEnd;
+		j = 0;
+		while (verifyNumber(info[i])) {
+			value[j] = info[i];
+			j++;
+			i++;
+		}
+		value[j] = '\0';
+		lines = atoi(value);
+		printf("Dimensions------------------------------> Lines: %d - Columns: %d | Info: Enter \"dimensions\" to change.\n", lines, columns);
+	}
+	else {
+		puts("Dimensions------------------------------> Lines: 150 - Columns: 150 | Info: Enter \"dimensions\" to change.");
+	}
+}
+
+
 void on_start() {
 	FILE *open = NULL;
 	char onStart[100] = "";
@@ -2159,6 +2346,59 @@ void on_start() {
 			applySettings(Window);
 			applySettings(Dimensions);
 		}
+	}
+}
+
+void idColorToName(char color) {
+	switch (color) {
+	case '0':
+		printf("BLACK");
+		break;
+	case '1':
+		printf("BLUE");
+		break;
+	case '2':
+		printf("GREEN");
+		break;
+	case '3':
+		printf("AQUA");
+		break;
+	case '4':
+		printf("RED");
+		break;
+	case '5':
+		printf("PURPLE");
+		break;
+	case '6':
+		printf("YELLOW");
+		break;
+	case '7':
+		printf("WHITE");
+		break;
+	case '8':
+		printf("GRAY");
+		break;
+	case '9':
+		printf("LIGHT BLUE");
+		break;
+	case 'a':
+		printf("LIGHT GREEN");
+		break;
+	case 'b':
+		printf("LIGHT AQUA");
+		break;
+	case 'c':
+		printf("LIGHT RED");
+		break;
+	case 'd':
+		printf("LIGHT PURPLE");
+		break;
+	case 'e':
+		printf("LIGHT YELLOW");
+		break;
+	case 'f':
+		printf("BRIGHT WHITE");
+		break;
 	}
 }
 

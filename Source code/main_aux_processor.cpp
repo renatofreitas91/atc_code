@@ -3,6 +3,7 @@
 #include "stdafx.h"
 
 int rasf = 0, maxLength = 0;
+boolean solving = true;
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);

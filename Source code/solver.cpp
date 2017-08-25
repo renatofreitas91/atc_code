@@ -5,6 +5,7 @@ boolean solverRunning = false;
 
 double solver(char expression[DIM]) {
 	solverRunning = true;
+	solving = false;
 	resultR = 0; resultI = 0;
 	char equation[DIM] = "", saveEquation[DIM] = "";
 	sprintf(equation, "%s", expression);
@@ -104,6 +105,7 @@ double solver(char expression[DIM]) {
 				if (time_s >= waitTime) {
 					printf("\n\nError: Unable to find value for x.\n\n");
 					solverRunning = false;
+					solving = true;
 					return -7000;
 				}
 				else {
@@ -177,6 +179,7 @@ double solver(char expression[DIM]) {
 				if (time_s >= waitTime) {
 					printf("\n\nError: Unable to find value for x.\n\n");
 					solverRunning = false;
+					solving = true;
 					return -7000;
 				}
 				else {
@@ -201,14 +204,17 @@ double solver(char expression[DIM]) {
 		resultR = resultFR; resultI = resultFI;
 		variableController("x", resultR);
 		solverRunning = false;
+		solving = true;
 		return resultFR;
 	}
 	else {
 		puts("\n\nYour expression has errors.\n\n");
 		solverRunning = false;
+		solving = true;
 		return NULL;
 	}
 	solverRunning = false;
+	solving = true;
 	return NULL;
 }
 

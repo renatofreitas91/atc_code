@@ -49,32 +49,32 @@ void dimensions() {
 
 void window() {
 	FILE *open;
-	double x = 601, y = 601, width = 2001, height = 2001;
+	int x = 601, y = 601, width = 2001, height = 2001;
 	char value[DIM] = " ";
 	HWND w;
 	w = GetConsoleWindow();
 	while (x > 600 || x < 0) {
 		printf("X-axis value -> [0, 600]: ");
-		x = getValue();
+		x = (int)getValue();
 	}
 	while (y > 600 || y < 0) {
 		printf("Y-axis value -> [0, 600]: ");
-		y = getValue();
+		y = (int)getValue();
 	}
 	while (width > 2000 || width < 200) {
 		printf("Width value -> [200, 2000]: ");
-		width = getValue();
+		width = (int)getValue();
 	}
 	while (height > 2000 || height < 200) {
 		printf("Height value -> [200, 2000]: ");
-		height = getValue();
+		height = (int)getValue();
 	}
 	printf("\n");
-	MoveWindow(w, (int)x, (int)y, (int)width, (int)height, FALSE);
+	MoveWindow(w, x, y, width, height, FALSE);
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\window.txt", atcPath);
 	open = fopen(toOpen, "w");
-	fprintf(open, "%G\n%G\n%G\n%G\n", x, y, width, height);
+	fprintf(open, "%d\n%d\n%d\n%d\n", x, y, width, height);
 	fclose(open);
 }
 
@@ -85,9 +85,9 @@ void mode() {
 	while (option != 1 && option != 2 && option != 3) {
 		printf("radian -> 1\ndegree -> 2\ngradian -> 3\n");
 		option = (int)getValue();
-			if (option > 3 || option < 1) {
-				printf("Error, incorrect choice.\n");
-			}
+		if (option > 3 || option < 1) {
+			printf("Error, incorrect choice.\n");
+		}
 	}
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\mode.txt", atcPath);
@@ -150,7 +150,7 @@ int applySettings(int toDo) {
 	}
 	if (toDo == 3) {
 		int i = 0, e = 0;
-		double x, y, width, height, a = 1;
+		int x, y, width, height, a = 1;
 		char value[DIM];
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\window.txt", atcPath);
@@ -168,22 +168,22 @@ int applySettings(int toDo) {
 				}
 				if (value[e] == '\n'&&a == 1) {
 					value[e] = '\0';
-					x = arithSolver(value, 0);
+					x = atoi(value);
 					a = 2; e = 0;
 				}
 				if (value[e] == '\n'&&a == 2) {
 					value[e] = '\0';
-					y = arithSolver(value, x);
+					y = atoi(value);
 					a = 3; e = 0;
 				}
 				if (value[e] == '\n'&&a == 3) {
 					value[e] = '\0';
-					width = arithSolver(value, y);
+					width = atoi(value);
 					a = 4; e = 0;
 				}
 				if (value[e] == '\n'&&a == 4) {
 					value[e] = '\0';
-					height = arithSolver(value, width);
+					height = atoi(value);
 					a = 5; e = 0;
 				}
 			}

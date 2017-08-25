@@ -51,6 +51,11 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		arithmeticMatrixSolver();
 		puts("");
 	}
+	if (isCommand(arithTrig, "currentsettings")) {
+		command = true;
+		currentSettings();
+		puts("");
+	}
 	if (isCommand(arithTrig, "atcfromcmd")) {
 		command = true;
 		char comm[300] = "";

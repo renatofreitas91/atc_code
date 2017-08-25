@@ -656,7 +656,9 @@ double solveNow(char toSolveNow[DIM], double result1, double result2) {
 	}
 	double resultFF = 0;
 	isFromSolveNow = 1;
+	solving = false;
 	main_core(toSolveNow, toSolveNow, fsolveN, path, result1, result2, feedbackValidation);
+	solving = true;
 	sprintf(toSolveNow, "");
 	resultFF = resultR;
 	isFromSolveNow = 0;
@@ -682,6 +684,8 @@ double atcProg(char exprDev[DIM]) {
 double getValue() {
 	char value[DIM] = "";
 	gets_s(value);
+	solving = false;
 	atcProg(value);
+	solving = true;
 	return resultR;
 }
