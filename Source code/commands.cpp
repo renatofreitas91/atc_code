@@ -176,26 +176,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
 		openTxt();
 	}
-	if (isCommand(arithTrig, "solver") && arithTrig[i + 6] == '(') {
-		command = true;
-		if (!isContained("x", arithTrig)) {
-			puts("\n\n Error: No 'x' detected in your entered expression.\n\n");
-		}
-		else {
-			int h = 7;
-			char expression[DIM] = "";
-			while ((arithTrig[h] == ')'&&arithTrig[h + 1] == '+'&&arithTrig[h + 2] == '0'&&arithTrig[h + 3] == '\0') == false) {
-				expression[h - 7] = arithTrig[h];
-				h++;
-			}
-			expression[h - 7] = '\0';
-			replace("x", "res", expression);
-			sprintf(expression, "%s", expressionF);
-			solver(expression);
-			printf("\n\nx=");
-			complexNumber(resultR, resultI);
-		}
-	}
 	if (isCommand(arithTrig, "solveequation")) {
 		command = true;
 		puts("");

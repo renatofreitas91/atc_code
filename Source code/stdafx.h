@@ -19,7 +19,7 @@
 extern double xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
 extern int  maxLength, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
 extern char atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
-extern boolean equationSolverRunning, solverRunning, solving;
+extern boolean equationSolverRunning, solverRunning, solving, fromInitialProcessor;
 double functionProcessor(char trigon[DIM], double result, double amplitude, double res);
 double initialProcessor(char arithTrig[DIM], double result);
 double arithSolver(char trigon1[DIM], double result);

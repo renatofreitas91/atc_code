@@ -767,6 +767,15 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					char saveExpr[DIM] = "";
 					sprintf(saveExpr, "%s", varValidator);
 					double funcF = functionProcessor(varValidator, 2, 7, 12);
+					if (funcF == 0.5&&isContained("solver", varValidator)) {
+						if (!isContained("x", data)) {
+							if (comment == 1) {
+								puts("\nError: No 'x' detected in the argument of your solver function.\n");
+							}
+							decision = false;
+							return decision;
+						}
+					}
 					sprintf(varValidator, "%s", saveExpr);
 					if (funcF != 0.5) {
 						if (validVar == 0) {
