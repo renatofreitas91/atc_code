@@ -1,12 +1,16 @@
-
-
 #include "stdafx.h"
 
+double xValuesR = 0, xValuesI = 0;
 boolean solverRunning = false, fromInitialProcessor = false;
 
 double solver(char expression[DIM]) {
+	if (isContained("x", expression)) {
+		replace("x", "res", expression);
+		sprintf(expression, "%s", expressionF);
+	}
 	solverRunning = true;
 	solving = false;
+	resultR = 0; resultI = 0;
 	char equation[DIM] = "", saveEquation[DIM] = "";
 	sprintf(equation, "%s", expression);
 	char const * equationF = equation;
@@ -20,20 +24,19 @@ double solver(char expression[DIM]) {
 	start = clock();
 	boolean to_solve = dataVerifier(equation, 0, 0, 1, 1);
 	if (to_solve) {
-		resultR = resultFR;
-		resultI = resultFI;
-		variableController("x", resultFR);
+		xValuesR = resultFR; xValuesI = resultFI;
 		sprintf(equation, "%s", equationF);
 		calcNow(equation, 0, 0);
 		while (isSolved() == false && time_s < waitTime && timesEvaluated < timesToEvaluate) {
 			timesEvaluated++;
-			if (resultFR >= (saveResultR*-1)) {
+			if (resultFR >= (saveResultR*-1) || initialR == (boolean)true) {
 				saveResultR = saveResultR * 10;
 				savePrecisionR = savePrecisionR * 10;
 				precisionR = savePrecisionR;
 				resultFR = saveResultR;
+				initialR = false;
 			}
-			if (resultFI >= (saveResultI*-1)) {
+			if (resultFI >= (saveResultI*-1) || initialI == (boolean)true) {
 				if (((resultI <-1E-9 || resultI>1E-9) || fromInitialProcessor == (boolean)true) && imaginary == (boolean)true) {
 					resultFI = -0.1;
 					saveResultI = -0.1;
@@ -45,12 +48,11 @@ double solver(char expression[DIM]) {
 				savePrecisionI = savePrecisionI * 10;
 				precisionI = savePrecisionI;
 				resultFI = saveResultI;
+				initialI = false;
 			}
 			while (resultR != 0 && resultFR < (saveResultR*-1) && time_s < waitTime && timesEvaluated < timesToEvaluate) {
 				timesEvaluated++;
-				resultR = resultFR;
-				resultI = resultFI;
-				variableController("x", resultFR);
+				xValuesR = resultFR; xValuesI = resultFI;
 				sprintf(equation, "%s", equationF);
 				calcNow(equation, 0, 0);
 				if (resultR < 0) {
@@ -58,18 +60,14 @@ double solver(char expression[DIM]) {
 						timesEvaluated++;
 						if (resultR < 0) {
 							resultFR = resultFR + precisionR;
-							resultR = resultFR;
-							resultI = resultFI;
-							variableController("x", resultFR);
+							xValuesR = resultFR; xValuesI = resultFI;
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
 						if (resultR > 0) {
 							resultFR = resultFR - precisionR;
 							precisionR = precisionR / 10;
-							resultR = resultFR;
-							resultI = resultFI;
-							variableController("x", resultFR);
+							xValuesR = resultFR; xValuesI = resultFI;
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
@@ -86,9 +84,7 @@ double solver(char expression[DIM]) {
 						timesEvaluated++;
 						if (resultR > 0) {
 							resultFR = resultFR + precisionR;
-							resultR = resultFR;
-							resultI = resultFI;
-							variableController("x", resultFR);
+							xValuesR = resultFR; xValuesI = resultFI;
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
@@ -96,9 +92,7 @@ double solver(char expression[DIM]) {
 							if (resultR < 0) {
 								resultFR = resultFR - precisionR;
 								precisionR = precisionR / 10;
-								resultR = resultFR;
-								resultI = resultFI;
-								variableController("x", resultFR);
+								xValuesR = resultFR; xValuesI = resultFI;
 								sprintf(equation, "%s", equationF);
 								calcNow(equation, 0, 0);
 							}
@@ -132,9 +126,7 @@ double solver(char expression[DIM]) {
 			}
 			while (resultI != 0 && resultFI < (saveResultI*-1) && time_s < waitTime && timesEvaluated < timesToEvaluate) {
 				timesEvaluated++;
-				resultR = resultFR;
-				resultI = resultFI;
-				variableController("x", resultFR);
+				xValuesR = resultFR; xValuesI = resultFI;
 				sprintf(equation, "%s", equationF);
 				calcNow(equation, 0, 0);
 				if (resultI < 0) {
@@ -142,18 +134,14 @@ double solver(char expression[DIM]) {
 						timesEvaluated++;
 						if (resultI < 0) {
 							resultFI = resultFI + precisionI;
-							resultR = resultFR;
-							resultI = resultFI;
-							variableController("x", resultFR);
+							xValuesR = resultFR; xValuesI = resultFI;
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
 						if (resultI > 0) {
 							resultFI = resultFI - precisionI;
 							precisionI = precisionI / 10;
-							resultR = resultFR;
-							resultI = resultFI;
-							variableController("x", resultFR);
+							xValuesR = resultFR; xValuesI = resultFI;
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
@@ -170,9 +158,7 @@ double solver(char expression[DIM]) {
 						timesEvaluated++;
 						if (resultI > 0) {
 							resultFI = resultFI + precisionI;
-							resultR = resultFR;
-							resultI = resultFI;
-							variableController("x", resultFR);
+							xValuesR = resultFR; xValuesI = resultFI;
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
@@ -180,9 +166,7 @@ double solver(char expression[DIM]) {
 							if (resultI < 0) {
 								resultFI = resultFI - precisionI;
 								precisionI = precisionI / 10;
-								resultR = resultFR;
-								resultI = resultFI;
-								variableController("x", resultFR);
+								xValuesR = resultFR; xValuesI = resultFI;
 								sprintf(equation, "%s", equationF);
 								calcNow(equation, 0, 0);
 							}
@@ -222,7 +206,6 @@ double solver(char expression[DIM]) {
 			}
 		}
 		resultR = resultFR; resultI = resultFI;
-		variableController("x", resultR);
 		solverRunning = false;
 		solving = true;
 		return resultFR;

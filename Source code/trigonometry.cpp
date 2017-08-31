@@ -3,7 +3,7 @@
 #include "calc.h"
 #include "stdafx.h"
 
-double INF = DBL_MAX;
+double INF = pot(2.0, 4000, 1);
 double mINF = INF *-1;
 
 void cotan(double x, double y) {

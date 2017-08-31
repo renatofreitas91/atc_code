@@ -2309,6 +2309,7 @@ void currentSettings() {
 	}
 }
 
+
 void on_start() {
 	FILE *open = NULL;
 	char onStart[100] = "";
@@ -2414,49 +2415,6 @@ void ShowConsoleCursor(BOOL bShow)
 	cursorInfo.dwSize = 10;
 	cursorInfo.bVisible = bShow;
 	SetConsoleCursorInfo(hOut, &cursorInfo);
-}
-
-void complexNumber(double a, double b) {
-	processingOK = -1;
-	verify = 0;
-	if (a > 0 && b > 0) {
-		printf("%G+%Gi\n", a, b);
-	}
-	else {
-		if (a > 0 && b < 0) {
-			printf("%G%Gi\n", a, b);
-		}
-		else {
-			if (a < 0 && b > 0) {
-				printf("%G+%Gi\n", a, b);
-			}
-			else {
-				if (a < 0 && b < 0) {
-					printf("%G%Gi\n", a, b);
-				}
-				else {
-					if (a == 0 && b == 0) {
-						printf("%G\n", a);
-					}
-					else {
-						if (a == 0 && b != 0) {
-							printf("%Gi\n", b);
-						}
-						else {
-							if (a != 0 && b == 0) {
-								printf("%G\n", a);
-							}
-							else {
-								printf("%G+%Gi\n", a, b);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	resultR = -7; resultI = -7;
-	puts("\n");
 }
 
 bool IsPreviousToWindowsVista()
@@ -2996,24 +2954,6 @@ double convertToNumber(char number[DIM]) {
 	return result;
 }
 
-double calcNow(char toCalc[DIM], double result1, double result2) {
-	if (strlen(toCalc) != 0) {
-		char expression[DIM] = "";
-		sprintf(expression, "%s", toCalc);
-		feedbackValidation = 1;
-		resultR = 0; resultI = 0;
-		resultR = solveNow(expression, result1, result2);
-		feedbackValidation = 0;
-		if (verified == 0) {
-			printf("Invalid expression: %s\n\n", expression);
-		}
-	}
-	else {
-		verified = 1; resultR = 0; resultI = 0;
-	}
-	return resultR;
-}
-
 boolean firstLetterVariable(char letter) {
 	char letters[100] = "QWRTYUISGJKLZXVNMwyuofhjkxzvnmp";
 	int i = 0;
@@ -3210,6 +3150,66 @@ boolean isEqual(char to_find[DIM], char string[DIM]) {
 	return false;
 }
 
+double calcNow(char toCalc[DIM], double result1, double result2) {
+	if (strlen(toCalc) != 0) {
+		char expression[DIM] = "";
+		sprintf(expression, "%s", toCalc);
+		feedbackValidation = 1;
+		resultR = 0; resultI = 0;
+		resultR = solveNow(expression, result1, result2);
+		feedbackValidation = 0;
+		if (verified == 0) {
+			printf("Invalid expression: %s\n\n", expression);
+		}
+	}
+	else {
+		verified = 1; resultR = 0; resultI = 0;
+	}
+	return resultR;
+}
+
+void complexNumber(double a, double b) {
+	processingOK = -1;
+	verify = 0;
+	if (a > 0 && b > 0) {
+		printf("%G+%Gi\n", a, b);
+	}
+	else {
+		if (a > 0 && b < 0) {
+			printf("%G%Gi\n", a, b);
+		}
+		else {
+			if (a < 0 && b > 0) {
+				printf("%G+%Gi\n", a, b);
+			}
+			else {
+				if (a < 0 && b < 0) {
+					printf("%G%Gi\n", a, b);
+				}
+				else {
+					if (a == 0 && b == 0) {
+						printf("%G\n", a);
+					}
+					else {
+						if (a == 0 && b != 0) {
+							printf("%Gi\n", b);
+						}
+						else {
+							if (a != 0 && b == 0) {
+								printf("%G\n", a);
+							}
+							else {
+								printf("%G+%Gi\n", a, b);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	resultR = -7; resultI = -7;
+	puts("\n");
+}
 
 
 

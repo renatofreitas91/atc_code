@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 
+
 void trianglesRectanglesSolver() {
 	int continuF = 0;
 	puts(" ");

@@ -24,8 +24,8 @@ void main(int argc, char *argv[]) {
 	if (continu == 1) {
 		system("title Advanced Trigonometry Calculator v1.9.1       ==) ATC is ready to process data. (==");
 		do {
-			variableController("INF", pot(2.0, 200, 0));
 			resultR = pot(2.0, 200.0, 1);
+			variableController("INF", 0);
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
 			fflush(NULL);
@@ -49,11 +49,6 @@ void main(int argc, char *argv[]) {
 					arG++;
 				}
 				addATCPath();
-			}
-			if (isContained("solver", trigData)) {
-				if (isContained("x", trigData)) {
-					variableController("x", 2.0);
-				}
 			}
 			sprintf(path, "%s\\history.txt", atcPath);
 			toSolve(rf);

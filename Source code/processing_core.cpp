@@ -22,7 +22,9 @@ double initialProcessor(char arithTrig[DIM], double result) {
 		triArithI[s] = 0;
 		sig[s] = -1;
 	}
-
+	for (s = 0; s < maxLength + 100; s++) {
+		parent[s] = 0;
+	}
 	for (i = 0; arithTrig[i] != '\0'; i++) {
 		if (arithTrig[i] == '[' || arithTrig[i] == '{') {
 			arithTrig[i] = '(';
@@ -298,9 +300,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 			s = 0;
 		}
 	}
-	for (s = 0; s < abs((int)strlen(arithTrig)); s++) {
-		parent[s] = 0;
-	}
 	int cp = 0, mark = 0;
 	c = 0; d = 0; k = 0; l = 0; h = 0;
 	for (s = 0; arithTrig[s] != '\0'&&s < abs((int)strlen(arithTrig)); s++) {
@@ -483,8 +482,8 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					if (isEqual("solver", op)) {
 						fromInitialProcessor = true;
 						triArith[b] = solver(pas);
-						fromInitialProcessor = false;
 						triArithI[b] = resultI;
+						fromInitialProcessor = false;
 						sig[b] = 1;
 					}
 					else {
@@ -1069,11 +1068,19 @@ double arithSolver(char trigon1[DIM], double result) {
 		if (number2[0] == 'r'&&number2[1] == 'e'&&number2[2] == 's' || number2[0] == '['&&number2[1] == 'r'&&number2[2] == 'e'&&number2[3] == 's') {
 			ampl[n] = ansRV;
 			amplI[n] = ansIV;
+			if (equationSolverRunning || solverRunning) {
+				ampl[n] = xValuesR;
+				amplI[n] = xValuesI;
+			}
 			complex = 2;
 		}
 		if (number2[0] == '_'&&number2[1] == 'r'&&number2[2] == 'e'&&number2[3] == 's' || number2[0] == '['&&number2[1] == '_'&&number2[2] == 'r'&&number2[3] == 'e'&&number2[4] == 's') {
 			ampl[n] = ansRV*-1;
 			amplI[n] = ansIV*-1;
+			if (equationSolverRunning || solverRunning) {
+				ampl[n] = xValuesR*-1;
+				amplI[n] = xValuesI*-1;
+			}
 			complex = 2;
 		}
 		if (facto > 0) {
