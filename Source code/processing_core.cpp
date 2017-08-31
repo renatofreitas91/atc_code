@@ -479,12 +479,15 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					}
 				}
 				if (kl == 1) {
-					if (isEqual("solver", op)) {
-						fromInitialProcessor = true;
+					if (isContained("solver", op)) {
+						countSolver = 0;
 						triArith[b] = solver(pas);
 						triArithI[b] = resultI;
-						fromInitialProcessor = false;
-						sig[b] = 1;
+						if (op[0] == '_') {
+							triArith[b] = triArith[b] * -1;
+							triArithI[b] = triArithI[b] * -1;
+							sig[b] = 0;
+						}
 					}
 					else {
 						triArith[b] = initialProcessor(pas, result);
