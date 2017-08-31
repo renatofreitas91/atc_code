@@ -24,8 +24,7 @@ void main(int argc, char *argv[]) {
 	if (continu == 1) {
 		system("title Advanced Trigonometry Calculator v1.9.1       ==) ATC is ready to process data. (==");
 		do {
-			resultR = pot(2.0, 200.0, 1);
-			variableController("INF", 0);
+			variableController("INF", pot(2.0, 200, 0));
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
 			fflush(NULL);

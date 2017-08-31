@@ -1,22 +1,19 @@
+
+
 #include "stdafx.h"
 
-double xValuesR = 0, xValuesI = 0;
-boolean solverRunning = false, fromInitialProcessor = false;
+boolean solverRunning = false;
 
 double solver(char expression[DIM]) {
-	if (isContained("x", expression)) {
-		replace("x", "res", expression);
-		sprintf(expression, "%s", expressionF);
-	}
 	solverRunning = true;
 	solving = false;
 	resultR = 0; resultI = 0;
 	char equation[DIM] = "", saveEquation[DIM] = "";
 	sprintf(equation, "%s", expression);
 	char const * equationF = equation;
-	double precisionR = 0.01, precisionI = 0, resultFR = -0.1, resultFI = 0, savePrecisionR = 0.01, savePrecisionI = 0, saveResultR = -0.1, saveResultI = 0, time_s = 0, time_ms = 0, save_time = 0;
+	double precisionR = 0.01, precisionI = 0.01, resultFR = -0.1, resultFI = -0.1, savePrecisionR = 0.01, savePrecisionI = 0.01, saveResultR = -0.1, saveResultI = -0.1, time_s = 0, time_ms = 0, save_time = 0;
 	char Xequal[100] = "";
-	int waitTime = 60, timesToEvaluate = 300, timesEvaluated = 0;
+	int waitTime = 60, timesToEvaluate = 300, timesEvaluated = 0, interactions = 20;
 	boolean initialR = true, initialI = true, imaginary = true;
 	clock_t start, end;
 	resultR = resultFR;
@@ -24,7 +21,9 @@ double solver(char expression[DIM]) {
 	start = clock();
 	boolean to_solve = dataVerifier(equation, 0, 0, 1, 1);
 	if (to_solve) {
-		xValuesR = resultFR; xValuesI = resultFI;
+		resultR = resultFR;
+		resultI = resultFI;
+		variableController("x", resultFR);
 		sprintf(equation, "%s", equationF);
 		calcNow(equation, 0, 0);
 		while (isSolved() == false && time_s < waitTime && timesEvaluated < timesToEvaluate) {
@@ -37,22 +36,16 @@ double solver(char expression[DIM]) {
 				initialR = false;
 			}
 			if (resultFI >= (saveResultI*-1) || initialI == (boolean)true) {
-				if (((resultI <-1E-9 || resultI>1E-9) || fromInitialProcessor == (boolean)true) && imaginary == (boolean)true) {
-					resultFI = -0.1;
-					saveResultI = -0.1;
-					precisionI = 0.01;
-					savePrecisionI = 0.01;
-					imaginary = false;
-				}
 				saveResultI = saveResultI * 10;
 				savePrecisionI = savePrecisionI * 10;
 				precisionI = savePrecisionI;
 				resultFI = saveResultI;
-				initialI = false;
 			}
-			while (resultR != 0 && resultFR < (saveResultR*-1) && time_s < waitTime && timesEvaluated < timesToEvaluate) {
+			while (resultR != 0 && resultFR < (saveResultR*-1) && time_s < waitTime && timesEvaluated < timesToEvaluate &&timesEvaluated % interactions != 0) {
 				timesEvaluated++;
-				xValuesR = resultFR; xValuesI = resultFI;
+				resultR = resultFR;
+				resultI = resultFI;
+				variableController("x", resultFR);
 				sprintf(equation, "%s", equationF);
 				calcNow(equation, 0, 0);
 				if (resultR < 0) {
@@ -60,14 +53,18 @@ double solver(char expression[DIM]) {
 						timesEvaluated++;
 						if (resultR < 0) {
 							resultFR = resultFR + precisionR;
-							xValuesR = resultFR; xValuesI = resultFI;
+							resultR = resultFR;
+							resultI = resultFI;
+							variableController("x", resultFR);
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
 						if (resultR > 0) {
 							resultFR = resultFR - precisionR;
 							precisionR = precisionR / 10;
-							xValuesR = resultFR; xValuesI = resultFI;
+							resultR = resultFR;
+							resultI = resultFI;
+							variableController("x", resultFR);
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
@@ -77,14 +74,16 @@ double solver(char expression[DIM]) {
 						if (save_time != time_s) {
 							save_time = time_s;
 						}
-					} while (resultR != 0 && resultFR < (saveResultR*-1) && time_s < waitTime&& timesEvaluated < timesToEvaluate);
+					} while (resultR != 0 && resultFR < (saveResultR*-1) && time_s < waitTime&& timesEvaluated < timesToEvaluate &&timesEvaluated % interactions != 0);
 				}
 				else {
 					do {
 						timesEvaluated++;
 						if (resultR > 0) {
 							resultFR = resultFR + precisionR;
-							xValuesR = resultFR; xValuesI = resultFI;
+							resultR = resultFR;
+							resultI = resultFI;
+							variableController("x", resultFR);
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
@@ -92,7 +91,9 @@ double solver(char expression[DIM]) {
 							if (resultR < 0) {
 								resultFR = resultFR - precisionR;
 								precisionR = precisionR / 10;
-								xValuesR = resultFR; xValuesI = resultFI;
+								resultR = resultFR;
+								resultI = resultFI;
+								variableController("x", resultFR);
 								sprintf(equation, "%s", equationF);
 								calcNow(equation, 0, 0);
 							}
@@ -103,7 +104,7 @@ double solver(char expression[DIM]) {
 						if (save_time != time_s) {
 							save_time = time_s;
 						}
-					} while (resultR != 0 && resultFR < (saveResultR*-1) && time_s < waitTime&& timesEvaluated < timesToEvaluate);
+					} while (resultR != 0 && resultFR < (saveResultR*-1) && time_s < waitTime&& timesEvaluated < timesToEvaluate &&timesEvaluated % interactions != 0);
 
 				}
 				if (time_s >= waitTime) {
@@ -124,9 +125,11 @@ double solver(char expression[DIM]) {
 					save_time = time_s;
 				}
 			}
-			while (resultI != 0 && resultFI < (saveResultI*-1) && time_s < waitTime && timesEvaluated < timesToEvaluate) {
+			while (resultI != 0 && resultFI < (saveResultI*-1) && time_s < waitTime && timesEvaluated < timesToEvaluate &&timesEvaluated % interactions != 0) {
 				timesEvaluated++;
-				xValuesR = resultFR; xValuesI = resultFI;
+				resultR = resultFR;
+				resultI = resultFI;
+				variableController("x", resultFR);
 				sprintf(equation, "%s", equationF);
 				calcNow(equation, 0, 0);
 				if (resultI < 0) {
@@ -134,14 +137,18 @@ double solver(char expression[DIM]) {
 						timesEvaluated++;
 						if (resultI < 0) {
 							resultFI = resultFI + precisionI;
-							xValuesR = resultFR; xValuesI = resultFI;
+							resultR = resultFR;
+							resultI = resultFI;
+							variableController("x", resultFR);
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
 						if (resultI > 0) {
 							resultFI = resultFI - precisionI;
 							precisionI = precisionI / 10;
-							xValuesR = resultFR; xValuesI = resultFI;
+							resultR = resultFR;
+							resultI = resultFI;
+							variableController("x", resultFR);
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
@@ -151,14 +158,16 @@ double solver(char expression[DIM]) {
 						if (save_time != time_s) {
 							save_time = time_s;
 						}
-					} while (resultI != 0 && resultFI < (saveResultI*-1) && time_s < waitTime&& timesEvaluated < timesToEvaluate);
+					} while (resultI != 0 && resultFI < (saveResultI*-1) && time_s < waitTime&& timesEvaluated < timesToEvaluate &&timesEvaluated % interactions != 0);
 				}
 				else {
 					do {
 						timesEvaluated++;
 						if (resultI > 0) {
 							resultFI = resultFI + precisionI;
-							xValuesR = resultFR; xValuesI = resultFI;
+							resultR = resultFR;
+							resultI = resultFI;
+							variableController("x", resultFR);
 							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
@@ -166,7 +175,9 @@ double solver(char expression[DIM]) {
 							if (resultI < 0) {
 								resultFI = resultFI - precisionI;
 								precisionI = precisionI / 10;
-								xValuesR = resultFR; xValuesI = resultFI;
+								resultR = resultFR;
+								resultI = resultFI;
+								variableController("x", resultFR);
 								sprintf(equation, "%s", equationF);
 								calcNow(equation, 0, 0);
 							}
@@ -177,7 +188,7 @@ double solver(char expression[DIM]) {
 						if (save_time != time_s) {
 							save_time = time_s;
 						}
-					} while (resultI != 0 && resultFI < (saveResultI*-1) && time_s < waitTime&& timesEvaluated < timesToEvaluate);
+					} while (resultI != 0 && resultFI < (saveResultI*-1) && time_s < waitTime&& timesEvaluated < timesToEvaluate &&timesEvaluated % interactions != 0);
 
 				}
 				if (time_s >= waitTime) {
@@ -206,6 +217,7 @@ double solver(char expression[DIM]) {
 			}
 		}
 		resultR = resultFR; resultI = resultFI;
+		variableController("x", resultR);
 		solverRunning = false;
 		solving = true;
 		return resultFR;
