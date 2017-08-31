@@ -3,7 +3,6 @@
 #include "stdafx.h"
 #include "calc.h"
 
-
 void complex_log(double a, double b) {
 	if (b == 0 && a > 0) {
 		resultR = ln(a);
