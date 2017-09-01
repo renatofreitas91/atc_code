@@ -6,12 +6,6 @@ int rasf = 0, maxLength = 0;
 boolean solving = true;
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
-	if (isContained("solver", arithTrig)) {
-		if (isContained("x", arithTrig)) {
-			resultR = 0; resultI = 0;
-			variableController("x", 0);
-		}
-	}
 	fflush(NULL);
 	verbose = 0;
 	verified = 0;

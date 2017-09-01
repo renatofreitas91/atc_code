@@ -1,11 +1,11 @@
+
+
 #include "stdafx.h"
 
-double xValuesR = 0, xValuesI = 0;
-int countSolver = 0;
 boolean solverRunning = false;
+double xValuesR = 0, xValuesI = 0;
 
 double solver(char expression[DIM]) {
-	countSolver++;
 	if (isContained("x", expression)) {
 		replace("x", "res", expression);
 		sprintf(expression, "%s", expressionF);
@@ -19,7 +19,7 @@ double solver(char expression[DIM]) {
 	double precisionR = 0.01, precisionI = 0, resultFR = -0.1, resultFI = 0, savePrecisionR = 0.01, savePrecisionI = 0, saveResultR = -0.1, saveResultI = 0, time_s = 0, time_ms = 0, save_time = 0;
 	char Xequal[100] = "";
 	int waitTime = 60, timesToEvaluate = 300, timesEvaluated = 0, interactions = 30;
-	boolean initialR = true, initialI = true, imaginary = true;
+	boolean initialR = true, initialI = true, imaginary = true, counter = true;
 	clock_t start, end;
 	resultR = resultFR;
 	resultI = resultFI;
@@ -38,8 +38,8 @@ double solver(char expression[DIM]) {
 				resultFR = saveResultR;
 				initialR = false;
 			}
-			if (resultFI >= (saveResultI*-1) || initialI == (boolean)true || (countSolver == 2 && imaginary == (boolean)true)) {
-				if (((resultI <-1E-9 || resultI>1E-9) && imaginary == (boolean)true) || (countSolver == 2 && imaginary == (boolean)true)) {
+			if (resultFI >= (saveResultI*-1) || initialI == (boolean)true) {
+				if (((resultI <-1E-9 || resultI>1E-9) && imaginary == (boolean)true)) {
 					resultFI = -0.1;
 					saveResultI = -0.1;
 					precisionI = 0.01;
@@ -211,11 +211,6 @@ double solver(char expression[DIM]) {
 			if (save_time != time_s) {
 				save_time = time_s;
 			}
-		}
-		if (((resultR > 1E-5 || resultR < -1E-5) || (resultI > 1E-5 || resultI < -1E-5)) && countSolver == 1) {
-			sprintf(equation, "%s", expression);
-			solver(equation);
-			resultFR = resultR; resultFI = resultI;
 		}
 		resultR = resultFR; resultI = resultFI;
 		solverRunning = false;

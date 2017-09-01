@@ -480,7 +480,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				}
 				if (kl == 1) {
 					if (isContained("solver", op)) {
-						countSolver = 0;
 						triArith[b] = solver(pas);
 						triArithI[b] = resultI;
 						if (op[0] == '_') {
@@ -1389,7 +1388,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			gon = 0;
 		}
 	}
-	for (s = 0; s < maxLength; s++) {
+	for (s = 0; s < abs((int)strlen(trigon)); s++) {
 		v[s] = 0;
 		argu[s] = 0;
 		ampl[s] = 0;
