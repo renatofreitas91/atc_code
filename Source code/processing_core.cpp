@@ -480,6 +480,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				}
 				if (kl == 1) {
 					if (isContained("solver", op)) {
+						retrySolver = false;
 						triArith[b] = solver(pas);
 						triArithI[b] = resultI;
 						if (op[0] == '_') {

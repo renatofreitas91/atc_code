@@ -2,8 +2,8 @@
 
 #include "stdafx.h"
 
-boolean solverRunning = false;
-double xValuesR = 0, xValuesI = 0;
+boolean solverRunning = false, retrySolver = false;
+double xValuesR = 0, xValuesI = 0, saveResultRFR = 0, saveResultRFI = 0;
 
 double solver(char expression[DIM]) {
 	if (isContained("x", expression)) {
@@ -20,6 +20,10 @@ double solver(char expression[DIM]) {
 	char Xequal[100] = "";
 	int waitTime = 60, timesToEvaluate = 300, timesEvaluated = 0, interactions = 30;
 	boolean initialR = true, initialI = true, imaginary = true, counter = true;
+	if (retrySolver == (boolean)true) {
+		precisionI = 0.01; resultFI = -0.1;
+		savePrecisionI = 0.01; saveResultI = -0.1;
+	}
 	clock_t start, end;
 	resultR = resultFR;
 	resultI = resultFI;
@@ -39,7 +43,7 @@ double solver(char expression[DIM]) {
 				initialR = false;
 			}
 			if (resultFI >= (saveResultI*-1) || initialI == (boolean)true) {
-				if (((resultI <-1E-9 || resultI>1E-9) && imaginary == (boolean)true)) {
+				if (((resultI <-1E-7 || resultI>1E-7) && imaginary == (boolean)true)) {
 					resultFI = -0.1;
 					saveResultI = -0.1;
 					precisionI = 0.01;
@@ -210,6 +214,16 @@ double solver(char expression[DIM]) {
 			time_s = qu(time_ms, 1000);
 			if (save_time != time_s) {
 				save_time = time_s;
+			}
+		}
+		if (retrySolver == (boolean)false && ((resultR > -1E-7&&resultR<1E-7&&resultI>-1E-7&&resultI < 1E-7) == false || resultR < -0.1 || resultR> 0.1)) {
+			retrySolver = true;
+			solver(expression);
+			saveResultRFR = resultR; saveResultRFI = resultI;
+			xValuesR = resultR; xValuesI = resultI;
+			calcNow(equation, 0, 0);
+			if (resultR > -1E-7&&resultR<1E-7&&resultI>-1E-7&&resultI < 1E-7) {
+				resultFR = saveResultRFR; resultFI = saveResultRFI;
 			}
 		}
 		resultR = resultFR; resultI = resultFI;

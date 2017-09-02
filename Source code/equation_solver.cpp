@@ -52,7 +52,7 @@ void equationSolver(char equation[DIM]) {
 				if (ValueI[v] == '-')
 					ValueI[v] = '_';
 			}
-			sprintf(toCalcX, "%s(%s+%si)res^%d+", toCalcX, ValueR, ValueI, i);
+			sprintf(toCalcX, "%s(%s+%si)*(res)^%d+", toCalcX, ValueR, ValueI, i);
 			sprintf(expression, "%s%s+%si\\", expression, ValueR, ValueI);
 		}
 
@@ -77,6 +77,7 @@ void equationSolver(char equation[DIM]) {
 			maxExponent = 0;
 		}
 		else {
+			retrySolver = false;
 			double rootR = solver(toCalcX);
 			double rootI = resultI;
 			if (rootR > 0 && rootI > 0) {
