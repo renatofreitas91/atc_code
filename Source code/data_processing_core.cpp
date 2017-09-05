@@ -2018,7 +2018,12 @@ void toSolve(int re) {
 	FILE *file = NULL;
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
-	file = fopen(toOpen, "r");
+	int retry = 0;
+	while (file == NULL&&retry < 7) {
+		file = fopen(toOpen, "r");
+		Sleep(10);
+		retry++;
+	}
 	if (file == NULL) {
 		char option[30] = "", directory[DIM] = "";
 		sprintf(directory, "%s\\To solve\\", atcPath);

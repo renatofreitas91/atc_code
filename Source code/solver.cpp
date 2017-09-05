@@ -216,15 +216,13 @@ double solver(char expression[DIM]) {
 				save_time = time_s;
 			}
 		}
-		if (retrySolver == (boolean)false && ((resultR > -1E-7&&resultR<1E-7&&resultI>-1E-7&&resultI < 1E-7) == false || resultR < -0.1 || resultR> 0.1)) {
+		if (retrySolver == (boolean)false && (resultI > -1E-7&&resultI < 1E-7) && (resultR > -1E-7&&resultR < 1E-7) == false) {
 			retrySolver = true;
 			solver(expression);
-			saveResultRFR = resultR; saveResultRFI = resultI;
-			xValuesR = resultR; xValuesI = resultI;
-			calcNow(equation, 0, 0);
-			if (resultR > -1E-7&&resultR<1E-7&&resultI>-1E-7&&resultI < 1E-7) {
-				resultFR = saveResultRFR; resultFI = saveResultRFI;
-			}
+			resultFR = resultR; resultFI = resultI;
+			solverRunning = false;
+			solving = true;
+			return resultFR;
 		}
 		resultR = resultFR; resultI = resultFI;
 		solverRunning = false;
