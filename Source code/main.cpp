@@ -29,6 +29,7 @@ void main(int argc, char *argv[]) {
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
 			fflush(NULL);
 			tD = 0;
+			toSolve(rf);
 			if (argc < 2) {
 				sprintf(trigData, "");
 				printf(">");
@@ -50,7 +51,6 @@ void main(int argc, char *argv[]) {
 				addATCPath();
 			}
 			sprintf(path, "%s\\history.txt", atcPath);
-			toSolve(rf);
 			for (tD = 0; trigData[tD] != 0; tD++) {
 				if (trigData[tD] == '{' || trigData[tD] == '[') {
 					trigData[tD] = '(';

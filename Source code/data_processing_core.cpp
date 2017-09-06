@@ -2055,14 +2055,19 @@ void toSolve(int re) {
 								b++; m++;
 							}
 							path[b] = '\0';
-							FILE *open = NULL;
-							open = fopen(path, "r");
-							if (open == NULL) {
+							retry = 0;
+							file = NULL;
+							while (file == NULL&&retry < 7) {
+								file = fopen(path, "r");
+								Sleep(10);
+								retry++;
+							}
+							if (file == NULL) {
 								sprintf(txtFiles, "%s\n%s", txtFiles, filename);
 								numFiles++;
 							}
 							else {
-								fclose(open);
+								fclose(file);
 							}
 						}
 					}
@@ -2116,15 +2121,24 @@ void toSolve(int re) {
 					FILE *dis = NULL;
 					char toOpen[DIM] = "";
 					sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
-					dis = fopen(toOpen, "w");
-					fclose(dis);
+					retry = 0;
+					while (dis == NULL&&retry < 7) {
+						dis = fopen(toOpen, "w");
+						Sleep(10);
+						retry++;
+					}
+					if (dis != NULL) {
+						fclose(dis);
+					}
 					puts("==> To enable the feature later enter \"enable txt detector\" <==\n");
 				}
 			}
 		}
 	}
 	else {
-		fclose(file);
+		if (file != NULL) {
+			fclose(file);
+		}
 	}
 }
 
