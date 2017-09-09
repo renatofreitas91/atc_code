@@ -274,6 +274,23 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fclose(start);
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
 	}
+	if (isCommand(arithTrig, "resetallnow")) {
+		command = true;
+		puts(" ");
+		FILE *start;
+		char path4ATC[DIM] = "";
+		sprintf(path4ATC, "%s\\onStart.txt", atcPath);
+		start = fopen(path4ATC, "w");
+		fprintf(start, "resetall");
+		fclose(start);
+		continu = 0;
+		sprintf(path4ATC, "%s\\atc.exe", atcPath);
+		using namespace std;
+		std::string s = string(path4ATC);
+		std::wstring stemp = std::wstring(s.begin(), s.end());
+		LPCWSTR sw = stemp.c_str();
+		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
+	}
 	if (isCommand(arithTrig, "resetsettings")) {
 		command = true;
 		puts(" ");
@@ -284,6 +301,23 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fprintf(start, "resetsettings");
 		fclose(start);
 		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
+	}
+	if (isCommand(arithTrig, "resetsettingsnow")) {
+		command = true;
+		puts(" ");
+		FILE *start;
+		char path4ATC[DIM] = "";
+		sprintf(path4ATC, "%s\\onStart.txt", atcPath);
+		start = fopen(path4ATC, "w");
+		fprintf(start, "resetsettings");
+		fclose(start);
+		continu = 0;
+		sprintf(path4ATC, "%s\\atc.exe", atcPath);
+		using namespace std;
+		std::string s = string(path4ATC);
+		std::wstring stemp = std::wstring(s.begin(), s.end());
+		LPCWSTR sw = stemp.c_str();
+		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 	}
 	if (isCommand(arithTrig, "atcfolder")) {
 		command = true;
