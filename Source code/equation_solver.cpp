@@ -55,7 +55,6 @@ void equationSolver(char equation[DIM]) {
 			sprintf(toCalcX, "%s(%s+%si)*(res)^%d+", toCalcX, ValueR, ValueI, i);
 			sprintf(expression, "%s%s+%si\\", expression, ValueR, ValueI);
 		}
-
 		char ValueR[DIM] = "";
 		sprintf(ValueR, "%G", valuesEqR[i]);
 		for (int v = 0; v < abs((int)strlen(ValueR)); v++) {
@@ -136,7 +135,6 @@ void equationSolver(char equation[DIM]) {
 			}
 			maxExponent--;
 		}
-
 	} while (maxExponent > 0);
 	equationSolverRunning = false;
 }

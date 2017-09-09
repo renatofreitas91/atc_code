@@ -747,7 +747,6 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 			j++;
 		}
 		hexadecimal2[j] = '\0';
-
 		mult = multi(decimal);
 		if (mult < 0 && hp != 0) {
 			mult = mult*-1;

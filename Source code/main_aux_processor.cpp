@@ -159,11 +159,9 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 		}
 	}
 	else {
-
 		if (strlen(arithTrig) > 0) {
 			arithTrig[i] = '+'; arithTrig[i + 1] = '0'; arithTrig[i + 2] = '\0';
 		}
-
 		verify = 0;
 		for (s = 0; arithTrig[s] != '\0'; s++) {
 			if (arithTrig[s] == 'B' || arithTrig[s] == 'O' || arithTrig[s] == 'H' || arithTrig[s] == '_' || arithTrig[s] == '{' || arithTrig[s] == '[' || arithTrig[s] == '(' || arithTrig[s] == '+' || arithTrig[s] == '-' || arithTrig[s] == '*' || arithTrig[s] == '/' || arithTrig[s] == '^' || arithTrig[s] == '0' || arithTrig[s] == '1' || arithTrig[s] == '2' || arithTrig[s] == '3' || arithTrig[s] == '4' || arithTrig[s] == '5' || arithTrig[s] == '6' || arithTrig[s] == '7' || arithTrig[s] == '8' || arithTrig[s] == '9' || (arithTrig[s] == 'r'&&arithTrig[s + 1] == 'e'&&arithTrig[s + 2] == 's') || (arithTrig[s] == 'a'&&arithTrig[s + 1] == 'n'&&arithTrig[s + 2] == 's') || (arithTrig[s] == 'e' && ((arithTrig[s + 1] == 'e' || arithTrig[s + 1] == '\0'&&s == 0 || arithTrig[s + 1] == ')' || arithTrig[s + 1] == 'p' || arithTrig[s - 1] == '_') || (arithTrig[s - 1] == 'e' || arithTrig[s - 1] == '(' || arithTrig[s - 1] == 'i'&&arithTrig[s - 2] != 't'))) || (arithTrig[s] == 'p'&&arithTrig[s + 1] == 'i' && ((arithTrig[s + 2] == 'e' || arithTrig[s + 2] == '\0'&&s == 0 || arithTrig[s + 2] == ')' || arithTrig[s + 2] == 'p' || arithTrig[s - 1] == '_') || (arithTrig[s - 1] == 'e' || arithTrig[s - 1] == '(' || arithTrig[s - 1] == 'i')))) {
@@ -533,7 +531,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 								}
 							}
 						}
-
 						fclose(fout);
 						if (isFromSolveNow == 0) {
 							rf++;
@@ -570,7 +567,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 								printf(dP, result1);
 							}
 						}
-
 						if (result1 == 0 && result2 != 0) {
 							sprintf(dP, "#%d=%%.%dfi\n", rf, dp);
 							if (isFromMain == 1) {

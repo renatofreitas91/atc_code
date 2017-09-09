@@ -328,7 +328,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 						}
 						h++;
 					}
-
 				} while (l == 2);
 				h = 0;
 				while (l != 1 && h < abs((int)strlen(arithTrig))) {
@@ -372,7 +371,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	char pas[DIM] = "";
 	int se = 0;
 	int thj = 0;
-
 	if (curPar == 1) {
 		for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
 			int jk = 0;
@@ -456,7 +454,6 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					triArithI[b] = resultI;
 					sig[b] = 1;
 					pas[0] = '\0';
-
 					if (strlen(op) > 0) {
 						if (op[3] == 't' && (op[2] == 's' || op[2] == 'o'&&op[1] != 'c')) {
 							resultI = triArithI[b]; resultR = triArithI[b - 1];
@@ -836,7 +833,6 @@ double arithSolver(char trigon1[DIM], double result) {
 			}
 			number2[y] = '.'; number2[y + 1] = '0'; number2[y + 2] = '\0';
 		}
-
 		v = 0;
 		for (j = 0; number2[j] != '\0'; j++) {
 			if (number2[j] == 'P') {
@@ -1304,7 +1300,6 @@ double arithSolver(char trigon1[DIM], double result) {
 	result1 = resultR;
 	result2 = resultI;
 	return result1;
-
 }
 
 double functionProcessor(char trigon[DIM], double result, double amplitude, double res) {
@@ -1398,7 +1393,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 	v[1] = result;
 	vI[0] = resultR;
 	vI[1] = resultI;
-
 	if (verbose == 1 && solving == (boolean)true) {
 		puts("\nFunction arguments:\n1st interactor: \n");
 		if (v[0] > 0 && vI[0] > 0) {
@@ -1661,7 +1655,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		result1 = resultR;
 		result2 = resultI;
 	}
-
 	if (isEqual("ln", op)) {
 		complex_log(v[1], result2);
 		result1 = resultR;
@@ -1693,7 +1686,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		if (gon == 1) {
 			v[1] = v[1] * (M_PI / 200);
 			vI[1] = vI[1] * (M_PI / 200);
-
 		}
 		sec(v[1], vI[1]);
 		result1 = resultR;
@@ -1704,7 +1696,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		result1 = resultR;
 		result2 = resultI;
 	}
-
 	if (isEqual("cotan", op)) {
 		if (deg == 1) {
 			v[1] = ((v[1] * M_PI) / 180);

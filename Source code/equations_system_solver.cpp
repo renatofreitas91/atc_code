@@ -15,7 +15,6 @@ int matrixToValues(char matrix[DIM], double result) {
 			values[i][j] = 0;
 			valuesI[i][j] = 0;
 			l = 0;
-
 			while (matrix[k] != '\0'&&matrix[k] != ';'&&matrix[k] != '\\') {
 				value[l] = matrix[k];
 				k++; l++;
@@ -146,7 +145,6 @@ void rearrangeValues() {
 		arrangeOrder[i] = index;
 		equa[index] = 0;
 	}
-
 	for (i = 0; i < count - 1; i++) {
 		for (j = 0; j < count; j++) {
 			valuesF[i][j] = values[arrangeOrder[i]][j];

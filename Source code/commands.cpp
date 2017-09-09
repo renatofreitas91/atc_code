@@ -154,7 +154,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			double time_s = qu(time_ms, 1000);
 			double time_ms_final = re(time_ms, 1000);
 			printf("==> Processed in %Gs and %Gms. ATC is ready to process more data. <==\n\n", time_s, time_ms_final);
-
 		} while (continu == 1);
 	}
 	if (isCommand(arithTrig, "autosolvetxt")) {

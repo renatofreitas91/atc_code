@@ -308,7 +308,6 @@ boolean processTxt(char path[DIM], int re) {
 			f++;
 			d = f;
 			trigData[e] = '\0';
-
 			for (e = 0; trigData[e] != 0; e++) {
 				if (trigData[e] == '{' || trigData[e] == '[') {
 					trigData[e] = '(';
@@ -583,7 +582,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			for (w = 0; data[w] != '\0'; w++) {
 				if ((data[w] == 'B' || data[w] == 'O' || data[w] == 'H' || data[w] == 'P' || data[w] == '#') && (w == 0 || data[w - 1] == '+' || data[w - 1] == '-' || data[w - 1] == '*' || data[w - 1] == '/' || data[w - 1] == '^' || data[w - 1] == '(')) {
 					w++;
-
 					if (data[w - 1] == 'B') {
 						if (data[w] == '_' || data[w] == '-') {
 							w++;
@@ -600,7 +598,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 								t++;
 							}
 						}
-
 						if (t != strlen(numsysData)) {
 							decision = false;
 							if (comment == 1) {
@@ -608,9 +605,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 							}
 							return decision;
 						}
-
 					}
-
 					if (data[w - 1] == 'O') {
 						if (data[w] == '_' || data[w] == '-') {
 							w++;
@@ -913,7 +908,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				}
 				return decision;
 			}
-
 			if (data[i] == '[' || data[i] == '{') {
 				data[i] = '(';
 			}
@@ -1007,7 +1001,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 							if (comment == 1) {
 								puts("\nNumber of \"bs\" for advanced logarithmic function can't be different of 2.\n");
 							}
-
 							return decision;
 						}
 					}

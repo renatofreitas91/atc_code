@@ -15,7 +15,6 @@ double solver(char expression[DIM]) {
 	resultR = 0; resultI = 0;
 	char equation[DIM] = "", saveEquation[DIM] = "";
 	sprintf(equation, "%s", expression);
-	char const * equationF = equation;
 	double precisionR = 0.01, precisionI = 0, resultFR = -0.1, resultFI = 0, savePrecisionR = 0.01, savePrecisionI = 0, saveResultR = -0.1, saveResultI = 0;
 	char Xequal[100] = "";
 	int waitTime = 60, timesToEvaluate = 420, timesEvaluated = 0, interactions = 30;
@@ -29,7 +28,6 @@ double solver(char expression[DIM]) {
 	boolean to_solve = dataVerifier(equation, 0, 0, 1, 1);
 	if (to_solve) {
 		xValuesR = resultFR; xValuesI = resultFI;
-		sprintf(equation, "%s", equationF);
 		calcNow(equation, 0, 0);
 		while (isSolved() == false && timesEvaluated < timesToEvaluate) {
 			timesEvaluated++;
@@ -52,7 +50,6 @@ double solver(char expression[DIM]) {
 			while (resultR != 0 && resultFR < (saveResultR*-1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0) {
 				timesEvaluated++;
 				xValuesR = resultFR; xValuesI = resultFI;
-				sprintf(equation, "%s", equationF);
 				calcNow(equation, 0, 0);
 				if (resultR < 0) {
 					do {
@@ -60,14 +57,12 @@ double solver(char expression[DIM]) {
 						if (resultR < 0) {
 							resultFR = resultFR + precisionR;
 							xValuesR = resultFR; xValuesI = resultFI;
-							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
 						if (resultR > 0) {
 							resultFR = resultFR - precisionR;
 							precisionR = precisionR / 10;
 							xValuesR = resultFR; xValuesI = resultFI;
-							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
 					} while (resultR != 0 && resultFR < (saveResultR*-1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
@@ -78,7 +73,6 @@ double solver(char expression[DIM]) {
 						if (resultR > 0) {
 							resultFR = resultFR + precisionR;
 							xValuesR = resultFR; xValuesI = resultFI;
-							sprintf(equation, "%s", equationF);
 							calcNow(equation, 0, 0);
 						}
 						else {
@@ -86,7 +80,6 @@ double solver(char expression[DIM]) {
 								resultFR = resultFR - precisionR;
 								precisionR = precisionR / 10;
 								xValuesR = resultFR; xValuesI = resultFI;
-								sprintf(equation, "%s", equationF);
 								calcNow(equation, 0, 0);
 							}
 						}
@@ -102,7 +95,6 @@ double solver(char expression[DIM]) {
 				while (resultI != 0 && resultFI < (saveResultI*-1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0) {
 					timesEvaluated++;
 					xValuesR = resultFR; xValuesI = resultFI;
-					sprintf(equation, "%s", equationF);
 					calcNow(equation, 0, 0);
 					if (resultI < 0) {
 						do {
@@ -110,14 +102,12 @@ double solver(char expression[DIM]) {
 							if (resultI < 0) {
 								resultFI = resultFI + precisionI;
 								xValuesR = resultFR; xValuesI = resultFI;
-								sprintf(equation, "%s", equationF);
 								calcNow(equation, 0, 0);
 							}
 							if (resultI > 0) {
 								resultFI = resultFI - precisionI;
 								precisionI = precisionI / 10;
 								xValuesR = resultFR; xValuesI = resultFI;
-								sprintf(equation, "%s", equationF);
 								calcNow(equation, 0, 0);
 							}
 						} while (resultI != 0 && resultFI < (saveResultI*-1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
@@ -128,7 +118,6 @@ double solver(char expression[DIM]) {
 							if (resultI > 0) {
 								resultFI = resultFI + precisionI;
 								xValuesR = resultFR; xValuesI = resultFI;
-								sprintf(equation, "%s", equationF);
 								calcNow(equation, 0, 0);
 							}
 							else {
@@ -136,7 +125,6 @@ double solver(char expression[DIM]) {
 									resultFI = resultFI - precisionI;
 									precisionI = precisionI / 10;
 									xValuesR = resultFR; xValuesI = resultFI;
-									sprintf(equation, "%s", equationF);
 									calcNow(equation, 0, 0);
 								}
 							}

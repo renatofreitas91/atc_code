@@ -1030,7 +1030,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					}
 					arithTrig[i] = '*'; arithTrig[i + 1] = '1';
 					i = abs((int)strlen(arithTrig));
-
 				}
 			}
 		}
@@ -1131,7 +1130,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 				arithTrig[i] = '*';
 				i = abs((int)strlen(arithTrig));
-
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
@@ -1320,14 +1318,11 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 				if (j != p) {
 					p++;
-
 					char function[DIM] = "";
-
 					int y = 0;
 					while (verifyLetter(arithTrig[p]) && p < abs((int)strlen(arithTrig))) {
 						function[y] = arithTrig[p];
 						p++; y++;
-
 					}
 					function[y] = '?'; function[y + 1] = '\0';
 					isFunc = (float)functionProcessor(function, 0, 0, 0);
@@ -3228,10 +3223,3 @@ boolean isEqual(char to_find[DIM], char string[DIM]) {
 	}
 	return false;
 }
-
-
-
-
-
-
-

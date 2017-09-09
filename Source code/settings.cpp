@@ -3,7 +3,6 @@
 #include "stdafx.h"
 #include "atc_functions.h"
 
-
 void colors() {
 	FILE *open;
 	char bGround = ' ', cTxt = ' ', express[DIM] = "color 73", value[DIM] = "";
@@ -267,4 +266,3 @@ boolean about() {
 	ShowConsoleCursor(TRUE);
 	return continu;
 }
-
