@@ -477,7 +477,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				}
 				if (kl == 1) {
 					if (isContained("solver", op)) {
-						retrySolver = false;
+						retrySolver = false; retrySolver_2 = false; retrySolver_3 = false;
 						triArith[b] = solver(pas);
 						triArithI[b] = resultI;
 						if (op[0] == '_') {

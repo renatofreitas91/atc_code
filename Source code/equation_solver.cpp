@@ -76,7 +76,7 @@ void equationSolver(char equation[DIM]) {
 			maxExponent = 0;
 		}
 		else {
-			retrySolver = false;
+			retrySolver = false; retrySolver_2 = false; retrySolver_3 = false;
 			double rootR = solver(toCalcX);
 			double rootI = resultI;
 			if (rootR > 0 && rootI > 0) {

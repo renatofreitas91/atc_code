@@ -2431,7 +2431,9 @@ void ShowConsoleCursor(BOOL bShow)
 }
 
 void complexNumber(double a, double b) {
-	processingOK = -1;
+	if (solverRunning == (boolean)false) {
+		processingOK = -1;
+	}
 	verify = 0;
 	if (a > 0 && b > 0) {
 		printf("%G+%Gi\n", a, b);
@@ -2470,7 +2472,12 @@ void complexNumber(double a, double b) {
 		}
 	}
 	resultR = -7; resultI = -7;
-	puts("\n");
+	if (rasf > 0) {
+		puts("");
+	}
+	if (solverRunning == (boolean)true) {
+		processingOK = 1;
+	}
 }
 
 bool IsPreviousToWindowsVista()
@@ -3011,19 +3018,14 @@ double convertToNumber(char number[DIM]) {
 }
 
 double calcNow(char toCalc[DIM], double result1, double result2) {
-	if (strlen(toCalc) != 0) {
-		char expression[DIM] = "";
-		sprintf(expression, "%s", toCalc);
-		feedbackValidation = 1;
-		resultR = 0; resultI = 0;
-		resultR = solveNow(expression, result1, result2);
-		feedbackValidation = 0;
-		if (verified == 0) {
-			printf("Invalid expression: %s\n\n", expression);
-		}
-	}
-	else {
-		verified = 1; resultR = 0; resultI = 0;
+	char expression[DIM] = "";
+	sprintf(expression, "%s", toCalc);
+	feedbackValidation = 1;
+	resultR = 0; resultI = 0;
+	resultR = solveNow(expression, result1, result2);
+	feedbackValidation = 0;
+	if (verified == 0) {
+		printf("Invalid expression: %s\n\n", expression);
 	}
 	return resultR;
 }
