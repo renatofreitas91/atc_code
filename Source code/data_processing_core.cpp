@@ -3018,14 +3018,19 @@ double convertToNumber(char number[DIM]) {
 }
 
 double calcNow(char toCalc[DIM], double result1, double result2) {
-	char expression[DIM] = "";
-	sprintf(expression, "%s", toCalc);
-	feedbackValidation = 1;
-	resultR = 0; resultI = 0;
-	resultR = solveNow(expression, result1, result2);
-	feedbackValidation = 0;
-	if (verified == 0) {
-		printf("Invalid expression: %s\n\n", expression);
+	if (strlen(toCalc) != 0) {
+		char expression[DIM] = "";
+		sprintf(expression, "%s", toCalc);
+		feedbackValidation = 1;
+		resultR = 0; resultI = 0;
+		resultR = solveNow(expression, result1, result2);
+		feedbackValidation = 0;
+		if (verified == 0) {
+			printf("Invalid expression: %s\n\n", expression);
+		}
+	}
+	else {
+		verified = 1; resultR = 0; resultI = 0;
 	}
 	return resultR;
 }
