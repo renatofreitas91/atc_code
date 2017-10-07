@@ -24,7 +24,8 @@ void main(int argc, char *argv[]) {
 	if (continu == 1) {
 		system("title Advanced Trigonometry Calculator v1.9.1       ==) ATC is ready to process data. (==");
 		do {
-			variableController("INF", pot(2.0, 200.0, 1));
+			resultR = sqrt(DBL_MAX);
+			variableController("INF", resultR);
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
 			fflush(NULL);
@@ -296,8 +297,8 @@ boolean processTxt(char path[DIM], int re) {
 		tD = 0;
 		char variable[DIM] = "";
 		for (k = 0; k < cP; k++) {
-			resultR = pot(2.0, 200.0, 1);
-			variableController("INF", 0);
+			resultR = sqrt(DBL_MAX);
+			variableController("INF", resultR);
 			char trigData[DIM] = "";
 			tD = 0;
 			e = 0;
