@@ -15,6 +15,14 @@ void main(int argc, char *argv[]) {
 	char  path[DIM] = "", trigData[DIM] = "";
 	double result1 = 0, result2 = 0;
 	getATCPath();
+	char path4ATC[400] = "";
+	sprintf(path4ATC, "%s\\atc_launcher.exe", atcPath);
+	puts(path4ATC);
+	using namespace std;
+	std::string s = string(path4ATC);
+	std::wstring stemp = std::wstring(s.begin(), s.end());
+	LPCWSTR sw = stemp.c_str();
+	ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 	if (argc < 2) {
 		on_start();
 		applySettings(Colors);

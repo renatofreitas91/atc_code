@@ -255,6 +255,12 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		Sleep(200);
 		puts(" ");
 	}
+	if (isCommand(arithTrig, "start atc launcher")) {
+		command = true;
+		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del disable_txt_detector.txt\""), NULL, SW_SHOW);
+		Sleep(200);
+		puts(" ");
+	}
 	if (isCommand(arithTrig, "history")) {
 		command = true;
 		puts(" ");
