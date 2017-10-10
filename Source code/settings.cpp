@@ -247,6 +247,7 @@ boolean about() {
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n         To support the development of this application please enter \"donate\"\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
 	printf("     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS\n");
+	ShowConsoleCursor(TRUE);
 	gets_s(exit);
 	if (isEqual(exit, "user guide")) {
 		puts(" ");
@@ -264,6 +265,5 @@ boolean about() {
 		applySettings(Window);
 		applySettings(Dimensions);
 	}
-	ShowConsoleCursor(TRUE);
 	return continu;
 }
