@@ -415,7 +415,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	if (isCommand(arithTrig, "update")) {
 		command = true;
 		puts(" ");
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator.exe/download\""), NULL, SW_SHOW);
+		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator%20x86.exe/download\""), NULL, SW_SHOW);
 	}
 	if (isCommand(arithTrig, "updatex64")) {
 		command = true;
