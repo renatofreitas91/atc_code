@@ -64,6 +64,9 @@ void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], doub
 void saveToReport(char report[DIM]);
 void equationSolver(char equation[DIM]);
 void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2, int index);
+void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
+void fmdeterminant(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
+void startDetProcessing(char matrix[DIM]);
 boolean verifyPrefix(char prefix[DIM]);
 boolean processTxt(char path[DIM], int re);
 boolean dataVerifier(char data[DIM], double result1, double result2, int comment, int verify);

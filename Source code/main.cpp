@@ -25,11 +25,11 @@ void main(int argc, char *argv[]) {
 		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v1.9.1");
+		system("title Advanced Trigonometry Calculator v1.9.2");
 		continu = about();
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v1.9.1       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v1.9.2       ==) ATC is ready to process data. (==");
 		do {
 			resultR = sqrt(DBL_MAX);
 			variableController("INF", resultR);
@@ -47,7 +47,7 @@ void main(int argc, char *argv[]) {
 				}
 				gets_s(trigData);
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v1.9.1       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v1.9.2       ==) Processing... (==");
 			}
 			else {
 				arG = 1;
@@ -195,7 +195,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v1.9.1       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v1.9.2       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -533,7 +533,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 		}
 		int j = 0, k = 0, l = 0, kr = 0, kl = 0, v = 0, cChars = 0, fr = 0, ra = 0, nDot = 0, g = 0, d = 0, w = 0, y = 0, t = 0, space = 0;
 		char function[DIM] = "", variable[DIM] = "", expression[DIM] = "", text[DIM] = "", value[DIM] = "", saveVar[DIM] = "";
-		char validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_";
+		char validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_;";
 		char numsysData[DIM] = "";
 		int u = 0, p = 0;
 		if (synTest == 0) {
@@ -790,6 +790,76 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 							return decision;
 						}
 					}
+					if (funcF == 0.5&&isContained("det", varValidator)) {
+						char matrix[DIM] = "";
+						if (isContained("det", data)) {
+							int det = strEnd;
+							int t = 0, rCount = 0, lCount = 0;
+							if (data[det] == '(') {
+								lCount++;
+								det++;
+								while (lCount > rCount&&data[det] != '\0') {
+									if (data[det] == '(') {
+										lCount++;
+									}
+									if (data[det] == ')') {
+										rCount++;
+									}
+									if (lCount != rCount) {
+										matrix[t] = data[det];
+										t++;
+									}
+									det++;
+								}
+								matrix[t] = '\0';
+							}
+							int mIndex = 0, ff = 0, cols = 1, lins = 1, saveCols = -1, errorCols = 0;
+							do {
+								char value[DIM] = "";
+								ff = 0;
+								while (matrix[mIndex] != '\\'&&matrix[mIndex] != ';'&&matrix[mIndex] != '\0') {
+									value[ff] = matrix[mIndex];
+									ff++; mIndex++;
+								}
+								value[ff] = '\0';
+								if (matrix[mIndex] == '\\') {
+									j++; cols++;
+								}
+								else {
+									if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
+										j = 0; i++;
+										if (saveCols != cols&&saveCols != -1) {
+											errorCols = 1;
+										}
+										saveCols = cols;
+										if (matrix[mIndex] != '\0') {
+											lins++;
+											cols = 1;
+										}
+									}
+								}
+								mIndex++;
+							} while (matrix[mIndex] != '\0');
+							if (errorCols == 0 && cols == lins&&cols >= 2) {
+								decision = true;
+							}
+							else {
+								if (comment == 1) {
+									if (errorCols == 1) {
+										puts("\nError: The numbers of columns per line in the matrix is not the same in the lines.\n");
+									}
+									if (cols != lins) {
+										puts("\nError: The number of lines and columns is not equal.\n");
+									}
+									if (cols < 2) {
+										puts("\nError: Your matrix must be at minimum of type 2x2.\n");
+									}
+								}
+								decision = false;
+								return decision;
+							}
+						}
+					}
 					sprintf(varValidator, "%s", saveExpr);
 					if (funcF != 0.5) {
 						if (validVar == 0) {
@@ -909,7 +979,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			}
 		}
 		for (i = 0; data[i] != '\0'; i++) {
-			if (data[i] == '"' || data[i] == '%' || data[i] == '&' || data[i] == '"' || data[i] == '=' || data[i] == '?' || data[i] == '@' || data[i] == '£' || data[i] == '§' || data[i] == '\'' || data[i] == '€' || data[i] == '¨' || data[i] == '´' || data[i] == '`' || data[i] == 'ª' || data[i] == 'º' || data[i] == '~' || data[i] == ',' || data[i] == ';' || data[i] == ':' || data[i] == '«' || data[i] == '»') {
+			if (data[i] == '"' || data[i] == '%' || data[i] == '&' || data[i] == '"' || data[i] == '=' || data[i] == '?' || data[i] == '@' || data[i] == '£' || data[i] == '§' || data[i] == '\'' || data[i] == '€' || data[i] == '¨' || data[i] == '´' || data[i] == '`' || data[i] == 'ª' || data[i] == 'º' || data[i] == '~' || data[i] == ',' || data[i] == ':' || data[i] == '«' || data[i] == '»') {
 				decision = false;
 				if (comment == 1) {
 					puts("\nYou entered invalid characters.\n");

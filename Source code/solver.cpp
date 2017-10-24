@@ -221,7 +221,6 @@ double solver(char expression[DIM]) {
 			return resultFR;
 		}
 		if (retrySolver == (boolean)false && retrySolver_2 == (boolean)true && retrySolver_3 == (boolean)false && ((resultR > -1 && resultR < 1) == false || (resultI > -1 && resultI < 1) == false)) {
-			puts("\nSolved by new algorithm!");
 			retrySolver_2 = false;
 			retrySolver_3 = true;
 			solver(expression);
