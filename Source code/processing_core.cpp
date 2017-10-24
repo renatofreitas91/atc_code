@@ -465,6 +465,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 						triArithI[b] = resultI;
 						sig[b] = 1;
 						pas[0] = '\0';
+						ju = 0;
 						if (strlen(op) > 0) {
 							if (op[3] == 't' && (op[2] == 's' || op[2] == 'o'&&op[1] != 'c')) {
 								resultI = triArithI[b]; resultR = triArithI[b - 1];
