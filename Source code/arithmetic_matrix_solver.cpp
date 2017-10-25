@@ -559,10 +559,10 @@ void fmdeterminant(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][d
 				if (m != i) {
 					for (n = 0; n < cols; n++) {
 						if (n != j) {
-							multiplication(vMS[m][j], vMSI[m][j], vMS[i][n], vMS[i][n]);
+							multiplication(vMS[m][j], vMSI[m][j], vMS[i][n], vMSI[i][n]);
 							subtraction(vMS[m][n], vMSI[m][n], resultR, resultI);
 							multiplication(multiplier, 0, resultR, resultI);
-							vMS[m][n] = resultR; vMSI[m][n];
+							vMS[m][n] = resultR; vMSI[m][n] = resultI;
 						}
 					}
 				}
