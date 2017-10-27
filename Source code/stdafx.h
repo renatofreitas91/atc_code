@@ -12,7 +12,7 @@
 #include "calc.h"
 #include "atc_functions.h"
 #define DIM 5900
-#define dim 1400
+#define dim 1000
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <dirent.h> 
