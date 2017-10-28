@@ -1142,7 +1142,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
 										}
 										else {
-											Sleep(time2syn - 50);
+											Sleep(time2syn - 250);
 											while (timepass == timePassed) {
 												end = clock();
 												timePassed = (end - start) / CLOCKS_PER_SEC;
@@ -1352,7 +1352,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											time2syn = (int)(((double)(end - start) / CLOCKS_PER_SEC) * 1000);
 										}
 										else {
-											Sleep(time2syn - 50);
+											Sleep(time2syn - 250);
 											while (timepass == timePassed) {
 												end = clock();
 												timePassed = (end - start) / CLOCKS_PER_SEC;
