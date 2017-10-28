@@ -859,6 +859,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			command = true;
 			arithTrig[0] = '\0';
 			ShowConsoleCursor(TRUE);
+			return command;
 		}
 	}
 	if (isCommand(arithTrig, "eliminateresults")) {
@@ -1236,6 +1237,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		arithTrig[0] = '\0'; command = true;
 		ShowConsoleCursor(TRUE);
+		return command;
 	}
 	if (isCommand(arithTrig, "clock") && arithTrig[i + 5] == '(' || isCommand(arithTrig, "runclock") && arithTrig[i + 8] == '(') {
 		if (isCommand(arithTrig, "runclock")) {
@@ -1441,6 +1443,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		arithTrig[0] = '\0'; command = true;
 		ShowConsoleCursor(TRUE);
+		return command;
 	}
 	if (isCommand(arithTrig, "verboseresolution")) {
 		arithTrig[0] = '\0'; command = true;
