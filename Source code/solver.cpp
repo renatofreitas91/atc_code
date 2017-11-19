@@ -202,7 +202,7 @@ double solver(char expression[DIM]) {
 				atcProg(equation);
 			}
 		}
-		if (retrySolver == (boolean)false && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false && ((resultR > -1E-2&&resultR < 1E-2) == false || (resultI > -1E-2&&resultI < 1E-2) == false)) {
+		if ((retrySolver == (boolean)false && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false && ((resultR > -1E-2&&resultR < 1E-2) == false || (resultI > -1E-2&&resultI < 1E-2) == false)) && equationSolverRunning == (boolean)false) {
 			retrySolver = true;
 			solver(expression);
 			resultFR = resultR; resultFI = resultI;
@@ -210,7 +210,7 @@ double solver(char expression[DIM]) {
 			solving = true;
 			return resultFR;
 		}
-		if (retrySolver == (boolean)true && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false && ((resultR > -1E-7&&resultR < 1E-7) == false || (resultI > -1E-7&&resultI < 1E-7) == false)) {
+		if ((retrySolver == (boolean)true && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false && ((resultR > -1E-7&&resultR < 1E-7) == false || (resultI > -1E-7&&resultI < 1E-7) == false)) && equationSolverRunning == (boolean)false) {
 			retrySolver = false;
 			retrySolver_2 = true;
 			solver(expression);
@@ -220,7 +220,7 @@ double solver(char expression[DIM]) {
 			puts("");
 			return resultFR;
 		}
-		if (retrySolver == (boolean)false && retrySolver_2 == (boolean)true && retrySolver_3 == (boolean)false && ((resultR > -1 && resultR < 1) == false || (resultI > -1 && resultI < 1) == false)) {
+		if ((retrySolver == (boolean)false && retrySolver_2 == (boolean)true && retrySolver_3 == (boolean)false && ((resultR > -1 && resultR < 1) == false || (resultI > -1 && resultI < 1) == false)) && equationSolverRunning == (boolean)false) {
 			retrySolver_2 = false;
 			retrySolver_3 = true;
 			solver(expression);

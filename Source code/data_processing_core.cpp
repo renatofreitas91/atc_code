@@ -388,25 +388,28 @@ void prefixDeterminator(double n, char path[DIM]) {
 
 void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]) {
 	char expression[DIM] = "", expressionG[DIM] = "";
+	int i = 0, g = 0, j = 0;;
 	sprintf(expression, "%s", string);
 	sprintf(expressionG, "%s", string);
 	isContained(toReplace, expressionG);
 	do {
-		int i = strStart, j = 0;
-		while (j < abs((int)strlen(replacement)))
+		i = strStart; j = 0;
+		while (j < abs((int)strlen(replacement)) && i < DIM)
 		{
 			expression[i] = replacement[j];
 			i++; j++;
 		}
-		int g = strEnd;
-		while (expression[g] != '\0') {
+		g = strEnd;
+		while (g < abs((int)strlen(expressionG)) && g < DIM&&i < DIM) {
 			expression[i] = expressionG[g];
 			g++;
 			i++;
 		}
-		expression[i] = '\0';
+		if (i < DIM) {
+			expression[i] = '\0';
+		}
 		sprintf(expressionG, "%s", expression);
-	} while (isContained(toReplace, expressionG));
+	} while (isContained(toReplace, expressionG) && i < DIM&&g < DIM);
 	sprintf(expressionF, "%s", expressionG);
 }
 
@@ -436,7 +439,7 @@ void renamer(char expression[DIM]) {
 			j = 0;
 		}
 	}
-	for (i = 0; expression[i] != '\0'&&i < abs((int)strlen(expression)); i++) {
+	for (i = 0; expression[i] != '\0'&&i < abs((int)strlen(expression)) && i < DIM; i++) {
 		expressionF[i] = expression[i];
 	}
 	expressionF[i] = '\0';

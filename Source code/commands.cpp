@@ -177,7 +177,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	}
 	if (isCommand(arithTrig, "solveequation")) {
 		command = true;
-		puts("");
 		if (arithTrig[13] == '(') {
 			int tDev = 14, tGet = 0;
 			char exprDev[DIM] = "";
@@ -187,6 +186,20 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 			exprDev[tGet] = '\0';
 			equationSolver(exprDev);
+		}
+		puts("");
+	}
+	if (isCommand(arithTrig, "rootstopolynomial")) {
+		command = true;
+		if (arithTrig[17] == '(') {
+			int tDev = 18, tGet = 0;
+			char exprDev[DIM] = "";
+			while ((arithTrig[tDev] == ')'&&arithTrig[tDev + 1] == '+'&&arithTrig[tDev + 2] == '0'&&arithTrig[tDev + 3] == '\0') == false && arithTrig[tDev] != '\0') {
+				exprDev[tGet] = arithTrig[tDev];
+				tGet++; tDev++;
+			}
+			exprDev[tGet] = '\0';
+			rootsToPolynomial(exprDev);
 		}
 		puts("");
 	}
