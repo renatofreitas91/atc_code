@@ -31,14 +31,10 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 		i++;
 	}
 	i = maxExponent;
-	while (i >= 0) {
-		i--;
-	}
-	i = maxExponent;
 	do {
 		saveMaxExponent = maxExponent;
 		double valuesEqRx[DIM], valuesEqIx[DIM];
-		char expression[DIM] = "";
+		char expression[DIM] = "", toCalcX[DIM] = "";
 		for (i = maxExponent; i > 0; i--) {
 			char ValueR[DIM] = "";
 			sprintf(ValueR, "%G", valuesEqR[i]);
@@ -52,6 +48,7 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 				if (ValueI[v] == '-')
 					ValueI[v] = '_';
 			}
+			sprintf(toCalcX, "%s(%s+%si)*(x)^%d+", toCalcX, ValueR, ValueI, i);
 			sprintf(expression, "%s%s+%si\\", expression, ValueR, ValueI);
 		}
 		char ValueR[DIM] = "";
@@ -66,6 +63,7 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 			if (ValueI[v] == '-')
 				ValueI[v] = '_';
 		}
+		sprintf(toCalcX, "%s(%s+%si)", toCalcX, ValueR, ValueI);
 		sprintf(expression, "%s%s+%si", expression, ValueR, ValueI);
 		if (maxExponent == 2) {
 			char command[DIM] = "";
@@ -112,7 +110,7 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 				int solve = 0;
 				resultR = 0; resultI = 0;
 				variableController("x", resultR);
-				for (solve = 0; solve < 75; solve++) {
+				for (solve = 0; solve < 100; solve++) {
 					calcNow(toPowerX, 0, 0);
 					variableController("x", resultR);
 				}
@@ -209,10 +207,11 @@ void equationSolver(char equation[DIM]) {
 		i++;
 	}
 	i = maxExponent;
-	while (i >= 0) {
-		i--;
+	double maxValueR = valuesEqR[maxExponent], maxValueI = valuesEqI[maxExponent];
+	for (i = maxExponent; i >= 0; i--) {
+		division(valuesEqR[i], valuesEqI[i], maxValueR, maxValueI);
+		valuesEqR[i] = resultR; valuesEqI[i] = resultI;
 	}
-	i = maxExponent;
 	saveMaxExponent = maxExponent;
 	do {
 		char toCalcX[DIM] = "";
@@ -257,7 +256,7 @@ void equationSolver(char equation[DIM]) {
 			retrySolver = false; retrySolver_2 = false; retrySolver_3 = false;
 			double rootR = solver(toCalcX);
 			double rootI = resultI;
-			if (rootR > 1E15) {
+			if (abs(rootR) > 1E15) {
 				equationSolver_2(expression, rootIndex);
 				maxExponent = 0;
 			}

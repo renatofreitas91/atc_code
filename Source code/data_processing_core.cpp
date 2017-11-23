@@ -388,7 +388,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 
 void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]) {
 	char expression[DIM] = "", expressionG[DIM] = "";
-	int i = 0, g = 0, j = 0;;
+	int i = 0, g = 0, j = 0;
 	sprintf(expression, "%s", string);
 	sprintf(expressionG, "%s", string);
 	isContained(toReplace, expressionG);

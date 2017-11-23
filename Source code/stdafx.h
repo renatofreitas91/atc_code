@@ -16,7 +16,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <dirent.h> 
-extern double saveResultRR = 0, saveResultRI = 0, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
+extern double saveResultRI = 0, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
 extern int executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
 extern char saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
 extern boolean equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3;
@@ -63,7 +63,7 @@ void fmmulr(int lins, int cols, double v[dim][dim], double r[dim][dim], double r
 void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]);
 void saveToReport(char report[DIM]);
 void equationSolver(char equation[DIM]);
-void equationSolve_2r(char equation[DIM], int rootIndex);
+void equationSolver_2(char equation[DIM], int rootIndex);
 void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2, int index);
 void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
 void fmdeterminant(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
