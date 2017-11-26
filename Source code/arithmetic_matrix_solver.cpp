@@ -17,6 +17,7 @@ void arithmeticMatrixSolver() {
 		puts("Multiply a Matrix by a complex/real number -> 3");
 		puts("Multiplication of Matrices -> 4");
 		puts("Transpose a Matrix -> 5");
+		puts("Inverse a Matrix -> 6");
 		op = (int)getValue();
 		puts("");
 		if (op == 1) {
@@ -347,7 +348,65 @@ void arithmeticMatrixSolver() {
 				puts("\nError: The numbers of columns per line in the matrix is not the same in the lines.\n");
 			}
 		}
-		if (op < 1 || op>5) {
+		if (op == 6) {
+			printf("\nMatrix:\n");
+			gets_s(matrix);
+			int mIndex = 0, ff = 0, lins = 1, cols = 1, lins1 = 1, cols1 = 1, saveCols = -1, saveCols1 = -1, errorCols = 0, errorCols1 = 0, i = 0, j = 0;
+			double vMS[dim][dim], vMSI[dim][dim];
+			do {
+				char value[DIM] = "";
+				ff = 0;
+				while (matrix[mIndex] != '\\'&&matrix[mIndex] != ';'&&matrix[mIndex] != '\0') {
+					value[ff] = matrix[mIndex];
+					ff++; mIndex++;
+				}
+				value[ff] = '\0';
+				calcNow(value, 0, 0);
+				vMS[i][j] = resultR;
+				vMSI[i][j] = resultI;
+				if (matrix[mIndex] == '\\') {
+					j++; cols++;
+				}
+				else {
+					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
+						j = 0; i++;
+						if (saveCols != cols&&saveCols != -1) {
+							errorCols = 1;
+						}
+						saveCols = cols;
+						if (matrix[mIndex] != '\0') {
+							lins++;
+							cols = 1;
+						}
+					}
+				}
+				mIndex++;
+			} while (matrix[mIndex] != '\0');
+			if (errorCols == 0 && cols == lins&&cols >= 2) {
+				char detChecker[DIM] = "";
+				sprintf(detChecker, "det(%s)", matrix);
+				atcProg(detChecker);
+				if (resultR == 0 && resultI == 0) {
+					printf("\nError: Your matrix does not have a inverse.\n--> det(%s)=0\n\n", matrix);
+				}
+				else {
+					printf("\nMatrix Inverse:\n");
+					fminverse(lins, cols, vMS, vMSI);
+				}
+			}
+			else {
+				if (errorCols == 1) {
+					puts("\nError: The numbers of columns per line in the matrix is not the same in the lines.\n");
+				}
+				if (cols != lins) {
+					puts("\nError: The number of lines and columns is not equal.\n");
+				}
+				if (cols < 2) {
+					puts("\nError: Your matrix must be at minimum of type 2x2.\n");
+				}
+			}
+		}
+		if (op < 1 || op>6) {
 			puts("\n\nError: Incorrect option id.\n\n");
 		}
 		fflush(NULL);
@@ -637,4 +696,99 @@ void startDetProcessing(char matrix[DIM]) {
 		mIndex++;
 	} while (matrix[mIndex] != '\0');
 	fmdeterminant(lins, cols, vMS, vMSI);
+}
+
+void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]) {
+	int i = 0, j = 0, one = cols, pivot = 0;
+	while (i < cols) {
+		for (j = cols; j < cols * 2; j++) {
+			if (one == j) {
+				vMS[i][j] = 1; vMSI[i][j] = 0;
+			}
+			else {
+				vMS[i][j] = 0; vMSI[i][j] = 0;
+			}
+		}
+		one++;
+		i++;
+	}
+	do {
+		i = pivot;
+		while (vMS[i][pivot] == 0 && vMSI[i][pivot] == 0 && i < cols) {
+			i++;
+		}
+		if (i == cols) {
+			i = 0;
+			while (vMS[i][pivot] == 0 && vMSI[i][pivot] == 0 && i < pivot) {
+				i++;
+			}
+		}
+		if (i != pivot) {
+			int t = 0;
+			double saveLineR[dim], saveLineI[dim];
+			for (t = 0; t < cols * 2; t++) {
+				saveLineR[t] = vMS[i][t];
+				saveLineI[t] = vMSI[i][t];
+			}
+			for (t = 0; t < cols * 2; t++) {
+				vMS[i][t] = vMS[pivot][t];
+				vMSI[i][t] = vMSI[pivot][t];
+			}
+			for (t = 0; t < cols * 2; t++) {
+				vMS[pivot][t] = saveLineR[t];
+				vMSI[pivot][t] = saveLineI[t];
+			}
+		}
+		i = pivot;
+		double pivotR = 0, pivotI = 0;
+		int linePivot = i, nextCol = linePivot + 1;
+		if (i == pivot) {
+			pivotR = vMS[i][i]; pivotI = vMSI[i][i];
+			for (j = 0; j < cols * 2; j++) {
+				division(vMS[pivot][j], vMSI[pivot][j], pivotR, pivotI);
+				vMS[pivot][j] = resultR; vMSI[pivot][j] = resultI;
+			}
+		}
+		for (i = linePivot + 1; i < cols; i++) {
+			for (j = 0; j < cols + nextCol; j++) {
+				multiplication(vMS[i][pivot], vMSI[i][pivot], vMS[pivot][j], vMSI[pivot][j]);
+				subtraction(vMS[i][j], vMSI[i][j], resultR, resultI);
+				if (j != pivot) {
+					vMS[i][j] = resultR; vMSI[i][j] = resultI;
+				}
+			}
+			vMS[i][pivot] = 0; vMSI[i][pivot] = 0;
+		}
+		for (i = 0; i < pivot; i++) {
+			for (j = 0; j < cols + nextCol; j++) {
+				multiplication(vMS[i][pivot], vMSI[i][pivot], vMS[pivot][j], vMSI[pivot][j]);
+				subtraction(vMS[i][j], vMSI[i][j], resultR, resultI);
+				if (j != pivot) {
+					vMS[i][j] = resultR; vMSI[i][j] = resultI;
+				}
+			}
+			vMS[i][pivot] = 0; vMSI[i][pivot] = 0;
+		}
+		pivot++;
+	} while (pivot < cols);
+	double inverseR[dim][dim], inverseI[dim][dim];
+	for (i = 0; i < cols; i++) {
+		for (j = cols; j < cols * 2; j++) {
+			inverseR[i][j - cols] = vMS[i][j];
+			inverseI[i][j - cols] = vMSI[i][j];
+		}
+	}
+	char report[DIM] = "";
+	for (i = 0; i < cols; i++) {
+		for (j = 0; j < lins; j++) {
+			sprintf(report, "%s%G+%Gi ", report, inverseR[i][j], inverseI[i][j]);
+		}
+		sprintf(report, "%s\n", report);
+	}
+	puts(report);
+	puts("Export result? (Yes -> 1 \\ No -> 0)");
+	int option = (int)getValue();
+	if (option == 1) {
+		saveToReport(report);
+	}
 }

@@ -474,6 +474,7 @@ void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2,
 void rootsToPolynomial(char roots[DIM]) {
 	double valuesRootsR[DIM], valuesRootsI[DIM], polynomialR[DIM], polynomialI[DIM], newPolynomialR[DIM], newPolynomialI[DIM];
 	int i = 0, numberRoots = 0, rootIndex = 1, saveNumberRoots = 0;
+	char report[DIM] = "";
 	for (i = 0; roots[i] != '\0'; i++) {
 		if (roots[i] == '\\') {
 			numberRoots++;
@@ -568,18 +569,18 @@ void rootsToPolynomial(char roots[DIM]) {
 			}
 			int exp = members;
 			if (members == numberRoots) {
-				puts("Final polynomial:");
+				sprintf(report, "%s\nFinal polynomial:\n", report);
 			}
 			for (pol = 0; pol < savePol; pol++) {
 				if (exp > 1) {
-					printf("(%G+%Gi)x^%d+", polynomialRF[pol], polynomialIF[pol], exp);
+					sprintf(report, "%s(%G+%Gi)x^%d+", report, polynomialRF[pol], polynomialIF[pol], exp);
 				}
 				else {
 					if (exp == 1) {
-						printf("(%G+%Gi)x+", polynomialRF[pol], polynomialIF[pol]);
+						sprintf(report, "%s(%G+%Gi)x+", report, polynomialRF[pol], polynomialIF[pol]);
 					}
 					else {
-						printf("(%G+%Gi)", polynomialRF[pol], polynomialIF[pol]);
+						sprintf(report, "%s(%G+%Gi)", report, polynomialRF[pol], polynomialIF[pol]);
 					}
 				}
 				polynomialR[pol] = polynomialRF[pol];
@@ -588,7 +589,13 @@ void rootsToPolynomial(char roots[DIM]) {
 				polynomialIF[pol] = 0;
 				exp--;
 			}
-			puts("\n");
+			sprintf(report, "%s\n", report);
 		}
+	}
+	puts(report);
+	puts("Export result? (Yes -> 1 \\ No -> 0)");
+	int option = (int)getValue();
+	if (option == 1) {
+		saveToReport(report);
 	}
 }

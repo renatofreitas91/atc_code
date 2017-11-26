@@ -16,7 +16,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <dirent.h> 
-extern double saveResultRI = 0, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
+extern double xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
 extern int executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
 extern char saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
 extern boolean equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3;
@@ -69,6 +69,7 @@ void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim
 void fmdeterminant(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
 void startDetProcessing(char matrix[DIM]);
 void rootsToPolynomial(char rooots[DIM]);
+void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
 boolean verifyPrefix(char prefix[DIM]);
 boolean processTxt(char path[DIM], int re);
 boolean dataVerifier(char data[DIM], double result1, double result2, int comment, int verify);
