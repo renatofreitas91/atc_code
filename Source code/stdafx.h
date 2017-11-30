@@ -70,6 +70,8 @@ void fmdeterminant(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][d
 void startDetProcessing(char matrix[DIM]);
 void rootsToPolynomial(char rooots[DIM]);
 void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
+void fmpowerm(double vMS[dim][dim], double vMSI[dim][dim], int power, int lins, int cols);
+void fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]);
 boolean verifyPrefix(char prefix[DIM]);
 boolean processTxt(char path[DIM], int re);
 boolean dataVerifier(char data[DIM], double result1, double result2, int comment, int verify);
