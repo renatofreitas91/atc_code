@@ -116,7 +116,8 @@ void variableController(char variable[DIM], double result) {
 				while (vari[i] == variable[g]) {
 					if (vari[i] == variable[g]) {
 						va[g] = vari[i];
-					}g++; i++;
+						g++;
+					} i++;
 				}
 				va[g] = '\0';
 				p = abs((int)strlen(variable));
@@ -127,6 +128,7 @@ void variableController(char variable[DIM], double result) {
 					g++;
 				}
 			}
+
 			if (g == strlen(va) && strlen(variable) == g&&g == j) {
 				h = f + p;
 				while (vari[h] != '\n') {
@@ -715,7 +717,7 @@ void variableToMultiply(char expression[DIM]) {
 
 void toMultiply(char expression[DIM], double result1, double result2) {
 	int i = 0, verify = 0, verifys = 0, j = 0;
-	char value[DIM] = "";
+	char value[DIM] = "", saveValue[DIM] = "";
 	while (expression[i] != '\0') {
 		if (expression[i] == '+'&&expression[i + 1] == '0'&&expression[i + 2] == '\0') {
 			value[j] = expression[i];
@@ -859,10 +861,39 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 			}
 		}
 	}
-	for (i = 0; value[i] != '\0'; i++) {
-		expressionF[i] = value[i];
+	i = 0;
+	j = 0;
+	sprintf(expression, value);
+	while (firstLetterVariable(expression[i])) {
+		if (firstLetterVariable(expression[i])) {
+			value[j] = expression[i];
+			value[j + 1] = '\0';
+			processVariable(value);
+			if (validVar == 1) {
+				while (validVar == 1 && firstLetterVariable(expression[i])) {
+					sprintf(saveValue, value);
+					j++; i++;
+					value[j] = expression[i];
+					value[j + 1] = '\0';
+					processVariable(value);
+				}
+				if (validVar == 0) {
+					sprintf(value, saveValue);
+					i--;
+				}
+				if (verifyLetter(expression[i + 1]) == (boolean)true) {
+					char toReplace[10] = "", replacement[10] = "";
+					sprintf(toReplace, "%s%c", value, expression[i + 1]);
+					sprintf(replacement, "%s*%c", value, expression[i + 1]);
+					replace(toReplace, replacement, expression);
+					sprintf(expression, expressionF);
+				}
+				i = i + 2;
+			}
+		}
+		i++;
 	}
-	expressionF[i] = '\0';
+	sprintf(expressionF, expression);
 }
 
 void customFuncRenamer(char variable[DIM]) {
@@ -1006,6 +1037,11 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		}
 	}
 	variableToMultiply(arithTrig);
+	for (i = 0; expressionF[i] != '\0'; i++) {
+		arithTrig[i] = expressionF[i];
+	}
+	arithTrig[i] = '\0';
+	toMultiply(arithTrig, result1, result2);
 	for (i = 0; expressionF[i] != '\0'; i++) {
 		arithTrig[i] = expressionF[i];
 	}
@@ -1722,11 +1758,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			s = 0;
 		}
 	}
-	toMultiply(arithTrig, result1, result2);
-	for (i = 0; expressionF[i] != '\0'; i++) {
-		arithTrig[i] = expressionF[i];
-	}
-	arithTrig[i] = '\0';
+
 	for (i = 0; arithTrig[i] != '\0'; i++) {
 		if (verifyLetter(arithTrig[i])) {
 			letterScan[i] = arithTrig[i];
@@ -1740,7 +1772,10 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	j = 0;
 	char varCandidate[DIM] = "";
 	char finalReplacement[DIM] = "";
+	char readLetter[DIM] = "";
+	int v = 0;
 	for (i = 0; letterScan[i] != '\0'; i++) {
+		readLetter[v] = letterScan[i];
 		if (verifyLetter(letterScan[i])) {
 			j = 0;
 			while (verifyLetter(letterScan[i])) {
@@ -1750,8 +1785,8 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			varCandidate[j] = '\0';
 			processVariable(varCandidate);
 			char replaceVariable[DIM] = "";
-			sprintf(finalReplacement, "(%s)", varCandidate);
-			if (validVar == 1 || isContained("res", arithTrig)) {
+			if ((validVar == 1 && isContained(varCandidate, finalReplacement) == false && (resultR < 0 || resultI < 0)) || isContained("res", arithTrig)) {
+				sprintf(finalReplacement, "(%s)", varCandidate);
 				if (isContained("res", arithTrig)) {
 					if (arithTrig[strEnd] != 't') {
 						replace("res", "(\\\\\\\\)", arithTrig);
@@ -1780,6 +1815,15 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					}
 				}
 			}
+			for (v = 0; arithTrig[v] != '\0'; v++) {
+				if (verifyLetter(arithTrig[v])) {
+					letterScan[v] = arithTrig[v];
+				}
+				else {
+					letterScan[v] = ' ';
+				}
+			}
+			letterScan[v] = '\0';
 		}
 	}
 	if (isContained("#", arithTrig)) {
