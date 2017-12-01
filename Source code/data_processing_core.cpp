@@ -861,16 +861,15 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 			}
 		}
 	}
-	i = 0;
-	j = 0;
-	sprintf(expression, value);
-	while (firstLetterVariable(expression[i])) {
+	i = 0; j = 0;
+	sprintf(value, ""); sprintf(saveValue, "");
+	while (expression[i] != '\0') {
 		if (firstLetterVariable(expression[i])) {
 			value[j] = expression[i];
 			value[j + 1] = '\0';
 			processVariable(value);
 			if (validVar == 1) {
-				while (validVar == 1 && firstLetterVariable(expression[i])) {
+				while (validVar == 1 && letterVariables(expression[i + 1]) && expression[i] != '\0') {
 					sprintf(saveValue, value);
 					j++; i++;
 					value[j] = expression[i];
@@ -887,13 +886,14 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 					sprintf(replacement, "%s*%c", value, expression[i + 1]);
 					replace(toReplace, replacement, expression);
 					sprintf(expression, expressionF);
+					sprintf(value, "");
 				}
-				i = i + 2;
+
 			}
+			j = 0;
 		}
 		i++;
 	}
-	sprintf(expressionF, expression);
 }
 
 void customFuncRenamer(char variable[DIM]) {
