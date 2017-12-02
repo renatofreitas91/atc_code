@@ -5,7 +5,7 @@
 boolean equationSolverRunning = false;
 
 void equationSolver_2(char equation[DIM], int rootIndex) {
-	processVariable("y");
+	processVariable("x");
 	double saveXR = resultR, saveXI = resultI;
 	equationSolverRunning = true;
 	double valuesEqR[DIM], valuesEqI[DIM];
@@ -50,7 +50,7 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 				if (ValueI[v] == '-')
 					ValueI[v] = '_';
 			}
-			sprintf(toCalcX, "%s(%s+%si)*(y)^%d+", toCalcX, ValueR, ValueI, i);
+			sprintf(toCalcX, "%s(%s+%si)*(x)^%d+", toCalcX, ValueR, ValueI, i);
 			sprintf(expression, "%s%s+%si\\", expression, ValueR, ValueI);
 		}
 		char ValueR[DIM] = "";
@@ -94,7 +94,7 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 						if (ValueI[v] == '-')
 							ValueI[v] = '_';
 					}
-					sprintf(toPowerX, "%s(%s+%si)*(y)^%d+", toPowerX, ValueR, ValueI, i);
+					sprintf(toPowerX, "%s(%s+%si)*(x)^%d+", toPowerX, ValueR, ValueI, i);
 				}
 				char ValueR[DIM] = "";
 				sprintf(ValueR, "%G", valuesEqRx[i]);
@@ -111,15 +111,16 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 				sprintf(toPowerX, "(%s(%s+%si))^(1/%d)", toPowerX, ValueR, ValueI, maxExponent);
 				int solve = 0;
 				resultR = 0; resultI = 0;
-				variableController("y", resultR);
+				variableController("x", resultR);
 				for (solve = 0; solve < 100; solve++) {
 					calcNow(toPowerX, 0, 0);
-					variableController("y", resultR);
+					variableController("x", resultR);
 				}
 			}
 			double rootR = resultR;
 			double rootI = resultI;
 			resultR = 0; resultI = 0;
+			variableController("x", resultR);
 			if (rootR > 0 && rootI > 0) {
 				printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
 			}
@@ -177,9 +178,9 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 			maxExponent--;
 		}
 	} while (maxExponent > 0);
-	resultR = saveXR; resultI = saveXI;
-	variableController("y", resultR);
 	equationSolverRunning = false;
+	resultR = saveXR; resultI = saveXI;
+	variableController("x", 0);
 }
 
 void equationSolver(char equation[DIM]) {
