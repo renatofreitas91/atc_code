@@ -75,7 +75,7 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 		}
 		else {
 			char toPowerX[DIM] = "";
-			for (i = maxExponent - 1; i >= 0; i--) {
+			for (i = maxExponent; i >= 0; i--) {
 				division(valuesEqR[i], valuesEqI[i], valuesEqR[maxExponent], valuesEqI[maxExponent]);
 				multiplication(resultR, resultI, -1, 0);
 				valuesEqRx[i] = resultR; valuesEqIx[i] = resultI;
@@ -109,9 +109,8 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 						ValueI[v] = '_';
 				}
 				sprintf(toPowerX, "(%s(%s+%si))^(1/%d)", toPowerX, ValueR, ValueI, maxExponent);
+				puts(toPowerX);
 				int solve = 0;
-				resultR = 0; resultI = 0;
-				variableController("x", resultR);
 				for (solve = 0; solve < 100; solve++) {
 					calcNow(toPowerX, 0, 0);
 					variableController("x", resultR);

@@ -88,7 +88,7 @@ void variableController(char variable[DIM], double result) {
 		fclose(open);
 	}
 	open = NULL;
-	while (open == NULL&&i < 100) {
+	while (open == NULL && i < 100) {
 		open = fopen(toOpen, "a+");
 		i++;
 	}
@@ -127,7 +127,7 @@ void variableController(char variable[DIM], double result) {
 					g++;
 				}
 			}
-			if (g == strlen(va) && strlen(variable) == g&&g == j) {
+			if (g == strlen(va) && strlen(variable) == g && g == j) {
 				h = f + p;
 				while (vari[h] != '\n') {
 					h++;
@@ -174,7 +174,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	}
 	int y = 0;
 	if (n < 0) {
-		n = n*-1;
+		n = n * -1;
 		y = 1;
 	}
 	char character = character_to_prefDet(n);
@@ -183,7 +183,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'A':
 		result = n / 1E-24;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gy (yocto-)\n", result);
 		if (a == 1) {
@@ -193,7 +193,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'B':
 		result = n / 1E-21;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gz (zepto-)\n", result);
 		if (a == 1) {
@@ -203,7 +203,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'C':
 		result = n / 1E-18;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Ga (atto-)\n", result);
 		if (a == 1) {
@@ -213,7 +213,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'D':
 		result = n / 1E-15;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gf (femto-)\n", result);
 		if (a == 1) {
@@ -223,7 +223,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'E':
 		result = n / 1E-12;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gp (pico-)\n", result);
 		if (a == 1) {
@@ -233,7 +233,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'F':
 		result = n / 1E-9;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gn (nano-)\n", result);
 		if (a == 1) {
@@ -243,7 +243,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'G':
 		result = n / 1E-6;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gµ (micro-)\n", result);
 		if (a == 1) {
@@ -253,7 +253,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'H':
 		result = n / 1E-3;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gm (milli-)\n", result);
 		if (a == 1) {
@@ -263,7 +263,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'I':
 		result = n / 1E-2;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gc (centi-)\n", result);
 		if (a == 1) {
@@ -273,7 +273,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'J':
 		result = n / 1E-1;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gd (deci-)\n", result);
 		if (a == 1) {
@@ -283,7 +283,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'K':
 		result = n / 1E1;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gda (deca-)\n", result);
 		if (a == 1) {
@@ -293,7 +293,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'L':
 		result = n / 1E2;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gh (hecto-)\n", result);
 		if (a == 1) {
@@ -303,7 +303,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'M':
 		result = n / 1E3;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%Gk (kilo-)\n", result);
 		if (a == 1) {
@@ -313,7 +313,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'N':
 		result = n / 1E6;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%GM (mega-)\n", result);
 		if (a == 1) {
@@ -323,7 +323,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'O':
 		result = n / 1E9;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%GG (giga-)\n", result);
 		if (a == 1) {
@@ -333,7 +333,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'P':
 		result = n / 1E12;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%GT (tera-)\n", result);
 		if (a == 1) {
@@ -343,7 +343,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'Q':
 		result = n / 1E15;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%GP (peta-)\n", result);
 		if (a == 1) {
@@ -353,7 +353,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'R':
 		result = n / 1E18;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%GE (exa-)\n", result);
 		if (a == 1) {
@@ -363,7 +363,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'S':
 		result = n / 1E21;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%GZ (zetta-)\n", result);
 		if (a == 1) {
@@ -373,7 +373,7 @@ void prefixDeterminator(double n, char path[DIM]) {
 	case 'T':
 		result = n / 1E24;
 		if (y == 1) {
-			result = result*-1;
+			result = result * -1;
 		}
 		fprintf(open, "=%GY (yotta-)\n", result);
 		if (a == 1) {
@@ -452,7 +452,7 @@ void variableRenamer(char variable[DIM]) {
 	FILE *open = NULL;
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
-	while (open == NULL&&i < 50) {
+	while (open == NULL && i < 50) {
 		open = fopen(toOpen, "a+");
 		i++;
 	}
@@ -838,7 +838,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 										value[j + 1] = expression[i + 1]; value[j + 2] = '+'; value[j + 3] = '0'; value[j + 4] = '\0';
 										int verifyS = dataVerifier(value, result1, result2, 0, verify);
 										value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
-										if (verify == verifyS&&verify == 1 && verifyLetter(expression[i + 1])) {
+										if (verify == verifyS && verify == 1 && verifyLetter(expression[i + 1])) {
 											verify = 0;
 										}
 										j++; i++;
@@ -1780,108 +1780,103 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	letterScan[i] = '\0';
 	i = 0;
 	j = 0;
-
 	char varCandidate[DIM] = "";
 	char finalReplacement[DIM] = "";
-	if (isContained("solver", letterScan)) {
-		for (i = 0; letterScan[i] != '\0'; i++) {
-			if (verifyLetter(letterScan[i])) {
-				j = 0;
-				while (verifyLetter(letterScan[i])) {
-					varCandidate[j] = letterScan[i];
-					i++; j++;
-				}
-				varCandidate[j] = '\0';
+	char readLetter[DIM] = "";
+	int v = 0;
+	int varState = 0;
+	for (i = 0; letterScan[i] != '\0'; i++) {
+		readLetter[v] = letterScan[i];
+	}
+	readLetter[v] = '\0';
+	varState = 1;
+	j = 0;
+	validVar = 1;
+	while (validVar == 1 && i < abs((int)strlen(arithTrig))) {
+		if (verifyLetter(letterScan[i])) {
+			varCandidate[j] = letterScan[i];
+			i++; j++;
+			varCandidate[j] = '\0';
+			processVariable(varCandidate);
+			if (validVar == 1) {
+				varState = 1;
+			}
+			if (varState == 1 && validVar == 0) {
+				varCandidate[j - 1] = '\0';
 				processVariable(varCandidate);
-				char replaceVariable[DIM] = "";
-				if (validVar == 1 || isContained("res", arithTrig)) {
-					sprintf(finalReplacement, "(%s)", varCandidate);
-					if (isContained("res", arithTrig)) {
-						if (arithTrig[strEnd] != 't') {
-							replace("res", "(\\\\\\\\)", arithTrig);
-							replace("\\\\\\\\", "res", expressionF);
-							sprintf(arithTrig, "%s", expressionF);
-							char isDuplicatedParent[DIM] = "";
-							sprintf(finalReplacement, "(res)");
-							sprintf(isDuplicatedParent, "(%s)", finalReplacement);
-							if (isContained(isDuplicatedParent, arithTrig)) {
-								replace(isDuplicatedParent, finalReplacement, arithTrig);
-								sprintf(arithTrig, "%s", expressionF);
-							}
-						}
-					}
-					else {
-						sprintf(replaceVariable, "(\\\\\\\\)");
-						replace(varCandidate, replaceVariable, arithTrig);
-						replace("\\\\\\\\", varCandidate, expressionF);
+			}
+		}
+		i++;
+	}
+	char replaceVariable[DIM] = "";
+	if (abs((int)strlen(varCandidate) != 0)) {
+		sprintf(finalReplacement, "(%s)", varCandidate);
+		if (validVar == 1 || isContained("res", arithTrig)) {
+			if (isContained("res", arithTrig)) {
+				if (arithTrig[strEnd] != 't') {
+					replace("res", "(\\\\\\\\)", arithTrig);
+					replace("\\\\\\\\", "res", expressionF);
+					sprintf(arithTrig, "%s", expressionF);
+					char isDuplicatedParent[DIM] = "";
+					sprintf(finalReplacement, "(res)");
+					sprintf(isDuplicatedParent, "(%s)", finalReplacement);
+					if (isContained(isDuplicatedParent, arithTrig)) {
+						replace(isDuplicatedParent, finalReplacement, arithTrig);
 						sprintf(arithTrig, "%s", expressionF);
-						char isDuplicatedParent[DIM] = "";
-						sprintf(finalReplacement, "(%s)", varCandidate);
-						sprintf(isDuplicatedParent, "(%s)", finalReplacement);
-						if (isContained(isDuplicatedParent, arithTrig)) {
-							replace(isDuplicatedParent, finalReplacement, arithTrig);
-							sprintf(arithTrig, "%s", expressionF);
-						}
 					}
 				}
 			}
+			else {
+				sprintf(replaceVariable, "(\\\\\\\\)");
+				replace(varCandidate, replaceVariable, arithTrig);
+				replace("\\\\\\\\", varCandidate, expressionF);
+				sprintf(arithTrig, "%s", expressionF);
+				char isDuplicatedParent[DIM] = "";
+				sprintf(finalReplacement, "(%s)", varCandidate);
+				sprintf(isDuplicatedParent, "(%s)", finalReplacement);
+				if (isContained(isDuplicatedParent, arithTrig)) {
+					replace(isDuplicatedParent, finalReplacement, arithTrig);
+					sprintf(arithTrig, "%s", expressionF);
+				}
+			}
+
 		}
 	}
-	else {
-		char readLetter[DIM] = "";
-		int v = 0;
-		for (i = 0; letterScan[i] != '\0'; i++) {
-			readLetter[v] = letterScan[i];
-			if (verifyLetter(letterScan[i])) {
-				j = 0;
-				while (verifyLetter(letterScan[i])) {
-					varCandidate[j] = letterScan[i];
-					i++; j++;
-				}
-				varCandidate[j] = '\0';
-				processVariable(varCandidate);
-				char replaceVariable[DIM] = "";
-				if ((validVar == 1 && isContained(varCandidate, finalReplacement) == false && (resultR < 0 || resultI < 0)) || isContained("res", arithTrig)) {
-					sprintf(finalReplacement, "(%s)", varCandidate);
-					if (isContained("res", arithTrig)) {
-						if (arithTrig[strEnd] != 't') {
-							replace("res", "(\\\\\\\\)", arithTrig);
-							replace("\\\\\\\\", "res", expressionF);
-							sprintf(arithTrig, "%s", expressionF);
-							char isDuplicatedParent[DIM] = "";
-							sprintf(finalReplacement, "(res)");
-							sprintf(isDuplicatedParent, "(%s)", finalReplacement);
-							if (isContained(isDuplicatedParent, arithTrig)) {
-								replace(isDuplicatedParent, finalReplacement, arithTrig);
-								sprintf(arithTrig, "%s", expressionF);
-							}
-						}
-					}
-					else {
-						sprintf(replaceVariable, "(\\\\\\\\)");
-						replace(varCandidate, replaceVariable, arithTrig);
-						replace("\\\\\\\\", varCandidate, expressionF);
-						sprintf(arithTrig, "%s", expressionF);
-						char isDuplicatedParent[DIM] = "";
-						sprintf(finalReplacement, "(%s)", varCandidate);
-						sprintf(isDuplicatedParent, "(%s)", finalReplacement);
-						if (isContained(isDuplicatedParent, arithTrig)) {
-							replace(isDuplicatedParent, finalReplacement, arithTrig);
-							sprintf(arithTrig, "%s", expressionF);
-						}
-					}
-				}
-				for (v = 0; arithTrig[v] != '\0'; v++) {
-					if (verifyLetter(arithTrig[v])) {
-						letterScan[v] = arithTrig[v];
-					}
-					else {
-						letterScan[v] = ' ';
-					}
-				}
-				letterScan[v] = '\0';
-			}
+	for (v = 0; arithTrig[v] != '\0'; v++) {
+		if (verifyLetter(arithTrig[v])) {
+			letterScan[v] = arithTrig[v];
 		}
+		else {
+			letterScan[v] = ' ';
+		}
+	}
+	letterScan[v] = '\0';
+	if (isContained("solver(", arithTrig)) {
+		char saveArithTrig[DIM] = "";
+		int kl = 1, kr = 0, k = 0, g = strEnd;
+		while (kl != kr && g < abs((int)strlen(arithTrig))) {
+			saveArithTrig[k] = arithTrig[g];
+			if (arithTrig[g] == '(') {
+				kl++;
+			}
+			if (arithTrig[g] == ')') {
+				kr++;
+			}
+			g++;
+			k++;
+		}
+		saveArithTrig[k] = '\0';
+		char saveArith[DIM] = "";
+		if (isContained("(x)", saveArithTrig) == (boolean)false && isContained("x", saveArithTrig)) {
+			sprintf(saveArith, saveArithTrig);
+			replace("x", "(/////////)", saveArithTrig);
+			replace("/////////", "x", expressionF);
+			sprintf(saveArithTrig, expressionF);
+			replace(saveArith, saveArithTrig, arithTrig);
+			sprintf(arithTrig, expressionF);
+			k = 0;
+		}
+		g++;
 	}
 	if (isContained("#", arithTrig)) {
 		int i = strStart + 1, v = 1;
@@ -2030,7 +2025,7 @@ void addATCPath() {
 		test = fopen(testPath, "r");
 		tested = 1;
 	}
-	if (open == NULL || (test == NULL&&open != NULL&&tested == 1)) {
+	if (open == NULL || (test == NULL && open != NULL && tested == 1)) {
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"echo %PATH% > PATH_paths.txt\""), NULL, SW_SHOW);
 		Sleep(200);
 		pathReader = fopen("PATH_paths.txt", "r");
@@ -2118,7 +2113,7 @@ void toSolve(int re) {
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
 	int retry = 0;
-	while (file == NULL&&retry < 7) {
+	while (file == NULL && retry < 7) {
 		file = fopen(toOpen, "r");
 		Sleep(10);
 		retry++;
@@ -2156,7 +2151,7 @@ void toSolve(int re) {
 							path[b] = '\0';
 							retry = 0;
 							file = NULL;
-							while (file == NULL&&retry < 7) {
+							while (file == NULL && retry < 7) {
 								file = fopen(path, "r");
 								Sleep(10);
 								retry++;
@@ -2221,7 +2216,7 @@ void toSolve(int re) {
 					char toOpen[DIM] = "";
 					sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
 					retry = 0;
-					while (dis == NULL&&retry < 7) {
+					while (dis == NULL && retry < 7) {
 						dis = fopen(toOpen, "w");
 						Sleep(10);
 						retry++;
@@ -2829,7 +2824,7 @@ int variableValidator(char variable[DIM]) {
 			var1 = NULL;
 			char toOpen[DIM] = "";
 			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
-			while (var1 == NULL&&i < 100) {
+			while (var1 == NULL && i < 100) {
 				var1 = fopen(toOpen, "a+");
 				i++;
 			}
@@ -2974,7 +2969,7 @@ double processVariable(char variable[DIM]) {
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\variables.txt", atcPath);
 	open = fopen(toOpen, "a+");
-	while (open == NULL&&cou < 10) {
+	while (open == NULL && cou < 10) {
 		open = fopen(toOpen, "a+");
 		cou++;
 	}
@@ -3014,7 +3009,7 @@ double processVariable(char variable[DIM]) {
 				}
 			}
 			vari[lth] = '\0';
-			if (g == strlen(va) && strlen(variable) == g&&j == g&&g != 0) {
+			if (g == strlen(va) && strlen(variable) == g && j == g && g != 0) {
 				int space = 0;
 				valid = 1; validVar = 1;
 				int gh = l;
@@ -3103,21 +3098,21 @@ double convertToNumber(char number[DIM]) {
 		nu[2] = '0';
 		nu[3] = '\0';
 		num = atoi(nu);
-		result = result + num*pot(10.0, j, 1);
+		result = result + num * pot(10.0, j, 1);
 		j--;
 	}
 	k = k + 2;
 	i = 1;
-	for (k; i <= l&&number[k] != '\0'&&k < abs((int)strlen(number)); k++) {
+	for (k; i <= l && number[k] != '\0'&&k < abs((int)strlen(number)); k++) {
 		nu[0] = number[k];
 		nu[1] = '.';
 		nu[2] = '0';
 		nu[3] = '\0';
 		num = atoi(nu);
-		result = result + num*pot(10.0, i*-1, 1);
+		result = result + num * pot(10.0, i*-1, 1);
 		i++;
 	}
-	result = result*pot(10.0, exp*sig, 1);
+	result = result * pot(10.0, exp*sig, 1);
 	return result;
 }
 

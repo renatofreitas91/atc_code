@@ -33,6 +33,11 @@ void main(int argc, char *argv[]) {
 		do {
 			resultR = sqrt(DBL_MAX);
 			variableController("INF", resultR);
+			processVariable("x");
+			if (validVar == 0) {
+				resultR = 0;
+				variableController("x", 0);
+			}
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
 			fflush(NULL);
@@ -105,7 +110,6 @@ void main(int argc, char *argv[]) {
 				if (isContained("solver", arithTrig)) {
 					if (isContained("x", arithTrig)) {
 						resultR = 0; resultI = 0;
-						variableController("x", 0);
 					}
 				}
 				main_core(arithTrig, fTrig, fout, path, result1, result2, 1);

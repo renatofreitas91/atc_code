@@ -375,7 +375,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 		for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
 			int jk = 0;
 			char op[DIM] = "";
-			while (parent[i] < 1 && i <= klp&&i < DIM) {
+			while (parent[i] < 1 && i <= klp && i < DIM) {
 				if (arithTrig[i] == '_' && (arithTrig[i + 1] == 'g' || arithTrig[i + 1] == 's' || arithTrig[i + 1] == 'c' || arithTrig[i + 1] == 't' || arithTrig[i + 1] == 'a' || arithTrig[i + 1] == 'l' || arithTrig[i + 1] == 'd' || arithTrig[i + 1] == 'r') || arithTrig[i] == 'q' || arithTrig[i] == 's' || arithTrig[i] == 'c' || arithTrig[i] == 't' || arithTrig[i] == 'a' || arithTrig[i] == 'r' && (arithTrig[i + 3] == 't'&&arithTrig[i + 4] != 'g'&&arithTrig[i + 4] != 'a' || arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'd' || arithTrig[i + 1] == 't'&&arithTrig[i + 2] == 'D') || arithTrig[i] == 'd' || arithTrig[i] == 'l' || arithTrig[i] == 'g') {
 					if (arithTrig[i] == '_') {
 						thj = 1;
@@ -437,7 +437,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				i = j;
 				a = 0;
 				i++;
-				while (parent[i] != cur&&i < abs((int)strlen(arithTrig))) {
+				while (parent[i] != cur && i < abs((int)strlen(arithTrig))) {
 					pas[a] = arithTrig[i];
 					a++; i++;
 				}
@@ -1099,11 +1099,11 @@ double arithSolver(char trigon1[DIM], double result) {
 			complex = 2;
 		}
 		if (number2[0] == '_'&&number2[1] == 'r'&&number2[2] == 'e'&&number2[3] == 's' || number2[0] == '['&&number2[1] == '_'&&number2[2] == 'r'&&number2[3] == 'e'&&number2[4] == 's') {
-			ampl[n] = ansRV*-1;
-			amplI[n] = ansIV*-1;
+			ampl[n] = ansRV * -1;
+			amplI[n] = ansIV * -1;
 			if (equationSolverRunning || solverRunning) {
-				ampl[n] = xValuesR*-1;
-				amplI[n] = xValuesI*-1;
+				ampl[n] = xValuesR * -1;
+				amplI[n] = xValuesI * -1;
 			}
 			complex = 2;
 		}
@@ -1934,13 +1934,13 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 			result2 = ((result2 * 180) / M_PI);
 		}
 		if (gon == 1) {
-			result1 = result1*(200 / M_PI);
-			result2 = result2*(200 / M_PI);
+			result1 = result1 * (200 / M_PI);
+			result2 = result2 * (200 / M_PI);
 		}
 	}
 	sprintf(trigon, "");
-	result1 = result1*jg;
-	result2 = result2*jg;
+	result1 = result1 * jg;
+	result2 = result2 * jg;
 	resultR = result1;
 	resultI = result2;
 	round_complex();
