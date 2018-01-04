@@ -9,7 +9,7 @@ void complex_log(double a, double b) {
 		resultI = 0;
 	}
 	else {
-		if (a >= mINF && a <= INF&& b >= mINF && b <= INF) {
+		if (a >= mINF && a <= INF && b >= mINF && b <= INF) {
 			resultR = 0; resultI = 0;
 			resultR = ln(pot(pot(a, 2.0, 1) + pot(b, 2.0, 1), 0.5, 1));
 			resultI = atan2(b, a);

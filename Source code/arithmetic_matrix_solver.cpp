@@ -42,7 +42,7 @@ void arithmeticMatrixSolver() {
 				else {
 					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 						j = 0; i++;
-						if (saveCols != cols&&saveCols != -1) {
+						if (saveCols != cols && saveCols != -1) {
 							errorCols = 1;
 						}
 						saveCols = cols;
@@ -75,7 +75,7 @@ void arithmeticMatrixSolver() {
 				else {
 					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 						j = 0; i++;
-						if (saveCols1 != cols1&&saveCols1 != -1) {
+						if (saveCols1 != cols1 && saveCols1 != -1) {
 							errorCols1 = 1;
 						}
 						saveCols1 = cols1;
@@ -87,7 +87,7 @@ void arithmeticMatrixSolver() {
 				}
 				mIndex++;
 			} while (matrix[mIndex] != '\0');
-			if (lins == lins1 && cols == cols1&&errorCols == 0 && errorCols1 == 0) {
+			if (lins == lins1 && cols == cols1 && errorCols == 0 && errorCols1 == 0) {
 				printf("\nMatrix sum:\n");
 				fmsum(lins, cols, vMS, uMS, rMS, vMSI, uMSI, rMSI);
 			}
@@ -125,7 +125,7 @@ void arithmeticMatrixSolver() {
 				else {
 					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 						j = 0; i++;
-						if (saveCols != cols&&saveCols != -1) {
+						if (saveCols != cols && saveCols != -1) {
 							errorCols = 1;
 						}
 						saveCols = cols;
@@ -158,7 +158,7 @@ void arithmeticMatrixSolver() {
 				else {
 					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 						j = 0; i++;
-						if (saveCols1 != cols1&&saveCols1 != -1) {
+						if (saveCols1 != cols1 && saveCols1 != -1) {
 							errorCols1 = 1;
 						}
 						saveCols1 = cols1;
@@ -170,7 +170,7 @@ void arithmeticMatrixSolver() {
 				}
 				mIndex++;
 			} while (matrix[mIndex] != '\0');
-			if (lins == lins1 && cols == cols1&&errorCols == 0 && errorCols1 == 0) {
+			if (lins == lins1 && cols == cols1 && errorCols == 0 && errorCols1 == 0) {
 				printf("\nMatrix subtraction:\n");
 				fmsubt(lins, cols, vMS, uMS, rMS, vMSI, uMSI, rMSI);
 			}
@@ -208,7 +208,7 @@ void arithmeticMatrixSolver() {
 				else {
 					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 						j = 0; i++;
-						if (saveCols != cols&&saveCols != -1) {
+						if (saveCols != cols && saveCols != -1) {
 							errorCols = 1;
 						}
 						saveCols = cols;
@@ -252,7 +252,7 @@ void arithmeticMatrixSolver() {
 				else {
 					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 						j = 0; i++;
-						if (saveCols != cols&&saveCols != -1) {
+						if (saveCols != cols && saveCols != -1) {
 							errorCols = 1;
 						}
 						saveCols = cols;
@@ -285,7 +285,7 @@ void arithmeticMatrixSolver() {
 				else {
 					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 						j = 0; i++;
-						if (saveCols1 != cols1&&saveCols1 != -1) {
+						if (saveCols1 != cols1 && saveCols1 != -1) {
 							errorCols1 = 1;
 						}
 						saveCols1 = cols1;
@@ -330,7 +330,7 @@ void arithmeticMatrixSolver() {
 				else {
 					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 						j = 0; i++;
-						if (saveCols != cols&&saveCols != -1) {
+						if (saveCols != cols && saveCols != -1) {
 							errorCols = 1;
 						}
 						saveCols = cols;
@@ -372,7 +372,7 @@ void arithmeticMatrixSolver() {
 				else {
 					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 						j = 0; i++;
-						if (saveCols != cols&&saveCols != -1) {
+						if (saveCols != cols && saveCols != -1) {
 							errorCols = 1;
 						}
 						saveCols = cols;
@@ -384,7 +384,7 @@ void arithmeticMatrixSolver() {
 				}
 				mIndex++;
 			} while (matrix[mIndex] != '\0');
-			if (errorCols == 0 && cols == lins&&cols >= 2) {
+			if (errorCols == 0 && cols == lins && cols >= 2) {
 				char detChecker[DIM] = "";
 				sprintf(detChecker, "det(%s)", matrix);
 				atcProg(detChecker);
@@ -428,7 +428,7 @@ void arithmeticMatrixSolver() {
 				else {
 					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 						j = 0; i++;
-						if (saveCols != cols&&saveCols != -1) {
+						if (saveCols != cols && saveCols != -1) {
 							errorCols = 1;
 						}
 						saveCols = cols;
@@ -474,7 +474,7 @@ void arithmeticMatrixSolver() {
 				else {
 					if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 						j = 0; i++;
-						if (saveCols != cols&&saveCols != -1) {
+						if (saveCols != cols && saveCols != -1) {
 							errorCols = 1;
 						}
 						saveCols = cols;
@@ -771,7 +771,7 @@ void startDetProcessing(char matrix[DIM]) {
 		else {
 			if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 				j = 0; i++;
-				if (saveCols != cols&&saveCols != -1) {
+				if (saveCols != cols && saveCols != -1) {
 					errorCols = 1;
 				}
 				saveCols = cols;

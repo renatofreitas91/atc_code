@@ -20,8 +20,8 @@ void trianglesRectanglesSolver() {
 			if (angleH > 0 && angleH < 90) {
 				angleH = (angleH*M_PI) / 180;
 				angleH1 = M_PI - (M_PI / 2) - angleH;
-				opposite = hypotenuse*sin(angleH);
-				adjacent = hypotenuse*cos(angleH);
+				opposite = hypotenuse * sin(angleH);
+				adjacent = hypotenuse * cos(angleH);
 				allcorrect = 1;
 			}
 			else {
@@ -31,7 +31,7 @@ void trianglesRectanglesSolver() {
 					slopeH = adjacent / hypotenuse;
 					angleH = acos(slopeH);
 					angleH1 = M_PI - (M_PI / 2) - angleH;
-					opposite = hypotenuse*sin(angleH);
+					opposite = hypotenuse * sin(angleH);
 					allcorrect = 1;
 				}
 				else {
@@ -40,8 +40,8 @@ void trianglesRectanglesSolver() {
 					if (angleH1 > 0 && angleH1 < 90) {
 						angleH1 = (angleH1*M_PI) / 180;
 						angleH = M_PI - (M_PI / 2) - angleH1;
-						opposite = hypotenuse*sin(angleH);
-						adjacent = hypotenuse*cos(angleH);
+						opposite = hypotenuse * sin(angleH);
+						adjacent = hypotenuse * cos(angleH);
 						allcorrect = 1;
 					}
 					else {
@@ -51,7 +51,7 @@ void trianglesRectanglesSolver() {
 							slopeH = opposite / hypotenuse;
 							angleH = asin(slopeH);
 							angleH1 = M_PI - (M_PI / 2) - angleH;
-							adjacent = hypotenuse*cos(angleH);
+							adjacent = hypotenuse * cos(angleH);
 							allcorrect = 1;
 						}
 						else {
@@ -61,8 +61,8 @@ void trianglesRectanglesSolver() {
 								perslope = (perslope / 100);
 								angleH = atan(perslope);
 								angleH1 = M_PI - (M_PI / 2) - angleH;
-								adjacent = hypotenuse*cos(angleH);
-								opposite = hypotenuse*sin(angleH);
+								adjacent = hypotenuse * cos(angleH);
+								opposite = hypotenuse * sin(angleH);
 								allcorrect = 1;
 							}
 						}
@@ -80,7 +80,7 @@ void trianglesRectanglesSolver() {
 					angleH1 = (angleH1*M_PI) / 180;
 					angleH = M_PI - (M_PI / 2) - angleH1;
 					hypotenuse = opposite / cos(angleH);
-					adjacent = hypotenuse*cos(angleH);
+					adjacent = hypotenuse * cos(angleH);
 					allcorrect = 1;
 				}
 				else {
@@ -90,7 +90,7 @@ void trianglesRectanglesSolver() {
 						angleH = (angleH*M_PI) / 180;
 						angleH1 = M_PI - (M_PI / 2) - angleH;
 						hypotenuse = opposite / sin(angleH);
-						adjacent = hypotenuse*cos(angleH);
+						adjacent = hypotenuse * cos(angleH);
 						allcorrect = 1;
 					}
 					else {
@@ -128,7 +128,7 @@ void trianglesRectanglesSolver() {
 						angleH = (angleH*M_PI) / 180;
 						angleH1 = M_PI - (M_PI / 2) - angleH;
 						hypotenuse = adjacent / cos(angleH);
-						opposite = hypotenuse*sin(angleH);
+						opposite = hypotenuse * sin(angleH);
 						allcorrect = 1;
 					}
 					else {
@@ -138,7 +138,7 @@ void trianglesRectanglesSolver() {
 							angleH1 = (angleH1*M_PI) / 180;
 							angleH = M_PI - (M_PI / 2) - angleH1;
 							hypotenuse = adjacent / cos(angleH);
-							opposite = hypotenuse*sin(angleH);
+							opposite = hypotenuse * sin(angleH);
 							allcorrect = 1;
 						}
 						else {
@@ -148,7 +148,7 @@ void trianglesRectanglesSolver() {
 								perslope = (perslope / 100);
 								angleH = atan(perslope);
 								angleH1 = M_PI - (M_PI / 2) - angleH;
-								opposite = adjacent*tan(angleH);
+								opposite = adjacent * tan(angleH);
 								hypotenuse = adjacent / cos(angleH);
 								allcorrect = 1;
 							}

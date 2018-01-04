@@ -157,6 +157,31 @@ void variableController(char variable[DIM], double result) {
 		while (open == NULL) {
 			open = fopen(toOpen, "a+");
 		}
+		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+		fclose(open);
+		isContained(variable, vari);
+		if ((vari[strStart - 1] == '\n' || strStart == 0) && isContained(variable, vari) && vari[strEnd] == ' ') {
+			int p = strStart;
+			char line[DIM] = "";
+			int s = 0;
+			while (vari[p] != '\0'&&vari[p] != '\n') {
+				line[s] = vari[p];
+				s++; p++;
+			}
+			line[s] = '\0';
+			replace(line, "", vari);
+			sprintf(vari, expressionF);
+			open = NULL;
+			while (open == NULL) {
+				open = fopen(toOpen, "w");
+				fputs(vari, open);
+				fclose(open);
+			}
+		}
+		open = NULL;
+		while (open == NULL) {
+			open = fopen(toOpen, "a+");
+		}
 		fprintf(open, "%s %G %G\n", variable, resultR, resultI);
 		fclose(open);
 	}
@@ -1789,25 +1814,26 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		readLetter[v] = letterScan[i];
 	}
 	readLetter[v] = '\0';
-	varState = 1;
+	varState = 0;
 	j = 0;
-	validVar = 1;
-	while (validVar == 1 && i < abs((int)strlen(arithTrig))) {
+	for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
 		if (verifyLetter(letterScan[i])) {
-			varCandidate[j] = letterScan[i];
-			i++; j++;
-			varCandidate[j] = '\0';
-			processVariable(varCandidate);
-			if (validVar == 1) {
-				varState = 1;
-			}
-			if (varState == 1 && validVar == 0) {
-				varCandidate[j - 1] = '\0';
+			j = 0;
+			while (verifyLetter(letterScan[i]) && i < abs((int)strlen(arithTrig))) {
+				varCandidate[j] = letterScan[i];
+				i++; j++;
+				varCandidate[j] = '\0';
 				processVariable(varCandidate);
+				if (validVar == 1) {
+					varState = 1;
+				}
+				if (varState == 1 && validVar == 0) {
+					varCandidate[j - 1] = '\0';
+				}
 			}
 		}
-		i++;
 	}
+	j = 0;
 	char replaceVariable[DIM] = "";
 	if (abs((int)strlen(varCandidate) != 0)) {
 		sprintf(finalReplacement, "(%s)", varCandidate);
@@ -1839,7 +1865,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					sprintf(arithTrig, "%s", expressionF);
 				}
 			}
-
 		}
 	}
 	for (v = 0; arithTrig[v] != '\0'; v++) {
@@ -1852,31 +1877,42 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	}
 	letterScan[v] = '\0';
 	if (isContained("solver(", arithTrig)) {
-		char saveArithTrig[DIM] = "";
-		int kl = 1, kr = 0, k = 0, g = strEnd;
-		while (kl != kr && g < abs((int)strlen(arithTrig))) {
-			saveArithTrig[k] = arithTrig[g];
-			if (arithTrig[g] == '(') {
-				kl++;
+		while (isContained("solver(", arithTrig)) {
+			char saveArithTrig[DIM] = "";
+			int kl = 1, kr = 0, k = 0, g = strEnd;
+			while (kl != kr && g < abs((int)strlen(arithTrig))) {
+				if (arithTrig[g] == '(') {
+					kl++;
+				}
+				if (arithTrig[g] == ')') {
+					kr++;
+				}
+				if (kl != kr) {
+					saveArithTrig[k] = arithTrig[g];
+					k++;
+				}
+				g++;
 			}
-			if (arithTrig[g] == ')') {
-				kr++;
+			saveArithTrig[k] = '\0';
+			char saveArith[DIM] = "";
+			if (isContained("(x)", saveArithTrig) == (boolean)false && isContained("x", saveArithTrig)) {
+				sprintf(saveArith, saveArithTrig);
+				replace("x", "(/////////)", saveArithTrig);
+				replace("/////////", "x", expressionF);
+				sprintf(saveArithTrig, expressionF);
+				char sol[DIM] = "";
+				sprintf(sol, "solver(%s)", saveArith);
+				char sol_2[DIM] = "";
+				sprintf(sol_2, "SOLVER(%s)", saveArithTrig);
+				replace(sol, sol_2, arithTrig);
+				sprintf(arithTrig, expressionF);
 			}
 			g++;
-			k++;
 		}
-		saveArithTrig[k] = '\0';
-		char saveArith[DIM] = "";
-		if (isContained("(x)", saveArithTrig) == (boolean)false && isContained("x", saveArithTrig)) {
-			sprintf(saveArith, saveArithTrig);
-			replace("x", "(/////////)", saveArithTrig);
-			replace("/////////", "x", expressionF);
-			sprintf(saveArithTrig, expressionF);
-			replace(saveArith, saveArithTrig, arithTrig);
-			sprintf(arithTrig, expressionF);
-			k = 0;
-		}
-		g++;
+	}
+	if (isContained("SOLVER", arithTrig)) {
+		replace("SOLVER", "solver", arithTrig);
+		sprintf(arithTrig, expressionF);
 	}
 	if (isContained("#", arithTrig)) {
 		int i = strStart + 1, v = 1;

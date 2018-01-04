@@ -743,7 +743,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		int r = 0;
 		char toPath[DIM] = "";
 		sprintf(toPath, "%s\\variables.txt", atcPath);
-		while (open == NULL&&r < 100) {
+		while (open == NULL && r < 100) {
 			open = fopen(toPath, "w");
 			r++;
 		}
@@ -754,7 +754,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			r = 0;
 			char toPath[DIM] = "";
 			sprintf(toPath, "%s\\renamedVar.txt", atcPath);
-			while (open == NULL&&r < 100) {
+			while (open == NULL && r < 100) {
 				open = fopen(toPath, "w");
 				r++;
 			}
@@ -771,7 +771,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		int r = 0;
 		char toPath[DIM] = "";
 		sprintf(toPath, "%s\\stringVariable.txt", atcPath);
-		while (open == NULL&&r < 100) {
+		while (open == NULL && r < 100) {
 			open = fopen(toPath, "w");
 			r++;
 		}
@@ -892,7 +892,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		int r = 0;
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\stringVariable.txt", atcPath);
-		while (open == NULL&&r < 100) {
+		while (open == NULL && r < 100) {
 			open = fopen(toOpen, "a+");
 			r++;
 		}
@@ -919,7 +919,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		int r = 0;
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\variables.txt", atcPath);
-		while (open == NULL&&r < 100) {
+		while (open == NULL && r < 100) {
 			open = fopen(toOpen, "a+");
 			r++;
 		}
@@ -1026,7 +1026,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		int r = 0;
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
-		while (open == NULL&&r < 100) {
+		while (open == NULL && r < 100) {
 			open = fopen(toOpen, "a+");
 			r++;
 		}

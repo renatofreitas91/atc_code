@@ -577,7 +577,7 @@ void wait(int seconds) {
 int datePreciser(double day, double month, double year, double dayS, double monthS, double yearS) {
 	int plusYears = 0, k = 10, count = -1, flag = 1;
 	double dayF = day, monthF = month, yearF = year, dayFF = day;
-	while (day != dayS&&k > 0) {
+	while (day != dayS && k > 0) {
 		day = dayF; month = monthF; year = yearF;
 		if (month > 12) {
 			plusYears = (int)qu(month, 12);
@@ -627,7 +627,7 @@ int datePreciser(double day, double month, double year, double dayS, double mont
 		}
 	}
 	if (flag == 2) {
-		count = count*-1;
+		count = count * -1;
 	}
 	return count;
 }

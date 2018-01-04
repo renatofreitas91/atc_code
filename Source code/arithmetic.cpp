@@ -19,8 +19,8 @@ void multiplication(double numR, double numI, double denR, double denI) {
 		resultI = 0;
 	}
 	else {
-		resultR = numR*denR + (numI*denI)*-1;
-		resultI = numR*denI + numI*denR;
+		resultR = numR * denR + (numI*denI)*-1;
+		resultI = numR * denI + numI * denR;
 	}
 }
 
@@ -65,7 +65,7 @@ void qu_complex(double dividend, double dividendI, double divider, double divide
 
 void round_complex() {
 	char path4ATC[DIM] = "";
-	if (resultR >= -DBL_MAX&&resultR <= DBL_MAX&&resultI >= -DBL_MAX&&resultI <= DBL_MAX) {
+	if (resultR >= -DBL_MAX && resultR <= DBL_MAX && resultI >= -DBL_MAX && resultI <= DBL_MAX) {
 		FILE *open;
 		sprintf(path4ATC, "%s\\numSystems.txt", atcPath);
 		open = fopen(path4ATC, "r");
@@ -127,21 +127,21 @@ void round_complex() {
 
 void exponentiation(double a, double b, double c, double d, int sig) {
 	if (sig == 0) {
-		a = a*-1; b = b*-1;
+		a = a * -1; b = b * -1;
 		exponentiation(a, b, c, d, 1);
-		resultR = resultR*-1;
-		resultI = resultI*-1;
+		resultR = resultR * -1;
+		resultI = resultI * -1;
 	}
 	else {
 		if (sig == 1) {
 			if (b != 0 || d != 0 || a < 0) {
 				double r = sqrt(pow(a, 2.0) + pow(b, 2.0));
 				double arg_ab = atan2(b, a);
-				double part1 = pow(r, c)*pow(M_E, -d*arg_ab);
-				double part2 = cos(d*log(r) + c*arg_ab);
-				double part3 = sin(d*log(r) + c*arg_ab);
-				resultR = part1*part2;
-				resultI = part1*part3;
+				double part1 = pow(r, c)*pow(M_E, -d * arg_ab);
+				double part2 = cos(d*log(r) + c * arg_ab);
+				double part3 = sin(d*log(r) + c * arg_ab);
+				resultR = part1 * part2;
+				resultI = part1 * part3;
 			}
 			else {
 				resultR = pot(a, c, sig);
@@ -170,7 +170,7 @@ double pot(double base, double exponent, int sig) {
 		double exponent1, exponent2;
 		int k = 0;
 		if (sig == 0) {
-			base = base*-1;
+			base = base * -1;
 			result = -1 * pot((double)base, (double)exponent, 1);
 		}
 		else {
@@ -179,16 +179,16 @@ double pot(double base, double exponent, int sig) {
 				exponent2 = multi(exponent);
 				result2 = base;
 				if (exponent < 0) {
-					exponent1 = exponent1*-1;
+					exponent1 = exponent1 * -1;
 				}
 				for (k = 1; k < exponent1&&result2 < 1.79769E308; k++) {
-					result2 = result2*base;
+					result2 = result2 * base;
 				}
 				if (exponent < 0) {
 					result2 = 1 / result2;
 				}
 				if (exponent < 0 && exponent2>0) {
-					exponent2 = exponent2*-1;
+					exponent2 = exponent2 * -1;
 				}
 				if (exponent1 >= 1) {
 					result = pow((double)base, (double)exponent2)*result2;
@@ -218,14 +218,14 @@ double rt(double radicand, double degree, int sig) {
 		return result;
 	}
 	if (sig == 0) {
-		radicand = radicand*-1;
+		radicand = radicand * -1;
 		result = -1 * rt((double)radicand, (double)degree, 1);
 		sig = 1;
 	}
 	else {
 		if (sig == 1) {
 			if (degree < 0) {
-				degree = degree*-1;
+				degree = degree * -1;
 				j = 1;
 			}
 			while (precision >= 1E-309) {
@@ -280,7 +280,7 @@ double multi(double multip) {
 	mul[i] = '\0';
 	mu = strtod(mul, &pointer);
 	if (multip < 0 && mu >= 0) {
-		mu = mu*-1;
+		mu = mu * -1;
 	}
 	return mu;
 }
@@ -354,7 +354,7 @@ double fact(double d) {
 		if (d > 0) {
 			d--;
 			while (d >= 1) {
-				result = result*d;
+				result = result * d;
 				d--;
 			}
 		}

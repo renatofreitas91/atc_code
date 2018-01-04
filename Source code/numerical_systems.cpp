@@ -17,18 +17,18 @@ void decimalToBinary(double decimal, char path[DIM], int bp) {
 	}
 	else {
 		if (decimal < 0) {
-			decimal = decimal*-1;
+			decimal = decimal * -1;
 			sN = log10(decimal) / log10(2.0);
 			sN1 = quo(sN);
 			sN2 = pow(2.0, multi(sN))*-1;
-			decimal = decimal*-1;
+			decimal = decimal * -1;
 		}
 	}
 	if (sN1 <= 5 && sN1 >= -4 || decimal == 0 || bp != -1) {
 		decimal1 = decimal;
 		if (decimal < 0) {
 			c = 0;
-			decimal1 = decimal1*-1;
+			decimal1 = decimal1 * -1;
 			while (quotient1 > 1) {
 				quotient1 = decimal1 / 2;
 				decimal1 = quotient1;
@@ -58,7 +58,7 @@ void decimalToBinary(double decimal, char path[DIM], int bp) {
 		binary2[j] = '\0';
 		mult = multi(decimal);
 		if (mult < 0 && bp != 0) {
-			mult = mult*-1;
+			mult = mult * -1;
 		}
 		if (mult > 0 && bp != 0) {
 			i = 0;
@@ -134,7 +134,7 @@ void decimalToBinary(double decimal, char path[DIM], int bp) {
 		decimal1 = decimal;
 		if (decimal < 0) {
 			c = 0;
-			decimal1 = decimal1*-1;
+			decimal1 = decimal1 * -1;
 			while (quotient1 > 1) {
 				quotient1 = decimal1 / 2;
 				decimal1 = quotient1;
@@ -164,7 +164,7 @@ void decimalToBinary(double decimal, char path[DIM], int bp) {
 		binary2[j] = '\0';
 		mult = multi(decimal);
 		if (mult < 0) {
-			mult = mult*-1;
+			mult = mult * -1;
 		}
 		if (mult != 0) {
 			i = 0;
@@ -203,7 +203,7 @@ void decimalToBinary(double decimal, char path[DIM], int bp) {
 		decimal1 = decimal2;
 		if (decimal2 < 0) {
 			c = 0;
-			decimal1 = decimal1*-1;
+			decimal1 = decimal1 * -1;
 			while (quotient1 > 1) {
 				quotient1 = decimal1 / 2;
 				decimal1 = quotient1;
@@ -233,7 +233,7 @@ void decimalToBinary(double decimal, char path[DIM], int bp) {
 		binaryexp[j] = '\0';
 		mult = multi(decimal2);
 		if (mult < 0) {
-			mult = mult*-1;
+			mult = mult * -1;
 		}
 		if (mult > 0) {
 			i = 0;
@@ -341,17 +341,17 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 	}
 	else {
 		if (decimal < 0) {
-			decimal = decimal*-1;
+			decimal = decimal * -1;
 			sN = log10(decimal) / log10(8.0);
 			sN1 = quo(sN);
 			sN2 = pow(8.0, multi(sN))*-1;
-			decimal = decimal*-1;
+			decimal = decimal * -1;
 		}
 	}
 	if (sN1 <= 5 && sN1 >= -4 || decimal == 0 || op != -1) {
 		if (decimal < 0) {
 			c = 0;
-			decimal1 = decimal1*-1;
+			decimal1 = decimal1 * -1;
 			while (quotient1 > 7) {
 				quotient1 = decimal1 / 8;
 				decimal1 = quotient1;
@@ -381,7 +381,7 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 		octal2[j] = '\0';
 		mult = multi(decimal);
 		if (mult < 0 && op != 0) {
-			mult = mult*-1;
+			mult = mult * -1;
 		}
 		if (mult > 0 && op != 0) {
 			i = 0;
@@ -457,7 +457,7 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 		decimal1 = decimal;
 		if (decimal < 0) {
 			c = 0;
-			decimal1 = decimal1*-1;
+			decimal1 = decimal1 * -1;
 			while (quotient1 > 7) {
 				quotient1 = decimal1 / 8;
 				decimal1 = quotient1;
@@ -487,7 +487,7 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 		octal2[j] = '\0';
 		mult = multi(decimal);
 		if (mult < 0) {
-			mult = mult*-1;
+			mult = mult * -1;
 		}
 		if (mult > 0) {
 			i = 0;
@@ -526,7 +526,7 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 		decimal1 = decimal2;
 		if (decimal2 < 0) {
 			c = 0;
-			decimal1 = decimal1*-1;
+			decimal1 = decimal1 * -1;
 			while (quotient1 > 7) {
 				quotient1 = decimal1 / 8;
 				decimal1 = quotient1;
@@ -556,7 +556,7 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 		octalexp[j] = '\0';
 		mult = multi(decimal2);
 		if (mult < 0) {
-			mult = mult*-1;
+			mult = mult * -1;
 		}
 		if (mult > 0) {
 			i = 0;
@@ -663,17 +663,17 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 	}
 	else {
 		if (decimal < 0) {
-			decimal = decimal*-1;
+			decimal = decimal * -1;
 			sN = log10(decimal) / log10(16.0);
 			sN1 = quo(sN);
 			sN2 = pow(16.0, multi(sN))*-1;
-			decimal = decimal*-1;
+			decimal = decimal * -1;
 		}
 	}
 	if (sN1 <= 5 && sN1 >= -4 || decimal == 0 || hp != -1) {
 		if (decimal < 0) {
 			c = 0;
-			decimal1 = decimal1*-1;
+			decimal1 = decimal1 * -1;
 			while (quotient1 > 15) {
 				quotient1 = decimal1 / 16;
 				decimal1 = quotient1;
@@ -749,7 +749,7 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 		hexadecimal2[j] = '\0';
 		mult = multi(decimal);
 		if (mult < 0 && hp != 0) {
-			mult = mult*-1;
+			mult = mult * -1;
 		}
 		if (mult > 0 && hp != 0) {
 			i = 0;
@@ -867,7 +867,7 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 		decimal1 = decimal;
 		if (decimal < 0) {
 			c = 0;
-			decimal1 = decimal1*-1;
+			decimal1 = decimal1 * -1;
 			while (quotient1 > 15) {
 				quotient1 = decimal1 / 16;
 				decimal1 = quotient1;
@@ -943,7 +943,7 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 		hexadecimal2[j] = '\0';
 		mult = multi(decimal);
 		if (mult < 0) {
-			mult = mult*-1;
+			mult = mult * -1;
 		}
 		if (mult > 0) {
 			i = 0;
@@ -1026,7 +1026,7 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 		decimal1 = decimal2;
 		if (decimal2 < 0) {
 			c = 0;
-			decimal1 = decimal1*-1;
+			decimal1 = decimal1 * -1;
 			while (quotient1 > 15) {
 				quotient1 = decimal1 / 16;
 				decimal1 = quotient1;
@@ -1102,7 +1102,7 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 		hexadecimalexp[j] = '\0';
 		mult = multi(decimal2);
 		if (mult < 0) {
-			mult = mult*-1;
+			mult = mult * -1;
 		}
 		if (mult > 0) {
 			i = 0;

@@ -5,7 +5,7 @@
 
 void complex_cosh(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		exponentiation(M_E, 0.0, x, y, 1);
 		double napR = resultR, napI = resultI;
 		exponentiation(M_E, 0.0, -1 * x, -1 * y, 1);
@@ -26,7 +26,7 @@ void complex_cosh(double x, double y) {
 
 void complex_sinh(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		exponentiation(M_E, 0.0, x, y, 1);
 		double napR = resultR, napI = resultI;
 		exponentiation(M_E, 0.0, -1 * x, -1 * y, 1);
@@ -47,7 +47,7 @@ void complex_sinh(double x, double y) {
 
 void complex_tanh(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_sinh(x, y);
 		double numR = resultR, numI = resultI;
 		complex_cosh(x, y);
@@ -65,7 +65,7 @@ void complex_tanh(double x, double y) {
 }
 
 void cotanh(double x, double y) {
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_tanh(x, y);
 		division(1.0, 0.0, resultR, resultI);
 		round_complex();
@@ -81,7 +81,7 @@ void cotanh(double x, double y) {
 
 void sech(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_cosh(x, y);
 		division(1.0, 0.0, resultR, resultI);
 		round_complex();
@@ -97,7 +97,7 @@ void sech(double x, double y) {
 
 void cosech(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_sinh(x, y);
 		division(1.0, 0.0, resultR, resultI);
 		round_complex();
@@ -113,7 +113,7 @@ void cosech(double x, double y) {
 
 void arsinh(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		double radicandR = pot(x, 2.0, 1) - pot(y, 2.0, 1) + 1;
 		double radicandI = 2 * x*y;
 		exponentiation(radicandR, radicandI, 1 / 2.0, 0.0, 1);
@@ -132,7 +132,7 @@ void arsinh(double x, double y) {
 
 void arcosh(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		double radicandR = pot(x, 2.0, 1) - pot(y, 2.0, 1) - 1;
 		double radicandI = 2 * x*y;
 		exponentiation(radicandR, radicandI, 1 / 2.0, 0.0, 1);
@@ -151,7 +151,7 @@ void arcosh(double x, double y) {
 
 void artanh(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		double numR = 1 + x, numI = y;
 		double denR = 1 - x, denI = -1 * y;
 		division(numR, numI, denR, denI);
@@ -170,7 +170,7 @@ void artanh(double x, double y) {
 
 void arcoth(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		artanh(resultR, resultI);
 		round_complex();
@@ -186,7 +186,7 @@ void arcoth(double x, double y) {
 
 void arsech(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		arcosh(resultR, resultI);
 		round_complex();
@@ -202,7 +202,7 @@ void arsech(double x, double y) {
 
 void arcsch(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		arsinh(resultR, resultI);
 		round_complex();

@@ -266,7 +266,7 @@ boolean processTxt(char path[DIM], int re) {
 		fclose(read);
 	}
 	read = NULL;
-	while (read == NULL&&i < 100) {
+	while (read == NULL && i < 100) {
 		read = fopen(path, "a+");
 		i++;
 	}
@@ -832,7 +832,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 								else {
 									if (matrix[mIndex] == ';' || matrix[mIndex] == '\0') {
 										j = 0; i++;
-										if (saveCols != cols&&saveCols != -1) {
+										if (saveCols != cols && saveCols != -1) {
 											errorCols = 1;
 										}
 										saveCols = cols;
@@ -844,7 +844,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 								}
 								mIndex++;
 							} while (matrix[mIndex] != '\0');
-							if (errorCols == 0 && cols == lins&&cols >= 2) {
+							if (errorCols == 0 && cols == lins && cols >= 2) {
 								decision = true;
 							}
 							else {
@@ -1259,7 +1259,7 @@ boolean atcFunctions(char functionName[DIM]) {
 				i++;
 				g++;
 			}
-			if (g == j&&j == strlen(functionName)) {
+			if (g == j && j == strlen(functionName)) {
 				isFunction = true;
 				h = i;
 			}

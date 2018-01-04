@@ -4,11 +4,11 @@
 #include "stdafx.h"
 
 double INF = DBL_MAX;
-double mINF = INF *-1;
+double mINF = INF * -1;
 
 void cotan(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_tan(x, y);
 		division(1.0, 0.0, resultR, resultI);
 		round_complex();
@@ -24,7 +24,7 @@ void cotan(double x, double y) {
 
 void sec(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_cos(x, y);
 		division(1.0, 0.0, resultR, resultI);
 		round_complex();
@@ -40,7 +40,7 @@ void sec(double x, double y) {
 
 void cosec(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_sin(x, y);
 		division(1.0, 0.0, resultR, resultI);
 		round_complex();
@@ -56,7 +56,7 @@ void cosec(double x, double y) {
 
 void arcosec(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		complex_asin(resultR, resultI);
 		round_complex();
@@ -72,7 +72,7 @@ void arcosec(double x, double y) {
 
 void arcsec(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		complex_acos(resultR, resultI);
 		round_complex();
@@ -88,7 +88,7 @@ void arcsec(double x, double y) {
 
 void arcotg(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		complex_atan(resultR, resultI);
 		round_complex();
@@ -104,7 +104,7 @@ void arcotg(double x, double y) {
 
 void complex_cos(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		exponentiation(M_E, 0.0, -1 * y, x, 1);
 		double napR = resultR, napI = resultI;
 		exponentiation(M_E, 0.0, y, -1 * x, 1);
@@ -125,7 +125,7 @@ void complex_cos(double x, double y) {
 
 void complex_sin(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		exponentiation(M_E, 0.0, -1 * y, x, 1);
 		double napR = resultR, napI = resultI;
 		exponentiation(M_E, 0.0, y, -1 * x, 1);
@@ -146,7 +146,7 @@ void complex_sin(double x, double y) {
 
 void complex_tan(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_sin(x, y);
 		double numR = resultR, numI = resultI;
 		complex_cos(x, y);
@@ -166,7 +166,7 @@ void complex_tan(double x, double y) {
 
 void complex_asin(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		double radicandR = 1 - pot(x, 2.0, 1) + pot(y, 2.0, 1);
 		double radicandI = -1 * 2 * x*y;
 		exponentiation(radicandR, radicandI, 1 / 2.0, 0.0, 1);
@@ -188,7 +188,7 @@ void complex_asin(double x, double y) {
 
 void complex_acos(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		double radicandR = -1 * pot(x, 2.0, 1) + pot(y, 2.0, 1) + 1;
 		double radicandI = -2 * x*y;
 		exponentiation(radicandR, radicandI, 1 / 2.0, 0.0, 1);
@@ -211,7 +211,7 @@ void complex_acos(double x, double y) {
 
 void complex_atan(double x, double y) {
 	resultR = 0; resultI = 0;
-	if (x >= mINF && x <= INF&& y >= mINF && y <= INF) {
+	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		double numR = 1 + y, numI = -1 * x;
 		double denR = 1 - y, denI = x;
 		division(numR, numI, denR, denI);
