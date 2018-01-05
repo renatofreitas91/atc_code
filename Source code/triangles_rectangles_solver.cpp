@@ -185,11 +185,28 @@ void saveToReport(char report[DIM]) {
 	FILE *save = NULL;
 	char pathName[DIM] = "";
 	printf("\nDrag-and-drop to here your txt file to save the report.\n");
-	gets_s(pathName);
-	replace("\"", "", pathName);
-	replace("\\", "AZ", expressionF);
-	replace("AZ", "\\\\", expressionF);
-	sprintf(pathName, "%s", expressionF);
+	while (save == NULL) {
+		gets_s(pathName);
+		if (isContained("\\", pathName)) {
+			if (isContained("\"", pathName)) {
+				replace("\"", "", pathName);
+			}
+			else {
+				sprintf(expressionF, pathName);
+			}
+			replace("\\", "AZ", expressionF);
+			replace("AZ", "\\\\", expressionF);
+			sprintf(pathName, "%s", expressionF);
+		}
+		save = fopen(pathName, "r");
+		if (save == NULL) {
+			printf("\nDrag-and-drop to here your txt file to save the report.\n");
+		}
+	}
+	if (save != NULL) {
+		fclose(save);
+	}
+	save = NULL;
 	while (save == NULL) {
 		save = fopen(pathName, "w");
 	}

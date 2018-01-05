@@ -109,7 +109,6 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 						ValueI[v] = '_';
 				}
 				sprintf(toPowerX, "(%s(%s+%si))^(1/%d)", toPowerX, ValueR, ValueI, maxExponent);
-				puts(toPowerX);
 				int solve = 0;
 				for (solve = 0; solve < 100; solve++) {
 					calcNow(toPowerX, 0, 0);

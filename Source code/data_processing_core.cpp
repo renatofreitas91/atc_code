@@ -1897,7 +1897,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			char saveArith[DIM] = "";
 			if (isContained("x", saveArithTrig)) {
 				sprintf(saveArith, saveArithTrig);
-				if (isContained("(x)", saveArithTrig) == false&& isContained("x", saveArithTrig)) {
+				if (isContained("(x)", saveArithTrig) == false && isContained("x", saveArithTrig)) {
 					replace("x", "(/////////)", saveArithTrig);
 					replace("/////////", "x", expressionF);
 					sprintf(saveArithTrig, expressionF);
