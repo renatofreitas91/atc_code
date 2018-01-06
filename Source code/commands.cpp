@@ -1934,9 +1934,11 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 	}
 	if (isCommand(arithTrig, "calendar") && (arithTrig[i + 8] == '(' || arithTrig[i + 8] == '+')) {
-		char ye[100], calendar[DIM];
+		char ye[100], calendar[DIM], lineWeekDays[150] = "";
+		char month[20] = "";
+		char day[3] = "";
 		int k = 0;
-		int p = 0, countR = 0, countL = 0;
+		int p = 0, countR = 0, countL = 0, currentYear = 0;
 		for (p = 0; arithTrig[p] != '\0'; p++) {
 			if (arithTrig[p] == '(' || arithTrig[p] == '[' || arithTrig[p] == '{') {
 				countL++;
@@ -1997,6 +1999,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 				}
 				else {
+					currentYear = 1;
 					time_t hour;
 					time(&hour);
 					char *tim;
@@ -2004,6 +2007,45 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					tim[24] = '\0';
 					char yea[7] = { tim[20], tim[21], tim[22], tim[23], '.', '0', '\0' };
 					year = (int)convertToNumber(yea);
+					char da[3] = { tim[8], tim[9], '\0' };
+					int days = atoi(da);
+					sprintf(day, "%d", days);
+					if (tim[4] == 'J'&&tim[5] == 'a'&&tim[6] == 'n') {
+						sprintf(month, "January");
+					}
+					if (tim[4] == 'F'&&tim[5] == 'e'&&tim[6] == 'b') {
+						sprintf(month, "February");
+					}
+					if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'r') {
+						sprintf(month, "March");
+					}
+					if (tim[4] == 'A'&&tim[5] == 'p'&&tim[6] == 'r') {
+						sprintf(month, "April");
+					}
+					if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'y') {
+						sprintf(month, "May");
+					}
+					if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'n') {
+						sprintf(month, "June");
+					}
+					if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'l') {
+						sprintf(month, "July");
+					}
+					if (tim[4] == 'A'&&tim[5] == 'u'&&tim[6] == 'g') {
+						sprintf(month, "August");
+					}
+					if (tim[4] == 'S'&&tim[5] == 'e'&&tim[6] == 'p') {
+						sprintf(month, "September");
+					}
+					if (tim[4] == 'O'&&tim[5] == 'c'&&tim[6] == 't') {
+						sprintf(month, "October");
+					}
+					if (tim[4] == 'N'&&tim[5] == 'o'&&tim[6] == 'v') {
+						sprintf(month, "November");
+					}
+					if (tim[4] == 'D'&&tim[5] == 'e'&&tim[6] == 'c') {
+						sprintf(month, "December");
+					}
 				}
 			}
 			arithTrig[0] = '\0'; command = true;
@@ -2053,6 +2095,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				}
 				calendar[yu] = '\0';
 				ca = 0;
+				int saveStartWeekDays = 0;
 				for (s = 0; calendar[s] != '\0'; s++) {
 					if (calendar[s] == '\n') {
 						ca++;
@@ -2068,8 +2111,19 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 							calendar[s + 112] = (char)179;
 							calendar[s + 118] = (char)179;
 						}
+						if (ca == 6) {
+							saveStartWeekDays = s + 1;
+						}
 					}
 				}
+				int y = saveStartWeekDays;
+				int k = 0;
+				while (calendar[y] != '\n') {
+					lineWeekDays[k] = calendar[y];
+					y++;
+					k++;
+				}
+				lineWeekDays[k] = '\0';
 				for (s = 0; calendar[s] != '\0'; s++) {
 					if (calendar[s] == 's'&&calendar[s + 3] == 'd'&&calendar[s + 4] == 'o') {
 						calendar[s + 1] = 'a';
@@ -2078,9 +2132,68 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 						calendar[s + 3] = 'c';
 					}
 				}
-				calendar[s] = '\0';
+				calendar[s] = '\n'; calendar[s + 1] = '\0';
+				if (currentYear == 1) {
+					isContained(month, calendar);
+					char background = calendar[strEnd];
+					int getStart = strStart;
+					while (calendar[getStart] != '\n') {
+						getStart--;
+					}
+					getStart++;
+					int startLine = getStart;
+					int d = startLine;
+					char line[150] = "";
+					int h = 0;
+					while (calendar[d] != '\n') {
+						line[h] = calendar[d];
+						d++;
+						h++;
+					}
+					line[h] = '\0';
+					char changeLine[150] = "";
+					sprintf(changeLine, line);
+					char changeWeekDaysLine[150] = "";
+					sprintf(changeWeekDaysLine, lineWeekDays);
+					changeLine[0] = ' ';
+					h = 1;
+					while (changeLine[h] == month[h - 1]) {
+						h++;
+					}
+					changeLine[h] = ' ';
+					int foundDay = 0;
+					while (foundDay == 0) {
+						while (changeLine[h] != day[0]) {
+							h++;
+						}
+						if (day[1] != '\0') {
+							if (day[1] == changeLine[h + 1]) {
+								changeLine[h - 1] = ' ';
+								changeWeekDaysLine[h - 1] = ' ';
+								h = h + 2;
+								changeLine[h] = ' ';
+								changeWeekDaysLine[h] = ' ';
+								foundDay = 1;
+							}
+						}
+						else {
+							if (day[1] == '\0') {
+								changeLine[h - 1] = ' ';
+								changeWeekDaysLine[h - 2] = ' ';
+								h = h + 1;
+								changeLine[h] = ' ';
+								changeWeekDaysLine[h] = ' ';
+								foundDay = 1;
+							}
+						}
+						h++;
+					}
+					replace(line, changeLine, calendar);
+					replace(lineWeekDays, changeWeekDaysLine, expressionF);
+					sprintf(calendar, expressionF);
+				}
 				printf("\n");
-				printf("%s\n\n", calendar);
+				printf("%s\n", calendar);
 				for (s = 0; calendarStr[s] != '\0'; s++) {
 					calendar[s] = calendarStr[s];
 				}
