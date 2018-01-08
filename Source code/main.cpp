@@ -107,11 +107,6 @@ void main(int argc, char *argv[]) {
 				}
 				arithTrig[i] = '\0';
 				sprintf(fTrig, "%s", arithTrig); verbose = 0;
-				if (isContained("solver", arithTrig)) {
-					if (isContained("x", arithTrig)) {
-						resultR = 0; resultI = 0;
-					}
-				}
 				main_core(arithTrig, fTrig, fout, path, result1, result2, 1);
 				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 				if (verified == 1) {
@@ -308,8 +303,6 @@ boolean processTxt(char path[DIM], int re) {
 		tD = 0;
 		char variable[DIM] = "";
 		for (k = 0; k < cP; k++) {
-			resultR = sqrt(DBL_MAX);
-			variableController("INF", resultR);
 			char trigData[DIM] = "";
 			tD = 0;
 			e = 0;
@@ -369,7 +362,6 @@ boolean processTxt(char path[DIM], int re) {
 					if (isContained("solver", arith)) {
 						if (isContained("x", arith)) {
 							resultR = 0; resultI = 0;
-							variableController("x", 0);
 						}
 					}
 					main_core(arith, arith, fin, path, result1, result2, 0);

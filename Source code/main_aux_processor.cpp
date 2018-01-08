@@ -7,6 +7,11 @@ boolean solving = true;
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);
+	if (isContained("solver", arithTrig)) {
+		if (isContained("x", arithTrig)) {
+			resultR = 0; resultI = 0;
+		}
+	}
 	verbose = 0;
 	verified = 0;
 	rasf = 0;

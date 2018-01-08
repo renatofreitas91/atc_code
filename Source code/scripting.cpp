@@ -168,42 +168,42 @@ void print(char text[DIM], double result1, double result2) {
 					varValue[g] = '\0';
 					specifier = varType[strlen(varType) - 1];
 					if (specifier == 'i' || specifier == 'd') {
-						int value = (int)solveNow(varValue, result1, result2);
+						int value = (int)calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'u') {
-						unsigned int value = (unsigned int)solveNow(varValue, result1, result2);
+						unsigned int value = (unsigned int)calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'o') {
-						unsigned int value = (unsigned int)solveNow(varValue, result1, result2);
+						unsigned int value = (unsigned int)calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'x' || specifier == 'X') {
-						unsigned int value = (unsigned int)solveNow(varValue, result1, result2);
+						unsigned int value = (unsigned int)calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'f') {
-						float value = (float)solveNow(varValue, result1, result2);
+						float value = (float)calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'e' || specifier == 'E') {
-						double value = solveNow(varValue, result1, result2);
+						double value = calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'G' || specifier == 'g') {
-						double value = solveNow(varValue, result1, result2);
+						double value = calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'a' || specifier == 'A') {
-						double value = solveNow(varValue, result1, result2);
+						double value = calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
@@ -240,7 +240,7 @@ void print(char text[DIM], double result1, double result2) {
 									p++; h++;
 								}
 								index[h] = '\0';
-								int Index = (int)solveNow(index, result1, result2);
+								int Index = (int)calcNow(index, result1, result2);
 								renamer(string);
 								for (h = 0; expressionF[h] != '\0'; h++) {
 									string[h] = expressionF[h];
@@ -251,7 +251,7 @@ void print(char text[DIM], double result1, double result2) {
 								charString = 0;
 							}
 							else {
-								int valu = (int)solveNow(varValue, result1, result2);
+								int valu = (int)calcNow(varValue, result1, result2);
 								value = valu;
 								printf(printing, value);
 								value = 0;
@@ -269,12 +269,12 @@ void print(char text[DIM], double result1, double result2) {
 						printf(printing, variableSTring);
 					}
 					if (specifier == 'p') {
-						int value = (int)solveNow(varValue, result1, result2);
+						int value = (int)calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'n') {
-						signed int value = (int)solveNow(varValue, result1, result2);
+						signed int value = (int)calcNow(varValue, result1, result2);
 						_set_printf_count_output(1);
 						printf(printing, &value);
 						_set_printf_count_output(0);
@@ -481,49 +481,49 @@ void sprint(char text[DIM], double result1, double result2) {
 					varValue[g] = '\0';
 					specifier = varType[strlen(varType) - 1];
 					if (specifier == 'i' || specifier == 'd') {
-						int value = (int)solveNow(varValue, result1, result2);
+						int value = (int)calcNow(varValue, result1, result2);
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
 					}
 					if (specifier == 'u') {
-						unsigned int value = (unsigned int)solveNow(varValue, result1, result2);
+						unsigned int value = (unsigned int)calcNow(varValue, result1, result2);
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
 					}
 					if (specifier == 'o') {
-						unsigned int value = (unsigned int)solveNow(varValue, result1, result2);
+						unsigned int value = (unsigned int)calcNow(varValue, result1, result2);
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
 					}
 					if (specifier == 'x' || specifier == 'X') {
-						unsigned int value = (unsigned int)solveNow(varValue, result1, result2);
+						unsigned int value = (unsigned int)calcNow(varValue, result1, result2);
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
 					}
 					if (specifier == 'f') {
-						float value = (float)solveNow(varValue, result1, result2);
+						float value = (float)calcNow(varValue, result1, result2);
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
 					}
 					if (specifier == 'e' || specifier == 'E') {
-						double value = solveNow(varValue, result1, result2);
+						double value = calcNow(varValue, result1, result2);
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
 					}
 					if (specifier == 'G' || specifier == 'g') {
-						double value = solveNow(varValue, result1, result2);
+						double value = calcNow(varValue, result1, result2);
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
 					}
 					if (specifier == 'a' || specifier == 'A') {
-						double value = solveNow(varValue, result1, result2);
+						double value = calcNow(varValue, result1, result2);
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
@@ -562,7 +562,7 @@ void sprint(char text[DIM], double result1, double result2) {
 									p++; h++;
 								}
 								index[h] = '\0';
-								int Index = (int)solveNow(index, result1, result2);
+								int Index = (int)calcNow(index, result1, result2);
 
 								renamer(string);
 								for (h = 0; expressionF[h] != '\0'; h++) {
@@ -575,7 +575,7 @@ void sprint(char text[DIM], double result1, double result2) {
 								charString = 0;
 							}
 							else {
-								int valu = (int)solveNow(varValue, result1, result2);
+								int valu = (int)calcNow(varValue, result1, result2);
 								value = valu;
 								sprintf(String, printing, value);
 								sprintf(finalString, "%s%s", finalString, String);
@@ -595,13 +595,13 @@ void sprint(char text[DIM], double result1, double result2) {
 						sprintf(finalString, "%s%s", finalString, String);
 					}
 					if (specifier == 'p') {
-						int value = (int)solveNow(varValue, result1, result2);
+						int value = (int)calcNow(varValue, result1, result2);
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
 					}
 					if (specifier == 'n') {
-						int value = (int)solveNow(varValue, result1, result2);
+						int value = (int)calcNow(varValue, result1, result2);
 						_set_printf_count_output(1);
 						sprintf(String, printing, &value);
 						sprintf(finalString, "%s%s", finalString, String);
