@@ -412,8 +412,8 @@ void prefixDeterminator(double n, char path[DIM]) {
 }
 
 void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]) {
-	char expression[DIM] = "", expressionG[DIM] = "";
-	int i = 0, g = 0, j = 0;
+	char expression[DIM] = "", expressionG[DIM] = "", check_for_variable[DIM] = "";
+	int i = 0, g = 0, j = 0, is_variable = 0, k = 0, n = 0;
 	sprintf(expression, "%s", string);
 	sprintf(expressionG, "%s", string);
 	isContained(toReplace, expressionG);
@@ -884,7 +884,6 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 			}
 		}
 	}
-
 	i = 0; j = 0;
 	sprintf(value, ""); sprintf(saveValue, "");
 	while (expression[i] != '\0') {
@@ -1013,7 +1012,6 @@ void customFuncRenamer(char variable[DIM]) {
 
 void manageExpression(char arithTrig[DIM], double result1, double result2, int verify) {
 	renamer(arithTrig);
-	sprintf(arithTrig, expressionF);
 	int i = 0, j = 0, s = 0, f = 0;
 	toMultiply(arithTrig, result1, result2);
 	renamer(arithTrig);
@@ -1834,30 +1832,15 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			while (verifyLetter(letterScan[i]) && i < abs((int)strlen(arithTrig))) {
 				varCandidate[j] = letterScan[i];
 				i++; j++;
-				varCandidate[j] = '\0';
-				processVariable(varCandidate);
-				if (validVar == 1) {
-					while (validVar == 1 && i < abs((int)strlen(arithTrig))) {
-						varCandidate[j] = letterScan[i];
-						i++; j++;
-						varCandidate[j] = '\0';
-						processVariable(varCandidate);
-					}
-					varState = 1;
-				}
-				if (varState == 1 && validVar == 0) {
-					varCandidate[j - 1] = '\0';
-					processVariable(varCandidate);
-					break;
-				}
 			}
+			varCandidate[j] = '\0';
 		}
 		renamer(arithTrig);
 		sprintf(arithTrig, expressionF);
 		char replaceVariable[DIM] = "";
 		if (abs((int)strlen(varCandidate) != 0)) {
 			sprintf(finalReplacement, "(%s)", varCandidate);
-			if (validVar == 1 || isContained("res", arithTrig)) {
+			if (isContained("res", arithTrig)) {
 				if (isContained("res", arithTrig)) {
 					if (arithTrig[strEnd] != 't') {
 						replace("res", "(\\\\\\\\)", arithTrig);
@@ -1872,59 +1855,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 						}
 					}
 				}
-				else {
-					sprintf(replaceVariable, "(\\\\\\\\)");
-					replace(varCandidate, replaceVariable, arithTrig);
-					replace("\\\\\\\\", varCandidate, expressionF);
-					sprintf(arithTrig, "%s", expressionF);
-					char isDuplicatedParent[DIM] = "";
-					sprintf(finalReplacement, "(%s)", varCandidate);
-					sprintf(isDuplicatedParent, "(%s)", finalReplacement);
-					if (isContained(isDuplicatedParent, arithTrig)) {
-						replace(isDuplicatedParent, finalReplacement, arithTrig);
-						sprintf(arithTrig, "%s", expressionF);
-					}
-				}
 			}
-		}
-	}
-	if (isContained("solver(", arithTrig)) {
-		while (isContained("solver(", arithTrig)) {
-			char saveArithTrig[DIM] = "";
-			int kl = 1, kr = 0, k = 0, g = strEnd;
-			while (kl != kr && g < abs((int)strlen(arithTrig))) {
-				if (arithTrig[g] == '(') {
-					kl++;
-				}
-				if (arithTrig[g] == ')') {
-					kr++;
-				}
-				if (kl != kr) {
-					saveArithTrig[k] = arithTrig[g];
-					k++;
-				}
-				g++;
-			}
-			saveArithTrig[k] = '\0';
-			char saveArith[DIM] = "";
-			if (isContained("x", saveArithTrig)) {
-				sprintf(saveArith, saveArithTrig);
-				if (isContained("(x)", saveArithTrig) == false && isContained("x", saveArithTrig)) {
-					replace("x", "(/////////)", saveArithTrig);
-					replace("/////////", "x", expressionF);
-					sprintf(saveArithTrig, expressionF);
-				}
-				char sol[DIM] = "";
-				sprintf(sol, "solver(%s)", saveArith);
-				char sol_2[DIM] = "";
-				sprintf(sol_2, "SOLVER(%s)", saveArithTrig);
-				replace(sol, sol_2, arithTrig);
-				sprintf(arithTrig, expressionF);
-			}
-		}
-		if (isContained("SOLVER", arithTrig)) {
-			replace("SOLVER", "solver", arithTrig);
-			sprintf(arithTrig, expressionF);
 		}
 	}
 	if (isContained("#", arithTrig)) {
@@ -2012,6 +1943,55 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			sprintf(arithTrig, "%s", expressionF);
 		}
 	}
+	char newArithTrig[DIM] = "";
+	char variableCheck[DIM] = "";
+	s = 0;
+	int y = 0, z = 0;
+	for (i = 0; arithTrig[i] != '\0'; i++) {
+		if (firstLetterVariable(arithTrig[i]) && (i == 0 || verifyLetter(arithTrig[i - 1]) == (boolean)false) && (arithTrig[i] == 'i'&&arithTrig[i - 1] == 'p') == false) {
+			s = 0;
+			while (letterVariables(arithTrig[i]) && arithTrig[i] != '\0') {
+				variableCheck[s] = arithTrig[i];
+				s++;
+				i++;
+			}
+			variableCheck[s] = '\0';
+			if (isVariable(variableCheck)) {
+				if (arithTrig[i] != ')') {
+					sprintf(newArithTrig, "%s(%s)", newArithTrig, variableCheck);
+				}
+				else {
+					sprintf(newArithTrig, "%s%s)", newArithTrig, variableCheck);
+					i++; y++;
+				}
+				y = abs((int)strlen(newArithTrig));
+				if (letterVariables(arithTrig[i]) == (boolean)false) {
+					while (firstLetterVariable(arithTrig[i]) == (boolean)false && arithTrig[i] != '\0') {
+						newArithTrig[y] = arithTrig[i];
+						y++; i++;
+					}
+					newArithTrig[y] = '\0';
+					i--;
+				}
+			}
+			else {
+				sprintf(newArithTrig, "%s%s", newArithTrig, variableCheck);
+				y = abs((int)strlen(newArithTrig));
+				while (firstLetterVariable(arithTrig[i]) == (boolean)false && arithTrig[i] != '\0') {
+					newArithTrig[y] = arithTrig[i];
+					y++; i++;
+				}
+				newArithTrig[y] = '\0';
+				i--;
+			}
+		}
+		else {
+			newArithTrig[y] = arithTrig[i];
+			y++;
+		}
+	}
+	newArithTrig[y] = '\0';
+	sprintf(arithTrig, newArithTrig);
 	renamer(arithTrig);
 	sprintf(arithTrig, expressionF);
 }
@@ -2027,6 +2007,16 @@ void openTxt() {
 	}
 }
 
+boolean isVariable(char variable[DIM]) {
+	renamer(variable);
+	char variableF[DIM] = "";
+	sprintf(variableF, expressionF);
+	processVariable(variableF);
+	if (validVar == 1) {
+		return true;
+	}
+	return false;
+}
 void cls()
 {
 	HANDLE hConsole;
@@ -3342,6 +3332,43 @@ boolean readyToSolve(char paTh[DIM]) {
 	}
 	else {
 		return false;
+	}
+	return false;
+}
+
+boolean isContainedVariable(char to_find[DIM], char string[DIM]) {
+	int i = 0, j = 0, k = 0;
+	char check_variable[DIM] = "";
+	for (i = 0; i < abs((int)strlen(string)); i++) {
+		for (j = 0; j < abs((int)strlen(to_find)); j++) {
+			if (to_find[j] == string[i] && firstLetterVariable(to_find[j]) && j == 0) {
+				while (to_find[j] == string[i] && to_find[j] != '\0'&&string[i] != '\0') {
+					j++;
+					i++;
+				}
+				int l = strStart;
+				k = 0;
+				while (letterVariables(string[l - 1])) {
+					l--;
+				}
+				while (letterVariables(string[l])) {
+					check_variable[k] = string[l];
+					l++; k++;
+				}
+				check_variable[k] = '\0';
+				if (isVariable(check_variable) == (boolean)false) {
+					return false;
+				}
+				else {
+					if (isContained(to_find, check_variable) && strlen(to_find) != strlen(check_variable)) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+			}
+		}
 	}
 	return false;
 }
