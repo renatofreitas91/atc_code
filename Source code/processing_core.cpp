@@ -983,7 +983,7 @@ double arithSolver(char trigon1[DIM], double result) {
 			}
 		}
 		if (number2[1] == 'f' || number2[1] == 'h' || number2[1] == 'j' || number2[1] == 'k' || number2[1] == 'm' || number2[1] == 'n' || number2[1] == 'o' || number2[1] == 'p' &&number2[2] != 'i' || number2[1] == 'u' || number2[1] == 'w' || number2[1] == 'v' || number2[1] == 'y' || number2[1] == 'z' || number2[1] == 'G' || number2[1] == 'I' || number2[1] == 'J' || number2[1] == 'K' || number2[1] == 'L' || number2[1] == 'M' || number2[1] == 'N' || number2[1] == 'Q' || number2[1] == 'R' || number2[1] == 'S' || number2[1] == 'T' || number2[1] == 'U' || number2[1] == 'V' || number2[1] == 'X' || number2[1] == 'Y' || number2[1] == 'Z' || number2[0] == 'x') {
-			if (number2[0] == '_' && (number2[1] == 'I'&&number2[2] == 'N'&&number2[3] == 'F') == false) {
+			if (number2[0] == '_') {
 				for (j = 0; number2[j + 1] != '\0'; j++) {
 					number2[j] = number2[j + 1];
 				}
@@ -1003,6 +1003,7 @@ double arithSolver(char trigon1[DIM], double result) {
 					amplI[n] = amplI[n] * -1;
 				}
 			}
+
 		}
 		if (number2[0] == 'B' || number2[0] == 'O' || number2[0] == 'H') {
 			if (number2[0] == 'B') {
