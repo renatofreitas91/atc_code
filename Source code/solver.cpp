@@ -17,7 +17,7 @@ double solver(char expression[DIM]) {
 	sprintf(equation, "%s", expression);
 	double precisionR = 0.01, precisionI = 0, resultFR = -0.1, resultFI = 0, savePrecisionR = 0.01, savePrecisionI = 0, saveResultR = -0.1, saveResultI = 0;
 	char Xequal[100] = "";
-	int timesToEvaluate = 480, timesEvaluated = 0, interactions = 30;
+	int timesToEvaluate = 300, timesEvaluated = 0, interactions = 30;
 	boolean initialR = true, initialI = true, imaginary = true, counter = true;
 	if (retrySolver == (boolean)true) {
 		precisionI = 0.01; resultFI = -0.1;

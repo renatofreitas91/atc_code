@@ -1003,7 +1003,6 @@ double arithSolver(char trigon1[DIM], double result) {
 					amplI[n] = amplI[n] * -1;
 				}
 			}
-
 		}
 		if (number2[0] == 'B' || number2[0] == 'O' || number2[0] == 'H') {
 			if (number2[0] == 'B') {

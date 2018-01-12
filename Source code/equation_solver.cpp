@@ -3,6 +3,7 @@
 #include "stdafx.h"
 
 boolean equationSolverRunning = false;
+double natureValue = 1;
 
 void equationSolver_2(char equation[DIM], int rootIndex) {
 	processVariable("x");
@@ -182,6 +183,9 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 }
 
 void equationSolver(char equation[DIM]) {
+	natureValue = 1;
+	processVariable("x");
+	double saveXR = resultR, saveXI = resultI;
 	puts("");
 	equationSolverRunning = true;
 	double valuesEqR[DIM], valuesEqI[DIM];
@@ -256,7 +260,10 @@ void equationSolver(char equation[DIM]) {
 		}
 		else {
 			retrySolver = false; retrySolver_2 = false; retrySolver_3 = false;
-			double rootR = solver(toCalcX);
+			double rootR = natureRootTest(toCalcX, valuesEqR[0], valuesEqI[0]);
+			if (rootR == -77777) {
+				rootR = solver(toCalcX);
+			}
 			double rootI = resultI;
 			if (abs(rootR) > 1E15) {
 				equationSolver_2(expression, rootIndex);
@@ -322,6 +329,8 @@ void equationSolver(char equation[DIM]) {
 		}
 	} while (maxExponent > 0);
 	equationSolverRunning = false;
+	resultR = saveXR; resultI = saveXI;
+	variableController("x", 0);
 }
 
 void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2, int index) {
@@ -600,4 +609,35 @@ void rootsToPolynomial(char roots[DIM]) {
 	if (option == 1) {
 		saveToReport(report);
 	}
+}
+
+double natureRootTest(char expression[DIM], double valuePolyR, double valuePolyI) {
+	char polynomial[DIM] = "";
+	sprintf(polynomial, expression);
+	replace("res", "x", polynomial);
+	sprintf(polynomial, expressionF);
+	if (valuePolyI > -0.01&&valuePolyI < 0.01) {
+		double k = natureValue;
+		while (k <= abs(valuePolyR)) {
+			resultR = k * -1;
+			resultI = 0;
+			variableController("x", 0);
+			calcNow(polynomial, 0, 0);
+			if (resultR > -0.01&&resultR<0.01 && resultI >-0.01&&resultI < 0.01) {
+				resultR = k * -1; resultI = 0;
+				return resultR;
+			}
+			resultR = k;
+			resultI = 0;
+			variableController("x", 0);
+			calcNow(polynomial, 0, 0);
+			if (resultR > -0.01&&resultR<0.01 && resultI >-0.01&&resultI < 0.01) {
+				resultR = k; resultI = 0;
+				return resultR;
+			}
+			k++;
+			natureValue = k;
+		}
+	}
+	return -77777;
 }

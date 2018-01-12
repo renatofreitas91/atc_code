@@ -1012,6 +1012,7 @@ void customFuncRenamer(char variable[DIM]) {
 
 void manageExpression(char arithTrig[DIM], double result1, double result2, int verify) {
 	renamer(arithTrig);
+	sprintf(arithTrig, expressionF);
 	int i = 0, j = 0, s = 0, f = 0;
 	toMultiply(arithTrig, result1, result2);
 	renamer(arithTrig);
@@ -1194,8 +1195,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 		}
 	}
-	renamer(arithTrig);
-	sprintf(arithTrig, expressionF);
 	needAst = 1;
 	while (needAst == 1) {
 		needAst = 0;
@@ -1493,8 +1492,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				}
 			}
 		}
-		renamer(arithTrig);
-		sprintf(arithTrig, expressionF);
 		for (i = mark; arithTrig[i] != '\0'; i++) {
 			needAst = 0;
 			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1])) {
@@ -1584,8 +1581,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 		}
 	}
-	renamer(arithTrig);
-	sprintf(arithTrig, expressionF);
 	needAst = 1;
 	while (needAst == 1) {
 		needAst = 0;
@@ -1835,8 +1830,6 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 			varCandidate[j] = '\0';
 		}
-		renamer(arithTrig);
-		sprintf(arithTrig, expressionF);
 		char replaceVariable[DIM] = "";
 		if (abs((int)strlen(varCandidate) != 0)) {
 			sprintf(finalReplacement, "(%s)", varCandidate);

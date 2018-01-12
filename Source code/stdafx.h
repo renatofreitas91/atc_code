@@ -16,7 +16,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <dirent.h> 
-extern double xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
+extern double natureValue, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
 extern int executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
 extern char saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
 extern boolean equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3;
@@ -35,6 +35,7 @@ double numericalSystems(char numSystem[DIM]);
 double calcNow(char toCalc[DIM], double result1, double result2);
 double solver(char expression[DIM]);
 double atcProg(char expression[DIM]);
+double natureRootTest(char expression[DIM], double valuePolyR, double valuePolyI);
 int variableValidator(char variable[DIM]);
 int matrixToValues(char matrix[DIM], double result);
 void variableController(char variable[DIM], double result);
