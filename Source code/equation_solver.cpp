@@ -613,27 +613,38 @@ void rootsToPolynomial(char roots[DIM]) {
 
 double natureRootTest(char expression[DIM], double valuePolyR, double valuePolyI) {
 	char polynomial[DIM] = "";
+	double restValueR = 0;
 	sprintf(polynomial, expression);
 	replace("res", "x", polynomial);
 	sprintf(polynomial, expressionF);
-	if (valuePolyI > -0.01&&valuePolyI < 0.01) {
+	if (valuePolyI > -0.01&&valuePolyI < 0.01&&abs(valuePolyR) < 1E6) {
 		double k = natureValue;
-		while (k <= abs(valuePolyR)) {
+		while (k <= 77) {
 			resultR = k * -1;
 			resultI = 0;
-			variableController("x", 0);
-			calcNow(polynomial, 0, 0);
-			if (resultR > -0.01&&resultR<0.01 && resultI >-0.01&&resultI < 0.01) {
-				resultR = k * -1; resultI = 0;
-				return resultR;
+			restValueR = re(valuePolyR, resultR);
+			if (restValueR > -0.01&&restValueR < 0.01) {
+				resultR = k * -1;
+				resultI = 0;
+				variableController("x", 0);
+				calcNow(polynomial, 0, 0);
+				if (resultR > -0.01&&resultR<0.01 && resultI >-0.01&&resultI < 0.01) {
+					resultR = k * -1; resultI = 0;
+					return resultR;
+				}
 			}
 			resultR = k;
 			resultI = 0;
-			variableController("x", 0);
-			calcNow(polynomial, 0, 0);
-			if (resultR > -0.01&&resultR<0.01 && resultI >-0.01&&resultI < 0.01) {
-				resultR = k; resultI = 0;
-				return resultR;
+			restValueR = re(valuePolyR, resultR);
+			if (restValueR > -0.01&&restValueR < 0.01) {
+				resultR = k;
+				resultI = 0;
+				variableController("x", 0);
+				calcNow(polynomial, 0, 0);
+				if (resultR > -0.01&&resultR<0.01 && resultI >-0.01&&resultI < 0.01) {
+					resultR = k; resultI = 0;
+					return resultR;
+				}
 			}
 			k++;
 			natureValue = k;
