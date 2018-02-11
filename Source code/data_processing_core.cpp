@@ -903,7 +903,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 					sprintf(value, saveValue);
 					i--;
 				}
-				if (verifyLetter(expression[i + 1]) == (boolean)true) {
+				if (verifyLetter(expression[i + 1])) {
 					char toReplace[10] = "", replacement[10] = "";
 					sprintf(toReplace, "%s%c", value, expression[i + 1]);
 					sprintf(replacement, "%s*%c", value, expression[i + 1]);
@@ -2744,7 +2744,7 @@ void complexNumber(double a, double b) {
 	if (rasf > 0) {
 		puts("");
 	}
-	if (solverRunning == (boolean)true) {
+	if (solverRunning) {
 		processingOK = 1;
 	}
 }

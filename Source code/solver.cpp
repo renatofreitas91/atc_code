@@ -19,7 +19,7 @@ double solver(char expression[DIM]) {
 	char Xequal[100] = "";
 	int timesToEvaluate = 300, timesEvaluated = 0, interactions = 30;
 	boolean initialR = true, initialI = true, imaginary = true, counter = true;
-	if (retrySolver == (boolean)true) {
+	if (retrySolver) {
 		precisionI = 0.01; resultFI = -0.1;
 		savePrecisionI = 0.01; saveResultI = -0.1;
 	}
@@ -28,18 +28,18 @@ double solver(char expression[DIM]) {
 	boolean to_solve = dataVerifier(equation, 0, 0, 1, 1);
 	if (to_solve) {
 		xValuesR = resultFR; xValuesI = resultFI;
-		if ((retrySolver == (boolean)false || retrySolver == (boolean)true) && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false) {
+		if ((retrySolver == (boolean)false || retrySolver) && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false) {
 			while (isSolved() == false && timesEvaluated < timesToEvaluate) {
 				timesEvaluated++;
-				if (resultFR >= (saveResultR*-1) || initialR == (boolean)true) {
+				if (resultFR >= (saveResultR*-1) || initialR) {
 					saveResultR = saveResultR * 10;
 					savePrecisionR = savePrecisionR * 10;
 					precisionR = savePrecisionR;
 					resultFR = saveResultR;
 					initialR = false;
 				}
-				if (retrySolver == (boolean)true) {
-					if (resultFI >= (saveResultI*-1) || initialI == (boolean)true) {
+				if (retrySolver) {
+					if (resultFI >= (saveResultI*-1) || initialI) {
 						saveResultI = saveResultI * 10;
 						savePrecisionI = savePrecisionI * 10;
 						precisionI = savePrecisionI;
@@ -90,7 +90,7 @@ double solver(char expression[DIM]) {
 					}
 				}
 				timesEvaluated++;
-				if (retrySolver == (boolean)true) {
+				if (retrySolver) {
 					while (resultI != 0 && resultFI < (saveResultI*-1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0) {
 						timesEvaluated++;
 						xValuesR = resultFR; xValuesI = resultFI;
@@ -137,7 +137,7 @@ double solver(char expression[DIM]) {
 			}
 		}
 		else {
-			if (retrySolver_2 == (boolean)true && retrySolver == (boolean)false && retrySolver_3 == (boolean)false) {
+			if (retrySolver_2 && retrySolver == (boolean)false && retrySolver_3 == (boolean)false) {
 				xValuesR = 1E9; xValuesI = 0;
 				atcProg(equation);
 				double minMaxR = resultR, minMaxI = resultI;
@@ -172,7 +172,7 @@ double solver(char expression[DIM]) {
 							break;
 						}
 					}
-					if (zero == (boolean)true) {
+					if (zero) {
 						zero = false;
 						if (y_valuesR[firstValueR] != INF * 2 && y_valuesR[secondValueR] != INF * 2 && y_valuesR[selected_X] != INF * 2) {
 							xValuesR = firstValueR; xValuesI = 0;
@@ -210,7 +210,7 @@ double solver(char expression[DIM]) {
 			solving = true;
 			return resultFR;
 		}
-		if ((retrySolver == (boolean)true && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false && ((resultR > -1E-7&&resultR < 1E-7) == false || (resultI > -1E-7&&resultI < 1E-7) == false)) && equationSolverRunning == (boolean)false) {
+		if ((retrySolver && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false && ((resultR > -1E-7&&resultR < 1E-7) == false || (resultI > -1E-7&&resultI < 1E-7) == false)) && equationSolverRunning == (boolean)false) {
 			retrySolver = false;
 			retrySolver_2 = true;
 			solver(expression);
@@ -220,7 +220,7 @@ double solver(char expression[DIM]) {
 			puts("");
 			return resultFR;
 		}
-		if ((retrySolver == (boolean)false && retrySolver_2 == (boolean)true && retrySolver_3 == (boolean)false && ((resultR > -1 && resultR < 1) == false || (resultI > -1 && resultI < 1) == false)) && equationSolverRunning == (boolean)false) {
+		if ((retrySolver == (boolean)false && retrySolver_2 && retrySolver_3 == (boolean)false && ((resultR > -1 && resultR < 1) == false || (resultI > -1 && resultI < 1) == false)) && equationSolverRunning == (boolean)false) {
 			retrySolver_2 = false;
 			retrySolver_3 = true;
 			solver(expression);

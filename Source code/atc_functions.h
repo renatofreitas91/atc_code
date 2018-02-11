@@ -9,6 +9,7 @@ void numSystemsController();
 void siPrefixController();
 void actualTimeController();
 void printTimer(int hours, int minutes, int seconds);
+void printBigTimer(int hours, int minutes, int seconds);
 void openTxt();
 void cls();
 void wait(int seconds);

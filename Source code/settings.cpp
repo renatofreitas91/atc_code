@@ -96,7 +96,7 @@ void mode() {
 }
 
 void about2() {
-	system("title Advanced Trigonometry Calculator v1.9.3");
+	system("title Advanced Trigonometry Calculator v1.9.4");
 	system("MODE con cols=90 lines=15");
 	cls();
 	FILE *open = NULL;
@@ -113,7 +113,7 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v1.9.3                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v1.9.4                                                             ==) Enter data (==              ");
 }
 
 int applySettings(int toDo) {
@@ -212,7 +212,7 @@ int applySettings(int toDo) {
 
 boolean about() {
 	ShowConsoleCursor(FALSE);
-	system("title Advanced Trigonometry Calculator v1.9.3");
+	system("title Advanced Trigonometry Calculator v1.9.4");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
@@ -239,11 +239,11 @@ boolean about() {
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("                                     %c%c    %c%c%c    %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                                    %c %c   %c   %c       %c\n", 177, 177, 177, 177, 177);
+	printf("                                     %c%c    %c%c%c    %c   %c\n", 177, 177, 177, 177, 177, 177, 177);
+	printf("                                    %c %c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177);
 	printf("                             %c   %c %c  %c    %c%c%c%c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("                              %c %c     %c       %c       %c\n", 177, 177, 177, 177, 177);
-	printf("                               %c      %c %c  %c%c%c  %c %c%c%c%c%c  \n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                               %c      %c %c  %c%c%c  %c     %c  \n", 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n         To support the development of this application please enter \"donate\"\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
 	printf("     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS\n");

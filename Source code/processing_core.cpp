@@ -8,7 +8,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 		rasf = rasf - 2;
 		arithTrig[rasf] = '\0';
 	}
-	if (verbose == 1 && solving == (boolean)true) {
+	if (verbose == 1 && solving) {
 		printf("\n\n==> initialProcessor <==\n\nExpression: %s", arithTrig);
 	}
 	if (strlen(arithTrig) == 0) {
@@ -679,7 +679,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	if (simplified[rasf - 1] == '+') {
 		simplified[rasf - 1] = '\0';
 	}
-	if (verbose == 1 && solving == (boolean)true) {
+	if (verbose == 1 && solving) {
 		printf("\nSimplified expression by initialProcessor: %s\n\n", simplified);
 	}
 	for (so = 0; so < c; so++) {
@@ -754,7 +754,7 @@ double arithSolver(char trigon1[DIM], double result) {
 		rasf = rasf - 2;
 		trigon1[rasf] = '\0';
 	}
-	if (verbose == 1 && solving == (boolean)true) {
+	if (verbose == 1 && solving) {
 		printf("\n\n==> arithSolver <==\n\nExpression: %s", trigon1);
 	}
 	resultR = 0; resultI = 0;
@@ -1261,7 +1261,7 @@ double arithSolver(char trigon1[DIM], double result) {
 	simplified[abs((int)strlen(simplified))] = '\0';
 	replace("=", "", simplified);
 	sprintf(simplified, "%s", expressionF);
-	if (verbose == 1 && solving == (boolean)true) {
+	if (verbose == 1 && solving) {
 		printf("\nSimplified expression by arithSolver: %s\n\n", simplified);
 	}
 	for (so = 0; so < n; so++) {
@@ -1328,7 +1328,7 @@ double arithSolver(char trigon1[DIM], double result) {
 }
 
 double functionProcessor(char trigon[DIM], double result, double amplitude, double res) {
-	if (verbose == 1 && solving == (boolean)true) {
+	if (verbose == 1 && solving) {
 		printf("\n\n==> functionProcessor <==\n\nFunction: %s", trigon);
 	}
 	int i = 0, var = 0, j = 0, n = 0, count = 0, opt = 0, l = 0, p = 0, cn = 0, s, rad = 1, jg = 1, gon = 0, tri = 0, co = 0, trigono = 0, paren = 1, pare = 0, parent = 0, e = 0, f = 0, kl = 0, ar = 0, deg = 0, type = 0, g = 0;
@@ -1418,7 +1418,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 	v[1] = result;
 	vI[0] = resultR;
 	vI[1] = resultI;
-	if (verbose == 1 && solving == (boolean)true) {
+	if (verbose == 1 && solving) {
 		puts("\nFunction arguments:\n1st interactor: \n");
 		if (v[0] > 0 && vI[0] > 0) {
 			printf("=%G+%Gi\n", v[0], vI[0]);
@@ -1944,7 +1944,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 	resultR = result1;
 	resultI = result2;
 	round_complex();
-	if (verbose == 1 && solving == (boolean)true) {
+	if (verbose == 1 && solving) {
 		puts("\nResult of function processing:\n");
 		if (resultR > 0 && resultI > 0) {
 			printf("=%G+%Gi\n", resultR, resultI);
