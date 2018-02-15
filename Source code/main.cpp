@@ -261,6 +261,7 @@ boolean processTxt(char path[DIM], int re) {
 		fclose(read);
 	}
 	read = NULL;
+	char saveSendFunc[DIM] = "";
 	while (read == NULL && i < 100) {
 		read = fopen(path, "a+");
 		i++;
@@ -280,115 +281,126 @@ boolean processTxt(char path[DIM], int re) {
 			sendFunc[i] = '\n'; sendFunc[i + 1] = '\0';
 			cP++;
 		}
-		m = 0;
-		l = 0;
-		while (m == 0) {
-			if (path[l] == '.'&&path[l + 1] == 't'&&path[l + 2] == 'x'&&path[l + 3] == 't'&&path[l + 4] == '\0') {
-				m = 1;
+		sprintf(saveSendFunc, sendFunc);
+		if (isContained("script", sendFunc) && strStart == 0) {
+			atcProgramming(sendFunc);
+			toWrite = false;
+			return toWrite;
+		}
+		else {
+			m = 0;
+			l = 0;
+			while (m == 0) {
+				if (path[l] == '.'&&path[l + 1] == 't'&&path[l + 2] == 'x'&&path[l + 3] == 't'&&path[l + 4] == '\0') {
+					m = 1;
+				}
+				l++;
 			}
-			l++;
-		}
-		m = 0;
-		l--;
-		while (resp[m] != '\0') {
-			path[l] = resp[m];
-			l++; m++;
-		}
-		path[l] = '\0';
-		while (fin == NULL) {
-			fin = fopen(path, "w");
-		}
-		fclose(fin);
-		d = 0;
-		tD = 0;
-		char variable[DIM] = "";
-		for (k = 0; k < cP; k++) {
-			char trigData[DIM] = "";
+			m = 0;
+			l--;
+			while (resp[m] != '\0') {
+				path[l] = resp[m];
+				l++; m++;
+			}
+			path[l] = '\0';
+			while (fin == NULL) {
+				fin = fopen(path, "w");
+			}
+			fclose(fin);
+			d = 0;
 			tD = 0;
-			e = 0;
-			for (f = d; sendFunc[f] != '\n'&&sendFunc[f] != '\0'; f++) {
-				trigData[e] = sendFunc[f];
-				e++;
-			}
-			f++;
-			d = f;
-			trigData[e] = '\0';
-			for (e = 0; trigData[e] != 0; e++) {
-				if (trigData[e] == '{' || trigData[e] == '[') {
-					trigData[e] = '(';
+			char variable[DIM] = "";
+			for (k = 0; k < cP; k++) {
+				char trigData[DIM] = "";
+				tD = 0;
+				e = 0;
+				for (f = d; sendFunc[f] != '\n'&&sendFunc[f] != '\0'; f++) {
+					trigData[e] = sendFunc[f];
+					e++;
 				}
-				if (trigData[e] == '}' || trigData[e] == ']') {
-					trigData[e] = ')';
+				f++;
+				d = f;
+				trigData[e] = '\0';
+				for (e = 0; trigData[e] != 0; e++) {
+					if (trigData[e] == '{' || trigData[e] == '[') {
+						trigData[e] = '(';
+					}
+					if (trigData[e] == '}' || trigData[e] == ']') {
+						trigData[e] = ')';
+					}
 				}
-			}
-			for (tD = 0; trigData[tD] != '\0'; tD++) {
-				i = 0;
-				char arith[DIM] = "";
-				int fl = 1, fr = 0;
-				while (trigData[tD] != '\0'&&trigData[tD] != ',') {
-					if (trigData[tD - 6] == 'p'&&trigData[tD - 5] == 'r'&&trigData[tD - 4] == 'i'&&trigData[tD - 3] == 'n'&&trigData[tD - 2] == 't'&&trigData[tD - 1] == '(') {
-						arith[i] = trigData[tD];
-						i++; tD++;
-						while (fl > fr && trigData[tD] != '\0') {
-							if (trigData[tD] == '(') {
-								fl++;
+				for (tD = 0; trigData[tD] != '\0'; tD++) {
+					i = 0;
+					char arith[DIM] = "";
+					int fl = 1, fr = 0;
+					while (trigData[tD] != '\0'&&trigData[tD] != ',') {
+						if (trigData[tD - 6] == 'p'&&trigData[tD - 5] == 'r'&&trigData[tD - 4] == 'i'&&trigData[tD - 3] == 'n'&&trigData[tD - 2] == 't'&&trigData[tD - 1] == '(') {
+							arith[i] = trigData[tD];
+							i++; tD++;
+							while (fl > fr && trigData[tD] != '\0') {
+								if (trigData[tD] == '(') {
+									fl++;
+								}
+								if (trigData[tD] == ')') {
+									fr++;
+								}
+								arith[i] = trigData[tD];
+								i++; tD++;
 							}
-							if (trigData[tD] == ')') {
-								fr++;
-							}
+							arith[i] = '\0';
+						}
+						else {
 							arith[i] = trigData[tD];
 							i++; tD++;
 						}
-						arith[i] = '\0';
 					}
-					else {
-						arith[i] = trigData[tD];
-						i++; tD++;
+					arith[i] = '\0';
+					valid = 0;
+					validVar = 1;
+					if (fin != NULL) {
+						fclose(fin);
 					}
-				}
-				arith[i] = '\0';
-				valid = 0;
-				validVar = 1;
-				if (fin != NULL) {
-					fclose(fin);
-				}
-				fin = NULL;
-				while (fin == NULL) {
-					fin = fopen(path, "a+");
-				}
-				toWrite = isToWrite(arith);
-				if (toWrite) {
-					verbose = 0;
-					if (isContained("solver", arith)) {
-						if (isContained("x", arith)) {
-							resultR = 0; resultI = 0;
+					fin = NULL;
+					while (fin == NULL) {
+						fin = fopen(path, "a+");
+					}
+					toWrite = isToWrite(arith);
+					if (isContained("script", saveSendFunc) && strStart == 0) {
+						toWrite = false;
+					}
+					if (toWrite) {
+						verbose = 0;
+						if (isContained("solver", arith)) {
+							if (isContained("x", arith)) {
+								resultR = 0; resultI = 0;
+							}
+						}
+						main_core(arith, arith, fin, path, result1, result2, 0);
+						if (verified == 1) {
+							result1 = resultR;
+							result2 = resultI;
+							verified = 0;
 						}
 					}
-					main_core(arith, arith, fin, path, result1, result2, 0);
-					if (verified == 1) {
-						result1 = resultR;
-						result2 = resultI;
-						verified = 0;
+					else {
+						break;
 					}
+					fflush(NULL);
+					sprintf(arith, "");
 				}
-				else {
-					break;
-				}
-				fflush(NULL);
-				sprintf(arith, "");
 			}
-		}
-		if (fin != NULL) {
-			fclose(fin);
-		}
-		if (read != NULL) {
-			fclose(read);
-		}
-		i = 0;
-		while (i < re) {
-			ans[i] = anstxt[i];
-			ansI[i] = anstxtI[i];
-			i++;
+			if (fin != NULL) {
+				fclose(fin);
+			}
+			if (read != NULL) {
+				fclose(read);
+			}
+			i = 0;
+			while (i < re) {
+				ans[i] = anstxt[i];
+				ansI[i] = anstxtI[i];
+				i++;
+			}
 		}
 	}
 	int h;

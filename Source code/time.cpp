@@ -639,7 +639,11 @@ void printBigTimer(int hours, int minutes, int seconds) {
 				}
 			}
 			if (tiIn[i] == '4') {
-				if (j == 0 || j == 1 || j == 2 || j == 3) {
+				if (j == 0 || j == 1) {
+					sprintf(text, "%c%c%c%c%c%c%c%c%c%c%c%c  ", 219, 219, 219, 219, 177, 177, 177, 177, 219, 219, 219, 219);
+					sprintf(display, "%s%s", display, text);
+				}
+				if (j == 2 || j == 3) {
 					sprintf(text, "%c%c%c%c    %c%c%c%c  ", 219, 219, 219, 219, 219, 219, 219, 219);
 					sprintf(display, "%s%s", display, text);
 				}

@@ -689,3 +689,56 @@ double getValue() {
 	solving = true;
 	return resultR;
 }
+
+int atcProgramming(char script[DIM]) {
+	char nativeCommands[DIM] = ",print,sprint,get,";
+	char commandCandidate[DIM] = "", getLine[DIM] = "";
+	if (script[strEnd] == '\0') {
+		puts("\nError: Your script is empty!");
+	}
+	else {
+		if (script[strEnd] == '\n') {
+			int i = strEnd + 1;
+			int j = i;
+			int c = 0;
+			for (i = strEnd + 1; script[i] != '\0'; i++) {
+				script[i - j] = script[i];
+			}
+			script[i - j] = '\0';
+			for (i = 0; i < abs((int)strlen(script)); i++) {
+				c = 0;
+				j = i;
+				while (script[i] != ';') {
+					getLine[c] = script[i];
+					i++; c++;
+				}
+				if (c > DIM - 2) {
+					getLine[c] = '\0';
+					puts("\nPlease be careful with terminators ';'.\n");
+					return 0;
+				}
+				else {
+					getLine[c] = '\0';
+				}
+				c = 0;
+				if (verifyLetter(getLine[c])) {
+					while (verifyLetter(getLine[c])) {
+						commandCandidate[c] = getLine[c];
+						c++;
+					}
+					commandCandidate[c] = '\0';
+				}
+				char candidate[DIM] = "";
+				sprintf(candidate, ",%s,", commandCandidate);
+				if (isContained(commandCandidate, nativeCommands)) {
+					atcProg(getLine);
+				}
+				sprintf(candidate, "");
+			}
+		}
+		else {
+			puts("\nError: The \"script\" word must be written in the first line and followed a press on the \"Enter\" key.");
+		}
+	}
+	return 0;
+}

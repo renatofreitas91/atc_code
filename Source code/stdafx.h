@@ -38,6 +38,7 @@ double atcProg(char expression[DIM]);
 double natureRootTest(char expression[DIM], double valuePolyR, double valuePolyI);
 int variableValidator(char variable[DIM]);
 int matrixToValues(char matrix[DIM], double result);
+int atcProgramming(char script[DIM]);
 void variableController(char variable[DIM], double result);
 void manageExpression(char arithTrig[DIM], double result1, double result2, int verify);
 void decimalToBinary(double decimal, char path[DIM], int bp);
