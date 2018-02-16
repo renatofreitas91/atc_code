@@ -691,7 +691,7 @@ double getValue() {
 }
 
 int atcProgramming(char script[DIM]) {
-	char nativeCommands[DIM] = ",print,sprint,get,";
+	char nativeCommands[DIM] = ",print,sprint,get,dayofweek,composecommand,";
 	char commandCandidate[DIM] = "", getLine[DIM] = "";
 	if (script[strEnd] == '\0') {
 		puts("\nError: Your script is empty!");
@@ -708,12 +708,12 @@ int atcProgramming(char script[DIM]) {
 			for (i = 0; i < abs((int)strlen(script)); i++) {
 				c = 0;
 				j = i;
-				while (script[i] != ';') {
+				while (script[i] != ';'&&c < DIM) {
 					getLine[c] = script[i];
 					i++; c++;
 				}
-				if (c > DIM - 2) {
-					getLine[c] = '\0';
+				if (c == DIM) {
+					getLine[c - 1] = '\0';
 					puts("\nPlease be careful with terminators ';'.\n");
 					return 0;
 				}
@@ -742,3 +742,4 @@ int atcProgramming(char script[DIM]) {
 	}
 	return 0;
 }
+

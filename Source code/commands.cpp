@@ -12,6 +12,22 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	int i = 0, r = 0, year = 0, s = 0;
 	boolean command = false;
 	i = 0;
+	if (isCommand(arithTrig, "composecommand")) {
+		command = true;
+		if (arithTrig[14] == '(') {
+			int tDev = 15, tGet = 0;
+			char exprDev[DIM] = "";
+			while ((arithTrig[tDev] == ')'&&arithTrig[tDev + 1] == '+'&&arithTrig[tDev + 2] == '0'&&arithTrig[tDev + 3] == '\0') == false && arithTrig[tDev] != '\0') {
+				exprDev[tGet] = arithTrig[tDev];
+				tGet++; tDev++;
+			}
+			exprDev[tGet] = '\0';
+			stringVariableToString(exprDev);
+			if (strlen(variableSTring) != 0) {
+				atcProg(variableSTring);
+			}
+		}
+	}
 	if (isCommand(arithTrig, "atcProg")) {
 		command = true;
 		if (arithTrig[7] == '(') {
