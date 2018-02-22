@@ -36,6 +36,7 @@ double calcNow(char toCalc[DIM], double result1, double result2);
 double solver(char expression[DIM]);
 double atcProg(char expression[DIM]);
 double natureRootTest(char expression[DIM], double valuePolyR, double valuePolyI);
+double getComplexRoot(char expression[DIM]);
 int variableValidator(char variable[DIM]);
 int matrixToValues(char matrix[DIM], double result);
 int atcProgramming(char script[DIM]);
@@ -66,6 +67,7 @@ void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], doub
 void saveToReport(char report[DIM]);
 void equationSolver(char equation[DIM]);
 void equationSolver_2(char equation[DIM], int rootIndex);
+void equationSolver_3(char equation[DIM], int rootIndex);
 void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2, int index);
 void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
 void fmdeterminant(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);

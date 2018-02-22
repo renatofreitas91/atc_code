@@ -5,7 +5,164 @@
 boolean equationSolverRunning = false;
 double natureValue = 1;
 
+void equationSolver_3(char equation[DIM], int rootIndex) {
+	double initialR = 0, initialI = 0;
+	natureValue = 1;
+	processVariable("x");
+	double saveXR = resultR, saveXI = resultI, saveRootR = 0, saveRootI = 0, rootR = 0, rootI = 0;
+	puts("");
+	equationSolverRunning = true;
+	double valuesEqR[DIM], valuesEqI[DIM];
+	int i = 0, maxExponent = 0, saveMaxExponent = 0;
+	for (i = 0; equation[i] != '\0'; i++) {
+		if (equation[i] == '\\') {
+			maxExponent++;
+		}
+	}
+	int members = maxExponent;
+	i = 0;
+	char toValue[DIM] = "";
+	while (members >= 0) {
+		int b = 0;
+		while (equation[i] != '\\'&&equation[i] != '\0') {
+			toValue[b] = equation[i];
+			b++; i++;
+		}
+		toValue[b] = '\0';
+		calcNow(toValue, 0, 0);
+		valuesEqR[members] = resultR;
+		valuesEqI[members] = resultI;
+		members--;
+		sprintf(toValue, "");
+		i++;
+	}
+	i = maxExponent;
+	double maxValueR = valuesEqR[maxExponent], maxValueI = valuesEqI[maxExponent];
+	for (i = maxExponent; i >= 0; i--) {
+		division(valuesEqR[i], valuesEqI[i], maxValueR, maxValueI);
+		valuesEqR[i] = resultR; valuesEqI[i] = resultI;
+	}
+	saveMaxExponent = maxExponent;
+	do {
+		char toCalcX[DIM] = "";
+		char expression[DIM] = "";
+		for (i = maxExponent; i > 0; i--) {
+			char ValueR[DIM] = "";
+			sprintf(ValueR, "%G", valuesEqR[i]);
+			for (int v = 0; v < abs((int)(strlen(ValueR))); v++) {
+				if (ValueR[v] == '-')
+					ValueR[v] = '_';
+			}
+			char ValueI[DIM] = "";
+			sprintf(ValueI, "%G", valuesEqI[i]);
+			for (int v = 0; v < abs((int)strlen(ValueI)); v++) {
+				if (ValueI[v] == '-')
+					ValueI[v] = '_';
+			}
+			sprintf(toCalcX, "%s(%s+%si)*(res)^%d+", toCalcX, ValueR, ValueI, i);
+			sprintf(expression, "%s%s+%si\\", expression, ValueR, ValueI);
+		}
+		char ValueR[DIM] = "";
+		sprintf(ValueR, "%G", valuesEqR[i]);
+		for (int v = 0; v < abs((int)strlen(ValueR)); v++) {
+			if (ValueR[v] == '-')
+				ValueR[v] = '_';
+		}
+		char ValueI[DIM] = "";
+		sprintf(ValueI, "%G", valuesEqI[i]);
+		for (int v = 0; v < abs((int)strlen(ValueI)); v++) {
+			if (ValueI[v] == '-')
+				ValueI[v] = '_';
+		}
+		sprintf(toCalcX, "%s(%s+%si)", toCalcX, ValueR, ValueI);
+		sprintf(expression, "%s%s+%si", expression, ValueR, ValueI);
+		if (maxExponent == 2) {
+			char command[DIM] = "";
+			sprintf(command, "solvequadraticequation(%s)", expression);
+			solveQuadraticEquation(command, 0, 0, rootIndex);
+			maxExponent = 0;
+		}
+		else {
+			if (maxExponent % 2 == 1) {
+				rootR = saveRootR;
+				rootI = saveRootI;
+			}
+			else {
+				rootR = getComplexRoot(toCalcX);
+				rootI = resultI;
+				saveRootR = rootR;
+				saveRootI = rootI * -1;;
+			}
+			if (rootR == -5555) {
+				puts("\nError: ATC was unable to get more complex roots.\nInfo: For now, ATC is limited to intervals from -10 to 10 for real and imaginary parts.\nInfo: Also, the maximum of decimal places of the roots is 9.\n");
+				maxExponent = 0;
+			}
+			else {
+				if (rootR > 0 && rootI > 0) {
+					printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
+				}
+				else {
+					if (rootR > 0 && rootI < 0) {
+						printf("x%d=%G%Gi\n", rootIndex, rootR, rootI);
+					}
+					else {
+						if (rootR < 0 && rootI > 0) {
+							printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
+						}
+						else {
+							if (rootR < 0 && rootI < 0) {
+								printf("x%d=%G%Gi\n", rootIndex, rootR, rootI);
+							}
+							else {
+								if (rootR == 0 && rootI == 0) {
+									printf("x%d=%G\n", rootIndex, rootR);
+								}
+								else {
+									if (rootR == 0 && rootI != 0) {
+										printf("x%d=%Gi\n", rootIndex, rootI);
+									}
+									else {
+										if (rootR != 0 && rootI == 0) {
+											printf("x%d=%G\n", rootIndex, rootR);
+										}
+										else {
+											printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				rootIndex++;
+				double valueCoefR = 0, valueCoefI = 0, newCoefR[DIM], newCoefI[DIM];
+				valueCoefR = valuesEqR[maxExponent]; valueCoefI = valuesEqI[maxExponent];
+				int newMaxExponent = maxExponent - 1;
+				members = newMaxExponent;
+				while (members >= 0) {
+					newCoefR[members] = valueCoefR; newCoefI[members] = valueCoefI;
+					multiplication(rootR, rootI, valueCoefR, valueCoefI);
+					sum(resultR, resultI, valuesEqR[members], valuesEqI[members]);
+					valueCoefR = resultR; valueCoefI = resultI;
+					members--;
+				}
+				for (i = 0; i < saveMaxExponent; i++) {
+					valuesEqR[i] = 0; valuesEqI[i] = 0;
+				}
+				for (i = 0; i < maxExponent; i++) {
+					valuesEqR[i] = newCoefR[i]; valuesEqI[i] = newCoefI[i];
+				}
+				maxExponent--;
+			}
+		}
+	} while (maxExponent > 0);
+	equationSolverRunning = false;
+	resultR = saveXR; resultI = saveXI;
+	variableController("x", 0);
+}
+
 void equationSolver_2(char equation[DIM], int rootIndex) {
+	equationSolverRunning = true;
 	processVariable("x");
 	double saveXR = resultR, saveXI = resultI;
 	equationSolverRunning = true;
@@ -51,7 +208,7 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 				if (ValueI[v] == '-')
 					ValueI[v] = '_';
 			}
-			sprintf(toCalcX, "%s(%s+%si)*(x)^%d+", toCalcX, ValueR, ValueI, i);
+			sprintf(toCalcX, "%s(%s+%si)*(res)^%d+", toCalcX, ValueR, ValueI, i);
 			sprintf(expression, "%s%s+%si\\", expression, ValueR, ValueI);
 		}
 		char ValueR[DIM] = "";
@@ -95,7 +252,7 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 						if (ValueI[v] == '-')
 							ValueI[v] = '_';
 					}
-					sprintf(toPowerX, "%s(%s+%si)*(x)^%d+", toPowerX, ValueR, ValueI, i);
+					sprintf(toPowerX, "%s(%s+%si)*(res)^%d+", toPowerX, ValueR, ValueI, i);
 				}
 				char ValueR[DIM] = "";
 				sprintf(ValueR, "%G", valuesEqRx[i]);
@@ -111,13 +268,14 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 				}
 				sprintf(toPowerX, "(%s(%s+%si))^(1/%d)", toPowerX, ValueR, ValueI, maxExponent);
 				int solve = 0;
-				for (solve = 0; solve < 100; solve++) {
+				for (solve = 0; solve < 300; solve++) {
+					resultR = 0; resultI = 0;
 					calcNow(toPowerX, 0, 0);
-					variableController("x", resultR);
+					xValuesR = resultR; xValuesI = resultI;
 				}
 			}
 			double rootR = resultR;
-			double rootI = resultI;
+			double rootI = resultI;;
 			resultR = 0; resultI = 0;
 			variableController("x", resultR);
 			if (rootR > 0 && rootI > 0) {
@@ -180,6 +338,7 @@ void equationSolver_2(char equation[DIM], int rootIndex) {
 	equationSolverRunning = false;
 	resultR = saveXR; resultI = saveXI;
 	variableController("x", 0);
+	equationSolverRunning = false;
 }
 
 void equationSolver(char equation[DIM]) {
@@ -265,8 +424,9 @@ void equationSolver(char equation[DIM]) {
 				rootR = solver(toCalcX);
 			}
 			double rootI = resultI;
-			if (abs(rootR) > 1E15) {
-				equationSolver_2(expression, rootIndex);
+			if (abs(rootR) > 1E7 || abs(rootI) > 1E7) {
+				equationSolver_3(expression, rootIndex);
+				double rootR = resultR, rootI = resultI;
 				maxExponent = 0;
 			}
 			else {
@@ -617,7 +777,7 @@ double natureRootTest(char expression[DIM], double valuePolyR, double valuePolyI
 	sprintf(polynomial, expression);
 	replace("res", "x", polynomial);
 	sprintf(polynomial, expressionF);
-	if (valuePolyI > -0.01&&valuePolyI < 0.01&&abs(valuePolyR) < 1E6) {
+	if (abs(valuePolyR) < 900000 && abs(valuePolyI) < 900000) {
 		double k = natureValue;
 		while (k <= 77) {
 			resultR = k * -1;
@@ -651,4 +811,44 @@ double natureRootTest(char expression[DIM], double valuePolyR, double valuePolyI
 		}
 	}
 	return -77777;
+}
+
+double getComplexRoot(char expression[DIM]) {
+	xValuesR = 0; xValuesI = 0;
+	calcNow(expression, 0, 0);
+	double lowLevelR = abs(resultR) + abs(resultI), lowLevelI = abs(resultR) + abs(resultI);
+	double iniValueR = -10, iniValueI = -10, iniAdd = 1;
+	xValuesR = iniValueR; xValuesI = iniValueI;
+	int i = 0, j = 0, max = 10;
+	double save_i = 0, save_j = 0;
+	while (max > 0) {
+		for (i = 0; i <= 20; i++) {
+			xValuesR = iniValueR;
+			for (j = 0; j <= 20; j++) {
+				calcNow(expression, 0, 0);
+				if (abs(resultR) < lowLevelR&&abs(resultI) < lowLevelI) {
+					lowLevelR = abs(resultR); lowLevelI = abs(resultI);
+					save_i = xValuesR; save_j = xValuesI;
+				}
+				xValuesR = xValuesR + iniAdd;
+			}
+			xValuesI = xValuesI + iniAdd;
+		}
+		xValuesR = save_i;
+		xValuesI = save_j;
+		calcNow(expression, 0, 0);
+		if (abs(resultR) < 1E-2&&abs(resultI) < 1E-2) {
+			resultR = save_i;
+			resultI = save_j;
+			return resultR;
+		}
+		else {
+			iniValueR = save_i - iniAdd;
+			iniValueI = save_j - iniAdd;
+			iniAdd = iniAdd * 0.1;
+			xValuesR = iniValueR; xValuesI = iniValueI;
+			max--;
+		}
+	}
+	return -5555;
 }
