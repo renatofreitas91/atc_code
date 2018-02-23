@@ -819,9 +819,9 @@ double getComplexRoot(char expression[DIM]) {
 	double lowLevelR = abs(resultR) + abs(resultI), lowLevelI = abs(resultR) + abs(resultI);
 	double iniValueR = -10, iniValueI = -10, iniAdd = 1;
 	xValuesR = iniValueR; xValuesI = iniValueI;
-	int i = 0, j = 0, max = 10;
+	int i = 0, j = 0, max = 7;
 	double save_i = 0, save_j = 0;
-	while (max > 0) {
+	while (iniAdd >= 1) {
 		for (i = 0; i <= 20; i++) {
 			xValuesR = iniValueR;
 			for (j = 0; j <= 20; j++) {
@@ -836,19 +836,77 @@ double getComplexRoot(char expression[DIM]) {
 		}
 		xValuesR = save_i;
 		xValuesI = save_j;
+		if (abs(save_i) == abs(iniValueR) && abs(save_j) == abs(iniValueI)) {
+			xValuesR = 0; xValuesI = 0;
+			calcNow(expression, 0, 0);
+			lowLevelR = abs(resultR) + abs(resultI); lowLevelI = abs(resultR) + abs(resultI);
+			iniValueR = iniValueR * 10;
+			iniValueI = iniValueI * 10;
+			xValuesR = iniValueR; xValuesI = iniValueI;
+			iniAdd = iniAdd * 10;
+		}
+		else {
+			calcNow(expression, 0, 0);
+			if (abs(resultR) < 1E-2&&abs(resultI) < 1E-2) {
+				resultR = save_i;
+				resultI = save_j;
+				return resultR;
+			}
+			else {
+				iniValueR = save_i - iniAdd;
+				iniValueI = save_j - iniAdd;
+				iniAdd = iniAdd * 0.1;
+				xValuesR = iniValueR; xValuesI = iniValueI;
+			}
+		}
+	}
+	xValuesR = save_i;
+	xValuesI = save_j;
+	iniAdd = iniAdd * 10;
+	while (max > 0) {
 		calcNow(expression, 0, 0);
-		if (abs(resultR) < 1E-2&&abs(resultI) < 1E-2) {
+		if (abs(resultR) < 1E-2 && abs(resultI) < 1E-2) {
 			resultR = save_i;
 			resultI = save_j;
 			return resultR;
 		}
 		else {
-			iniValueR = save_i - iniAdd;
-			iniValueI = save_j - iniAdd;
+			iniValueR = save_i;
+			iniValueI = save_j;
 			iniAdd = iniAdd * 0.1;
 			xValuesR = iniValueR; xValuesI = iniValueI;
 			max--;
 		}
+		for (i = 0; i <= 10; i++) {
+			xValuesR = iniValueR;
+			for (j = 0; j <= 10; j++) {
+				calcNow(expression, 0, 0);
+				if (abs(resultR) < abs(lowLevelR) && abs(resultI) < abs(lowLevelI)) {
+					lowLevelR = abs(resultR); lowLevelI = abs(resultI);
+					save_i = xValuesR; save_j = xValuesI;
+				}
+				if (xValuesR >= 0) {
+					xValuesR = xValuesR + iniAdd;
+				}
+				else {
+					xValuesR = (abs(xValuesR) + iniAdd)*-1;
+				}
+			}
+			if (xValuesI >= 0) {
+				xValuesI = xValuesI + iniAdd;
+			}
+			else {
+				xValuesI = (abs(xValuesI) + iniAdd)*-1;
+			}
+		}
+		xValuesR = save_i;
+		xValuesI = save_j;
 	}
-	return -5555;
+	resultR = save_i;
+	resultI = save_j;
+	return resultR;
+}
+
+double module(double a, double b) {
+	return sqrt(pow(a, 2) + pow(b, 2));
 }

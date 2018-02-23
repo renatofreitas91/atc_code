@@ -10,6 +10,22 @@ double solver(char expression[DIM]) {
 		replace("x", "res", expression);
 		sprintf(expression, "%s", expressionF);
 	}
+	if (isContained("E+", expression)) {
+		replace("E+", "*10^", expression);
+		sprintf(expression, "%s", expressionF);
+	}
+	if (isContained("E-", expression)) {
+		replace("E-", "*10^_", expression);
+		sprintf(expression, "%s", expressionF);
+	}
+	if (isContained("E_", expression)) {
+		replace("E_", "*10^_", expression);
+		sprintf(expression, "%s", expressionF);
+	}
+	if (isContained("E", expression)) {
+		replace("E", "*10^", expression);
+		sprintf(expression, "%s", expressionF);
+	}
 	solverRunning = true;
 	solving = false;
 	resultR = 0; resultI = 0;
