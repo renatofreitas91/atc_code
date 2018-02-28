@@ -826,17 +826,19 @@ double getComplexRoot(char expression[DIM]) {
 			xValuesR = iniValueR;
 			for (j = 0; j <= 20; j++) {
 				calcNow(expression, 0, 0);
-				if (abs(resultR) < lowLevelR&&abs(resultI) < lowLevelI) {
+				if (abs(resultR) <= lowLevelR && abs(resultI) <= lowLevelI) {
 					lowLevelR = abs(resultR); lowLevelI = abs(resultI);
 					save_i = xValuesR; save_j = xValuesI;
+					//printf("\nAproximation-> %G+%Gi\n", save_i, save_j);
 				}
 				xValuesR = xValuesR + iniAdd;
 			}
 			xValuesI = xValuesI + iniAdd;
 		}
+		//printf("\nBest aproximation-> %G+%Gi\n", save_i, save_j);
 		xValuesR = save_i;
 		xValuesI = save_j;
-		if (abs(save_i) == abs(iniValueR) && abs(save_j) == abs(iniValueI)) {
+		if ((abs(save_i) >= abs(iniValueR)-0.1)&& (abs(save_i) <= abs(iniValueR) + 0.1) && (abs(save_j) >= abs(iniValueI) - 0.1) && (abs(save_j) <= abs(iniValueI) + 0.1)) {
 			xValuesR = 0; xValuesI = 0;
 			calcNow(expression, 0, 0);
 			lowLevelR = abs(resultR) + abs(resultI); lowLevelI = abs(resultR) + abs(resultI);
@@ -847,7 +849,7 @@ double getComplexRoot(char expression[DIM]) {
 		}
 		else {
 			calcNow(expression, 0, 0);
-			if (abs(resultR) < 1E-2&&abs(resultI) < 1E-2) {
+			if (abs(resultR) < 1E-1&&abs(resultI) < 1E-1) {
 				resultR = save_i;
 				resultI = save_j;
 				return resultR;
@@ -862,45 +864,55 @@ double getComplexRoot(char expression[DIM]) {
 	}
 	xValuesR = save_i;
 	xValuesI = save_j;
-	iniAdd = iniAdd * 10;
-	while (max > 0) {
-		calcNow(expression, 0, 0);
-		if (abs(resultR) < 1E-2 && abs(resultI) < 1E-2) {
-			resultR = save_i;
-			resultI = save_j;
-			return resultR;
-		}
-		else {
-			iniValueR = save_i;
-			iniValueI = save_j;
-			iniAdd = iniAdd * 0.1;
-			xValuesR = iniValueR; xValuesI = iniValueI;
-			max--;
-		}
-		for (i = 0; i <= 10; i++) {
-			xValuesR = iniValueR;
-			for (j = 0; j <= 10; j++) {
-				calcNow(expression, 0, 0);
-				if (abs(resultR) < abs(lowLevelR) && abs(resultI) < abs(lowLevelI)) {
-					lowLevelR = abs(resultR); lowLevelI = abs(resultI);
-					save_i = xValuesR; save_j = xValuesI;
-				}
-				if (xValuesR >= 0) {
-					xValuesR = xValuesR + iniAdd;
-				}
-				else {
-					xValuesR = (abs(xValuesR) + iniAdd)*-1;
-				}
-			}
-			if (xValuesI >= 0) {
-				xValuesI = xValuesI + iniAdd;
+	calcNow(expression, 0, 0);
+	if (abs(resultR) < 1E-1 && abs(resultI) < 1E-1) {
+		resultR = save_i;
+		resultI = save_j;
+		return resultR;
+	}
+	else {
+		iniAdd = iniAdd * 10;
+		while (max > 0) {
+			calcNow(expression, 0, 0);
+			if (abs(resultR) < 1E-1 && abs(resultI) < 1E-1) {
+				resultR = save_i;
+				resultI = save_j;
+				return resultR;
 			}
 			else {
-				xValuesI = (abs(xValuesI) + iniAdd)*-1;
+				iniValueR = save_i;
+				iniValueI = save_j;
+				iniAdd = iniAdd * 0.1;
+				xValuesR = iniValueR; xValuesI = iniValueI;
+				max--;
 			}
+			for (i = 0; i <= 10; i++) {
+				xValuesR = iniValueR;
+				for (j = 0; j <= 10; j++) {
+					calcNow(expression, 0, 0);
+					if (abs(resultR) <= abs(lowLevelR) && abs(resultI) <= abs(lowLevelI)) {
+						lowLevelR = abs(resultR); lowLevelI = abs(resultI);
+						save_i = xValuesR; save_j = xValuesI;
+					//	printf("\nAproximation-> %G+%Gi\n", save_i, save_j);
+					}
+					if (xValuesR >= 0) {
+						xValuesR = xValuesR + iniAdd;
+					}
+					else {
+						xValuesR = (abs(xValuesR) + iniAdd)*-1;
+					}
+				}
+				if (xValuesI >= 0) {
+					xValuesI = xValuesI + iniAdd;
+				}
+				else {
+					xValuesI = (abs(xValuesI) + iniAdd)*-1;
+				}
+			}
+			//printf("\nBest aproximation-> %G+%Gi\n", save_i, save_j);
+			xValuesR = save_i;
+			xValuesI = save_j;
 		}
-		xValuesR = save_i;
-		xValuesI = save_j;
 	}
 	resultR = save_i;
 	resultI = save_j;

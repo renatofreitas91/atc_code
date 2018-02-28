@@ -691,7 +691,7 @@ double getValue() {
 }
 
 int atcProgramming(char script[DIM]) {
-	char nativeCommands[DIM] = ",print,sprint,get,dayofweek,composecommand,";
+	char nativeCommands[DIM] = ",print,sprint,get,composecommand,atc,";
 	char commandCandidate[DIM] = "", getLine[DIM] = "";
 	if (script[strEnd] == '\0') {
 		puts("\nError: Your script is empty!");

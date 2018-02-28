@@ -16,7 +16,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 	verified = 0;
 	rasf = 0;
 	resultR = 0; resultI;
-	int txt = 0, command = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0;
+	int txt = 0, command = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0, StringManual = 0;
 	char variable[DIM] = "", getVarName[DIM] = "", getVar[DIM] = "", savefTrig[DIM] = "";
 	cleanhistory = 0;
 	txt = 0;
@@ -25,6 +25,46 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 	str = 0;
 	nPlaces = 0;
 	sprintf(savefTrig, "%s", fTrig);
+	if (isContained(":\\", arithTrig) == false && isContained("=\"", arithTrig)) {
+		StringManual = 1;
+		for (i = 0; arithTrig[i] != '\0'; i++) {
+			if (arithTrig[i] == '='&&arithTrig[i + 1] == '"') {
+				int p = 0;
+				char variableString[DIM] = "";
+				i = 0;
+				while (arithTrig[i] != '=') {
+					variableString[p] = arithTrig[i];
+					p++; i++;
+				}
+				char string[DIM] = "";
+				p = 0;
+				while (arithTrig[i] != '\0') {
+					string[p] = arithTrig[i];
+					i++;
+					p++;
+				}
+				string[p] = '\0';
+				replace("=", "", string);
+				replace("\"", "", expressionF);
+				sprintf(string, expressionF);
+				variableString[p] = '\0';
+				p = 0;
+				while (verifyLetter(variableString[p]) || verifyNumber(variableString[p])) {
+					p++;
+				}
+				if (p == strlen(variableString)) {
+					stringVariableController(variableString, string);
+				}
+				else {
+					printf("\n==> Invalid string name! Only letters from latin alphabet and digits 0-9 can be used. <==\n\n");
+					fprintf(fout, "\n==> Invalid string name! Only letters from latin alphabet and digits 0-9 can be used. <==\n\n");
+					arithTrig[0] = '\0';
+				}
+
+			}
+		}
+		puts("saiu");
+	}
 	if (arithTrig[0] == 'g'&&arithTrig[1] == 'e'&&arithTrig[2] == 't'&&arithTrig[3] == '(') {
 		i = 4;
 		for (i = 4; arithTrig[i] != '\0'; i++) {
@@ -70,6 +110,8 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			txt = 1;
 		}
 	}
+
+
 	for (i = 0; arithTrig[i] != '\0'; i++) {
 		if (arithTrig[i] == '=') {
 			var = 1;
@@ -127,7 +169,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 		int p = 0;
 		char variableString[DIM] = "";
 		p = 0;
-		if (var == 1) {
+		if (var == 1 && StringManual == 0) {
 			var = 0;
 			while (arithTrig[p] != '=') {
 				variableString[p] = arithTrig[p];
