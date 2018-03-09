@@ -54,6 +54,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				}
 				if (p == strlen(variableString)) {
 					stringVariableController(variableString, string);
+					puts(" ");
 				}
 				else {
 					printf("\n==> Invalid string name! Only letters from latin alphabet and digits 0-9 can be used. <==\n\n");
@@ -63,7 +64,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 
 			}
 		}
-		puts("saiu");
+
 	}
 	if (arithTrig[0] == 'g'&&arithTrig[1] == 'e'&&arithTrig[2] == 't'&&arithTrig[3] == '(') {
 		i = 4;

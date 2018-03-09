@@ -157,7 +157,19 @@ void print(char text[DIM], double result1, double result2) {
 						k++; i++;
 					}
 					varType[k] = '\0';
-					sprintf(printing, "%s%s", toPrint, varType);
+					if (strlen(toPrint) != 0 && strlen(varType) != 0) {
+						sprintf(printing, "%s%s", toPrint, varType);
+					}
+					else {
+						if (strlen(toPrint) != 0) {
+							sprintf(printing, "%s", toPrint);
+						}
+						else {
+							if (strlen(varType) != 0) {
+								sprintf(printing, "%s", varType);
+							}
+						}
+					}
 					varValue[0] = '\0';
 					g = 0;
 					while (listValues[valP] != ','&&listValues[valP] != '\0') {
@@ -730,8 +742,11 @@ int atcProgramming(char script[DIM]) {
 				}
 				char candidate[DIM] = "";
 				sprintf(candidate, ",%s,", commandCandidate);
-				if (isContained(commandCandidate, nativeCommands)) {
+				if (isContained(candidate, nativeCommands)) {
 					atcProg(getLine);
+				}
+				else {
+					processOtherLines(getLine);
 				}
 				sprintf(candidate, "");
 			}
@@ -741,5 +756,9 @@ int atcProgramming(char script[DIM]) {
 		}
 	}
 	return 0;
+}
+
+void processOtherLines(char line[DIM]) {
+	//puts("entrou");
 }
 

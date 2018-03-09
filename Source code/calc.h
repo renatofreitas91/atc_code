@@ -18,7 +18,6 @@ double arcfact(double f);
 double arg(double a, double b);
 double fact(double d);
 double getValue();
-double module(double a, double b);
 void currentSettings();
 void cotan(double x, double y);
 void sec(double x, double y);

@@ -609,12 +609,12 @@ void stringVariableToString(char stringVariable[DIM]) {
 		fclose(open);
 		for (i = 0; data[i] != '\0'; i++) {
 			j = 0;
-			if (data[i] == stringVariable[j] && (data[i - 1] == '\n' || i == 0) && j == 0) {
+			if (data[i] == stringVariable[j] && j == 0) {
 				while (data[i] == stringVariable[j]) {
 					j++;
 					i++;
 				}
-				if (j == strlen(stringVariable) && data[i] == '\n') {
+				if (j == strlen(stringVariable)) {
 					char directory[MAX_PATH] = "";
 					sprintf(directory, "%s\\Strings\\%s.txt", atcPath, stringVariable);
 					open = fopen(directory, "a+");
@@ -642,7 +642,7 @@ void stringVariableController(char stringVariable[DIM], char string[DIM]) {
 	for (i = 0; (data[i] = fgetc(save)) != EOF; i++);
 	data[i] = '\0';
 	for (i = 0; data[i] != '\0'; i++) {
-		if (data[i] == stringVariable[j] && (data[i - 1] == '\n' || i == 0)) {
+		if (data[i] == stringVariable[j] && i == 0) {
 			y = i;
 			while (data[i] == stringVariable[j]) {
 				j++;
@@ -671,7 +671,7 @@ void stringVariableController(char stringVariable[DIM], char string[DIM]) {
 	sprintf(directory, "%s\\Strings\\%s.txt", atcPath, stringVariable);
 	save = fopen(directory, "w");
 	if (save != NULL) {
-		fprintf(save, "%s\n", string);
+		fprintf(save, "%s", string);
 		fclose(save);
 	}
 }
