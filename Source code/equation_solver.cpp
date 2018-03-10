@@ -283,9 +283,8 @@ void rootsToPolynomial(char roots[DIM]) {
 }
 
 void equationSolver(char equation[DIM]) {
-	double initialR = 0, initialI = 0;
 	int rootIndex = 1;
-	double saveRootR = 0, saveRootI = 0, rootR = 0, rootI = 0;
+	double rootR = 0, rootI = 0;
 	puts("");
 	equationSolverRunning = true;
 	double valuesEqR[DIM], valuesEqI[DIM];
@@ -319,26 +318,11 @@ void equationSolver(char equation[DIM]) {
 		valuesEqR[i] = resultR; valuesEqI[i] = resultI;
 	}
 	saveMaxExponent = maxExponent;
-	do {
-		char toCalcX[DIM] = "";
-		for (i = maxExponent; i > 0; i--) {
-			char ValueR[DIM] = "";
-			sprintf(ValueR, "%G", valuesEqR[i]);
-			for (int v = 0; v < abs((int)(strlen(ValueR))); v++) {
-				if (ValueR[v] == '-')
-					ValueR[v] = '_';
-			}
-			char ValueI[DIM] = "";
-			sprintf(ValueI, "%G", valuesEqI[i]);
-			for (int v = 0; v < abs((int)strlen(ValueI)); v++) {
-				if (ValueI[v] == '-')
-					ValueI[v] = '_';
-			}
-			sprintf(toCalcX, "%s(%s+%si)*(res)^%d+", toCalcX, ValueR, ValueI, i);
-		}
+	char toCalcX[DIM] = "";
+	for (i = maxExponent; i > 0; i--) {
 		char ValueR[DIM] = "";
 		sprintf(ValueR, "%G", valuesEqR[i]);
-		for (int v = 0; v < abs((int)strlen(ValueR)); v++) {
+		for (int v = 0; v < abs((int)(strlen(ValueR))); v++) {
 			if (ValueR[v] == '-')
 				ValueR[v] = '_';
 		}
@@ -348,92 +332,107 @@ void equationSolver(char equation[DIM]) {
 			if (ValueI[v] == '-')
 				ValueI[v] = '_';
 		}
-		sprintf(toCalcX, "%s(%s+%si)", toCalcX, ValueR, ValueI);
-		double RootR[dim], RootI[dim], to_numR[dim], to_numI[dim];
-		int g = 0;
-		while (g < maxExponent) {
-			RootR[g] = 0.4; RootI[g] = 0.9;
-			exponentiation(RootR[g], RootI[g], g, 0, 1);
-			RootR[g] = resultR; RootI[g] = resultI;
-			to_numR[g] = resultR; to_numI[g] = resultI;
-			g++;
-		}
-		int n = 0;
-		while (n < 30) {
-			g = 0;
-			while (g < maxExponent) {
-				xValuesR = RootR[g]; xValuesI = RootI[g];
-				calcNow(toCalcX, 0, 0);
-				double numR = resultR, numI = resultI, resultSubR[dim], resultSubI[dim], denR = 1, denI = 0;
-				int w = 0, h = 0;
-				while (w < maxExponent) {
-					if (w != g) {
-						subtraction(RootR[g], RootI[g], RootR[w], RootI[w]);
-						resultSubR[h] = resultR; resultSubI[h] = resultI;
-						h++;
-					}w++;
-				}
-				int k = h;
-				h = 1;
-				while (h < k) {
-					multiplication(resultSubR[0], resultSubI[0], resultSubR[h], resultSubI[h]);
-					resultSubR[0] = resultR; resultSubI[0] = resultI;
-					h++;
-				}
-				denR = resultSubR[0]; denI = resultSubI[0];
-				division(numR, numI, denR, denI);
-				subtraction(RootR[g], RootI[g], resultR, resultI);
-				RootR[g] = resultR; RootI[g] = resultI;
-				g++;
-			}
-			n++;
-		}
+		sprintf(toCalcX, "%s(%s+%si)*(res)^%d+", toCalcX, ValueR, ValueI, i);
+	}
+	char ValueR[DIM] = "";
+	sprintf(ValueR, "%G", valuesEqR[i]);
+	for (int v = 0; v < abs((int)strlen(ValueR)); v++) {
+		if (ValueR[v] == '-')
+			ValueR[v] = '_';
+	}
+	char ValueI[DIM] = "";
+	sprintf(ValueI, "%G", valuesEqI[i]);
+	for (int v = 0; v < abs((int)strlen(ValueI)); v++) {
+		if (ValueI[v] == '-')
+			ValueI[v] = '_';
+	}
+	sprintf(toCalcX, "%s(%s+%si)", toCalcX, ValueR, ValueI);
+	double RootR[dim], RootI[dim], to_numR[dim], to_numI[dim];
+	int g = 0;
+	while (g < maxExponent) {
+		RootR[g] = 0.4; RootI[g] = 0.9;
+		exponentiation(RootR[g], RootI[g], g, 0, 1);
+		RootR[g] = resultR; RootI[g] = resultI;
+		to_numR[g] = resultR; to_numI[g] = resultI;
+		g++;
+	}
+	int n = 0;
+	while (n < 20) {
 		g = 0;
 		while (g < maxExponent) {
-			rootR = RootR[g]; rootI = RootI[g];
-			if (abs(rootI) < 1E-7) {
-				rootI = 0;
+			xValuesR = RootR[g]; xValuesI = RootI[g];
+			calcNow(toCalcX, 0, 0);
+			double numR = resultR, numI = resultI, resultSubR[dim], resultSubI[dim], denR = 1, denI = 0;
+			int w = 0, h = 0;
+			while (w < maxExponent) {
+				if (w != g) {
+					subtraction(RootR[g], RootI[g], RootR[w], RootI[w]);
+					resultSubR[h] = resultR; resultSubI[h] = resultI;
+					h++;
+				}w++;
 			}
-			if (rootR > 0 && rootI > 0) {
-				printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
+			int k = h;
+			h = 1;
+			while (h < k) {
+				multiplication(resultSubR[0], resultSubI[0], resultSubR[h], resultSubI[h]);
+				resultSubR[0] = resultR; resultSubI[0] = resultI;
+				h++;
 			}
-			else {
-				if (rootR > 0 && rootI < 0) {
-					printf("x%d=%G%Gi\n", rootIndex, rootR, rootI);
-				}
-				else {
-					if (rootR < 0 && rootI > 0) {
-						printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
-					}
-					else {
-						if (rootR < 0 && rootI < 0) {
-							printf("x%d=%G%Gi\n", rootIndex, rootR, rootI);
-						}
-						else {
-							if (rootR == 0 && rootI == 0) {
-								printf("x%d=%G\n", rootIndex, rootR);
-							}
-							else {
-								if (rootR == 0 && rootI != 0) {
-									printf("x%d=%Gi\n", rootIndex, rootI);
-								}
-								else {
-									if (rootR != 0 && rootI == 0) {
-										printf("x%d=%G\n", rootIndex, rootR);
-									}
-									else {
-										printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			rootIndex++;
+			denR = resultSubR[0]; denI = resultSubI[0];
+			division(numR, numI, denR, denI);
+			subtraction(RootR[g], RootI[g], resultR, resultI);
+			RootR[g] = resultR; RootI[g] = resultI;
 			g++;
 		}
-		maxExponent = 0;
-	} while (maxExponent > 0);
+		n++;
+	}
+	g = 0;
+	while (g < maxExponent) {
+		rootR = RootR[g]; rootI = RootI[g];
+		if ((rootI < 1E-7&&rootI >= 0) || (rootI > -1E-7&&rootI <= 0)) {
+			rootI = 0;
+		}
+		if ((rootR < 1E-7&&rootR >= 0) || (rootR > -1E-7&&rootR <= 0)) {
+			rootR = 0;
+		}
+		if (rootR > 0 && rootI > 0) {
+			printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
+		}
+		else {
+			if (rootR > 0 && rootI < 0) {
+				printf("x%d=%G%Gi\n", rootIndex, rootR, rootI);
+			}
+			else {
+				if (rootR < 0 && rootI > 0) {
+					printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
+				}
+				else {
+					if (rootR < 0 && rootI < 0) {
+						printf("x%d=%G%Gi\n", rootIndex, rootR, rootI);
+					}
+					else {
+						if (rootR == 0 && rootI == 0) {
+							printf("x%d=%G\n", rootIndex, rootR);
+						}
+						else {
+							if (rootR == 0 && rootI != 0) {
+								printf("x%d=%Gi\n", rootIndex, rootI);
+							}
+							else {
+								if (rootR != 0 && rootI == 0) {
+									printf("x%d=%G\n", rootIndex, rootR);
+								}
+								else {
+									printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		rootIndex++;
+		g++;
+	}
 	equationSolverRunning = false;
 }
