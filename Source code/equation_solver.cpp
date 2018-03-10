@@ -386,6 +386,7 @@ void equationSolver(char equation[DIM]) {
 		}
 		n++;
 	}
+	char answers[DIM] = "";
 	g = 0;
 	while (g < maxExponent) {
 		rootR = RootR[g]; rootI = RootI[g];
@@ -396,34 +397,34 @@ void equationSolver(char equation[DIM]) {
 			rootR = 0;
 		}
 		if (rootR > 0 && rootI > 0) {
-			printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
+			sprintf(answers, "%sx%d=%G+%Gi\n", answers, rootIndex, rootR, rootI);
 		}
 		else {
 			if (rootR > 0 && rootI < 0) {
-				printf("x%d=%G%Gi\n", rootIndex, rootR, rootI);
+				sprintf(answers, "%sx%d=%G%Gi\n", answers, rootIndex, rootR, rootI);
 			}
 			else {
 				if (rootR < 0 && rootI > 0) {
-					printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
+					sprintf(answers, "%sx%d=%G+%Gi\n", answers, rootIndex, rootR, rootI);
 				}
 				else {
 					if (rootR < 0 && rootI < 0) {
-						printf("x%d=%G%Gi\n", rootIndex, rootR, rootI);
+						sprintf(answers, "%sx%d=%G%Gi\n", answers, rootIndex, rootR, rootI);
 					}
 					else {
 						if (rootR == 0 && rootI == 0) {
-							printf("x%d=%G\n", rootIndex, rootR);
+							sprintf(answers, "%sx%d=%G\n", answers, rootIndex, rootR);
 						}
 						else {
 							if (rootR == 0 && rootI != 0) {
-								printf("x%d=%Gi\n", rootIndex, rootI);
+								sprintf(answers, "%sx%d=%Gi\n", answers, rootIndex, rootI);
 							}
 							else {
 								if (rootR != 0 && rootI == 0) {
-									printf("x%d=%G\n", rootIndex, rootR);
+									sprintf(answers, "%sx%d=%G\n", answers, rootIndex, rootR);
 								}
 								else {
-									printf("x%d=%G+%Gi\n", rootIndex, rootR, rootI);
+									sprintf(answers, "%sx%d=%G+%Gi\n", answers, rootIndex, rootR, rootI);
 								}
 							}
 						}
@@ -433,6 +434,12 @@ void equationSolver(char equation[DIM]) {
 		}
 		rootIndex++;
 		g++;
+	}
+	puts(answers);
+	puts("Export result? (Yes -> 1 \\ No -> 0)");
+	int option = (int)getValue();
+	if (option == 1) {
+		saveToReport(answers);
 	}
 	equationSolverRunning = false;
 }
