@@ -357,7 +357,7 @@ void equationSolver(char equation[DIM]) {
 		g++;
 	}
 	int n = 0;
-	while (n < 20) {
+	while (n < 27) {
 		g = 0;
 		while (g < maxExponent) {
 			xValuesR = RootR[g]; xValuesI = RootI[g];

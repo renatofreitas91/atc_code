@@ -69,10 +69,10 @@ void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim
 void fmdeterminant(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
 void startDetProcessing(char matrix[DIM]);
 void rootsToPolynomial(char rooots[DIM]);
+void processOtherLines(char line[DIM]);
 void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
 void fmpowerm(double vMS[dim][dim], double vMSI[dim][dim], int power, int lins, int cols);
 void fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]);
-void processOtherLines(char line[DIM]);
 boolean isContainedVariable(char to_find[DIM], char string[DIM]);
 boolean verifyPrefix(char prefix[DIM]);
 boolean processTxt(char path[DIM], int re);

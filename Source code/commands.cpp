@@ -42,20 +42,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		puts(" ");
 	}
-	if (isCommand(arithTrig, "atc")) {
-		command = true;
-		if (arithTrig[3] == '(') {
-			int tDev = 4, tGet = 0;
-			char exprDev[DIM] = "";
-			while ((arithTrig[tDev] == ')'&&arithTrig[tDev + 1] == '+'&&arithTrig[tDev + 2] == '0'&&arithTrig[tDev + 3] == '\0') == false && arithTrig[tDev] != '\0') {
-				exprDev[tGet] = arithTrig[tDev];
-				tGet++; tDev++;
-			}
-			exprDev[tGet] = '\0';
-			atcProg(exprDev);
-		}
-		puts(" ");
-	}
 	if (isCommand(arithTrig, "donate")) {
 		command = true;
 		puts(" ");

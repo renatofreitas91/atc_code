@@ -178,6 +178,8 @@ void print(char text[DIM], double result1, double result2) {
 					}
 					valP++;
 					varValue[g] = '\0';
+					renamer(varValue);
+					sprintf(varValue, expressionF);
 					specifier = varType[strlen(varType) - 1];
 					if (specifier == 'i' || specifier == 'd') {
 						int value = (int)calcNow(varValue, result1, result2);
@@ -491,6 +493,8 @@ void sprint(char text[DIM], double result1, double result2) {
 					}
 					valP++;
 					varValue[g] = '\0';
+					renamer(varValue);
+					sprintf(varValue, expressionF);
 					specifier = varType[strlen(varType) - 1];
 					if (specifier == 'i' || specifier == 'd') {
 						int value = (int)calcNow(varValue, result1, result2);
@@ -702,9 +706,12 @@ double getValue() {
 	return resultR;
 }
 
+
 int atcProgramming(char script[DIM]) {
-	char nativeCommands[DIM] = ",print,sprint,get,composecommand,atc,";
+	char nativeCommands[DIM] = ",print,sprint,get,composecommand,";
 	char commandCandidate[DIM] = "", getLine[DIM] = "";
+	int atcP = 0;
+	isContained("script", script);
 	if (script[strEnd] == '\0') {
 		puts("\nError: Your script is empty!");
 	}
@@ -744,11 +751,13 @@ int atcProgramming(char script[DIM]) {
 				sprintf(candidate, ",%s,", commandCandidate);
 				if (isContained(candidate, nativeCommands)) {
 					atcProg(getLine);
-				}
-				else {
-					processOtherLines(getLine);
+					atcP = 1;
 				}
 				sprintf(candidate, "");
+				if (atcP == 0) {
+					atcProg(getLine);
+				}
+				atcP = 0;
 			}
 		}
 		else {
@@ -759,6 +768,7 @@ int atcProgramming(char script[DIM]) {
 }
 
 void processOtherLines(char line[DIM]) {
-	//puts("entrou");
+	puts("entrou");
 }
+
 
