@@ -88,8 +88,13 @@ boolean advancedEvaluator(char expression[DIM]) {
 			k++;
 		}
 	}
-	replace("  ", ",", valuesToExtract);
-	replace(" ", ",", expressionF);
+	sprintf(expressionF, valuesToExtract);
+	if (isContained("  ", expressionF)) {
+		replace("  ", ",", valuesToExtract);
+	}
+	if (isContained(" ", expressionF)) {
+		replace(" ", ",", expressionF);
+	}
 	sprintf(valuesToExtract, expressionF);
 	double valuesR[dim], valuesI[dim];
 	char values[DIM] = "";
@@ -110,7 +115,7 @@ boolean advancedEvaluator(char expression[DIM]) {
 	}
 	h = 0;
 	boolean results[dim];
-	while (h < 100) {
+	while (h < f) {
 		results[h] = 0;
 		h++;
 	}
@@ -409,8 +414,13 @@ boolean simpleEvaluator(char expression[DIM]) {
 			k++;
 		}
 	}
-	replace("  ", ",", valuesToExtract);
-	replace(" ", ",", expressionF);
+	sprintf(expressionF, valuesToExtract);
+	if (isContained("  ", expressionF)) {
+		replace("  ", ",", valuesToExtract);
+	}
+	if (isContained(" ", expressionF)) {
+		replace(" ", ",", expressionF);
+	}
 	sprintf(valuesToExtract, expressionF);
 	double valuesR[dim], valuesI[dim];
 	char values[DIM] = "";
@@ -429,10 +439,9 @@ boolean simpleEvaluator(char expression[DIM]) {
 			f++;
 		}
 	}
-
 	h = 0;
 	boolean results[dim];
-	while (h < 100) {
+	while (h < f) {
 		results[h] = 0;
 		h++;
 	}
