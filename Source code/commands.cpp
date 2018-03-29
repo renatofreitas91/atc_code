@@ -42,6 +42,26 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		puts(" ");
 	}
+	if (isCommand(arithTrig, "if")) {
+		command = true;
+		if (arithTrig[2] == '(') {
+			int tDev = 3, tGet = 0;
+			char exprDev[DIM] = "";
+			while ((arithTrig[tDev] == ')'&&arithTrig[tDev + 1] == '+'&&arithTrig[tDev + 2] == '0'&&arithTrig[tDev + 3] == '\0') == false && arithTrig[tDev] != '\0') {
+				exprDev[tGet] = arithTrig[tDev];
+				tGet++; tDev++;
+			}
+			exprDev[tGet] = '\0';
+			boolean returned = advancedEvaluator(exprDev);
+			if (returned) {
+				printf("\nTrue\n");
+			}
+			else {
+				printf("\nFalse\n");
+			}
+		}
+		puts(" ");
+	}
 	if (isCommand(arithTrig, "donate")) {
 		command = true;
 		puts(" ");

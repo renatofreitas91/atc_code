@@ -706,7 +706,6 @@ double getValue() {
 	return resultR;
 }
 
-
 int atcProgramming(char script[DIM]) {
 	char nativeCommands[DIM] = ",print,sprint,get,composecommand,";
 	char commandCandidate[DIM] = "", getLine[DIM] = "";
@@ -767,8 +766,5 @@ int atcProgramming(char script[DIM]) {
 	return 0;
 }
 
-void processOtherLines(char line[DIM]) {
-	puts("entrou");
-}
 
 

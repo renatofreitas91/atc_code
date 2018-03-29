@@ -642,14 +642,14 @@ void stringVariableController(char stringVariable[DIM], char string[DIM]) {
 	for (i = 0; (data[i] = fgetc(save)) != EOF; i++);
 	data[i] = '\0';
 	for (i = 0; data[i] != '\0'; i++) {
-		if (data[i] == stringVariable[j] && i == 0) {
+		if (data[i] == stringVariable[j] && j == 0) {
 			y = i;
 			while (data[i] == stringVariable[j]) {
 				j++;
 				i++;
 			}
 			if (j == abs((int)strlen(stringVariable)) && data[i] == '\n') {
-				w = abs((int)strlen(stringVariable)) + 3;
+				w = abs((int)strlen(stringVariable)) + 1;
 				for (l = y; data[l + w] != '\0'; l++) {
 					data[l] = data[l + w];
 				}
