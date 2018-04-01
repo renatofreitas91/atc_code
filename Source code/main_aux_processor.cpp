@@ -294,36 +294,38 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		}
 	}
 	if (var == 1) {
-		for (i = 0; arithTrig[i] != '='&&arithTrig[i] != '\0'; i++) {
-			variable[i] = arithTrig[i];
-		}
-		variable[i] = '\0';
-		g = i + 1;
-		for (i = 0; arithTrig[i] != '\0'; i++) {
-			arithTrig[i] = arithTrig[i + g];
-		}
-		arithTrig[i] = '\0';
-		sprintf(saveArithTr, "%s", arithTrig);
-		sprintf(arithTrig, "");
-		i = 0;
-		int hk = variableValidator(variable);
-		if (hk == 1 || v == 1) {
-			processVariable(revariable);
-		}
-		if (hk == 2) {
-			if (isFromMain == 1) {
-				printf("\n==> Your variable was renamed to \"%s\". <==\n\n", revariable);
+		if (isContained("==", arithTrig) == (boolean)false) {
+			for (i = 0; arithTrig[i] != '='&&arithTrig[i] != '\0'; i++) {
+				variable[i] = arithTrig[i];
 			}
-			fprintf(fout, "\n==> Your variable was renamed to \"%s\". <==\n\n", revariable);
-		}
-		if (hk == 0) {
-			if (isFromMain == 1) {
-				printf("\n==> Invalid variable. Use only latin alphabet letters. <==\n\n");
+			variable[i] = '\0';
+			g = i + 1;
+			for (i = 0; arithTrig[i] != '\0'; i++) {
+				arithTrig[i] = arithTrig[i + g];
 			}
-			fprintf(fout, "\n==> Invalid variable. Use only latin alphabet letters. <==\n\n");
-			var = 0;
+			arithTrig[i] = '\0';
+			sprintf(saveArithTr, "%s", arithTrig);
+			sprintf(arithTrig, "");
+			i = 0;
+			int hk = variableValidator(variable);
+			if (hk == 1 || v == 1) {
+				processVariable(revariable);
+			}
+			if (hk == 2) {
+				if (isFromMain == 1) {
+					printf("\n==> Your variable was renamed to \"%s\". <==\n\n", revariable);
+				}
+				fprintf(fout, "\n==> Your variable was renamed to \"%s\". <==\n\n", revariable);
+			}
+			if (hk == 0) {
+				if (isFromMain == 1) {
+					printf("\n==> Invalid variable. Use only latin alphabet letters. <==\n\n");
+				}
+				fprintf(fout, "\n==> Invalid variable. Use only latin alphabet letters. <==\n\n");
+				var = 0;
+			}
+			sprintf(arithTrig, "%s", saveArithTr);
 		}
-		sprintf(arithTrig, "%s", saveArithTr);
 	}
 	char dP[DIM] = "", bP[DIM] = "", oP[DIM] = "", hP[DIM] = "";
 	int dp = -1, bp = -1, op = -1, hp = -1;
