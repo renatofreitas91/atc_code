@@ -64,14 +64,6 @@ void main(int argc, char *argv[]) {
 				addATCPath();
 			}
 			sprintf(path, "%s\\history.txt", atcPath);
-			for (tD = 0; trigData[tD] != 0; tD++) {
-				if (trigData[tD] == '{' || trigData[tD] == '[') {
-					trigData[tD] = '(';
-				}
-				if (trigData[tD] == '}' || trigData[tD] == ']') {
-					trigData[tD] = ')';
-				}
-			}
 			for (tD = 0; trigData[tD] != '\0'; tD++) {
 				fflush(NULL);
 				char fTrig[DIM] = "", arithTrig[DIM] = "";
@@ -321,14 +313,6 @@ boolean processTxt(char path[DIM], int re) {
 				f++;
 				d = f;
 				trigData[e] = '\0';
-				for (e = 0; trigData[e] != 0; e++) {
-					if (trigData[e] == '{' || trigData[e] == '[') {
-						trigData[e] = '(';
-					}
-					if (trigData[e] == '}' || trigData[e] == ']') {
-						trigData[e] = ')';
-					}
-				}
 				for (tD = 0; trigData[tD] != '\0'; tD++) {
 					i = 0;
 					char arith[DIM] = "";
@@ -449,13 +433,13 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			if (kc > kg) {
 				decision = false;
 				if (comment == 1) {
-					printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
+					printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
 				}
 				return decision;
 			}
 			decision = false;
 			if (comment == 1) {
-				printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
+				printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
 			}
 			return decision;
 		}

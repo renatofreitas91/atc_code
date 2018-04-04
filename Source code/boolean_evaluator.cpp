@@ -2,27 +2,99 @@
 #include "stdafx.h"
 
 boolean advancedEvaluator(char expression[DIM]) {
-	int toSolve = 0;
-	char saveExpression[DIM] = "";
-	int d = 0, kl = 0, kr = 0;
-	for (d = 0; expression[d] != '\0'; d++) {
-		if (expression[d] == '(') {
-			if (verifyLetter(expression[d + 1]) || verifyNumber(expression[d + 1])) {
-				if (expression[d - 1] != '&'&&expression[d - 1] != '|') {
-					expression[d] = '[';
-					kl++;
-				}
-			}
+	int h = 0;
+	boolean results[dim];
+	while (h < strlen(expression)) {
+		results[h] = 1;
+		h++;
+	}
+	int cp = 0, mark = 0;
+	int c = 0, d = 0, l = 0, parent[DIM];
+	int s = 0, k = 0, g = 0;
+	for (s = 0; s < abs((int)strlen(expression)); s++) {
+		parent[s] = 0;
+	}
+	for (s = 0; expression[s] != '\0'&&s < abs((int)strlen(expression)); s++) {
+		if (expression[s] == '(') {
+			d = 0;
+			c++;
+			parent[s] = c;
+			d = 1;
+			k = c;
 		}
-		if (expression[d] == ')') {
-			if (verifyLetter(expression[d - 1]) || verifyNumber(expression[d - 1]) || kr < kl) {
-				if ((expression[d + 1] != '&'&&expression[d + 1] != '|'&&d != strlen(expression) - 1) || kr < kl) {
-					expression[d] = ']';
-					kr++;
+		else {
+			if (expression[s] == ')') {
+				d = 0;
+				h = 0;
+				l = 2;
+				do {
+					l = 0;
+					h = 0;
+					while (h < abs((int)strlen(expression))) {
+						if (parent[h] == k) {
+							l++;
+						}
+						if (l == 2) {
+							l = 0;
+							k--;
+						}
+						h++;
+					}
+				} while (l == 2);
+				h = 0;
+				while (l != 1 && h < abs((int)strlen(expression))) {
+					h = 0;
+					l = 0;
+					while (h < abs((int)strlen(expression))) {
+						if (parent[h] == k) {
+							l++;
+						}
+						if (l == 2) {
+							k--;
+							h = 0;
+							l = 0;
+						}
+						h++;
+					}
 				}
+				parent[s] = k;
+			}
+			else {
+				parent[s] = 0;
 			}
 		}
 	}
+	h = 0;
+	char amp[DIM] = "";
+	int j = 0;
+	l = 0; k = 0;
+	char expToSolve[DIM] = "";
+	for (j = 0; j < s; j++) {
+		if (parent[j] == 0) {
+			k = 0;
+			while (parent[j] == 0 && j < s) {
+				expToSolve[k] = expression[j];
+				j++; k++;
+			}
+			expToSolve[k] = '\0';
+			results[h] = simpleEvaluator(expToSolve);
+			h++;
+		}
+		else {
+			k = 0;
+			l = parent[j];
+			j++;
+			while (parent[j] != l && j < s) {
+				expToSolve[k] = expression[j];
+				j++; k++;
+			}
+			expToSolve[k] = '\0';
+			results[h] = advancedEvaluator(expToSolve);
+			h++;
+		}
+	}
+	int toSolve = 0;
+	char saveExpression[DIM] = "";
 	sprintf(saveExpression, expression);
 	sprintf(expressionF, expression);
 	if (isContained("==", expressionF)) {
@@ -62,50 +134,18 @@ boolean advancedEvaluator(char expression[DIM]) {
 		char saveValues[DIM] = "";
 		sprintf(valuesToExtract, expressionF);
 		char symbols[DIM] = "";
-		int g = 0, h = 0, kl = 0, kr = 0;
-		for (g = 0; valuesToExtract[g] != '\0'; g++) {
-			kl = 0; kr = 0;
-			while (valuesToExtract[g] != ' '&&valuesToExtract[g] != '\0') {
-				if (valuesToExtract[g] == '[') {
-					kl++;
-				}
-				if (valuesToExtract[g] == ']') {
-					kr++;
-				}
-				g++;
-			}
-			if (kl != kr) {
-				if (kr > kl) {
-					while (expression[g] != ']'&&g > 0) {
-						g--;
-					}
-					expression[g] = ')';
-					valuesToExtract[g] = ')';
-				}
-				if (kl > kr) {
-					g--;
-					while (expression[g] != ' '&&g > 0) {
-						g--;
-					}
-					while (expression[g] != '['&&expression[g] != '\0') {
-						g++;
-					}
-					expression[g] = '(';
-					valuesToExtract[g] = '(';
-				}
-			}
-		}
+		int g = 0, p = 0, kl = 0, kr = 0;
 		for (g = 0; valuesToExtract[g] != '\0'; g++) {
 			if (valuesToExtract[g] == ' ') {
 				while (valuesToExtract[g] == ' ') {
-					symbols[h] = saveExpression[g];
-					h++; g++;
+					symbols[p] = saveExpression[g];
+					p++; g++;
 				}
-				symbols[h] = ',';
-				h++;
+				symbols[p] = ',';
+				p++;
 			}
 		}
-		symbols[h] = '\0';
+		symbols[p] = '\0';
 		char newSymbol[dim] = "";
 		char getSymbol[dim] = "";
 		int s = 0, t = 0, k = 0;
@@ -157,22 +197,20 @@ boolean advancedEvaluator(char expression[DIM]) {
 			replace(" ", ",", expressionF);
 		}
 		sprintf(valuesToExtract, expressionF);
-
-
 		double valuesR[dim], valuesI[dim];
 		char values[DIM] = "";
 		int f = 0;
 		for (g = 0; valuesToExtract[g] != '\0'; g++) {
-			h = 0;
+			p = 0;
 			while (valuesToExtract[g] == '(') {
 				g++;
 			}
 			if (valuesToExtract[g] != ','&&valuesToExtract[g] != '\0'&&valuesToExtract[g] != ')') {
 				while (valuesToExtract[g] != ','&&valuesToExtract[g] != '\0'&&valuesToExtract[g] != ')') {
-					values[h] = valuesToExtract[g];
-					h++; g++;
+					values[p] = valuesToExtract[g];
+					p++; g++;
 				}
-				values[h] = '\0';
+				values[p] = '\0';
 				if (isContained(" ", values)) {
 					replace(" ", "", values);
 					sprintf(values, expressionF);
@@ -183,100 +221,11 @@ boolean advancedEvaluator(char expression[DIM]) {
 				f++;
 			}
 		}
-		h = 0;
-		boolean results[dim];
-		while (h < f) {
-			results[h] = 0;
-			h++;
-		}
-		boolean result = false;
-		int cp = 0, mark = 0;
-		int c = 0, d = 0, l = 0, parent[DIM];
-		s = 0; k = 0; h = 0; g = 0;
-		for (s = 0; s < abs((int)strlen(expression)); s++) {
-			parent[s] = 0;
-		}
-		for (s = 0; expression[s] != '\0'&&s < abs((int)strlen(expression)); s++) {
-			if (expression[s] == '(') {
-				d = 0;
-				c++;
-				parent[s] = c;
-				d = 1;
-				k = c;
-			}
-			else {
-				if (expression[s] == ')') {
-					d = 0;
-					h = 0;
-					l = 2;
-					do {
-						l = 0;
-						h = 0;
-						while (h < abs((int)strlen(expression))) {
-							if (parent[h] == k) {
-								l++;
-							}
-							if (l == 2) {
-								l = 0;
-								k--;
-							}
-							h++;
-						}
-					} while (l == 2);
-					h = 0;
-					while (l != 1 && h < abs((int)strlen(expression))) {
-						h = 0;
-						l = 0;
-						while (h < abs((int)strlen(expression))) {
-							if (parent[h] == k) {
-								l++;
-							}
-							if (l == 2) {
-								k--;
-								h = 0;
-								l = 0;
-							}
-							h++;
-						}
-					}
-					parent[s] = k;
-				}
-				else {
-					parent[s] = 0;
-				}
-			}
-		}
-		h = 0;
-		char amp[DIM] = "";
-		int j = 0;
-		l = 0; k = 0;
-		char expToSolve[DIM] = "";
-		for (j = 0; j < s; j++) {
-			if (parent[j] == 0) {
-				k = 0;
-				while (parent[j] == 0 && j < s) {
-					expToSolve[k] = expression[j];
-					j++; k++;
-				}
-				expToSolve[k] = '\0';
-				simpleEvaluator(expToSolve);
-			}
-			else {
-				k = 0;
-				l = parent[j];
-				j++;
-				while (parent[j] != l && j < s) {
-					expToSolve[k] = expression[j];
-					j++; k++;
-				}
-				expToSolve[k] = '\0';
-				advancedEvaluator(expToSolve);
-			}
-		}
-		h = 0;
+		p = 0;
 		g = 0;
-		while (h < k) {
-			if (newSymbol[h] == '0') {
+		int y = 0;
+		while (verifyNumber(newSymbol[p])) {
+			if (newSymbol[p] == '0') {
 				if (valuesR[g] == valuesR[g + 1] && valuesI[g] == valuesI[g + 1]) {
 					results[h] = true;
 				}
@@ -284,13 +233,13 @@ boolean advancedEvaluator(char expression[DIM]) {
 					results[h] = false;
 				}
 				char df[5] = "";
-				sprintf(df, "%c", newSymbol[h + 1]);
+				sprintf(df, "%c", newSymbol[p + 1]);
 				if (atoi(df) > 5) {
 					g = g + 2;
-					h++;
 				}
+				h++;
 			}
-			if (newSymbol[h] == '1') {
+			if (newSymbol[p] == '1') {
 				if (valuesR[g] != valuesR[g + 1] || valuesI[g] != valuesI[g + 1]) {
 					results[h] = true;
 				}
@@ -298,11 +247,11 @@ boolean advancedEvaluator(char expression[DIM]) {
 					results[h] = false;
 				}
 				char df[5] = "";
-				sprintf(df, "%c", newSymbol[h + 1]);
+				sprintf(df, "%c", newSymbol[p + 1]);
 				if (atoi(df) > 5) {
 					g = g + 2;
-					h++;
 				}
+				h++;
 			}
 			if (newSymbol[h] == '2') {
 				if (valuesR[g] <= valuesR[g + 1] && valuesI[g] <= valuesI[g + 1]) {
@@ -312,11 +261,11 @@ boolean advancedEvaluator(char expression[DIM]) {
 					results[h] = false;
 				}
 				char df[5] = "";
-				sprintf(df, "%c", newSymbol[h + 1]);
+				sprintf(df, "%c", newSymbol[p + 1]);
 				if (atoi(df) > 5) {
 					g = g + 2;
-					h++;
 				}
+				h++;
 			}
 			if (newSymbol[h] == '3') {
 				if (valuesR[g] >= valuesR[g + 1] && valuesI[g] >= valuesI[g + 1]) {
@@ -326,11 +275,11 @@ boolean advancedEvaluator(char expression[DIM]) {
 					results[h] = false;
 				}
 				char df[5] = "";
-				sprintf(df, "%c", newSymbol[h + 1]);
+				sprintf(df, "%c", newSymbol[p + 1]);
 				if (atoi(df) > 5) {
 					g = g + 2;
-					h++;
 				}
+				h++;
 			}
 			if (newSymbol[h] == '4') {
 				if (valuesR[g] > valuesR[g + 1]) {
@@ -345,11 +294,11 @@ boolean advancedEvaluator(char expression[DIM]) {
 					}
 				}
 				char df[5] = "";
-				sprintf(df, "%c", newSymbol[h + 1]);
+				sprintf(df, "%c", newSymbol[p + 1]);
 				if (atoi(df) > 5) {
 					g = g + 2;
-					h++;
 				}
+				h++;
 			}
 			if (newSymbol[h] == '5') {
 				if (valuesR[g] < valuesR[g + 1]) {
@@ -364,18 +313,18 @@ boolean advancedEvaluator(char expression[DIM]) {
 					}
 				}
 				char df[5] = "";
-				sprintf(df, "%c", newSymbol[h + 1]);
+				sprintf(df, "%c", newSymbol[p + 1]);
 				if (atoi(df) > 5) {
 					g = g + 2;
-					h++;
 				}
+				h++;
 			}
-			h++;
+			p++;
 		}
 		g = 0;
 		int i = 0;
 		boolean finalResult = results[g];
-		while (g < h) {
+		while (verifyNumber(newSymbol[g])) {
 			if (newSymbol[g] == '6') {
 				if (finalResult && results[g + 1]) {
 					finalResult = true;
@@ -439,30 +388,6 @@ boolean simpleEvaluator(char expression[DIM]) {
 	char valuesToExtract[DIM] = "";
 	sprintf(valuesToExtract, expressionF);
 	int s = 0, k = 0;
-	for (s = 0; valuesToExtract[s] != '\0'; s++) {
-		if (valuesToExtract[s] != ' '&&valuesToExtract[s] != '\0') {
-			k = 0;
-			char toReplace[DIM] = "";
-			while (valuesToExtract[s] != ' '&&valuesToExtract[s] != '\0') {
-				toReplace[k] = valuesToExtract[s];
-				k++;
-				s++;
-			}
-			toReplace[k] = '\0';
-			char finalReplace[DIM] = "";
-			sprintf(finalReplace, "(%s)", toReplace);
-			if (isContained(finalReplace, expression) == (boolean)false) {
-				char replacement[DIM] = "ABC CBA";
-				sprintf(replacement, "ABC CBA");
-				toReplace[k] = '\0';
-				replace(toReplace, replacement, expression);
-				replace("ABC", "(", expressionF);
-				replace("CBA", ")", expressionF);
-				replace(" ", toReplace, expressionF);
-				sprintf(expression, expressionF);
-			}
-		}
-	}
 	sprintf(expressionF, expression);
 	if (isContained("==", expressionF)) {
 		toSolve = 1;
@@ -592,12 +517,12 @@ boolean simpleEvaluator(char expression[DIM]) {
 		h = 0;
 		boolean results[dim];
 		while (h < f) {
-			results[h] = 0;
+			results[h] = 1;
 			h++;
 		}
 		h = 0;
 		g = 0;
-		while (h < k) {
+		while (verifyNumber(newSymbol[h])) {
 			if (newSymbol[h] == '0') {
 				if (valuesR[g] == valuesR[g + 1] && valuesI[g] == valuesI[g + 1]) {
 					results[h] = true;
@@ -627,7 +552,7 @@ boolean simpleEvaluator(char expression[DIM]) {
 				}
 			}
 			if (newSymbol[h] == '2') {
-				if (valuesR[g] <= valuesR[g + 1] && valuesI[g] <= valuesI[g + 1]) {
+				if (valuesR[g] <= valuesR[g + 1] <= valuesI[g] <= valuesI[g + 1]) {
 					results[h] = true;
 				}
 				else {
@@ -697,7 +622,7 @@ boolean simpleEvaluator(char expression[DIM]) {
 		g = 0;
 		int i = 0;
 		boolean finalResult = results[g];
-		while (g < h) {
+		while (verifyNumber(newSymbol[g])) {
 			if (newSymbol[g] == '6') {
 				if (finalResult && results[g + 1]) {
 					finalResult = true;
