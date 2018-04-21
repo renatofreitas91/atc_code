@@ -1797,6 +1797,10 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			s = 0;
 		}
 	}
+	if (isContained("ans", arithTrig)) {
+		replace("ans", "res", arithTrig);
+		sprintf(arithTrig, expressionF);
+	}
 	for (i = 0; arithTrig[i] != '\0'; i++) {
 		if (verifyLetter(arithTrig[i])) {
 			letterScan[i] = arithTrig[i];
@@ -1808,6 +1812,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	letterScan[i] = '\0';
 	i = 0;
 	j = 0;
+
 
 	char varCandidate[DIM] = "";
 	char finalReplacement[DIM] = "";
@@ -1873,6 +1878,11 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			while (verifyNumber(arithTrig[i])) {
 				result_name[v] = arithTrig[i];
 				v++; i++;
+				if (i > strStart + 1) {
+					if (arithTrig[i] == '#') {
+						break;
+					}
+				}
 			}
 			result_name[v] = '\0';
 			char replacement[DIM] = "";
@@ -1896,6 +1906,11 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			while (verifyNumber(arithTrig[i])) {
 				result_name[v] = arithTrig[i];
 				v++; i++;
+				if (i > strStart + 1) {
+					if (arithTrig[i] == '#') {
+						break;
+					}
+				}
 			}
 			result_name[v] = '\0';
 			char replacement[DIM] = "";
@@ -1918,9 +1933,14 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		if (isContained("^_B", arithTrig) == (boolean)false && isContained("B", arithTrig)) {
 			int i = strStart, v = 0;
 			char result_name[DIM] = "";
-			while (verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') {
+			while ((verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') && firstLetterFunction(arithTrig[i]) == false) {
 				result_name[v] = arithTrig[i];
 				v++; i++;
+				if (i > strStart + 1) {
+					if (arithTrig[i] == 'B') {
+						break;
+					}
+				}
 			}
 			result_name[v] = '\0';
 			char replacement[DIM] = "";
@@ -1939,9 +1959,14 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		if (isContained("^_B", arithTrig)) {
 			int i = strStart + 2, v = 0;
 			char result_name[DIM] = "";
-			while (verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') {
+			while ((verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') && firstLetterFunction(arithTrig[i]) == false) {
 				result_name[v] = arithTrig[i];
 				v++; i++;
+				if (i > strStart + 1) {
+					if (arithTrig[i] == 'B') {
+						break;
+					}
+				}
 			}
 			result_name[v] = '\0';
 			char replacement[DIM] = "";
@@ -1964,9 +1989,14 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		if (isContained("^_O", arithTrig) == (boolean)false && isContained("O", arithTrig)) {
 			int i = strStart, v = 0;
 			char result_name[DIM] = "";
-			while (verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') {
+			while ((verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') && firstLetterFunction(arithTrig[i]) == false) {
 				result_name[v] = arithTrig[i];
 				v++; i++;
+				if (i > strStart + 1) {
+					if (arithTrig[i] == 'O') {
+						break;
+					}
+				}
 			}
 			result_name[v] = '\0';
 			char replacement[DIM] = "";
@@ -1982,12 +2012,17 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				sprintf(arithTrig, "%s", expressionF);
 			}
 		}
-		if (isContained("^_H", arithTrig)) {
+		if (isContained("^_O", arithTrig)) {
 			int i = strStart + 2, v = 0;
 			char result_name[DIM] = "";
-			while (verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') {
+			while ((verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') && firstLetterFunction(arithTrig[i]) == false) {
 				result_name[v] = arithTrig[i];
 				v++; i++;
+				if (i > strStart + 1) {
+					if (arithTrig[i] == 'O') {
+						break;
+					}
+				}
 			}
 			result_name[v] = '\0';
 			char replacement[DIM] = "";
@@ -2010,9 +2045,14 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		if (isContained("^_H", arithTrig) == (boolean)false && isContained("H", arithTrig)) {
 			int i = strStart, v = 0;
 			char result_name[DIM] = "";
-			while (verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') {
+			while ((verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') && firstLetterFunction(arithTrig[i]) == false) {
 				result_name[v] = arithTrig[i];
 				v++; i++;
+				if (i > strStart + 1) {
+					if (arithTrig[i] == 'H') {
+						break;
+					}
+				}
 			}
 			result_name[v] = '\0';
 			char replacement[DIM] = "";
@@ -2031,9 +2071,62 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		if (isContained("^_H", arithTrig)) {
 			int i = strStart + 2, v = 0;
 			char result_name[DIM] = "";
-			while (verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') {
+			while ((verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') && firstLetterFunction(arithTrig[i]) == false) {
 				result_name[v] = arithTrig[i];
 				v++; i++;
+				if (i > strStart + 1) {
+					if (arithTrig[i] == 'H') {
+						break;
+					}
+				}
+			}
+			result_name[v] = '\0';
+			char replacement[DIM] = "";
+			char toReplace[DIM] = "";
+			sprintf(toReplace, "^_%s", result_name);
+			sprintf(finalReplacement, "(_%s)", result_name);
+			sprintf(replacement, "^(_////////)");
+			replace(toReplace, replacement, arithTrig);
+			replace("////////", result_name, expressionF);
+			sprintf(arithTrig, "%s", expressionF);
+			char isDuplicatedParent[DIM] = "";
+			sprintf(isDuplicatedParent, "(_%s)", finalReplacement);
+			if (isContained(isDuplicatedParent, arithTrig)) {
+				replace(isDuplicatedParent, finalReplacement, arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+			}
+		}
+	}
+	if (isContained("P", arithTrig)) {
+		if (isContained("^_P", arithTrig) == (boolean)false && isContained("P", arithTrig)) {
+			int i = strStart, v = 0;
+			char result_name[DIM] = "P", prefixes[DIM] = "PY,PZ,PE,PP,PT,PG,PM,Pk,Ph,Pda,Pd,Pc,Pm,Pu,Pn,Pp,Pf,Pa,Pz,Py,", toTest[DIM] = "P";
+			while (verifyLetter(arithTrig[i]) && isContained(toTest, prefixes)) {
+				result_name[v] = arithTrig[i];
+				v++; i++;
+				sprintf(toTest, "%s%c", toTest, arithTrig[i]);
+			}
+			result_name[v] = '\0';
+			char replacement[DIM] = "";
+			sprintf(finalReplacement, "(%s)", result_name);
+			sprintf(replacement, "(////////)");
+			replace(result_name, replacement, arithTrig);
+			replace("////////", result_name, expressionF);
+			sprintf(arithTrig, "%s", expressionF);
+			char isDuplicatedParent[DIM] = "";
+			sprintf(isDuplicatedParent, "(%s)", finalReplacement);
+			if (isContained(isDuplicatedParent, arithTrig)) {
+				replace(isDuplicatedParent, finalReplacement, arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+			}
+		}
+		if (isContained("^_P", arithTrig)) {
+			int i = strStart + 2, v = 0;
+			char result_name[DIM] = "P", prefixes[DIM] = "PY,PZ,PE,PP,PT,PG,PM,Pk,Ph,Pda,Pd,Pc,Pm,Pu,Pn,Pp,Pf,Pa,Pz,Py,", toTest[DIM] = "P";
+			while (verifyLetter(arithTrig[i]) && isContained(toTest, prefixes)) {
+				result_name[v] = arithTrig[i];
+				v++; i++;
+				sprintf(toTest, "%s%c", toTest, arithTrig[i]);
 			}
 			result_name[v] = '\0';
 			char replacement[DIM] = "";
@@ -2306,7 +2399,7 @@ void toSolve(int re) {
 					sprintf(filename, "%s", dir->d_name);
 					if (searchExtension(filename, ".txt")) {
 						int h = abs((int)strlen(filename)) - 1;
-						if ((filename[h - 10] == 'a'&& filename[h - 9] == 'n'&&filename[h - 8] == 's'&&filename[h - 7] == 'w'&&filename[h - 6] == 'e'&&filename[h - 5] == 'r'&&filename[h - 4] == 's'&&filename[h - 3] == '.'&&filename[h - 2] == 't'&&filename[h - 1] == 'x'&&filename[h] == 't') == false) {
+						if (isContained("_answers.txt", filename) == false) {
 							char path[DIM] = "";
 							sprintf(path, "%s%s", directory, filename);
 							int b = 0, m = 0;

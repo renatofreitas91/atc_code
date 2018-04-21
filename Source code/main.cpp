@@ -433,13 +433,13 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			if (kc > kg) {
 				decision = false;
 				if (comment == 1) {
-					printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
+					printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
 				}
 				return decision;
 			}
 			decision = false;
 			if (comment == 1) {
-				printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
+				printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
 			}
 			return decision;
 		}
@@ -513,7 +513,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					if (parent[s - 1] == parent[s] + 1 && parent[s - 1] != 0) {
 						decision = false;
 						if (comment == 1) {
-							printf("\nError in parentheses. \n ==> You have entered more parentheses than ATC needs. Be careful with duplicate parentheses, i.e. '))' and '(('.\n");
+							printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
 						}
 						return decision;
 					}
