@@ -4,7 +4,7 @@
 boolean advancedEvaluator(char expression[DIM]) {
 	int h = 0;
 	boolean results[dim];
-	while (h < strlen(expression)) {
+	while (h < abs((int)strlen(expression))) {
 		results[h] = 1;
 		h++;
 	}
@@ -552,7 +552,7 @@ boolean simpleEvaluator(char expression[DIM]) {
 				}
 			}
 			if (newSymbol[h] == '2') {
-				if (valuesR[g] <= valuesR[g + 1] <= valuesI[g] <= valuesI[g + 1]) {
+				if (valuesR[g] <= valuesR[g + 1] && valuesI[g] <= valuesI[g + 1]) {
 					results[h] = true;
 				}
 				else {

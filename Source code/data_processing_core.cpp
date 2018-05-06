@@ -1930,58 +1930,60 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		}
 	}
 	if (isContained("B", arithTrig)) {
-		if (isContained("^_B", arithTrig) == (boolean)false && isContained("B", arithTrig)) {
-			int i = strStart, v = 0;
-			char result_name[DIM] = "";
-			while ((verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') && firstLetterFunction(arithTrig[i]) == false) {
-				result_name[v] = arithTrig[i];
-				v++; i++;
-				if (i > strStart + 1) {
-					if (arithTrig[i] == 'B') {
-						break;
+		if (verifyNumerical(arithTrig[strStart - 1]) == (boolean)false && verifyLetter(arithTrig[strStart - 1]) == (boolean)false) {
+			if (isContained("^_B", arithTrig) == (boolean)false && isContained("B", arithTrig)) {
+				int i = strStart, v = 0;
+				char result_name[DIM] = "";
+				while ((verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') && firstLetterFunction(arithTrig[i]) == false) {
+					result_name[v] = arithTrig[i];
+					v++; i++;
+					if (i > strStart + 1) {
+						if (arithTrig[i] == 'B') {
+							break;
+						}
 					}
 				}
-			}
-			result_name[v] = '\0';
-			char replacement[DIM] = "";
-			sprintf(finalReplacement, "(%s)", result_name);
-			sprintf(replacement, "(////////)");
-			replace(result_name, replacement, arithTrig);
-			replace("////////", result_name, expressionF);
-			sprintf(arithTrig, "%s", expressionF);
-			char isDuplicatedParent[DIM] = "";
-			sprintf(isDuplicatedParent, "(%s)", finalReplacement);
-			if (isContained(isDuplicatedParent, arithTrig)) {
-				replace(isDuplicatedParent, finalReplacement, arithTrig);
+				result_name[v] = '\0';
+				char replacement[DIM] = "";
+				sprintf(finalReplacement, "(%s)", result_name);
+				sprintf(replacement, "(////////)");
+				replace(result_name, replacement, arithTrig);
+				replace("////////", result_name, expressionF);
 				sprintf(arithTrig, "%s", expressionF);
-			}
-		}
-		if (isContained("^_B", arithTrig)) {
-			int i = strStart + 2, v = 0;
-			char result_name[DIM] = "";
-			while ((verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') && firstLetterFunction(arithTrig[i]) == false) {
-				result_name[v] = arithTrig[i];
-				v++; i++;
-				if (i > strStart + 1) {
-					if (arithTrig[i] == 'B') {
-						break;
-					}
+				char isDuplicatedParent[DIM] = "";
+				sprintf(isDuplicatedParent, "(%s)", finalReplacement);
+				if (isContained(isDuplicatedParent, arithTrig)) {
+					replace(isDuplicatedParent, finalReplacement, arithTrig);
+					sprintf(arithTrig, "%s", expressionF);
 				}
 			}
-			result_name[v] = '\0';
-			char replacement[DIM] = "";
-			char toReplace[DIM] = "";
-			sprintf(toReplace, "^_%s", result_name);
-			sprintf(finalReplacement, "(_%s)", result_name);
-			sprintf(replacement, "^(_////////)");
-			replace(toReplace, replacement, arithTrig);
-			replace("////////", result_name, expressionF);
-			sprintf(arithTrig, "%s", expressionF);
-			char isDuplicatedParent[DIM] = "";
-			sprintf(isDuplicatedParent, "(_%s)", finalReplacement);
-			if (isContained(isDuplicatedParent, arithTrig)) {
-				replace(isDuplicatedParent, finalReplacement, arithTrig);
+			if (isContained("^_B", arithTrig)) {
+				int i = strStart + 2, v = 0;
+				char result_name[DIM] = "";
+				while ((verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i]) || (arithTrig[i] == '-' && (arithTrig[i - 1] == 'B' || arithTrig[i - 1] == 'O' || arithTrig[i - 1] == 'H')) || arithTrig[i] == '.') && firstLetterFunction(arithTrig[i]) == false) {
+					result_name[v] = arithTrig[i];
+					v++; i++;
+					if (i > strStart + 1) {
+						if (arithTrig[i] == 'B') {
+							break;
+						}
+					}
+				}
+				result_name[v] = '\0';
+				char replacement[DIM] = "";
+				char toReplace[DIM] = "";
+				sprintf(toReplace, "^_%s", result_name);
+				sprintf(finalReplacement, "(_%s)", result_name);
+				sprintf(replacement, "^(_////////)");
+				replace(toReplace, replacement, arithTrig);
+				replace("////////", result_name, expressionF);
 				sprintf(arithTrig, "%s", expressionF);
+				char isDuplicatedParent[DIM] = "";
+				sprintf(isDuplicatedParent, "(_%s)", finalReplacement);
+				if (isContained(isDuplicatedParent, arithTrig)) {
+					replace(isDuplicatedParent, finalReplacement, arithTrig);
+					sprintf(arithTrig, "%s", expressionF);
+				}
 			}
 		}
 	}
@@ -3388,7 +3390,7 @@ double calcNow(char toCalc[DIM], double result1, double result2) {
 		resultR = solveNow(expression, result1, result2);
 		feedbackValidation = 0;
 		if (verified == 0) {
-			printf("Invalid expression: %s\n\n", expression);
+			printf("Invalid expression: %s\n\n", toCalc);
 		}
 	}
 	else {

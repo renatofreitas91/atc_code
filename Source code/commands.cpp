@@ -2,6 +2,8 @@
 
 #include "stdafx.h"
 
+boolean returned = false;
+
 boolean commands(char arithTrig[DIM], char path[DIM], double result1, double result2) {
 	FILE *fout = NULL, *fclean = NULL;
 	char stringV[DIM] = "";
@@ -12,6 +14,11 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	int i = 0, r = 0, year = 0, s = 0;
 	boolean command = false;
 	i = 0;
+	if (isCommand(arithTrig, "financialcalculations")) {
+		command = true;
+		financialCalculations();
+		puts("");
+	}
 	if (isCommand(arithTrig, "composecommand")) {
 		command = true;
 		if (arithTrig[14] == '(') {
@@ -52,15 +59,19 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				tGet++; tDev++;
 			}
 			exprDev[tGet] = '\0';
-			boolean returned = advancedEvaluator(exprDev);
-			if (returned) {
-				printf("\nTrue\n");
-			}
-			else {
-				printf("\nFalse\n");
+			returned = advancedEvaluator(exprDev);
+			if (runningScript == false) {
+				if (returned) {
+					printf("\nTrue\n");
+				}
+				else {
+					printf("\nFalse\n");
+				}
 			}
 		}
-		puts(" ");
+		if (runningScript == false) {
+			puts(" ");
+		}
 	}
 	if (isCommand(arithTrig, "donate")) {
 		command = true;
@@ -1260,7 +1271,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.4  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.5  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(thours, tminutes, tseconds);
 									}
@@ -1458,7 +1469,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.4  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.5  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(thours, tminutes, tseconds);
 									}
@@ -1671,7 +1682,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.4 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.5 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n  %02d:%02d:%02d\n", thours, tminutes, tseconds);
@@ -1879,7 +1890,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.4 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.5 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(Hours, Minutes, Seconds);
 										printf("\n\n    %02d:%02d:%02d\n\n", thours, tminutes, tseconds);
@@ -2635,6 +2646,12 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					replace(line, changeLine, calendar);
 					replace(lineWeekDays, changeWeekDaysLine, expressionF);
 					sprintf(calendar, expressionF);
+					i = 0;
+					for (i = 0; calendar[i] != '\0'; i++) {
+						if (calendar[i] == ' ') {
+							calendar[i] = (char)219;
+						}
+					}
 				}
 				printf("\n");
 				printf("%s\n", calendar);

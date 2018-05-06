@@ -2,6 +2,8 @@
 
 #include "stdafx.h"
 
+boolean runningScript = false;
+
 void print(char text[DIM], double result1, double result2) {
 	int i = 0, j = 0, varAndValues = 0, k = 0, var2Print = 0, g = 0, valP = 0, l = 0, chChar = 0, b = 0, nV = 0, nC = 0;
 	char toPrint[DIM], listValues[DIM], listText[DIM], varType[DIM], printing[DIM], varValue[DIM], finalString[DIM] = "";
@@ -698,24 +700,60 @@ double atcProg(char exprDev[DIM]) {
 }
 
 double getValue() {
-	char value[DIM] = "";
-	gets_s(value);
-	solving = false;
-	atcProg(value);
-	solving = true;
+	verified = 0;
+	while (verified == 0) {
+		char value[DIM] = "";
+		gets_s(value);
+		solving = false;
+		calcNow(value, 0, 0);
+		solving = true;
+	}
 	return resultR;
 }
 
 int atcProgramming(char script[DIM]) {
-	char nativeCommands[DIM] = ",print,sprint,get,composecommand,";
+	runningScript = true;
+	char nativeCommands[DIM] = ",print,sprint,get,composecommand,if,else,while,for,";
 	char commandCandidate[DIM] = "", getLine[DIM] = "";
 	int atcP = 0;
+	boolean ifStatus = true;
 	isContained("script", script);
 	if (script[strEnd] == '\0') {
 		puts("\nError: Your script is empty!");
 	}
 	else {
 		if (script[strEnd] == '\n') {
+			if (isContained("\n ", script)) {
+				while (isContained("\n ", script)) {
+					int h = strEnd, k = 0;
+					h--;
+					while (script[h] == ' ') {
+						h++;
+						k++;
+					}
+					while (script[h] != '\0') {
+						script[h - k] = script[h];
+						h++;
+					}
+					script[h - k] = '\0';
+				}
+			}
+			if (isContained("\n\t", script)) {
+				while (isContained("\n\t", script)) {
+					int h = strEnd, k = 0;
+					h--;
+					while (script[h] == '\t') {
+						h++;
+						k++;
+					}
+					while (script[h] != '\0') {
+						script[h - k] = script[h];
+						h++;
+					}
+					script[h - k] = '\0';
+				}
+			}
+			isContained("script", script);
 			int i = strEnd + 1;
 			int j = i;
 			int c = 0;
@@ -726,9 +764,13 @@ int atcProgramming(char script[DIM]) {
 			for (i = 0; i < abs((int)strlen(script)); i++) {
 				c = 0;
 				j = i;
-				while (script[i] != ';'&&c < DIM) {
+				while (script[i] != ';'&&script[i] != '\n'&&script[i] != '{'&&c < DIM) {
 					getLine[c] = script[i];
 					i++; c++;
+					if (getLine[0] == 'f'&&getLine[1] == 'o'&&getLine[2] == 'r'&&script[i] == ';') {
+						getLine[c] = script[i];
+						i++; c++;
+					}
 				}
 				if (c == DIM) {
 					getLine[c - 1] = '\0';
@@ -751,7 +793,215 @@ int atcProgramming(char script[DIM]) {
 				if (isContained(candidate, nativeCommands)) {
 					atcProg(getLine);
 					atcP = 1;
+					if (isEqual("if", commandCandidate)) {
+						ifStatus = returned;
+						if (returned == (boolean)true) {
+							isContained(getLine, script);
+							i = strEnd;
+							if (script[i] == '\n') {
+								i = i + 2;
+							}
+							else {
+								if (script[i] == '{') {
+									i = i + 2;
+								}
+							}
+							char innerIF[DIM] = ""; int kl = 1, kr = 0, f = 0;
+							while (kl != kr && script[i] != '\0') {
+								if (script[i] == '{') {
+									kl++;
+								}
+								if (script[i] == '}') {
+									kr++;
+								}
+								innerIF[f] = script[i];
+								f++; i++;
+							}
+							f--;
+							innerIF[f] = '\0';
+							sprintf(innerIF, "%s", innerIF);
+							char toATCProgram[DIM] = "";
+							sprintf(toATCProgram, "script\n%s", innerIF);
+							atcProgramming(toATCProgram);
+						}
+						else {
+							if (script[i] == '\n') {
+								i = i + 2;
+							}
+							else {
+								if (script[i] == '{') {
+									i = i + 2;
+								}
+							}
+							char innerIF[DIM] = ""; int kl = 1, kr = 0, f = 0;
+							while (kl != kr && script[i] != '\0') {
+								if (script[i] == '{') {
+									kl++;
+								}
+								if (script[i] == '}') {
+									kr++;
+								}
+								innerIF[f] = script[i];
+								f++; i++;
+							}
+							innerIF[f] = '\0';
+						}
+					}
+					if ((isEqual("else", commandCandidate))) {
+						if (ifStatus == (boolean)false) {
+							isContained(getLine, script);
+							i = strEnd;
+							if (script[i] == '\n') {
+								i = i + 2;
+							}
+							else {
+								if (script[i] == '{') {
+									i = i + 2;
+								}
+							}
+							char innerIF[DIM] = ""; int kl = 1, kr = 0, f = 0;
+							while (kl != kr && script[i] != '\0') {
+								if (script[i] == '{') {
+									kl++;
+								}
+								if (script[i] == '}') {
+									kr++;
+								}
+								innerIF[f] = script[i];
+								f++; i++;
+							}
+							f--;
+							innerIF[f] = '\0';
+							sprintf(innerIF, "%s", innerIF);
+							char toATCProgram[DIM] = "";
+							sprintf(toATCProgram, "script\n%s", innerIF);
+							atcProgramming(toATCProgram);
+						}
+						else {
+							if (script[i] == '\n') {
+								i = i + 2;
+							}
+							else {
+								if (script[i] == '{') {
+									i = i + 2;
+								}
+							}
+							char innerIF[DIM] = ""; int kl = 1, kr = 0, f = 0;
+							while (kl != kr && script[i] != '\0') {
+								if (script[i] == '{') {
+									kl++;
+								}
+								if (script[i] == '}') {
+									kr++;
+								}
+								innerIF[f] = script[i];
+								f++; i++;
+							}
+							innerIF[f] = '\0';
+						}
+					}
+					if (isEqual("while", commandCandidate)) {
+						replace("while", "if", getLine);
+						char saveGetLine[DIM] = "";
+						sprintf(saveGetLine, getLine);
+						sprintf(getLine, expressionF);
+						atcProg(getLine);
+						ifStatus = returned;
+						while (returned == (boolean)true) {
+							isContained(saveGetLine, script);
+							i = strEnd;
+							if (script[i] == '\n') {
+								i = i + 2;
+							}
+							else {
+								if (script[i] == '{') {
+									i = i + 2;
+								}
+							}
+							char innerIF[DIM] = ""; int kl = 1, kr = 0, f = 0;
+							while (kl != kr && script[i] != '\0') {
+								if (script[i] == '{') {
+									kl++;
+								}
+								if (script[i] == '}') {
+									kr++;
+								}
+								innerIF[f] = script[i];
+								f++; i++;
+							}
+							f--;
+							innerIF[f] = '\0';
+							sprintf(innerIF, "%s", innerIF);
+							char toATCProgram[DIM] = "";
+							sprintf(toATCProgram, "script\n%s", innerIF);
+							atcProgramming(toATCProgram);
+							atcProg(getLine);
+						}
+					}
+					if (isEqual("for", commandCandidate)) {
+						int f = 4, p = 0;
+						char initial[DIM] = "";
+						while (getLine[f] != ';'&&getLine[f] != '\0') {
+							initial[p] = getLine[f];
+							p++;
+							f++;
+						}
+						initial[p] = '\0';
+						atcProg(initial);
+						char condition[DIM] = "";
+						f++; p = 0;
+						while (getLine[f] != ';'&&getLine[f] != '\0') {
+							condition[p] = getLine[f];
+							p++;
+							f++;
+						}
+						condition[p] = '\0';
+						f++; p = 0;
+						char final[DIM] = "";
+						while (getLine[f] != ')'&&getLine[f] != '\0') {
+							final[p] = getLine[f];
+							p++;
+							f++;
+						}
+						final[p] = '\0';
+						char saveGetLine[DIM] = "";
+						sprintf(saveGetLine, getLine);
+						sprintf(getLine, "if(%s)", condition);
+						atcProg(getLine);
+						ifStatus = returned;
+						while (returned == (boolean)true) {
+							isContained(saveGetLine, script);
+							i = strEnd;
+							if (script[i] == '\n') {
+								i = i + 2;
+							}
+							else {
+								if (script[i] == '{') {
+									i = i + 2;
+								}
+							}
+							char innerIF[DIM] = ""; int kl = 1, kr = 0, f = 0;
+							while (kl != kr && script[i] != '\0') {
+								if (script[i] == '{') {
+									kl++;
+								}
+								if (script[i] == '}') {
+									kr++;
+								}
+								innerIF[f] = script[i];
+								f++; i++;
+							}
+							f--;
+							innerIF[f] = '\0';
+							sprintf(innerIF, "%s", innerIF);
+							char toATCProgram[DIM] = "";
+							sprintf(toATCProgram, "script\n%s\n%s;", innerIF, final);
+							atcProgramming(toATCProgram);
+							atcProg(getLine);
+						}
+					}
 				}
+				sprintf(commandCandidate, "");
 				sprintf(candidate, "");
 				if (atcP == 0) {
 					atcProg(getLine);
