@@ -31,13 +31,6 @@ void main(int argc, char *argv[]) {
 	if (continu == 1) {
 		system("title Advanced Trigonometry Calculator v1.9.5       ==) ATC is ready to process data. (==");
 		do {
-			resultR = sqrt(DBL_MAX);
-			variableController("INF", resultR);
-			processVariable("x");
-			if (validVar == 0) {
-				resultR = 0;
-				variableController("x", 0);
-			}
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
 			fflush(NULL);
@@ -99,6 +92,15 @@ void main(int argc, char *argv[]) {
 					}
 				}
 				arithTrig[i] = '\0';
+				resultR = sqrt(DBL_MAX);
+				variableController("INF", resultR);
+				processVariable("x");
+				if (validVar == 0) {
+					resultR = 0;
+					variableController("x", 0);
+				}
+				processVariable("x");
+				variableController("x", 0);
 				sprintf(fTrig, "%s", arithTrig); verbose = 0;
 				main_core(arithTrig, fTrig, fout, path, result1, result2, 1);
 				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
@@ -314,6 +316,10 @@ boolean processTxt(char path[DIM], int re) {
 				f++;
 				d = f;
 				trigData[e] = '\0';
+				usRFunctions[0] = ','; usRFuncTrans[0] = ',';
+				usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
+				fflush(NULL);
+				tD = 0;
 				for (tD = 0; trigData[tD] != '\0'; tD++) {
 					i = 0;
 					char arith[DIM] = "";
@@ -340,6 +346,15 @@ boolean processTxt(char path[DIM], int re) {
 						}
 					}
 					arith[i] = '\0';
+					resultR = sqrt(DBL_MAX);
+					variableController("INF", resultR);
+					processVariable("x");
+					if (validVar == 0) {
+						resultR = 0;
+						variableController("x", 0);
+					}
+					processVariable("x");
+					variableController("x", 0);
 					valid = 0;
 					validVar = 1;
 					if (fin != NULL) {

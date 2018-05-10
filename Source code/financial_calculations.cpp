@@ -13,7 +13,13 @@ void financialCalculations() {
 		puts("Annuity Payment (FV) -> 41");
 		puts("Annuity Payment (PV) -> 20");
 		puts("Annuity Payment Factor - PV -> 37");
+		puts("Asset to Sales Ratio -> 45");
+		puts("Asset Turnover Ratio -> 46");
+		puts("Average Collection Period -> 47");
 		puts("Balloon Balance of a Loan -> 35");
+		puts("Bid Ask Spread -> 48");
+		puts("Bond Equivalent Yield -> 49");
+		puts("Book Value per Share -> 50");
 		puts("Compound Interest -> 4");
 		puts("Continuous Compounding -> 6");
 		puts("Discounted Payback Period -> 18");
@@ -690,7 +696,55 @@ void financialCalculations() {
 			double fv_annuity_due = (1 + rate)*periodic_payment*((pow(1 + rate, number_periods) - 1) / rate);
 			printf("\nFuture Value of Annuity Due: $%.2f\n", fv_annuity_due);
 		}
-		if (op < 1 || op>44) {
+		if (op == 45) {
+			puts("Total Assets?");
+			double total_assets = getValue();
+			puts("Sales Revenue?");
+			double sales_revenue = getValue();
+			double asset_to_sales = total_assets / sales_revenue;
+			printf("\nAsset to Sales Ratio: %G\n", asset_to_sales);
+		}
+		if (op == 46) {
+			puts("Sales Revenue?");
+			double sales_revenue = getValue();
+			puts("Total Assets?");
+			double total_assets = getValue();
+			double asset_turnover = sales_revenue / total_assets;
+			printf("\nAsset Turnover Ratio: %G\n", asset_turnover);
+		}
+		if (op == 47) {
+			puts("Receivables Turnover?");
+			double receivables_turnover = getValue();
+			double avg_collection_period = 365 / receivables_turnover;
+			printf("\nAverage Collection Period: %G\n", avg_collection_period);
+		}
+		if (op == 48) {
+			puts("Ask Price?");
+			double ask_price = getValue();
+			puts("Bid Price?");
+			double bid_price = getValue();
+			double bid_ask_spread = ask_price - bid_price;
+			printf("\nBid-Ask Spread: $%.2f\n", bid_ask_spread);
+		}
+		if (op == 49) {
+			puts("Face Value?");
+			double face_value = getValue();
+			puts("Price?");
+			double price = getValue();
+			puts("Days to maturity?");
+			double d = getValue();
+			double bond_equivalent_yield = ((face_value - price) / price)*(365 / d);
+			printf("\nBond Equivalent Yield: %.3f%%\n", bond_equivalent_yield * 100);
+		}
+		if (op == 50) {
+			puts("Total Common Stockholder's Equity?");
+			double total_common_stockholder_equity = getValue();
+			puts("Number of Common Shares?");
+			double number_common_shares = getValue();
+			double book_value_per_share = total_common_stockholder_equity / number_common_shares;
+			printf("\nBook Value per Share: $%.3f\n", book_value_per_share);
+		}
+		if (op < 1 || op>50) {
 			puts("\n\nError: Incorrect option id.\n\n");
 		}
 		fflush(NULL);

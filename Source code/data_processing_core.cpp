@@ -887,6 +887,11 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 	i = 0; j = 0;
 	sprintf(value, ""); sprintf(saveValue, "");
 	while (expression[i] != '\0') {
+		if (firstLetterFunction(expression[i])) {
+			while (verifyLetter(expression[i])) {
+				i++;
+			}
+		}
 		if (firstLetterVariable(expression[i])) {
 			value[j] = expression[i];
 			value[j + 1] = '\0';
