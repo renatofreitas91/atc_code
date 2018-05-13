@@ -2468,8 +2468,8 @@ void toSolve(int re) {
 					numFiles--;
 					sprintf(path, "%s%s", directory, fileName);
 					processTxt(path, re);
-					printf("==> Check the folder \"To solve\" to see the answers file(s) generated. Enter \"to solve\". <== \n\n");
 				}
+				printf("==> Check the folder \"To solve\" to see the answers file(s) generated. Enter \"to solve\". <== \n\n");
 			}
 			if (action == 0) {
 				int disable = -1;
