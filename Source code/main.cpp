@@ -25,11 +25,11 @@ void main(int argc, char *argv[]) {
 		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v1.9.5");
+		system("title Advanced Trigonometry Calculator v1.9.6");
 		continu = about();
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v1.9.5       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v1.9.6       ==) ATC is ready to process data. (==");
 		do {
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
@@ -45,7 +45,7 @@ void main(int argc, char *argv[]) {
 				}
 				gets_s(trigData);
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v1.9.5       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v1.9.6       ==) Processing... (==");
 			}
 			else {
 				arG = 1;
@@ -57,14 +57,17 @@ void main(int argc, char *argv[]) {
 				addATCPath();
 			}
 			sprintf(path, "%s\\history.txt", atcPath);
+			if (fout != NULL) {
+				fclose(fout);
+			}
+			fout = NULL;
+			while (fout == NULL) {
+				fout = fopen(path, "a+");
+			}
 			for (tD = 0; trigData[tD] != '\0'; tD++) {
 				runningScript = false;
 				fflush(NULL);
 				char fTrig[DIM] = "", arithTrig[DIM] = "";
-				fout = NULL;
-				while (fout == NULL) {
-					fout = fopen(path, "a+");
-				}
 				varRename[0] = '\0'; revariable[0] = '\0';
 				validVar = 1; 	processingOK = 1;
 				fTrig[0] = '\0';
@@ -111,6 +114,9 @@ void main(int argc, char *argv[]) {
 				}
 				fflush(NULL);
 				sprintf(arithTrig, "");
+			}
+			if (fout != NULL) {
+				fclose(fout);
 			}
 			if (continu != 1) {
 				fclose(fout);
@@ -189,7 +195,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v1.9.5       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v1.9.6       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -387,6 +393,12 @@ boolean processTxt(char path[DIM], int re) {
 					}
 					fflush(NULL);
 					sprintf(arith, "");
+					if (fin != NULL) {
+						fclose(fin);
+					}
+				}
+				if (fin != NULL) {
+					fclose(fin);
 				}
 			}
 			if (fin != NULL) {

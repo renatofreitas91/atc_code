@@ -2378,7 +2378,7 @@ void getATCPath() {
 	}
 }
 
-void toSolve(int re) {
+int toSolve(int re) {
 	FILE *file = NULL;
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
@@ -2391,7 +2391,7 @@ void toSolve(int re) {
 	if (file == NULL) {
 		char option[30] = "", directory[DIM] = "";
 		sprintf(directory, "%s\\To solve\\", atcPath);
-		int k = 0, numFiles = 0, i = 0;
+		int k = 0, numFiles = 0, i = 0, numFilesSolved = 0;
 		DIR *d;
 		struct dirent *dir;
 		d = opendir(directory);
@@ -2434,6 +2434,9 @@ void toSolve(int re) {
 								fclose(file);
 							}
 						}
+						else {
+							numFilesSolved++;
+						}
 					}
 				}
 			}
@@ -2443,7 +2446,7 @@ void toSolve(int re) {
 			txtFiles[k] = '\0';
 			closedir(d);
 			int action = -1;
-			if (numFiles > 0) {
+			if (numFiles > 0 && numFiles != numFilesSolved) {
 				printf("\n==> ATC has detected %d file(s) in the \"To solve\" folder. <==\n\nDo you want to solve the file(s)? (Yes -> 1 / No -> 0)\n", numFiles);
 				while (action != 0 && action != 1) {
 					action = (int)getValue();
@@ -2452,50 +2455,53 @@ void toSolve(int re) {
 					}
 				}
 				puts(" ");
+				if (action == 1) {
+					char path[DIM] = "";
+					char fileName[DIM] = "";
+					int i = 0, j = 0;
+					while (numFiles > 0) {
+						j = 0;
+						while (txtFiles[i] != '\n'&&txtFiles[i] != '\0') {
+							fileName[j] = txtFiles[i];
+							j++; i++;
+						}
+						fileName[j] = '\0';
+						i++;
+						numFiles--;
+						sprintf(path, "%s%s", directory, fileName);
+						processTxt(path, re);
+					}
+					printf("==> Check the folder \"To solve\" to see the answers file(s) generated. Enter \"to solve\". <== \n\n");
+				}
+				if (action == 0) {
+					int disable = -1;
+					printf("Do you want to disable the feature? (Yes -> 1 / No -> 0)\n");
+					while (disable != 0 && disable != 1) {
+						disable = (int)getValue();
+						if (disable != 0 && disable != 1) {
+							puts("(Yes -> 1 / No -> 0)");
+						}
+					}
+					puts(" ");
+					if (disable == 1) {
+						FILE *dis = NULL;
+						char toOpen[DIM] = "";
+						sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
+						retry = 0;
+						while (dis == NULL && retry < 7) {
+							dis = fopen(toOpen, "w");
+							Sleep(10);
+							retry++;
+						}
+						if (dis != NULL) {
+							fclose(dis);
+						}
+						puts("==> To enable the feature later enter \"enable txt detector\" <==\n");
+					}
+				}
 			}
-			if (action == 1) {
-				char path[DIM] = "";
-				char fileName[DIM] = "";
-				int i = 0, j = 0;
-				while (numFiles > 0) {
-					j = 0;
-					while (txtFiles[i] != '\n'&&txtFiles[i] != '\0') {
-						fileName[j] = txtFiles[i];
-						j++; i++;
-					}
-					fileName[j] = '\0';
-					i++;
-					numFiles--;
-					sprintf(path, "%s%s", directory, fileName);
-					processTxt(path, re);
-				}
-				printf("==> Check the folder \"To solve\" to see the answers file(s) generated. Enter \"to solve\". <== \n\n");
-			}
-			if (action == 0) {
-				int disable = -1;
-				printf("Do you want to disable the feature? (Yes -> 1 / No -> 0)\n");
-				while (disable != 0 && disable != 1) {
-					disable = (int)getValue();
-					if (disable != 0 && disable != 1) {
-						puts("(Yes -> 1 / No -> 0)");
-					}
-				}
-				puts(" ");
-				if (disable == 1) {
-					FILE *dis = NULL;
-					char toOpen[DIM] = "";
-					sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
-					retry = 0;
-					while (dis == NULL && retry < 7) {
-						dis = fopen(toOpen, "w");
-						Sleep(10);
-						retry++;
-					}
-					if (dis != NULL) {
-						fclose(dis);
-					}
-					puts("==> To enable the feature later enter \"enable txt detector\" <==\n");
-				}
+			else {
+				return 0;
 			}
 		}
 	}
@@ -2504,6 +2510,7 @@ void toSolve(int re) {
 			fclose(file);
 		}
 	}
+	return 0;
 }
 
 void currentSettings() {
@@ -2704,7 +2711,7 @@ void on_start() {
 		fclose(open);
 		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 'a'&&onStart[6] == 'l'&&onStart[7] == 'l'&&onStart[8] == '\0') {
 			char toOpen[DIM] = "";
-			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\variables.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"& del \"%s\\verboseResolution.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&rmdir /Q /S \"%s\\Strings\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
+			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\graph.txt\"&del \"%s\\variables.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"& del \"%s\\verboseResolution.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&rmdir /Q /S \"%s\\Strings\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
 			using namespace std;
 			std::string s = string(toOpen);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -2717,7 +2724,7 @@ void on_start() {
 		}
 		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 's'&&onStart[6] == 'e'&&onStart[7] == 't'&&onStart[8] == 't'&&onStart[9] == 'i'&&onStart[10] == 'n'&&onStart[11] == 'g'&&onStart[12] == 's'&&onStart[13] == '\0') {
 			char toOpen[DIM] = "";
-			sprintf(toOpen, "/C \"del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\verboseResolution.txt\"&del \"%s\\onStart.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
+			sprintf(toOpen, "/C \"del \"%s\\numSystems.txt\"&del \"%s\\graph.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\verboseResolution.txt\"&del \"%s\\onStart.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
 			using namespace std;
 			std::string s = string(toOpen);
 			std::wstring stemp = std::wstring(s.begin(), s.end());

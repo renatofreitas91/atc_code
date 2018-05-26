@@ -78,7 +78,7 @@ void window() {
 }
 
 void mode() {
-	FILE *open;
+	FILE *open = NULL;
 	int option = 0;
 	char value[DIM] = "";
 	while (option != 1 && option != 2 && option != 3) {
@@ -90,13 +90,15 @@ void mode() {
 	}
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\mode.txt", atcPath);
-	open = fopen(toOpen, "w");
+	while (open == NULL) {
+		open = fopen(toOpen, "w");
+	}
 	fprintf(open, "%d", option);
 	fclose(open);
 }
 
 void about2() {
-	system("title Advanced Trigonometry Calculator v1.9.5");
+	system("title Advanced Trigonometry Calculator v1.9.6");
 	system("MODE con cols=90 lines=15");
 	cls();
 	FILE *open = NULL;
@@ -113,7 +115,133 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v1.9.5                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v1.9.6                                                             ==) Enter data (==              ");
+}
+
+void graphSettings() {
+	FILE *graph = NULL;
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\graph.txt", atcPath);
+	graph = fopen(toOpen, "r");
+	if (graph == NULL) {
+		puts("\nCurrent settings:\n");
+		puts("Xmin: _10");
+		puts("Xmax: 10");
+		puts("Xscale: 1");
+		puts("Ymin: _10");
+		puts("Ymax: 10");
+		puts("Yscale: 1");
+		puts("");
+	}
+	else {
+		char data[DIM] = "";
+		int i = 0;
+		for (i = 0; (data[i] = fgetc(graph)) != EOF; i++);
+		data[i] = '\0';
+		puts("\nCurrent settings:\n");
+		i = 0; int j = 0;
+		char value[20] = "";
+		while (data[i] != '\n'&&data[i] != '\0') {
+			value[j] = data[i];
+			i++; j++;
+		}
+		value[j] = '\0';
+		printf("Xmin: %s\n", value);
+		i++;
+		j = 0;
+		while (data[i] != '\n'&&data[i] != '\0') {
+			value[j] = data[i];
+			i++; j++;
+		}
+		value[j] = '\0';
+		printf("Xmax: %s\n", value);
+		i++;
+		j = 0;
+		while (data[i] != '\n'&&data[i] != '\0') {
+			value[j] = data[i];
+			i++; j++;
+		}
+		value[j] = '\0';
+		printf("Xscale: %s\n", value);
+		i++;
+		j = 0;
+		while (data[i] != '\n'&&data[i] != '\0') {
+			value[j] = data[i];
+			i++; j++;
+		}
+		value[j] = '\0';
+		printf("Ymin: %s\n", value);
+		i++;
+		j = 0;
+		while (data[i] != '\n'&&data[i] != '\0') {
+			value[j] = data[i];
+			i++; j++;
+		}
+		value[j] = '\0';
+		printf("Ymax: %s\n", value);
+		i++;
+		j = 0;
+		while (data[i] != '\n'&&data[i] != '\0') {
+			value[j] = data[i];
+			i++; j++;
+		}
+		value[j] = '\0';
+		printf("Yscale: %s\n", value);
+		puts("");
+	}
+	int op = -1;
+	while (op > 1 || op < 0) {
+		puts("Would you like to change them? (Yes -> 1 \\ No -> 0)");
+		op = (int)getValue();
+	}
+	if (op == 1) {
+		int error = -1;
+		while (error == -1) {
+			puts("Xmin?");
+			double Xmin = getValue();
+			puts("Xmax?");
+			double Xmax = getValue();
+			puts("Xscale?");
+			double Xscale = getValue();
+			puts("Ymin?");
+			double Ymin = getValue();
+			puts("Ymax?");
+			double Ymax = getValue();
+			puts("Yscale?");
+			double Yscale = getValue();
+			char settingsGraph[DIM] = "";
+			if (Ymax <= Ymin) {
+				puts("\nError: Ymax <= Ymin  -> Must be the opposite.\n");
+			}
+			else {
+				if (Xmax <= Xmin) {
+					puts("\nError: Xmax <= Xmin  -> Must be the opposite.\n");
+				}
+				else {
+					if (Xscale <= 0) {
+						puts("\nError: X scale must be greater than 0.\n");
+					}
+					else {
+						if (Yscale <= 0) {
+							puts("\nError: Y scale must be greater than 0.\n");
+						}
+						else {
+							error = 0;
+							graph = fopen(toOpen, "w");
+							sprintf(settingsGraph, "%G\n%G\n%G\n%G\n%G\n%G", Xmin, Xmax, Xscale, Ymin, Ymax, Yscale);
+							if (isContained("-", settingsGraph)) {
+								replace("-", "_", settingsGraph);
+								sprintf(settingsGraph, expressionF);
+							}
+							fputs(settingsGraph, graph);
+							fclose(graph);
+						}
+					}
+				}
+			}
+		}
+
+	}
 }
 
 int applySettings(int toDo) {
@@ -197,13 +325,19 @@ int applySettings(int toDo) {
 		char opt[DIM] = "";
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\mode.txt", atcPath);
-		open = fopen(toOpen, "r");
+		open = NULL;
+		int g = 0;
+		while (open == NULL && g < 10) {
+			open = fopen(toOpen, "r");
+			g++;
+		}
 		if (open == NULL) {
 			option = 2;
 		}
 		else {
 			fgets(opt, 2, open);
 			option = atoi(opt);
+			fclose(open);
 		}
 		return option;
 	}
@@ -212,7 +346,7 @@ int applySettings(int toDo) {
 
 boolean about() {
 	ShowConsoleCursor(FALSE);
-	system("title Advanced Trigonometry Calculator v1.9.5");
+	system("title Advanced Trigonometry Calculator v1.9.6");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
@@ -239,11 +373,11 @@ boolean about() {
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("                                     %c%c    %c%c%c    %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                                     %c%c    %c%c%c     %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("                                    %c %c   %c   %c   %c    \n", 177, 177, 177, 177, 177);
 	printf("                             %c   %c %c  %c    %c%c%c%c   %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                              %c %c     %c       %c       %c\n", 177, 177, 177, 177, 177);
-	printf("                               %c      %c %c  %c%c%c  %c %c%c%c%c  \n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                              %c %c     %c       %c   %c   %c\n", 177, 177, 177, 177, 177, 177);
+	printf("                               %c      %c %c  %c%c%c  %c  %c%c%c  \n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n         To support the development of this application please enter \"donate\"\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
 	printf("     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS\n");

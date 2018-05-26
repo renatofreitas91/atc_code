@@ -61,7 +61,6 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 					fprintf(fout, "\n==> Invalid string name! Only letters from latin alphabet and digits 0-9 can be used. <==\n\n");
 					arithTrig[0] = '\0';
 				}
-
 			}
 		}
 
@@ -265,12 +264,10 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			if (verify == 1) {
 				fprintf(fout, ">%s\n", savefTrig);
 			}
-			if (fout != NULL) {
-				fclose(fout);
-			}
 			command = commands(arithTrig, path, result1, result2);
 			fflush(NULL);
 			fout = NULL;
+			fout = fopen(path, "a+");
 			while (fout == NULL) {
 				fout = fopen(path, "a+");
 			}

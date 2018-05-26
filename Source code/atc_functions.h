@@ -16,7 +16,7 @@ void wait(int seconds);
 void on_start();
 void addATCPath();
 void getATCPath();
-void toSolve(int re);
+int toSolve(int re);
 void ShowConsoleCursor(BOOL bShow);
 void verboseResolutionController();
 void complexNumber(double a, double b);

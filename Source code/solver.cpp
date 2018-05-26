@@ -6,6 +6,44 @@ boolean solverRunning = false, retrySolver = false, retrySolver_2 = false, retry
 double xValuesR = 0, xValuesI = 0, saveResultRFR = 0, saveResultRFI = 0;
 
 double solver(char expression[DIM]) {
+	if (isContained("\\", expression)) {
+		int d = 0, check_integral = 0;;
+		for (d = 0; expression[d] != '\0'; d++) {
+			if (expression[d] == '\\') {
+				check_integral++;
+			}
+		}
+		if (check_integral == 2) {
+			d = 0;
+			int e = 0;
+			char getValue[DIM] = "";
+			while (expression[d] != '\\') {
+				getValue[e] = expression[d];
+				e++; d++;
+			}
+			getValue[e] = '\0';
+			double a = calcNow(getValue, 0, 0);
+			d++;
+			e = 0;
+			sprintf(getValue,"");
+			while (expression[d] != '\\') {
+				getValue[e] = expression[d];
+				e++; d++;
+			}
+			getValue[e] = '\0';
+			double b = calcNow(getValue, 0, 0);
+			d++;
+			char function[DIM] = "";
+			e = 0;
+			while (expression[d] != '\0') {
+				function[e] = expression[d];
+				e++; d++;
+			}
+			function[e] = '\0';
+			double area = calculateIntegral(a, b, function);
+			return area;
+		}
+	}
 	if (isContained("x", expression)) {
 		replace("x", "res", expression);
 		sprintf(expression, "%s", expressionF);
