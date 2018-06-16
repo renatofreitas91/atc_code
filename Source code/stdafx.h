@@ -19,7 +19,7 @@
 extern double natureValue, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
 extern int executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
 extern char saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
-extern boolean equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript;
+extern boolean equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver;
 double functionProcessor(char trigon[DIM], double result, double amplitude, double res);
 double initialProcessor(char arithTrig[DIM], double result);
 double arithSolver(char trigon1[DIM], double result);
@@ -58,7 +58,6 @@ void toMultiply(char expression[DIM], double result1, double result2);
 void print(char text[DIM], double result1, double result2);
 void sprint(char text[DIM], double result1, double result2);
 void customFuncRenamer(char variable[DIM]);
-void graphSettings();
 void designGraph(char function[DIM]);
 void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]);
 void fmsum(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]);

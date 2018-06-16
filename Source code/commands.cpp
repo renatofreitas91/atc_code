@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-boolean returned = false;
+boolean returned = false, equation_solver = false;
 
 boolean commands(char arithTrig[DIM], char path[DIM], double result1, double result2) {
 	FILE *fout = NULL, *fclean = NULL;
@@ -31,6 +31,16 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	if (isCommand(arithTrig, "graphsettings")) {
 		command = true;
 		graphSettings();
+		puts("");
+	}
+	if (isCommand(arithTrig, "statisticscalculations")) {
+		command = true;
+		statisticsCalculations();
+		puts("");
+	}
+	if (isCommand(arithTrig, "geometrycalculations")) {
+		command = true;
+		geometryCalculations();
 		puts("");
 	}
 	if (isCommand(arithTrig, "financialcalculations")) {
@@ -211,9 +221,8 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			Try = fopen(Path, "r");
 			if (Try != NULL) {
 				fclose(Try);
-				char toOpen[DIM] = "";
-				sprintf(toOpen, "del \"%s\"", Path);
-				system(toOpen);
+				Try = fopen(Path, "w");
+				fclose(Try);
 			}
 			end_processing = clock();
 			double time_ms = (end_processing - start_processing) / (CLOCKS_PER_SEC / 1000);
@@ -243,6 +252,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	}
 	if (isCommand(arithTrig, "solveequation")) {
 		command = true;
+		equation_solver = true;
 		if (arithTrig[13] == '(') {
 			int tDev = 14, tGet = 0;
 			char exprDev[DIM] = "";
@@ -252,6 +262,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 			exprDev[tGet] = '\0';
 			equationSolver(exprDev);
+			equation_solver = false;
 		}
 		puts("");
 	}
@@ -1290,7 +1301,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.6  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.7  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(thours, tminutes, tseconds);
 									}
@@ -1488,7 +1499,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.6  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.7  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(thours, tminutes, tseconds);
 									}
@@ -1701,7 +1712,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.6 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.7 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n  %02d:%02d:%02d\n", thours, tminutes, tseconds);
@@ -1909,7 +1920,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.6 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v1.9.7 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(Hours, Minutes, Seconds);
 										printf("\n\n    %02d:%02d:%02d\n\n", thours, tminutes, tseconds);

@@ -275,8 +275,11 @@ void rootsToPolynomial(char roots[DIM]) {
 		}
 	}
 	puts(report);
-	puts("Export result? (Yes -> 1 \\ No -> 0)");
-	int option = (int)getValue();
+	int option = -1;
+	while (option != 0 && option != 1) {
+		puts("Export result? (Yes -> 1 \\ No -> 0)");
+		option = (int)getValue();
+	}
 	if (option == 1) {
 		saveToReport(report);
 	}
@@ -290,6 +293,7 @@ void equationSolver(char equation[DIM]) {
 	if (isContained("\\", equation)) {
 		puts("");
 		equationSolverRunning = true;
+		solving = false;
 		double valuesEqR[DIM], valuesEqI[DIM];
 		for (i = 0; equation[i] != '\0'; i++) {
 			if (equation[i] == '\\') {
@@ -350,8 +354,167 @@ void equationSolver(char equation[DIM]) {
 		sprintf(toCalcX, "%s(%s+%si)", toCalcX, ValueR, ValueI);
 	}
 	else {
-		maxExponent = 1;
-		sprintf(toCalcX, equation);
+		solving = false;
+		if (isContained("x^", equation) == (boolean)false || (equation_solver == (boolean)true && isContained("x", equation) && isContained("x^", equation) == (boolean)false)) {
+			maxExponent = 1;
+			sprintf(toCalcX, equation);
+			equationSolverRunning = true;
+			solving = false;
+			if (equation_solver == (boolean)true && isContained("x", equation) && isContained("x^", equation) == (boolean)false) {
+				while (isContained("x", toCalcX) && verifyNumber(toCalcX[strStart - 1])) {
+					char value[100] = "", valueF[100] = "";
+					sprintf(value, "%cx", toCalcX[strStart - 1]);
+					sprintf(valueF, "%c*(res)^1", toCalcX[strStart - 1]);
+					replace(value, valueF, toCalcX);
+					sprintf(toCalcX, expressionF);
+				}
+				if (isContained("x", toCalcX)) {
+					replace("x", "1*(res)^1", toCalcX);
+					sprintf(toCalcX, expressionF);
+				}
+				char saveToCalcX[DIM] = "";
+				sprintf(saveToCalcX, toCalcX);
+				char maxExp[10] = "";
+				sprintf(maxExp, ")^%d", maxExponent);
+				double dividerValue = 0;
+				char divider[DIM] = "";
+				while (isContained(maxExp, saveToCalcX)) {
+					int b = strStart;
+					while (saveToCalcX[b] != '(') {
+						b--;
+					}
+					if (saveToCalcX[b - 1] == '*') {
+						b = b - 2;
+						while (verifyValue(saveToCalcX[b])) {
+							b--;
+						}
+						b++;
+						int t = 0;
+						if (saveToCalcX[b - 1] == '-') {
+							divider[t] = '_'; t++;
+						}
+						while (saveToCalcX[b + 1] != '(') {
+							divider[t] = saveToCalcX[b];
+							b++;
+							t++;
+						}
+						divider[t] = '\0';
+						calcNow(divider, 0, 0);
+						dividerValue = dividerValue + resultR;
+						char toReplace[DIM] = "";
+						sprintf(toReplace, "%s*(res%s", divider, maxExp);
+						isContained(toReplace, saveToCalcX);
+						int y = strStart;
+						while (y < strEnd) {
+							saveToCalcX[y] = ' ';
+							y++;
+						}
+						replace(" ", "", saveToCalcX);
+						sprintf(saveToCalcX, expressionF);
+					}
+				}
+				sprintf(divider, "%G", dividerValue);
+				for (int y = 0; divider[y] != '\0'; y++) {
+					if (divider[y] == '-') {
+						divider[y] = '_';
+					}
+				}
+				char newExpre[DIM] = "";
+				sprintf(newExpre, "(%s)/%s", toCalcX, divider);
+				sprintf(toCalcX, newExpre);
+			}
+		}
+		else {
+			equationSolverRunning = true;
+			maxExponent = 1;
+			char exponent[DIM] = "";
+			int g = 0, k = 0;
+			for (g = 0; equation[g] != '\0'; g++) {
+				if (equation[g - 1] == 'x'&&equation[g] == '^') {
+					int saveG = g - 2;
+					g++; k = 0;
+					while (verifyNumber(equation[g])) {
+						exponent[k] = equation[g];
+						k++; g++;
+					}
+					exponent[k] = '\0';
+					calcNow(exponent, 0, 0);
+					if ((int)resultR > maxExponent) {
+						maxExponent = (int)resultR;
+					}
+					char toReplace[DIM] = "";
+					sprintf(toReplace, "x^%s", exponent);
+					char replacement[DIM] = "";
+					if (verifyNumber(equation[saveG])) {
+						sprintf(replacement, "*(res)^%s", exponent);
+					}
+					else {
+						sprintf(replacement, "1*(res)^%s", exponent);
+					}
+					replace(toReplace, replacement, equation);
+					sprintf(toCalcX, expressionF);
+				}
+			}
+			if (isContained("x", toCalcX)) {
+				if (verifyNumber(toCalcX[strStart - 1])) {
+					replace("x", "*(res)", toCalcX);
+				}
+				else {
+					replace("x", "1*(res)", toCalcX);
+				}
+				sprintf(toCalcX, expressionF);
+			}
+			char saveToCalcX[DIM] = "";
+			sprintf(saveToCalcX, toCalcX);
+			char maxExp[10] = "";
+			sprintf(maxExp, ")^%d", maxExponent);
+			double dividerValue = 0;
+			char divider[DIM] = "";
+			while (isContained(maxExp, saveToCalcX)) {
+				int b = strStart;
+				while (saveToCalcX[b] != '(') {
+					b--;
+				}
+				if (saveToCalcX[b - 1] == '*') {
+					b = b - 2;
+					while (verifyValue(saveToCalcX[b])) {
+						b--;
+					}
+					b++;
+					int t = 0;
+					if (saveToCalcX[b - 1] == '-') {
+						divider[t] = '_'; t++;
+					}
+					while (saveToCalcX[b + 1] != '(') {
+						divider[t] = saveToCalcX[b];
+						b++;
+						t++;
+					}
+					divider[t] = '\0';
+					calcNow(divider, 0, 0);
+					dividerValue = dividerValue + resultR;
+					char toReplace[DIM] = "";
+					sprintf(toReplace, "%s*(res%s", divider, maxExp);
+					isContained(toReplace, saveToCalcX);
+					int y = strStart;
+					while (y < strEnd) {
+						saveToCalcX[y] = ' ';
+						y++;
+					}
+					replace(" ", "", saveToCalcX);
+					sprintf(saveToCalcX, expressionF);
+				}
+			}
+			sprintf(divider, "%G", dividerValue);
+			for (int y = 0; divider[y] != '\0'; y++) {
+				if (divider[y] == '-') {
+					divider[y] = '_';
+				}
+			}
+			char newExpre[DIM] = "";
+			sprintf(newExpre, "(%s)/%s", toCalcX, divider);
+			sprintf(toCalcX, newExpre);
+		}
 	}
 	double RootR[dim], RootI[dim], to_numR[dim], to_numI[dim];
 	int g = 0;
@@ -402,7 +565,7 @@ void equationSolver(char equation[DIM]) {
 		if ((rootR < 1E-7&&rootR >= 0) || (rootR > -1E-7&&rootR <= 0)) {
 			rootR = 0;
 		}
-		if (isContained("\\", equation)) {
+		if (isContained("\\", equation) || isContained("x^", equation) || (equation_solver == (boolean)true && isContained("x", equation) && isContained("x^", equation) == (boolean)false)) {
 			if (rootR > 0 && rootI > 0) {
 				sprintf(answers, "%sx%d=%G+%Gi\n", answers, rootIndex, rootR, rootI);
 			}
@@ -443,10 +606,13 @@ void equationSolver(char equation[DIM]) {
 		rootIndex++;
 		g++;
 	}
-	if (isContained("\\", equation)) {
+	if (isContained("\\", equation) || isContained("x^", equation) || (equation_solver == (boolean)true && isContained("x", equation) && isContained("x^", equation) == (boolean)false)) {
 		puts(answers);
-		puts("Export result? (Yes -> 1 \\ No -> 0)");
-		int option = (int)getValue();
+		int option = -1;
+		while (option != 0 && option != 1) {
+			puts("Export result? (Yes -> 1 \\ No -> 0)");
+			option = (int)getValue();
+		}
 		if (option == 1) {
 			saveToReport(answers);
 		}
@@ -455,5 +621,6 @@ void equationSolver(char equation[DIM]) {
 		resultR = RootR[g - 1];
 		resultI = RootI[g - 1];
 	}
+	solving = true;
 	equationSolverRunning = false;
 }

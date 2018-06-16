@@ -2385,7 +2385,6 @@ int toSolve(int re) {
 	int retry = 0;
 	while (file == NULL && retry < 7) {
 		file = fopen(toOpen, "r");
-		Sleep(10);
 		retry++;
 	}
 	if (file == NULL) {
@@ -2446,7 +2445,7 @@ int toSolve(int re) {
 			txtFiles[k] = '\0';
 			closedir(d);
 			int action = -1;
-			if (numFiles > 0 && numFiles != numFilesSolved) {
+			if (numFiles != 0) {
 				printf("\n==> ATC has detected %d file(s) in the \"To solve\" folder. <==\n\nDo you want to solve the file(s)? (Yes -> 1 / No -> 0)\n", numFiles);
 				while (action != 0 && action != 1) {
 					action = (int)getValue();
@@ -2700,6 +2699,24 @@ void currentSettings() {
 }
 
 void on_start() {
+	char Path[DIM] = "";
+	sprintf(Path, "%s\\temp.txt", atcPath);
+	FILE *Try = NULL;
+	Try = fopen(Path, "r");
+	if (Try != NULL) {
+		fclose(Try);
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "del \"%s\"", Path);
+		system(toOpen);
+	}
+	sprintf(Path, "%s\\temp_answers.txt", atcPath);
+	Try = fopen(Path, "r");
+	if (Try != NULL) {
+		fclose(Try);
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "del \"%s\"", Path);
+		system(toOpen);
+	}
 	FILE *open = NULL;
 	char onStart[100] = "";
 	int Colors = 1, Dimensions = 2, Window = 3;
@@ -3446,6 +3463,17 @@ boolean verifyLetter(char letter) {
 
 boolean verifyNumber(char number) {
 	char numbers[DIM] = "0123456789";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (number == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean verifyValue(char number) {
+	char numbers[DIM] = "_.0123456789/*";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(numbers)); i++) {
 		if (number == numbers[i]) {

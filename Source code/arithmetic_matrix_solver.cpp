@@ -516,8 +516,11 @@ void fmsum(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[
 		sprintf(report, "%s\n", report);
 	}
 	puts(report);
-	puts("Export result? (Yes -> 1 \\ No -> 0)");
-	int option = (int)getValue();
+	int option = -1;
+	while (option != 0 && option != 1) {
+		puts("Export result? (Yes -> 1 \\ No -> 0)");
+		option = (int)getValue();
+	}
 	if (option == 1) {
 		saveToReport(report);
 	}
@@ -536,8 +539,11 @@ void fmsubt(int lins, int cols, double v[dim][dim], double u[dim][dim], double r
 		sprintf(report, "%s\n", report);
 	}
 	puts(report);
-	puts("Export result? (Yes -> 1 \\ No -> 0)");
-	int option = (int)getValue();
+	int option = -1;
+	while (option != 0 && option != 1) {
+		puts("Export result? (Yes -> 1 \\ No -> 0)");
+		option = (int)getValue();
+	}
 	if (option == 1) {
 		saveToReport(report);
 	}
@@ -556,8 +562,11 @@ void fmmulr(int lins, int cols, double v[dim][dim], double r[dim][dim], double r
 		sprintf(report, "%s\n", report);
 	}
 	puts(report);
-	puts("Export result? (Yes -> 1 \\ No -> 0)");
-	int option = (int)getValue();
+	int option = -1;
+	while (option != 0 && option != 1) {
+		puts("Export result? (Yes -> 1 \\ No -> 0)");
+		option = (int)getValue();
+	}
 	if (option == 1) {
 		saveToReport(report);
 	}
@@ -589,8 +598,11 @@ void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], doub
 			sprintf(report, "%s\n", report);
 		}
 		puts(report);
-		puts("Export result? (Yes -> 1 \\ No -> 0)");
-		int option = (int)getValue();
+		int option = -1;
+		while (option != 0 && option != 1) {
+			puts("Export result? (Yes -> 1 \\ No -> 0)");
+			option = (int)getValue();
+		}
 		if (option == 1) {
 			saveToReport(report);
 		}
@@ -614,8 +626,11 @@ void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim
 		sprintf(report, "%s\n", report);
 	}
 	puts(report);
-	puts("Export result? (Yes -> 1 \\ No -> 0)");
-	int option = (int)getValue();
+	int option = -1;
+	while (option != 0 && option != 1) {
+		puts("Export result? (Yes -> 1 \\ No -> 0)");
+		option = (int)getValue();
+	}
 	if (option == 1) {
 		saveToReport(report);
 	}
@@ -874,8 +889,11 @@ void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim])
 		sprintf(report, "%s\n", report);
 	}
 	puts(report);
-	puts("Export result? (Yes -> 1 \\ No -> 0)");
-	int option = (int)getValue();
+	int option = -1;
+	while (option != 0 && option != 1) {
+		puts("Export result? (Yes -> 1 \\ No -> 0)");
+		option = (int)getValue();
+	}
 	if (option == 1) {
 		saveToReport(report);
 	}
@@ -924,8 +942,11 @@ void fmpowerm(double v[dim][dim], double vI[dim][dim], int power, int lins, int 
 			sprintf(report, "%s\n", report);
 		}
 		puts(report);
-		puts("Export result? (Yes -> 1 \\ No -> 0)");
-		int option = (int)getValue();
+		int option = -1;
+		while (option != 0 && option != 1) {
+			puts("Export result? (Yes -> 1 \\ No -> 0)");
+			option = (int)getValue();
+		}
 		if (option == 1) {
 			saveToReport(report);
 		}
@@ -992,8 +1013,11 @@ void fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]) {
 	}
 	sprintf(report, "%s\nRank: %d\n", report, rank);
 	puts(report);
-	puts("Export result? (Yes -> 1 \\ No -> 0)");
-	int option = (int)getValue();
+	int option = -1;
+	while (option != 0 && option != 1) {
+		puts("Export result? (Yes -> 1 \\ No -> 0)");
+		option = (int)getValue();
+	}
 	if (option == 1) {
 		saveToReport(report);
 	}
