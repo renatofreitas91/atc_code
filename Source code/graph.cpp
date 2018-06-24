@@ -7,16 +7,17 @@ void designGraph(char function[DIM]) {
 	}
 	FILE *graph = NULL;
 	char toOpen[DIM] = "";
-	double Xmin, Xmax, Xscale, Ymin, Ymax, Yscale;
+	double Xmin, Xmax, Xscale, Ymin, Ymax, Yscale, auto_y_axis;
 	sprintf(toOpen, "%s\\graph.txt", atcPath);
 	graph = fopen(toOpen, "r");
 	if (graph == NULL) {
 		Xmin = -10;
 		Xmax = 10;
 		Xscale = 1;
-		Ymin = -10;
-		Ymax = 10;
-		Yscale = 1;
+		Ymin = -1E-20;
+		Ymax = 1E-20;
+		Yscale = 1E-21;
+		auto_y_axis = 1;
 	}
 	else {
 		char data[DIM] = "";
@@ -72,23 +73,26 @@ void designGraph(char function[DIM]) {
 		}
 		value[j] = '\0';
 		Yscale = calcNow(value, 0, 0);
+		i++;
+		j = 0;
+		while (data[i] != '\n'&&data[i] != '\0') {
+			value[j] = data[i];
+			i++; j++;
+		}
+		value[j] = '\0';
+		auto_y_axis = calcNow(value, 0, 0);
 	}
+	double yValuesAll[20][121];
 	double xDim = Xmax - Xmin;
 	double valuePerxDim = 120 / xDim;
 	double yDim = Ymax - Ymin;
 	double valuePeryDim = 60 / yDim;
 	double valueXPerXscale = Xscale * valuePerxDim;
 	double valueYPerYscale = Yscale * valuePeryDim;
+	double x_scale = (Xscale / (xDim / 120)), y_scale = ((Yscale) / (yDim / 60));
 	solverRunning = true;
 	solving = false;
-	char Graph[60][120];
-	int i = 0;
-	int j = 0;
-	for (i = 0; i < 60; i++) {
-		for (j = 0; j < 120; j++) {
-			Graph[i][j] = ' ';
-		}
-	}
+	int i = 0, j = 0;
 	int y = (int)abs(Ymax);
 	y = (int)(y / ((double)yDim / 60));
 	int x = (int)abs(Xmin);
@@ -101,27 +105,99 @@ void designGraph(char function[DIM]) {
 			}
 		}
 	}
-	int x_scale = (int)(Xscale / (xDim / 120)), y_scale = (int)(Yscale / (yDim / 60));
+	char specFunction[DIM] = "";
+	sprintf(specFunction, function);
+	int r = 0, e = 0, count = 0;
+	char info[DIM] = "";
+	if (auto_y_axis == 1) {
+		do {
+			e = 0;
+			while (function[r] != '\\'&&function[r] != '\0') {
+				specFunction[e] = function[r];
+				r++; e++;
+			}
+			specFunction[e] = '\0';
+			r++;
+			double start = Xmin;
+			int f = 0;
+			double yValues[121] = { 0,0 };
+			double newYmax = 1E-20, newYmin = -1E-20;
+			while (f < 120) {
+				xValuesR = start; xValuesI = 0;
+				calcNow(specFunction, 0, 0);
+				yValues[f] = resultR;
+				yValuesAll[count][f] = resultR;
+				if (yValues[f] < newYmin) {
+					newYmin = yValues[f];
+				}
+				if (yValues[f] > newYmax) {
+					newYmax = yValues[f];
+				}
+				resultR = 0; resultI = 0;
+				start = start + (double)xDim / 120;
+				f++;
+			}
+			if (newYmin < Ymin || newYmax > Ymax) {
+				if (abs(newYmin) > newYmax) {
+					newYmax = abs(newYmin);
+				}
+				else {
+					newYmin = newYmax * -1;
+				}
+				Ymax = ceil(newYmax);
+				Ymin = floor(newYmin);
+				Yscale = abs(Ymax - Ymin) / 20;
+				xDim = abs(Xmax - Xmin);
+				valuePerxDim = 120 / xDim;
+				yDim = abs(Ymax - Ymin);
+				valuePeryDim = 60 / yDim;
+				valueXPerXscale = Xscale * valuePerxDim;
+				valueYPerYscale = Yscale * valuePeryDim;
+				i = 0;
+				j = 0;
+				y = (int)abs(Ymax);
+				y = (int)(y / ((double)yDim / 60));
+				x = (int)abs(Xmin);
+				x = (int)(x / ((double)xDim / 120));
+			}
+			x_scale = (Xscale / (xDim / 120)); y_scale = ((Yscale) / (yDim / 60));
+			commas--;
+			count++;
+		} while (commas > 0);
+	}
+	commas = 1;
+	if (isContained("\\", function)) {
+		for (j = 0; function[j] != '\0'; j++) {
+			if (function[j] == '\\') {
+				commas++;
+			}
+		}
+	}
+	char Graph[60][120];
+	i = 0; j = 0;
+	for (i = 0; i < 60; i++) {
+		for (j = 0; j < 120; j++) {
+			Graph[i][j] = ' ';
+		}
+	}
 	for (i = 0; i < 60; i++) {
 		Graph[y][i] = '_';
-		if (i%x_scale == 0) {
+		if (re(i, x_scale) == 0) {
 			Graph[y + 1][i] = (char)179;
 		}
 		Graph[i][x] = (char)179;
-		if (i%y_scale == 0) {
+		if (re(i, y_scale) == 0) {
 			Graph[i][x + 1] = '_';
 		}
 	}
 	for (i = 60; i < 120; i++) {
 		Graph[y][i] = '_';
-		if (i%x_scale == 0) {
+		if (re(i, x_scale) == 0) {
 			Graph[y + 1][i] = (char)179;
 		}
 	}
-	char specFunction[DIM] = "";
 	sprintf(specFunction, function);
-	int r = 0, e = 0, count = 0;
-	char info[DIM] = "";
+	r = 0; e = 0; count = 0;
 	do {
 		e = 0;
 		while (function[r] != '\\'&&function[r] != '\0') {
@@ -135,9 +211,14 @@ void designGraph(char function[DIM]) {
 		int f = 0;
 		double yValues[121] = { 0,0 };
 		while (f < 120) {
-			xValuesR = start; xValuesI = 0;
-			calcNow(specFunction, 0, 0);
-			yValues[f] = resultR;
+			if (auto_y_axis == 1) {
+				yValues[f] = yValuesAll[count][f];
+			}
+			else {
+				xValuesR = start; xValuesI = 0;
+				calcNow(specFunction, 0, 0);
+				yValues[f] = resultR;
+			}
 			resultR = 0; resultI = 0;
 			start = start + (double)xDim / 120;
 			f++;

@@ -2166,7 +2166,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 			variableCheck[s] = '\0';
 			if (isVariable(variableCheck)) {
-				if (arithTrig[i] != ')') {
+				if (arithTrig[i - strlen(variableCheck) - 1] != '(' || arithTrig[i] != ')') {
 					sprintf(newArithTrig, "%s(%s)", newArithTrig, variableCheck);
 				}
 				else {

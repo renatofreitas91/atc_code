@@ -128,9 +128,10 @@ void graphSettings() {
 		puts("Xmin: _10");
 		puts("Xmax: 10");
 		puts("Xscale: 1");
-		puts("Ymin: _10");
-		puts("Ymax: 10");
-		puts("Yscale: 1");
+		puts("Ymin: _1E-20");
+		puts("Ymax: 1E-20");
+		puts("Yscale: 1E-21");
+		puts("Auto Y-axis: ON");
 		puts("");
 	}
 	else {
@@ -187,6 +188,19 @@ void graphSettings() {
 		}
 		value[j] = '\0';
 		printf("Yscale: %s\n", value);
+		j = 0;
+		i++;
+		while (data[i] != '\n'&&data[i] != '\0') {
+			value[j] = data[i];
+			i++; j++;
+		}
+		value[j] = '\0';
+		if (isEqual("1", value)) {
+			printf("Auto Y-axis: Enabled\n");
+		}
+		if (isEqual("0", value)) {
+			printf("Auto Y-axis: Disabled\n");
+		}
 		puts("");
 	}
 	int op = -1;
@@ -201,14 +215,29 @@ void graphSettings() {
 			double Xmin = getValue();
 			puts("Xmax?");
 			double Xmax = getValue();
-			puts("Xscale?");
-			double Xscale = getValue();
-			puts("Ymin?");
-			double Ymin = getValue();
-			puts("Ymax?");
-			double Ymax = getValue();
-			puts("Yscale?");
-			double Yscale = getValue();
+			double Xscale = 0.00001;
+			while (Xscale < (Xmax - Xmin) / 120) {
+				printf("Xscale? (minimum: %G)\n", abs(Xmax - Xmin) / 120);
+				Xscale = getValue();
+			}
+			int auto_y_axis = -1;
+			while (auto_y_axis != 1 && auto_y_axis != 0) {
+				puts("Auto Y-axis? (Enable -> 1 \\ Disable -> 0)");
+				auto_y_axis = (int)getValue();
+			}
+			double Ymin = -1E-20;
+			double Ymax = 1E-20;
+			double Yscale = 0.05;
+			if (auto_y_axis == 0) {
+				puts("Ymin?");
+				Ymin = getValue();
+				puts("Ymax?");
+				Ymax = getValue();
+				while (Yscale < (Ymax - Ymin) / 60) {
+					printf("Yscale? (minimum: %G)\n", abs(Ymax - Ymin) / 60);
+					Yscale = getValue();
+				}
+			}
 			char settingsGraph[DIM] = "";
 			if (Ymax <= Ymin) {
 				puts("\nError: Ymax <= Ymin  -> Must be the opposite.\n");
@@ -228,7 +257,7 @@ void graphSettings() {
 						else {
 							error = 0;
 							graph = fopen(toOpen, "w");
-							sprintf(settingsGraph, "%G\n%G\n%G\n%G\n%G\n%G", Xmin, Xmax, Xscale, Ymin, Ymax, Yscale);
+							sprintf(settingsGraph, "%G\n%G\n%G\n%G\n%G\n%G\n%d\n", Xmin, Xmax, Xscale, Ymin, Ymax, Yscale, auto_y_axis);
 							if (isContained("-", settingsGraph)) {
 								replace("-", "_", settingsGraph);
 								sprintf(settingsGraph, expressionF);

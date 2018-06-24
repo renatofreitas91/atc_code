@@ -167,7 +167,7 @@ void rootsToPolynomial(char roots[DIM]) {
 		puts("\nError: At minimum two roots must be entered.\n");
 	}
 	else {
-		for (i = 0; i < numberRoots * 7; i++) {
+		for (i = 0; i < numberRoots * 100; i++) {
 			valuesRootsR[i] = 0;
 			valuesRootsI[i] = 0;
 			polynomialR[i] = 0;
