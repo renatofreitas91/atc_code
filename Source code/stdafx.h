@@ -18,8 +18,8 @@
 #include <dirent.h> 
 extern double natureValue, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
 extern int executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
-extern char saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
-extern boolean equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver;
+extern char charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
+extern boolean physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver;
 double functionProcessor(char trigon[DIM], double result, double amplitude, double res);
 double initialProcessor(char arithTrig[DIM], double result);
 double arithSolver(char trigon1[DIM], double result);
@@ -34,6 +34,7 @@ double solveNow(char toSolveNow[DIM], double result1, double result2);
 double numericalSystems(char numSystem[DIM]);
 double calcNow(char toCalc[DIM], double result1, double result2);
 double solver(char expression[DIM]);
+double solve(char equation[DIM]);
 double atcProg(char expression[DIM]);
 double calculateIntegral(double a, double b, char function[DIM]);
 int variableValidator(char variable[DIM]);

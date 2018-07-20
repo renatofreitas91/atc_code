@@ -48,22 +48,6 @@ double solver(char expression[DIM]) {
 		replace("x", "res", expression);
 		sprintf(expression, "%s", expressionF);
 	}
-	if (isContained("E+", expression)) {
-		replace("E+", "*10^", expression);
-		sprintf(expression, "%s", expressionF);
-	}
-	if (isContained("E-", expression)) {
-		replace("E-", "*10^_", expression);
-		sprintf(expression, "%s", expressionF);
-	}
-	if (isContained("E_", expression)) {
-		replace("E_", "*10^_", expression);
-		sprintf(expression, "%s", expressionF);
-	}
-	if (isContained("E", expression)) {
-		replace("E", "*10^", expression);
-		sprintf(expression, "%s", expressionF);
-	}
 	solverRunning = true;
 	solving = false;
 	resultR = 0; resultI = 0;
@@ -92,7 +76,7 @@ double solver(char expression[DIM]) {
 			}
 		}
 		poly = false;
-		xValuesR = resultFR; xValuesI = resultFI;
+		xValuesR = resultFR; xValuesI = resultFI; saveResultR = -0.1; saveResultI = 0;
 		if ((retrySolver == (boolean)false || retrySolver) && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false) {
 			xValuesR = resultFR; xValuesI = resultFI;
 			while (isSolved() == false && timesEvaluated < timesToEvaluate) {
@@ -253,8 +237,10 @@ double solver(char expression[DIM]) {
 							sum(resultR, resultI, selected_X, 0);
 							if (resultR > mINF&&resultR<INF&&resultI>mINF&&resultI < INF) {
 								resultFR = resultR; resultFI = resultI;
-								printf("x%d=", c);
-								complexNumber(resultFR, resultFI);
+								if (physics == (boolean)false) {
+									printf("x%d=", c);
+									complexNumber(resultFR, resultFI);
+								}
 								xValuesR = resultFR; xValuesI = resultFI;
 								atcProg(equation);
 								c++;

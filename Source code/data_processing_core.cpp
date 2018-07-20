@@ -2378,6 +2378,65 @@ void getATCPath() {
 	}
 }
 
+void getCharArray() {
+	char value[DIM] = "";
+	sprintf(expressionF, "");
+	double Value = getValue();
+	if (isEqual("x", expressionF)) {
+		sprintf(value, "x");
+	}
+	else {
+		sprintf(value, "%G", Value);
+	}
+	if (isContained("-", value)) {
+		replace("-", "_", value);
+	}
+	else {
+		sprintf(expressionF, value);
+	}
+}
+
+double solve(char equation[DIM]) {
+	char colectCoeff[dim] = "";
+	int p = 0;
+	if (isContained("x", equation)) {
+		int i = strStart - 1;
+		if (verifyValue(equation[i])) {
+			while (verifyValue(equation[i])) {
+				i--;
+			}
+			i++;
+			p = 0;
+			if (equation[i - 1] == '-') {
+				colectCoeff[p] = '_';
+				p++;
+			}
+		}
+		else {
+			i++;
+			colectCoeff[0] = '1';
+			i++;
+			p = 1;
+		}
+		while (verifyValue(equation[i]) && verifyLetter(equation[i + 1]) == (boolean)false) {
+			colectCoeff[p] = equation[i];
+			p++;
+			i++;
+			if (equation[i] == 'x') {
+				colectCoeff[p] = '1';
+				p++;
+				i++;
+			}
+		}
+		colectCoeff[p] = '\0';
+		char equationF[dim] = "";
+		sprintf(equationF, "(%s)/(%s)", equation, colectCoeff);
+		double answer = solver(equationF);
+		return answer;
+	}
+	return 0;
+}
+
 int toSolve(int re) {
 	FILE *file = NULL;
 	char toOpen[DIM] = "";
@@ -3473,7 +3532,7 @@ boolean verifyNumber(char number) {
 }
 
 boolean verifyValue(char number) {
-	char numbers[DIM] = "_.0123456789/*";
+	char numbers[DIM] = "_.0123456789/*^E";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(numbers)); i++) {
 		if (number == numbers[i]) {
@@ -3639,21 +3698,113 @@ boolean isContainedVariable(char to_find[DIM], char string[DIM]) {
 
 boolean isContained(char to_find[DIM], char string[DIM]) {
 	int i = 0, j = 0;
-	for (i = 0; i < abs((int)strlen(string)); i++) {
-		for (j = 0; j < abs((int)strlen(to_find)); j++) {
-			if (to_find[j] == string[i] && j == 0) {
-				strStart = i;
-				while (to_find[j] == string[i] && to_find[j] != '\0'&&string[i] != '\0') {
-					j++;
-					i++;
+	if (strlen(charMaster) == 0) {
+		for (i = 0; i < abs((int)strlen(string)); i++) {
+			for (j = 0; j < abs((int)strlen(to_find)); j++) {
+				if (to_find[j] == string[i] && j == 0) {
+					strStart = i;
+					while (to_find[j] == string[i] && to_find[j] != '\0'&&string[i] != '\0') {
+						j++;
+						i++;
+					}
+					if (j == strlen(to_find)) {
+						strEnd = i;
+						return true;
+					}
+					else {
+						i = strStart;
+						break;
+					}
 				}
-				if (j == strlen(to_find)) {
-					strEnd = i;
-					return true;
+			}
+		}
+	}
+	else {
+		if (isEqual("nothingL", charMaster)) {
+			for (i = 0; i < abs((int)strlen(string)); i++) {
+				for (j = 0; j < abs((int)strlen(to_find)); j++) {
+					if (to_find[j] == string[i] && j == 0 && verifyLetter(string[i - 1]) == (boolean)false && verifyNumber(string[i - 1]) == (boolean)false) {
+						strStart = i;
+						while (to_find[j] == string[i] && to_find[j] != '\0'&&string[i] != '\0') {
+							j++;
+							i++;
+						}
+						if (j == strlen(to_find)) {
+							strEnd = i;
+							return true;
+						}
+						else {
+							i = strStart;
+							break;
+						}
+					}
 				}
-				else {
-					i = strStart;
-					break;
+			}
+		}
+		else {
+			if (isEqual("nothingR", charMaster)) {
+				for (i = 0; i < abs((int)strlen(string)); i++) {
+					for (j = 0; j < abs((int)strlen(to_find)); j++) {
+						if (to_find[j] == string[i] && j == 0) {
+							strStart = i;
+							while (to_find[j] == string[i] && to_find[j] != '\0'&&string[i] != '\0') {
+								j++;
+								i++;
+							}
+							if (j == strlen(to_find) && verifyLetter(string[i - 1]) == (boolean)false && verifyNumber(string[i - 1]) == (boolean)false) {
+								strEnd = i;
+								return true;
+							}
+							else {
+								i = strStart;
+								break;
+							}
+						}
+					}
+				}
+			}
+			else {
+				char saveTo_find[DIM] = "";
+				sprintf(saveTo_find, to_find);
+				sprintf(to_find, "%s%s", charMaster, saveTo_find);
+				for (i = 0; i < abs((int)strlen(string)); i++) {
+					for (j = 0; j < abs((int)strlen(to_find)); j++) {
+						if (to_find[j] == string[i] && j == 0) {
+							strStart = i;
+							while (to_find[j] == string[i] && to_find[j] != '\0'&&string[i] != '\0') {
+								j++;
+								i++;
+							}
+							if (j == strlen(to_find)) {
+								strEnd = i;
+								return true;
+							}
+							else {
+								i = strStart;
+								break;
+							}
+						}
+					}
+				}
+				sprintf(to_find, "%s%s", saveTo_find, charMaster);
+				for (i = 0; i < abs((int)strlen(string)); i++) {
+					for (j = 0; j < abs((int)strlen(to_find)); j++) {
+						if (to_find[j] == string[i] && j == 0) {
+							strStart = i;
+							while (to_find[j] == string[i] && to_find[j] != '\0'&&string[i] != '\0') {
+								j++;
+								i++;
+							}
+							if (j == strlen(to_find)) {
+								strEnd = i;
+								return true;
+							}
+							else {
+								i = strStart;
+								break;
+							}
+						}
+					}
 				}
 			}
 		}

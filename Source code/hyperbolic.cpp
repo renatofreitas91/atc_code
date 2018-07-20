@@ -16,7 +16,7 @@ void complex_cosh(double x, double y) {
 		round_complex();
 	}
 	else {
-		if (rasf > 0) {
+		if (rasf > 0 && physics == (boolean)false) {
 			printf("\nError in function domain.\n\n ==> For hyperbolic cosine function the valid domain is [-INF, INF].\n\n");
 			printf(" ==> Your function argument: ");
 			complexNumber(x, y);
@@ -56,7 +56,7 @@ void complex_tanh(double x, double y) {
 		round_complex();
 	}
 	else {
-		if (rasf > 0) {
+		if (rasf > 0 && physics == (boolean)false) {
 			printf("\nError in function domain.\n\n ==> For hyperbolic tangent function the valid domain is [-INF, INF].\n\n");
 			printf(" ==> Your function argument: ");
 			complexNumber(x, y);

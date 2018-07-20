@@ -3,6 +3,7 @@
 #include "stdafx.h"
 
 boolean equationSolverRunning = false;
+char charMaster[DIM] = "";
 
 void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2, int index) {
 	char values[DIM] = "", value[DIM] = "", saveValue[DIM] = "";
@@ -361,6 +362,15 @@ void equationSolver(char equation[DIM]) {
 			equationSolverRunning = true;
 			solving = false;
 			if (equation_solver == (boolean)true && isContained("x", equation) && isContained("x^", equation) == (boolean)false) {
+				sprintf(charMaster, "nothingL");
+				while (isContained("x", toCalcX) && verifyLetter(toCalcX[strStart - 1]) == (boolean)false && verifyNumber(toCalcX[strStart - 1]) == (boolean)false) {
+					char value[100] = "", valueF[100] = "";
+					sprintf(value, "x");
+					sprintf(valueF, "1*(res)^1");
+					replace(value, valueF, toCalcX);
+					sprintf(toCalcX, expressionF);
+				}
+				sprintf(charMaster, "");
 				while (isContained("x", toCalcX) && verifyNumber(toCalcX[strStart - 1])) {
 					char value[100] = "", valueF[100] = "";
 					sprintf(value, "%cx", toCalcX[strStart - 1]);
@@ -368,10 +378,7 @@ void equationSolver(char equation[DIM]) {
 					replace(value, valueF, toCalcX);
 					sprintf(toCalcX, expressionF);
 				}
-				if (isContained("x", toCalcX)) {
-					replace("x", "1*(res)^1", toCalcX);
-					sprintf(toCalcX, expressionF);
-				}
+				sprintf(charMaster, "");
 				char saveToCalcX[DIM] = "";
 				sprintf(saveToCalcX, toCalcX);
 				char maxExp[10] = "";
@@ -390,8 +397,10 @@ void equationSolver(char equation[DIM]) {
 						}
 						b++;
 						int t = 0;
-						if (saveToCalcX[b - 1] == '-') {
+						int s = b - 1;
+						if (saveToCalcX[b - 1] == '-' || saveToCalcX[b - 1] == '_') {
 							divider[t] = '_'; t++;
+
 						}
 						while (saveToCalcX[b + 1] != '(') {
 							divider[t] = saveToCalcX[b];
@@ -400,6 +409,10 @@ void equationSolver(char equation[DIM]) {
 						}
 						divider[t] = '\0';
 						calcNow(divider, 0, 0);
+						if (isContained("_", divider) && saveToCalcX[s] == '-') {
+							replace("_", "-", divider);
+							sprintf(divider, expressionF);
+						}
 						dividerValue = dividerValue + resultR;
 						char toReplace[DIM] = "";
 						sprintf(toReplace, "%s*(res%s", divider, maxExp);
@@ -426,6 +439,7 @@ void equationSolver(char equation[DIM]) {
 		}
 		else {
 			equationSolverRunning = true;
+			sprintf(toCalcX, equation);
 			maxExponent = 1;
 			char exponent[DIM] = "";
 			int g = 0, k = 0;
@@ -442,28 +456,31 @@ void equationSolver(char equation[DIM]) {
 					if ((int)resultR > maxExponent) {
 						maxExponent = (int)resultR;
 					}
-					char toReplace[DIM] = "";
-					sprintf(toReplace, "x^%s", exponent);
-					char replacement[DIM] = "";
-					if (verifyNumber(equation[saveG])) {
-						sprintf(replacement, "*(res)^%s", exponent);
-					}
-					else {
-						sprintf(replacement, "1*(res)^%s", exponent);
-					}
-					replace(toReplace, replacement, equation);
-					sprintf(toCalcX, expressionF);
 				}
 			}
-			if (isContained("x", toCalcX)) {
-				if (verifyNumber(toCalcX[strStart - 1])) {
-					replace("x", "*(res)", toCalcX);
-				}
-				else {
-					replace("x", "1*(res)", toCalcX);
-				}
+			sprintf(charMaster, "nothingL");
+			char maxExpX[100] = "";
+			sprintf(maxExpX, "x^%d", maxExponent);
+			while (isContained(maxExpX, toCalcX) && verifyLetter(toCalcX[strStart - 1]) == (boolean)false && verifyNumber(toCalcX[strStart - 1]) == (boolean)false) {
+				char value[100] = "", valueF[100] = "";
+				sprintf(value, "x^%d", maxExponent);
+				sprintf(valueF, "1*(res)^%d", maxExponent);
+				replace(value, valueF, toCalcX);
 				sprintf(toCalcX, expressionF);
 			}
+			sprintf(charMaster, "");
+			while (isContained(maxExpX, toCalcX) && verifyNumber(toCalcX[strStart - 1])) {
+				char value[100] = "", valueF[100] = "";
+				sprintf(value, "%cx^%d", toCalcX[strStart - 1], maxExponent);
+				sprintf(valueF, "%c*(res)^%d", toCalcX[strStart - 1], maxExponent);
+				replace(value, valueF, toCalcX);
+				sprintf(toCalcX, expressionF);
+			}
+			if (isContained("x", toCalcX)) {
+				replace("x", "(res)", toCalcX);
+				sprintf(toCalcX, expressionF);
+			}
+			sprintf(charMaster, "");
 			char saveToCalcX[DIM] = "";
 			sprintf(saveToCalcX, toCalcX);
 			char maxExp[10] = "";
@@ -482,7 +499,8 @@ void equationSolver(char equation[DIM]) {
 					}
 					b++;
 					int t = 0;
-					if (saveToCalcX[b - 1] == '-') {
+					int s = b - 1;
+					if (saveToCalcX[b - 1] == '-' || saveToCalcX[b - 1] == '_') {
 						divider[t] = '_'; t++;
 					}
 					while (saveToCalcX[b + 1] != '(') {
@@ -492,6 +510,10 @@ void equationSolver(char equation[DIM]) {
 					}
 					divider[t] = '\0';
 					calcNow(divider, 0, 0);
+					if (isContained("_", divider) && saveToCalcX[s] == '-') {
+						replace("_", "-", divider);
+						sprintf(divider, expressionF);
+					}
 					dividerValue = dividerValue + resultR;
 					char toReplace[DIM] = "";
 					sprintf(toReplace, "%s*(res%s", divider, maxExp);

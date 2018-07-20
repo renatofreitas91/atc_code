@@ -62,3 +62,4 @@ void arithmeticMatrixSolver();
 void financialCalculations();
 void geometryCalculations();
 void statisticsCalculations();
+void physicsCalculations();

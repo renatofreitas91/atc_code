@@ -17,6 +17,7 @@ void on_start();
 void addATCPath();
 void getATCPath();
 void graphSettings();
+void getCharArray();
 int toSolve(int re);
 void ShowConsoleCursor(BOOL bShow);
 void verboseResolutionController();

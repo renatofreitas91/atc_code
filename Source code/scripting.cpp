@@ -706,6 +706,7 @@ double getValue() {
 		gets_s(value);
 		solving = false;
 		calcNow(value, 0, 0);
+		sprintf(expressionF, value);
 		solving = true;
 	}
 	return resultR;
