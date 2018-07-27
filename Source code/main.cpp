@@ -321,8 +321,6 @@ boolean processTxt(char path[DIM], int re) {
 				f++;
 				d = f;
 				trigData[e] = '\0';
-				usRFunctions[0] = ','; usRFuncTrans[0] = ',';
-				usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
 				fflush(NULL);
 				tD = 0;
 				for (tD = 0; trigData[tD] != '\0'; tD++) {

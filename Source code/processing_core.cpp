@@ -1335,7 +1335,9 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 	char trig[DIM] = "0", base[DIM], number[DIM] = "0", number1[DIM] = "0", number2[DIM] = "0", op[DIM] = "0", signal = '*', numb[DIM] = "0", sig = '0', point = '0', cieNot[DIM] = "0", arg[DIM] = "0", amp[DIM] = "0", trigon1[DIM] = "0", ex[DIM] = "", eX[DIM] = "", trig1[DIM] = "", function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res,pi,e,solver,det";
 	double num = 0, v[DIM], vI[DIM], argu[DIM], ampl[DIM], exp = 1, result1 = 0, baLog = 0, dgrt = 0, result2 = resultI, dgrt2 = 0;
 	char userFunc[DIM] = "", atcFunc[DIM] = "", funcU[DIM] = "";
-	sprintf(function, "%s%s", function, usRFuncTrans);
+	char saveFunction[DIM] = "";
+	sprintf(saveFunction, "%s%s", function, usRFuncTrans);
+	sprintf(function, saveFunction);
 	for (i = 0; trigon[i] != '?'&&trigon[i] != '\0'; i++) {
 		atcFunc[i] = trigon[i];
 	}
