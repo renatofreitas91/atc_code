@@ -20,7 +20,7 @@ extern double natureValue, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR,
 extern int executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
 extern char charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
 extern boolean physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver;
-double functionProcessor(char trigon[DIM], double result, double amplitude, double res);
+double functionProcessor(char trigon[DIM], double result, double amplitude, int res);
 double initialProcessor(char arithTrig[DIM], double result);
 double arithSolver(char trigon1[DIM], double result);
 double processVariable(char variable[DIM]);
@@ -40,6 +40,7 @@ double calculateIntegral(double a, double b, char function[DIM]);
 int variableValidator(char variable[DIM]);
 int matrixToValues(char matrix[DIM], double result);
 int atcProgramming(char script[DIM]);
+int countOccurrences(char to_find[DIM], char expression[DIM]);
 void variableController(char variable[DIM], double result);
 void manageExpression(char arithTrig[DIM], double result1, double result2, int verify);
 void decimalToBinary(double decimal, char path[DIM], int bp);

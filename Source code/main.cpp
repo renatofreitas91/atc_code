@@ -215,7 +215,7 @@ boolean processTxt(char path[DIM], int re) {
 	}
 	savePath[i] = '\0';
 	i = 0;
-	while (i < re) {
+	while (i < re&&re != 0) {
 		anstxt[i] = ans[i];
 		anstxtI[i] = ansI[i];
 		i++;
@@ -1185,7 +1185,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				resultI = 0.5;
 				int ko = abs((int)strlen(function));
 				function[ko] = '?'; function[ko + 1] = '\0';
-				if (functionProcessor(function, 0.2, 1.0, result1) != 0 || function[0] == 'r'&&function[1] == 'e'&&function[2] == 's'&&function[3] == 't'&&function[4] == '\0' || function[0] == 'q'&&function[1] == 'u'&&function[2] == 'o'&&function[3] == 't'&&function[4] == 'i'&&function[5] == 'e'&&function[6] == 'n'&&function[7] == 't'&&function[8] == '\0' || function[0] == 'a'&&function[1] == 'c'&&function[2] == 'o'&&function[3] == 's'&&function[4] == 'h'&&function[5] == '\0' || function[0] == 'a'&&function[1] == 'c'&&function[2] == 'o'&&function[3] == 't'&&function[4] == 'a'&&function[5] == 'n'&&function[6] == 'h'&&function[7] == '\0') {
+				if (functionProcessor(function, 0.2, 1.0, 0) != 0 || function[0] == 'r'&&function[1] == 'e'&&function[2] == 's'&&function[3] == 't'&&function[4] == '\0' || function[0] == 'q'&&function[1] == 'u'&&function[2] == 'o'&&function[3] == 't'&&function[4] == 'i'&&function[5] == 'e'&&function[6] == 'n'&&function[7] == 't'&&function[8] == '\0' || function[0] == 'a'&&function[1] == 'c'&&function[2] == 'o'&&function[3] == 's'&&function[4] == 'h'&&function[5] == '\0' || function[0] == 'a'&&function[1] == 'c'&&function[2] == 'o'&&function[3] == 't'&&function[4] == 'a'&&function[5] == 'n'&&function[6] == 'h'&&function[7] == '\0') {
 					decision = true;
 				}
 				else {

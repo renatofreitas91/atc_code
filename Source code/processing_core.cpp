@@ -462,6 +462,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					}
 					else {
 						triArith[b] = arithSolver(pas, result);
+						sprintf(expressionF, pas);
 						triArithI[b] = resultI;
 						sig[b] = 1;
 						pas[0] = '\0';
@@ -469,14 +470,14 @@ double initialProcessor(char arithTrig[DIM], double result) {
 						if (strlen(op) > 0) {
 							if (op[3] == 't' && (op[2] == 's' || op[2] == 'o'&&op[1] != 'c')) {
 								resultI = triArithI[b]; resultR = triArithI[b - 1];
-								triArith[b - 1] = functionProcessor(op, triArith[b], triArith[b - 1], result);
+								triArith[b - 1] = functionProcessor(op, triArith[b], triArith[b - 1], rf);
 								triArith[b] = 0;
 								triArithI[b - 1] = resultI;
 								triArithI[b] = 0;
 								arTrig[b - 1] = '+';
 							}
 							else {
-								triArith[b] = functionProcessor(op, triArith[b], amplitude, result);
+								triArith[b] = functionProcessor(op, triArith[b], amplitude, rf);
 								triArithI[b] = resultI;
 							}
 							if (thj == 1) { thj = 0; sig[b] = 0; }
@@ -512,12 +513,13 @@ double initialProcessor(char arithTrig[DIM], double result) {
 						}
 						else {
 							triArith[b] = initialProcessor(pas, result);
+							sprintf(expressionF, pas);
 							triArithI[b] = resultI;
 							sig[b] = 1;
 							char pas[DIM] = "";
 							if (strlen(op) > 0) {
 								resultI = triArithI[b];
-								triArith[b] = functionProcessor(op, triArith[b], amplitude, result);
+								triArith[b] = functionProcessor(op, triArith[b], amplitude, rf);
 								triArithI[b] = resultI;
 								if (thj == 1) { thj = 0; sig[b] = 0; }
 								else {
@@ -1327,7 +1329,7 @@ double arithSolver(char trigon1[DIM], double result) {
 	return result1;
 }
 
-double functionProcessor(char trigon[DIM], double result, double amplitude, double res) {
+double functionProcessor(char trigon[DIM], double result, double amplitude, int res) {
 	if (verbose == 1 && solving) {
 		printf("\n\n==> functionProcessor <==\n\nFunction: %s", trigon);
 	}
@@ -1918,8 +1920,27 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		}
 		resultR = v[1];
 		resultI = vI[1];
-		variableController("Input", resultR);
-		processTxt(userFunc, (int)res);
+		int inputs = countOccurrences("\\", expressionF);
+		char letters[30] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", value[DIM] = "";
+		int y = 0, x = 0, entered = 0;
+		char toEnter[DIM] = "";
+		sprintf(toEnter, expressionF);
+		while (entered <= inputs) {
+			y = 0;
+			while (toEnter[x] != '\\'&&toEnter[x] != '='&&toEnter[x] != '\0') {
+				value[y] = toEnter[x];
+				y++; x++;
+			}
+			value[y] = '\0';
+			calcNow(value, 0, 0);
+			char variable[20] = "";
+			sprintf(variable, "Input%c", letters[entered]);
+			variableController(variable, resultR);
+			entered++;
+			x++;
+			sprintf(value, "");
+		}
+		processTxt(userFunc, res);
 		result1 = resultR;
 		result2 = resultI;
 		char txtSolved[DIM] = "";
@@ -1927,7 +1948,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, doub
 		sprintf(txtSolved, "del \"%s\\User functions\\%s_answers.txt\"", atcPath, funcU);
 		system(txtSolved);
 		type = 1;
-		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver";
+		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det";
 		return result1;
 	}
 	if (op[0] == 'a'&&type == 0) {

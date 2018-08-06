@@ -28,6 +28,11 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 		puts("");
 	}
+	if (isCommand(arithTrig, "unitconversions")) {
+		command = true;
+		unitConversions();
+		puts("");
+	}
 	if (isCommand(arithTrig, "physicscalculations")) {
 		command = true;
 		physicsCalculations();

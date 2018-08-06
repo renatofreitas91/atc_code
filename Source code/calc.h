@@ -63,3 +63,4 @@ void financialCalculations();
 void geometryCalculations();
 void statisticsCalculations();
 void physicsCalculations();
+void unitConversions();

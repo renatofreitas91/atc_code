@@ -3531,6 +3531,34 @@ boolean verifyNumber(char number) {
 	return false;
 }
 
+int countOccurrences(char to_find[DIM], char expression[DIM]) {
+	char expressionR[DIM] = "";
+	char to_findR[DIM] = "";
+	int numberOccurrences = 0;
+	sprintf(expressionR, expression);
+	sprintf(to_findR, to_find);
+	if (isContained(to_findR, expressionR)) {
+		while (isContained(to_findR, expressionR)) {
+			numberOccurrences++;
+			char cuttedExpression[DIM] = "";
+			int i = 0;
+			int j = 0;
+			while (i < strStart) {
+				cuttedExpression[j] = expressionR[i];
+				i++; j++;
+			}
+			i = strEnd;
+			while (expressionR[i] != '\0') {
+				cuttedExpression[j] = expressionR[i];
+				j++; i++;
+			}
+			cuttedExpression[j] = '\0';
+			sprintf(expressionR, cuttedExpression);
+		}
+	}
+	return numberOccurrences;
+}
+
 boolean verifyValue(char number) {
 	char numbers[DIM] = "_.0123456789/*^E";
 	int i = 0;
