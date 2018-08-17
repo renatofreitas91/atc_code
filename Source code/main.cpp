@@ -33,6 +33,7 @@ void main(int argc, char *argv[]) {
 		do {
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
+			Break = 0;
 			fflush(NULL);
 			tD = 0;
 			toSolve(rf);
@@ -283,7 +284,14 @@ boolean processTxt(char path[DIM], int re) {
 		}
 		sprintf(saveSendFunc, sendFunc);
 		if (isContained("script", sendFunc) && strStart == 0) {
+			countBreak = countOccurrences("break", sendFunc);
+			countReturn = countOccurrences("return", sendFunc);
+			countUseBreak = 0;
+			countUseReturn = 0;
+			returnedR = 0;
+			returnedI = 0;
 			atcProgramming(sendFunc);
+			printf("\nResultR-> %G\nResultI-> %G\n", returnedR, returnedI);
 			toWrite = false;
 			return toWrite;
 		}

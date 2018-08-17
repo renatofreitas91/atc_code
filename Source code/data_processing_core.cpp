@@ -3559,6 +3559,39 @@ int countOccurrences(char to_find[DIM], char expression[DIM]) {
 	return numberOccurrences;
 }
 
+int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x) {
+	char expressionR[DIM] = "";
+	char to_findR[DIM] = "";
+	int numberOccurrences = 0;
+	sprintf(expressionR, expression);
+	sprintf(to_findR, to_find);
+	if (isContained(to_findR, expressionR)) {
+		while (isContained(to_findR, expressionR)) {
+			numberOccurrences++;
+			char cuttedExpression[DIM] = "";
+			int i = 0;
+			int j = 0;
+			while (i < strStart) {
+				cuttedExpression[j] = expressionR[i];
+				i++; j++;
+			}
+			i = strEnd;
+			while (expressionR[i] != '\0') {
+				cuttedExpression[j] = expressionR[i];
+				j++; i++;
+			}
+			cuttedExpression[j] = '\0';
+			sprintf(expressionR, cuttedExpression);
+			if (numberOccurrences == x) {
+				puts("##########################################");
+				sprintf(expressionF, expressionR);
+				return x;
+			}
+		}
+	}
+	return numberOccurrences;
+}
+
 boolean verifyValue(char number) {
 	char numbers[DIM] = "_.0123456789/*^E";
 	int i = 0;
@@ -3724,6 +3757,32 @@ boolean isContainedVariable(char to_find[DIM], char string[DIM]) {
 	return false;
 }
 
+boolean isContainedByIndex(char to_find[DIM], char string[DIM], int index) {
+	int i = 0, j = 0;
+	sprintf(charMaster, "");
+	if (strlen(charMaster) == 0) {
+		for (i = index; i < abs((int)strlen(string)); i++) {
+			for (j = 0; j < abs((int)strlen(to_find)); j++) {
+				if (to_find[j] == string[i] && j == 0) {
+					strStart = i;
+					while (to_find[j] == string[i] && to_find[j] != '\0'&&string[i] != '\0') {
+						j++;
+						i++;
+					}
+					if (j == strlen(to_find)) {
+						strEnd = i;
+						return true;
+					}
+					else {
+						i = strStart;
+						break;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
 boolean isContained(char to_find[DIM], char string[DIM]) {
 	int i = 0, j = 0;
 	if (strlen(charMaster) == 0) {

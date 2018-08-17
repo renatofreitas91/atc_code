@@ -1944,9 +1944,16 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 		result1 = resultR;
 		result2 = resultI;
 		char txtSolved[DIM] = "";
+		char txtTryDelete[DIM] = "";
 		sprintf(userFunc, "%s\\User functions\\%s.txt", atcPath, funcU);
 		sprintf(txtSolved, "del \"%s\\User functions\\%s_answers.txt\"", atcPath, funcU);
-		system(txtSolved);
+		sprintf(txtTryDelete, "%s\\User functions\\%s_answers.txt", atcPath, funcU);
+		FILE *file = NULL;
+		file = fopen(txtTryDelete, "r");
+		if (file != NULL) {
+			fclose(file);
+			system(txtSolved);
+		}
 		type = 1;
 		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det";
 		return result1;
