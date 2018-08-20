@@ -3583,7 +3583,6 @@ int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x) {
 			cuttedExpression[j] = '\0';
 			sprintf(expressionR, cuttedExpression);
 			if (numberOccurrences == x) {
-				puts("##########################################");
 				sprintf(expressionF, expressionR);
 				return x;
 			}

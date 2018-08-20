@@ -716,9 +716,9 @@ double getValue() {
 
 int atcProgramming(char script[DIM]) {
 	runningScript = true;
-	char nativeCommands[DIM] = ",print,sprint,get,composecommand,if,else,while,for,break,return,";
+	char nativeCommands[DIM] = ",print,sprint,get,composecommand,if,else,while,for,break,return,switch,case,cls,";
 	char commandCandidate[DIM] = "", getLine[DIM] = "";
-	int atcP = 0, saveI = 0, w = 0;
+	int atcP = 0, saveI = 0;
 	boolean ifStatus = true;
 	isContained("script", script);
 	if (script[strEnd] == '\0') {
@@ -756,6 +756,73 @@ int atcProgramming(char script[DIM]) {
 					script[h - k] = '\0';
 				}
 			}
+			if (isContained("switch", script)) {
+				while (isContained("switch", script)) {
+					int j = strStart;
+					char switchContent[DIM] = "";
+					char variable[DIM] = "";
+					int i = strEnd;
+					while (script[i] != '('&&script[i] != '\0') {
+						i++;
+					}
+					i++;
+					int h = 0;
+					while (script[i] != ')'&&script[i] != '\0') {
+						if (verifyLetter(script[i])) {
+							while (verifyLetter(script[i])) {
+								variable[h] = script[i];
+								h++;
+								i++;
+							}
+							variable[h] = '\0';
+							break;
+						}
+						i++;
+					}
+					i = j;
+					h = 0;
+					int d = j;
+					char saveSwitch[DIM] = "";
+					while (script[j] != '\n') {
+						saveSwitch[h] = script[j];
+						h++;
+						j++;
+					}
+					saveSwitch[h] = script[j];
+					h++;
+					saveSwitch[h] = '\0';
+					h = 0;
+					while (script[i] != '}'&&script[i] != '\0') {
+						switchContent[h] = script[i];
+						h++; i++;
+					}
+					switchContent[h] = script[i];
+					h++;
+					switchContent[h] = '\0';
+					replace(":", "){", switchContent);
+					char convertToIf[DIM] = "";
+					sprintf(convertToIf, expressionF);
+					replace(saveSwitch, "", convertToIf);
+					sprintf(convertToIf, expressionF);
+					char ifCreation[DIM] = "";
+					sprintf(ifCreation, "if(%s==", variable);
+					replace("case ", ifCreation, convertToIf);
+					sprintf(convertToIf, expressionF);
+					if (isContained("default){\n", convertToIf)) {
+						replace("default){\n", "", convertToIf);
+						sprintf(convertToIf, expressionF);
+					}
+					replace("break;", "}\nelse{", convertToIf);
+					sprintf(convertToIf, expressionF);
+					int numberElses = countOccurrences("else{", convertToIf) - 1;
+					while (numberElses > 0) {
+						sprintf(convertToIf, "%s\n}", convertToIf);
+						numberElses--;
+					}
+					replace(switchContent, convertToIf, script);
+					sprintf(script, expressionF);
+				}
+			}
 			isContained("script", script);
 			int i = strEnd + 1;
 			int j = i;
@@ -765,7 +832,7 @@ int atcProgramming(char script[DIM]) {
 				script[i - j] = script[i];
 			}
 			script[i - j] = '\0';
-			for (i = w; i < abs((int)strlen(script)); i++) {
+			for (i = 0; i < abs((int)strlen(script)); i++) {
 				c = 0;
 				while (script[i] != ';'&&script[i] != '\n'&&script[i] != '{'&&c < DIM) {
 					getLine[c] = script[i];
@@ -794,7 +861,7 @@ int atcProgramming(char script[DIM]) {
 				}
 				char candidate[DIM] = "";
 				sprintf(candidate, ",%s,", commandCandidate);
-				if (isContained(candidate, nativeCommands) && countUseReturn == 0 && ((countBreak == 0 && countUseBreak == 0) || (countUseBreak <= countBreak))) {
+				if (isContained(candidate, nativeCommands) && countUseReturn == 0 && ((countBreak == 0 && countUseBreak == 0) || (countUseBreak <= countBreak + 1))) {
 					atcProg(getLine);
 					atcP = 1;
 					if (isEqual("if", commandCandidate)) {
@@ -908,8 +975,8 @@ int atcProgramming(char script[DIM]) {
 							innerIF[f] = '\0';
 						}
 					}
-					if (isEqual("while", commandCandidate) && countUseReturn == 0 && ((countBreak == 0 && countUseBreak == 0) || (countUseBreak <= countBreak))) {
-						if (countUseBreak < countBreak || countBreak == 0) {
+					if (isEqual("while", commandCandidate) && countUseReturn == 0 && ((countBreak == 0 && countUseBreak == 0) || (countUseBreak <= countBreak + 1))) {
+						if (countUseBreak <= countBreak + 1 || countBreak == 0) {
 							Break = 0;
 						}
 						else {
@@ -953,8 +1020,8 @@ int atcProgramming(char script[DIM]) {
 							atcProg(getLine);
 						}
 					}
-					if (isEqual("for", commandCandidate) && countUseReturn == 0 && ((countBreak == 0 && countUseBreak == 0) || (countUseBreak <= countBreak))) {
-						if (countUseBreak < countBreak || countBreak == 0) {
+					if (isEqual("for", commandCandidate) && countUseReturn == 0 && ((countBreak == 0 && countUseBreak == 0) || (countUseBreak <= countBreak + 1))) {
+						if (countUseBreak <= countBreak + 1 || countBreak == 0) {
 							Break = 0;
 						}
 						else {
@@ -968,7 +1035,7 @@ int atcProgramming(char script[DIM]) {
 							f++;
 						}
 						initial[p] = '\0';
-						atcProg(initial);
+						calcNow(initial, 0, 0);
 						char condition[DIM] = "";
 						f++; p = 0;
 						while (getLine[f] != ';'&&getLine[f] != '\0'&&countUseReturn == 0) {
@@ -1038,7 +1105,9 @@ int atcProgramming(char script[DIM]) {
 						sprintf(returnArgument, expressionF);
 						calcNow(returnArgument, 0, 0);
 						returnedR = resultR; returnedI = resultI;
-						w = i;
+					}
+					if (isEqual("cls", commandCandidate)) {
+						cls();
 					}
 				}
 				if (countReturn > 0) {
@@ -1050,7 +1119,7 @@ int atcProgramming(char script[DIM]) {
 					atcP = 0;
 				}
 				else {
-					if ((countBreak == 0 && countUseBreak == 0) || (countUseBreak < countBreak)) {
+					if ((countBreak == 0 && countUseBreak == 0) || (countUseBreak < countBreak + 1)) {
 						sprintf(commandCandidate, "");
 						sprintf(candidate, "");
 						if (atcP == 0) {

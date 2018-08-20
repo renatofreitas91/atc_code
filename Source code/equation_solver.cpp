@@ -552,13 +552,15 @@ void equationSolver(char equation[DIM]) {
 		to_numR[g] = resultR; to_numI[g] = resultI;
 		g++;
 	}
-	double saveResultR = -1, saveResultI = -1;
-	while (abs(saveResultR) > 1E-12&&abs(saveResultI) > 1E-12) {
+	double saveResultR = -1, saveResultI = -1, n = 0;
+	while ((abs(saveResultR) > 0 || abs(saveResultI) > 0) && n < 70) {
 		g = 0;
 		while (g < maxExponent) {
 			xValuesR = RootR[g]; xValuesI = RootI[g];
 			calcNow(toCalcX, 0, 0);
-			saveResultR = resultR; saveResultI = resultI;
+			if ((abs(resultR) > 0 || abs(resultI) > 0)) {
+				saveResultR = resultR; saveResultI = resultI;
+			}
 			double numR = resultR, numI = resultI, resultSubR[dim], resultSubI[dim], denR = 1, denI = 0;
 			int w = 0, h = 0;
 			while (w < maxExponent) {
@@ -581,6 +583,7 @@ void equationSolver(char equation[DIM]) {
 			RootR[g] = resultR; RootI[g] = resultI;
 			g++;
 		}
+		n++;
 	}
 	char answers[DIM] = "";
 	g = 0;
