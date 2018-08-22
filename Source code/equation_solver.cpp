@@ -552,15 +552,15 @@ void equationSolver(char equation[DIM]) {
 		to_numR[g] = resultR; to_numI[g] = resultI;
 		g++;
 	}
-	double saveResultR = -1, saveResultI = -1, n = 0;
-	while ((abs(saveResultR) > 0 || abs(saveResultI) > 0) && n < 70) {
+	double saveResultR = -1, saveResultI = -1;
+	int n = 0;
+	resultR = 1; resultI = 1;
+	while ((abs(saveResultR) > 1E-7 || abs(saveResultI) > 1E-7) && n < 37) {
 		g = 0;
 		while (g < maxExponent) {
 			xValuesR = RootR[g]; xValuesI = RootI[g];
 			calcNow(toCalcX, 0, 0);
-			if ((abs(resultR) > 0 || abs(resultI) > 0)) {
-				saveResultR = resultR; saveResultI = resultI;
-			}
+			saveResultR = resultR; saveResultI = resultI;
 			double numR = resultR, numI = resultI, resultSubR[dim], resultSubI[dim], denR = 1, denI = 0;
 			int w = 0, h = 0;
 			while (w < maxExponent) {
@@ -589,10 +589,10 @@ void equationSolver(char equation[DIM]) {
 	g = 0;
 	while (g < maxExponent) {
 		rootR = RootR[g]; rootI = RootI[g];
-		if ((rootI < 1E-7&&rootI >= 0) || (rootI > -1E-7&&rootI <= 0)) {
+		if ((rootI > 1E-27&&rootI < 1E-5) || (rootI < -1E-27&&rootI>-0.001)) {
 			rootI = 0;
 		}
-		if ((rootR < 1E-7&&rootR >= 0) || (rootR > -1E-7&&rootR <= 0)) {
+		if ((rootR > 1E-27&&rootR < 1E-5) || (rootR < -1E-27&&rootR>-0.001)) {
 			rootR = 0;
 		}
 		if (isContained("\\", equation) || isContained("x^", equation) || (equation_solver == (boolean)true && isContained("x", equation) && isContained("x^", equation) == (boolean)false)) {

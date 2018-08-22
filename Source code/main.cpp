@@ -33,7 +33,6 @@ void main(int argc, char *argv[]) {
 		do {
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
-			Break = 0;
 			fflush(NULL);
 			tD = 0;
 			toSolve(rf);
@@ -290,6 +289,7 @@ boolean processTxt(char path[DIM], int re) {
 			countUseReturn = 0;
 			returnedR = 0;
 			returnedI = 0;
+			Break = 0;
 			atcProgramming(sendFunc);
 			resultR = returnedR; resultI = returnedI;
 			toWrite = false;
