@@ -122,7 +122,7 @@ void designGraph(char function[DIM]) {
 			int f = 0;
 			double yValues[121] = { 0,0 };
 			double newYmax = 1E-20, newYmin = -1E-20;
-			while (f < 120) {
+			while (f < 121) {
 				xValuesR = start; xValuesI = 0;
 				calcNow(specFunction, 0, 0);
 				yValues[f] = resultR;
@@ -198,6 +198,7 @@ void designGraph(char function[DIM]) {
 	}
 	sprintf(specFunction, function);
 	r = 0; e = 0; count = 0;
+	char symbols[35] = "XYZOABCDEFGHIJKLMNOPQRSTUVW/*-+_xo";
 	do {
 		e = 0;
 		while (function[r] != '\\'&&function[r] != '\0') {
@@ -206,7 +207,6 @@ void designGraph(char function[DIM]) {
 		}
 		specFunction[e] = '\0';
 		r++;
-		char symbols[35] = "XYZOABCDEFGHIJKLMNOPQRSTUVW/*-+_xo";
 		double start = Xmin;
 		int f = 0;
 		double yValues[121] = { 0,0 };
@@ -298,4 +298,55 @@ void designGraph(char function[DIM]) {
 	puts(info);
 	solverRunning = false;
 	solving = true;
+	int option = -1;
+	while (option != 1 && option != 0) {
+		puts("\nDo you want to see the graph data in table form? (Yes -> 1 \\ No -> 0)");
+		option = (int)getValue();
+	}
+	if (option == 1) {
+		char valueToText[DIM] = "";
+		int k = 0, l = 0;
+		puts(" ");
+		printf("%cx", 179);
+		int g = 0;
+		while (g < 11) {
+			printf(" ");
+			g++;
+		}
+		k = 0;
+		while (k < count) {
+			printf("%c%c", 179, symbols[k]);
+			int g = 0;
+			while (g < 11) {
+				printf(" ");
+				g++;
+			}
+			k++;
+		}
+		printf("\n");
+		double start = Xmin;
+		while (l < 121) {
+			k = 0;
+			printf("%c%G", 179, start);
+			sprintf(valueToText, "%c%G", 179, start);
+			g = (int)strlen(valueToText);
+			while (g < 13) {
+				printf(" ");
+				g++;
+			}
+			while (k < count) {
+				printf("%c%G", 179, yValuesAll[k][l]);
+				sprintf(valueToText, "%c%G", 179, yValuesAll[k][l]);
+				g = (int)strlen(valueToText);
+				while (g < 13) {
+					printf(" ");
+					g++;
+				}
+				k++;
+			}
+			printf("\n");
+			start = start + (double)xDim / 120;
+			l++;
+		}
+	}
 }
