@@ -17,9 +17,9 @@
 #include <math.h>
 #include <dirent.h> 
 extern double returnedR, returnedI, natureValue, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
-extern int countEnters, countReturn, countBreak, Break, countUseReturn, countUseBreak, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
-extern char charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
-extern boolean physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver;
+extern int parentPol[DIM], replaceTimes, countEnters, countReturn, countBreak, Break, countUseReturn, countUseBreak, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
+extern char roots[DIM], charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
+extern boolean solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver;
 double functionProcessor(char trigon[DIM], double result, double amplitude, int res);
 double initialProcessor(char arithTrig[DIM], double result);
 double arithSolver(char trigon1[DIM], double result);
@@ -42,6 +42,9 @@ int matrixToValues(char matrix[DIM], double result);
 int atcProgramming(char script[DIM]);
 int countOccurrences(char to_find[DIM], char expression[DIM]);
 int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x);
+void getNumerationPol(char expression[DIM]);
+void simplifyPolynomial(char expression[DIM]);
+void simpleSimplifyPolynomial(char expression[DIM]);
 void variableController(char variable[DIM], double result);
 void manageExpression(char arithTrig[DIM], double result1, double result2, int verify);
 void decimalToBinary(double decimal, char path[DIM], int bp);
@@ -77,6 +80,10 @@ void rootsToPolynomial(char rooots[DIM]);
 void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
 void fmpowerm(double vMS[dim][dim], double vMSI[dim][dim], int power, int lins, int cols);
 void fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]);
+void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]);
+void sub_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]);
+void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]);
+void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]);
 boolean simpleEvaluator(char expression[DIM]);
 boolean advancedEvaluator(char expression[DIM]);
 boolean isContainedVariable(char to_find[DIM], char string[DIM]);

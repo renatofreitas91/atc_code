@@ -23,6 +23,7 @@ void ShowConsoleCursor(BOOL bShow);
 void verboseResolutionController();
 void complexNumber(double a, double b);
 void idColorToName(char color);
+void microeconomicsCalculations();
 boolean letterVariables(char letter);
 boolean firstLetterVariable(char letter);
 boolean verifyLetter(char letter);

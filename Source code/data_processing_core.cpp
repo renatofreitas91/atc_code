@@ -417,7 +417,28 @@ void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]) {
 	sprintf(expression, "%s", string);
 	sprintf(expressionG, "%s", string);
 	isContained(toReplace, expressionG);
-	do {
+	if (replaceTimes == 0) {
+		do {
+			i = strStart; j = 0;
+			while (j < abs((int)strlen(replacement)) && i < DIM)
+			{
+				expression[i] = replacement[j];
+				i++; j++;
+			}
+			g = strEnd;
+			while (g < abs((int)strlen(expressionG)) && g < DIM&&i < DIM) {
+				expression[i] = expressionG[g];
+				g++;
+				i++;
+			}
+			if (i < DIM) {
+				expression[i] = '\0';
+			}
+			sprintf(expressionG, "%s", expression);
+		} while (isContained(toReplace, expressionG) && i < DIM&&g < DIM);
+		sprintf(expressionF, "%s", expressionG);
+	}
+	else {
 		i = strStart; j = 0;
 		while (j < abs((int)strlen(replacement)) && i < DIM)
 		{
@@ -433,9 +454,8 @@ void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]) {
 		if (i < DIM) {
 			expression[i] = '\0';
 		}
-		sprintf(expressionG, "%s", expression);
-	} while (isContained(toReplace, expressionG) && i < DIM&&g < DIM);
-	sprintf(expressionF, "%s", expressionG);
+		sprintf(expressionF, "%s", expression);
+	}
 }
 
 void renamer(char expression[DIM]) {

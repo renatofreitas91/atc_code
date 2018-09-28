@@ -2,8 +2,9 @@
 
 #include "stdafx.h"
 
-boolean equationSolverRunning = false;
-char charMaster[DIM] = "";
+boolean equationSolverRunning = false, polySimplifier = false, solveMultiPoly = false;
+char charMaster[DIM] = "", roots[DIM] = "";
+int parentPol[DIM];
 
 void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2, int index) {
 	char values[DIM] = "", value[DIM] = "", saveValue[DIM] = "";
@@ -155,9 +156,9 @@ void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2,
 }
 
 void rootsToPolynomial(char roots[DIM]) {
+	char report[DIM] = "";
 	double valuesRootsR[DIM], valuesRootsI[DIM], polynomialR[DIM], polynomialI[DIM], newPolynomialR[DIM], newPolynomialI[DIM];
 	int i = 0, numberRoots = 0, rootIndex = 1, saveNumberRoots = 0;
-	char report[DIM] = "";
 	for (i = 0; roots[i] != '\0'; i++) {
 		if (roots[i] == '\\') {
 			numberRoots++;
@@ -165,7 +166,20 @@ void rootsToPolynomial(char roots[DIM]) {
 	}
 	numberRoots++;
 	if (numberRoots == 1) {
-		puts("\nError: At minimum two roots must be entered.\n");
+		if (polySimplifier == (boolean)false) {
+			sprintf(report, "%s\nFinal polynomial:\n", report);
+		}
+		calcNow(roots, 0, 0);
+		sprintf(report, "(x-(%G+%Gi))", resultR, resultI);
+		if (isContained("(-", report)) {
+			replace("(-", "(_", report);
+			sprintf(report, expressionF);
+		}
+		if (isContained("+-", report)) {
+			replace("+-", "+_", report);
+			sprintf(report, expressionF);
+		}
+		sprintf(expressionF, report);
 	}
 	else {
 		for (i = 0; i < numberRoots * 100; i++) {
@@ -252,7 +266,12 @@ void rootsToPolynomial(char roots[DIM]) {
 			}
 			int exp = members;
 			if (members == numberRoots) {
-				sprintf(report, "%s\nFinal polynomial:\n", report);
+				if (polySimplifier == (boolean)false) {
+					sprintf(report, "%s\nFinal polynomial:\n", report);
+				}
+				else {
+					sprintf(report, "%s\nPolynomial simplified:\n", report);
+				}
 			}
 			for (pol = 0; pol < savePol; pol++) {
 				if (exp > 1) {
@@ -274,15 +293,37 @@ void rootsToPolynomial(char roots[DIM]) {
 			}
 			sprintf(report, "%s\n", report);
 		}
-	}
-	puts(report);
-	int option = -1;
-	while (option != 0 && option != 1) {
-		puts("Export result? (Yes -> 1 \\ No -> 0)");
-		option = (int)getValue();
-	}
-	if (option == 1) {
-		saveToReport(report);
+		if (isContained("(-", report)) {
+			replace("(-", "(_", report);
+			sprintf(report, expressionF);
+		}
+		if (isContained("+-", report)) {
+			replace("+-", "+_", report);
+			sprintf(report, expressionF);
+		}
+		if (polySimplifier == (boolean)false) {
+			puts(report);
+			int option = -1;
+			while (option != 0 && option != 1) {
+				puts("Export result? (Yes -> 1 \\ No -> 0)");
+				option = (int)getValue();
+			}
+			if (option == 1) {
+				saveToReport(report);
+			}
+		}
+		else {
+			isContained("Polynomial simplified:\n", report);
+			char finalPolynomial[DIM] = "";
+			int h = 0, g = strEnd;
+			while (report[g] != '\0') {
+				finalPolynomial[h] = report[g];
+				g++;
+				h++;
+			}
+			finalPolynomial[h] = '\0';
+			sprintf(expressionF, finalPolynomial);
+		}
 	}
 }
 
@@ -291,6 +332,15 @@ void equationSolver(char equation[DIM]) {
 	double rootR = 0, rootI = 0;
 	int i = 0, maxExponent = 0, saveMaxExponent = 0;
 	char toCalcX[DIM] = "";
+	char saveEquation[DIM] = "";
+	if (isContained(")*(", equation) || isContained(")(", equation) || isContained(")-(", equation) || isContained(")/(", equation)) {
+		simplifyPolynomial(equation);
+		sprintf(saveEquation, expressionF);
+		sprintf(equation, expressionF);
+	}
+	else {
+		sprintf(saveEquation, equation);
+	}
 	if (isContained("\\", equation)) {
 		puts("");
 		equationSolverRunning = true;
@@ -433,7 +483,15 @@ void equationSolver(char equation[DIM]) {
 					}
 				}
 				char newExpre[DIM] = "";
-				sprintf(newExpre, "(%s)/%s", toCalcX, divider);
+				char toTest[DIM] = "";
+				sprintf(toTest, "(%s)", toCalcX);
+				boolean testNeedPar = dataVerifier(toTest, 0, 0, 0, 1);
+				if (testNeedPar) {
+					sprintf(newExpre, "(%s)/%s", toCalcX, divider);
+				}
+				else {
+					sprintf(newExpre, "%s/%s", toCalcX, divider);
+				}
 				sprintf(toCalcX, newExpre);
 			}
 		}
@@ -460,6 +518,7 @@ void equationSolver(char equation[DIM]) {
 			}
 			sprintf(charMaster, "nothingL");
 			char maxExpX[100] = "";
+			maxExponent = maxExponent;
 			sprintf(maxExpX, "x^%d", maxExponent);
 			while (isContained(maxExpX, toCalcX) && verifyLetter(toCalcX[strStart - 1]) == (boolean)false && verifyNumber(toCalcX[strStart - 1]) == (boolean)false) {
 				char value[100] = "", valueF[100] = "";
@@ -527,6 +586,9 @@ void equationSolver(char equation[DIM]) {
 					sprintf(saveToCalcX, expressionF);
 				}
 			}
+			if (dividerValue == 0) {
+				dividerValue = 1;
+			}
 			sprintf(divider, "%G", dividerValue);
 			for (int y = 0; divider[y] != '\0'; y++) {
 				if (divider[y] == '-') {
@@ -534,7 +596,15 @@ void equationSolver(char equation[DIM]) {
 				}
 			}
 			char newExpre[DIM] = "";
-			sprintf(newExpre, "(%s)/%s", toCalcX, divider);
+			char toTest[DIM] = "";
+			sprintf(toTest, "(%s)", toCalcX);
+			boolean testNeedPar = dataVerifier(toTest, 0, 0, 0, 1);
+			if (testNeedPar) {
+				sprintf(newExpre, "(%s)/%s", toCalcX, divider);
+			}
+			else {
+				sprintf(newExpre, "%s/%s", toCalcX, divider);
+			}
 			sprintf(toCalcX, newExpre);
 		}
 	}
@@ -595,36 +665,64 @@ void equationSolver(char equation[DIM]) {
 		if ((rootR > 1E-27&&rootR < 1E-5) || (rootR < -1E-27&&rootR>-0.001)) {
 			rootR = 0;
 		}
-		if (isContained("\\", equation) || isContained("x^", equation) || (equation_solver == (boolean)true && isContained("x", equation) && isContained("x^", equation) == (boolean)false)) {
+		if (isContained("\\", saveEquation) || isContained("x^", saveEquation) || (equation_solver == (boolean)true && isContained("x", saveEquation) && isContained("x^", equation) == (boolean)false)) {
 			if (rootR > 0 && rootI > 0) {
 				sprintf(answers, "%sx%d=%G+%Gi\n", answers, rootIndex, rootR, rootI);
+				sprintf(roots, "%s\\%G+%Gi", roots, rootR, rootI);
 			}
 			else {
 				if (rootR > 0 && rootI < 0) {
 					sprintf(answers, "%sx%d=%G%Gi\n", answers, rootIndex, rootR, rootI);
+					sprintf(roots, "%s\\%G%Gi", roots, rootR, rootI);
 				}
 				else {
 					if (rootR < 0 && rootI > 0) {
 						sprintf(answers, "%sx%d=%G+%Gi\n", answers, rootIndex, rootR, rootI);
+						char rootRExp[100] = "";
+						sprintf(rootRExp, "%G", rootR);
+						replace("-", "_", rootRExp);
+						sprintf(rootRExp, expressionF);
+						sprintf(roots, "%s\\%s+%Gi", roots, rootRExp, rootI);
 					}
 					else {
 						if (rootR < 0 && rootI < 0) {
 							sprintf(answers, "%sx%d=%G%Gi\n", answers, rootIndex, rootR, rootI);
+							char rootRExp[100] = "";
+							sprintf(rootRExp, "%G", rootR);
+							replace("-", "_", rootRExp);
+							sprintf(rootRExp, expressionF);
+							sprintf(roots, "%s\\%s%Gi", roots, rootRExp, rootI);
 						}
 						else {
 							if (rootR == 0 && rootI == 0) {
 								sprintf(answers, "%sx%d=%G\n", answers, rootIndex, rootR);
+								sprintf(roots, "%s\\%G", roots, rootR);
 							}
 							else {
 								if (rootR == 0 && rootI != 0) {
 									sprintf(answers, "%sx%d=%Gi\n", answers, rootIndex, rootI);
+									char rootIExp[100] = "";
+									sprintf(rootIExp, "%Gi", rootI);
+									if (isContained("-", rootIExp)) {
+										replace("-", "_", rootIExp);
+										sprintf(rootIExp, expressionF);
+									}
+									sprintf(roots, "%s\\%s", roots, rootIExp);
 								}
 								else {
 									if (rootR != 0 && rootI == 0) {
 										sprintf(answers, "%sx%d=%G\n", answers, rootIndex, rootR);
+										char rootRExp[100] = "";
+										sprintf(rootRExp, "%G", rootR);
+										if (isContained("-", rootRExp)) {
+											replace("-", "_", rootRExp);
+											sprintf(rootRExp, expressionF);
+										}
+										sprintf(roots, "%s\\%s", roots, rootRExp);
 									}
 									else {
 										sprintf(answers, "%sx%d=%G+%Gi\n", answers, rootIndex, rootR, rootI);
+										sprintf(roots, "%s\\%G+%Gi", roots, rootR, rootI);
 									}
 								}
 							}
@@ -635,22 +733,560 @@ void equationSolver(char equation[DIM]) {
 		}
 		rootIndex++;
 		g++;
-	}
-	if (isContained("\\", equation) || isContained("x^", equation) || (equation_solver == (boolean)true && isContained("x", equation) && isContained("x^", equation) == (boolean)false)) {
-		puts(answers);
-		int option = -1;
-		while (option != 0 && option != 1) {
-			puts("Export result? (Yes -> 1 \\ No -> 0)");
-			option = (int)getValue();
-		}
-		if (option == 1) {
-			saveToReport(answers);
+		if (roots[0] == '\\') {
+			int y = 1;
+			for (y = 1; y < abs((int)strlen(roots)); y++) {
+				roots[y - 1] = roots[y];
+			}
+			roots[y - 1] = '\0';
 		}
 	}
-	else {
-		resultR = RootR[g - 1];
-		resultI = RootI[g - 1];
+	if (polySimplifier == (boolean)false) {
+		if (isContained("\\", saveEquation) || isContained("x^", saveEquation) || (equation_solver == (boolean)true && isContained("x", saveEquation) && isContained("x^", saveEquation) == (boolean)false)) {
+			puts(" ");
+			puts(answers);
+			int option = -1;
+			while (option != 0 && option != 1) {
+				puts("Export result? (Yes -> 1 \\ No -> 0)");
+				option = (int)getValue();
+			}
+			if (option == 1) {
+				saveToReport(answers);
+			}
+		}
+		else {
+			resultR = RootR[g - 1];
+			resultI = RootI[g - 1];
+		}
 	}
 	solving = true;
 	equationSolverRunning = false;
+}
+
+
+void simpleSimplifyPolynomial(char expression[DIM]) {
+	polySimplifier = true;
+	sprintf(roots, "");
+	char expressionS[DIM] = "";
+	char toSimplify[DIM] = "";
+	char exprProcessed[DIM] = "";
+	sprintf(expressionS, expression);
+	char divExpression[DIM] = "";
+	int saveStrEnd = 0;
+	int i = 0, j = 0;
+	if (isContained(")(", expressionS)) {
+		replace(")(", ")*(", expressionS);
+		sprintf(expressionS, expressionF);
+	}
+	char newExpression[DIM] = "";
+	int v = 0, vv = 0, vvv = 0;
+	char operaTor[DIM] = "";
+	char operators[DIM] = "";
+	char noSignalsExpression[DIM] = "";
+	while (expressionS[v] != '\0') {
+		sprintf(operaTor, "%c%c%c", expressionS[v], expressionS[v + 1], expressionS[v + 2]);
+		noSignalsExpression[vvv] = expressionS[v];
+		if (isEqual(")+(", operaTor)) {
+			operators[vv] = '+';
+			vv++;
+			noSignalsExpression[vvv] = ' ';
+			v = v + 2;
+		}
+		if (isEqual(")*(", operaTor)) {
+			operators[vv] = '*';
+			vv++;
+			noSignalsExpression[vvv] = ' ';
+			v = v + 2;
+		}
+		if (isEqual(")/(", operaTor)) {
+			operators[vv] = '/';
+			vv++;
+			noSignalsExpression[vvv] = ' ';
+			v = v + 2;
+		}
+		if (isEqual(")-(", operaTor)) {
+			operators[vv] = '-';
+			vv++;
+			noSignalsExpression[vvv] = ' ';
+			v = v + 2;
+		}
+		v++;
+		vvv++;
+	}
+	noSignalsExpression[vvv] = '\0';
+	if (isContained(" ", noSignalsExpression)) {
+		replace(" ", ")_(", noSignalsExpression);
+		replace(")_(", ") (", expressionF);
+		sprintf(noSignalsExpression, expressionF);
+	}
+	operators[vv] = '\0';
+	replaceTimes = 1;
+	int count_spaces = 0;
+	int y = 0;
+	int h = 0;
+	count_spaces = 0;
+	y = 0;
+	h = 0;
+	int ff = 0;
+	char replacement[DIM] = "";
+	char saveExpression[DIM] = "";
+	int otherOp = 0;
+	int saveOp = 0;
+	char saveOperators[DIM] = "";
+	char passedOperators[DIM] = "";
+	if (isContained("/", operators)) {
+		for (h = 0; h < vv; h++) {
+			count_spaces = 0;
+			sprintf(passedOperators, "");
+			while (operators[h] == '/') {
+				sprintf(passedOperators, "%s%c", passedOperators, operators[h]);
+				for (y = 0; noSignalsExpression[y] != '\0'; y++) {
+					if (noSignalsExpression[y] == ' ') {
+						count_spaces++;
+					}
+					if (count_spaces - 1 == h) {
+						break;
+					}
+				}
+				int fg = y;
+				y--;
+				while (noSignalsExpression[y] != ' '&&y != 0) {
+					y--;
+				}
+				int u = 0;
+				char math_expression_1[DIM] = "";
+				if (y > 0) {
+					y++;
+				}
+				while (y < fg) {
+					math_expression_1[u] = noSignalsExpression[y];
+					y++; u++;
+				}
+				math_expression_1[u] = '\0';
+				y++;
+				u = 0;
+				char math_expression_2[DIM] = "";
+				while (noSignalsExpression[y] != ' '&&noSignalsExpression[y] != '\0') {
+					math_expression_2[u] = noSignalsExpression[y];
+					y++; u++;
+				}
+				math_expression_2[u] = '\0';
+				div_polynomial(math_expression_1, math_expression_2);
+				char toReplace[DIM] = "";
+				sprintf(toReplace, "%s %s", math_expression_1, math_expression_2);
+				if (noSignalsExpression[y] == ' ') {
+					sprintf(replacement, "%s ", expressionF);
+				}
+				else {
+					sprintf(replacement, expressionF);
+				}
+				replace(toReplace, expressionF, noSignalsExpression);
+				sprintf(noSignalsExpression, expressionF);
+				h++;
+			}
+			if (operators[h] != '/') {
+				saveOperators[saveOp] = operators[h];
+				saveOp++;
+				sprintf(passedOperators, "%s%c", passedOperators, operators[h]);
+				replace(replacement, "", noSignalsExpression);
+				sprintf(noSignalsExpression, expressionF);
+				sprintf(newExpression, "%s%s", newExpression, replacement);
+				if (operators[h + 1] == '/') {
+					h = -1;
+				}
+				else {
+					h++;
+				}
+				replace(passedOperators, "", operators);
+				sprintf(operators, expressionF);
+				vv = (int)strlen(operators);
+			}
+		}
+		saveOperators[saveOp] = '\0';
+		if (strlen(saveOperators) > 0) {
+			sprintf(operators, saveOperators);
+		}
+		sprintf(noSignalsExpression, newExpression);
+		count_spaces = 0;
+		vv = (int)strlen(operators);
+	}
+	count_spaces = 0;
+	y = 0;
+	h = 0;
+	y = 0;
+	h = 0;
+	ff = 0;
+	sprintf(replacement, "");
+	sprintf(saveExpression, "");
+	otherOp = 0;
+	saveOp = 0;
+	sprintf(saveOperators, "");
+	sprintf(passedOperators, "");
+	if (isContained("*", operators)) {
+		for (h = 0; h < vv; h++) {
+			count_spaces = 0;
+			sprintf(passedOperators, "");
+			while (operators[h] == '*') {
+				sprintf(passedOperators, "%s%c", passedOperators, operators[h]);
+				for (y = 0; noSignalsExpression[y] != '\0'; y++) {
+					if (noSignalsExpression[y] == ' ') {
+						count_spaces++;
+					}
+					if (count_spaces - 1 == h) {
+						break;
+					}
+				}
+				int fg = y;
+				y--;
+				while (noSignalsExpression[y] != ' '&&y != 0) {
+					y--;
+				}
+				int u = 0;
+				char math_expression_1[DIM] = "";
+				if (y > 0) {
+					y++;
+				}
+				while (y < fg) {
+					math_expression_1[u] = noSignalsExpression[y];
+					y++; u++;
+				}
+				math_expression_1[u] = '\0';
+				y++;
+				u = 0;
+				char math_expression_2[DIM] = "";
+				while (noSignalsExpression[y] != ' '&&noSignalsExpression[y] != '\0') {
+					math_expression_2[u] = noSignalsExpression[y];
+					y++; u++;
+				}
+				math_expression_2[u] = '\0';
+				multi_polynomial(math_expression_1, math_expression_2);
+				char toReplace[DIM] = "";
+				sprintf(toReplace, "%s %s", math_expression_1, math_expression_2);
+				if (noSignalsExpression[y] == ' ') {
+					sprintf(replacement, "%s ", expressionF);
+				}
+				else {
+					sprintf(replacement, expressionF);
+				}
+				replace(toReplace, expressionF, noSignalsExpression);
+				sprintf(noSignalsExpression, expressionF);
+				h++;
+			}
+			if (operators[h] != '*') {
+				saveOperators[saveOp] = operators[h];
+				saveOp++;
+				sprintf(passedOperators, "%s%c", passedOperators, operators[h]);
+				replace(replacement, "", noSignalsExpression);
+				sprintf(noSignalsExpression, expressionF);
+				sprintf(newExpression, "%s%s", newExpression, replacement);
+				if (operators[h + 1] == '*') {
+					h = -1;
+				}
+				else {
+					h++;
+				}
+				replace(passedOperators, "", operators);
+				sprintf(operators, expressionF);
+				vv = (int)strlen(operators);
+			}
+		}
+		saveOperators[saveOp] = '\0';
+		if (strlen(saveOperators) > 0) {
+			sprintf(operators, saveOperators);
+		}
+		sprintf(noSignalsExpression, newExpression);
+		count_spaces = 0;
+		vv = (int)strlen(operators);
+	}
+	y = 0;
+	h = 0;
+	for (h = 0; h < vv; h++) {
+		count_spaces = 0;
+		if (operators[h] == '*') {
+			for (y = 0; noSignalsExpression[y] != '\0'; y++) {
+				if (noSignalsExpression[y] == ' ') {
+					count_spaces++;
+				}
+				if (count_spaces - 1 == h) {
+					break;
+				}
+			}
+			int fg = y;
+			y--;
+			while (noSignalsExpression[y] != ' '&&y != 0) {
+				y--;
+			}
+			int u = 0;
+			if (y > 0) {
+				y++;
+			}
+			char math_expression_1[DIM] = "";
+			while (y < fg) {
+				math_expression_1[u] = noSignalsExpression[y];
+				y++; u++;
+			}
+			math_expression_1[u] = '\0';
+			y++;
+			u = 0;
+			char math_expression_2[DIM] = "";
+			while (noSignalsExpression[y] != ' '&&noSignalsExpression[y] != '\0') {
+				math_expression_2[u] = noSignalsExpression[y];
+				y++; u++;
+			}
+			math_expression_2[u] = '\0';
+			multi_polynomial(math_expression_1, math_expression_2);
+			char toReplace[DIM] = "";
+			sprintf(toReplace, "%s %s", math_expression_1, math_expression_2);
+			replace(toReplace, expressionF, noSignalsExpression);
+			sprintf(noSignalsExpression, expressionF);
+		}
+		if (operators[h] == '/') {
+			for (y = 0; noSignalsExpression[y] != '\0'; y++) {
+				if (noSignalsExpression[y] == ' ') {
+					count_spaces++;
+				}
+				if (count_spaces - 1 == h) {
+					break;
+				}
+			}
+			int fg = y;
+			y--;
+			while (noSignalsExpression[y] != ' '&&y != 0) {
+				y--;
+			}
+			int u = 0;
+			char math_expression_1[DIM] = "";
+			if (y > 0) {
+				y++;
+			}
+			while (y < fg) {
+				math_expression_1[u] = noSignalsExpression[y];
+				y++; u++;
+			}
+			math_expression_1[u] = '\0';
+			y++;
+			u = 0;
+			char math_expression_2[DIM] = "";
+			while (noSignalsExpression[y] != ' '&&noSignalsExpression[y] != '\0') {
+				math_expression_2[u] = noSignalsExpression[y];
+				y++; u++;
+			}
+			math_expression_2[u] = '\0';
+			div_polynomial(math_expression_1, math_expression_2);
+			char toReplace[DIM] = "";
+			sprintf(toReplace, "%s %s", math_expression_1, math_expression_2);
+			replace(toReplace, expressionF, noSignalsExpression);
+			sprintf(noSignalsExpression, expressionF);
+		}
+		if (operators[h] == '-') {
+			for (y = 0; noSignalsExpression[y] != '\0'; y++) {
+				if (noSignalsExpression[y] == ' ') {
+					count_spaces++;
+				}
+				if (count_spaces - 1 == h) {
+					break;
+				}
+			}
+			int fg = y;
+			y--;
+			while (noSignalsExpression[y] != ' '&&y != 0) {
+				y--;
+			}
+			int u = 0;
+			char math_expression_1[DIM] = "";
+			if (y > 0) {
+				y++;
+			}
+			while (y < fg) {
+				math_expression_1[u] = noSignalsExpression[y];
+				y++; u++;
+			}
+			math_expression_1[u] = '\0';
+			y++;
+			u = 0;
+			char math_expression_2[DIM] = "";
+			while (noSignalsExpression[y] != ' '&&noSignalsExpression[y] != '\0') {
+				math_expression_2[u] = noSignalsExpression[y];
+				y++; u++;
+			}
+			math_expression_2[u] = '\0';
+			char savemath_expression_2[DIM] = "";
+			sprintf(savemath_expression_2, math_expression_2);
+			sub_polynomial(math_expression_1, math_expression_2);
+			char toReplace[DIM] = "";
+			sprintf(toReplace, "%s %s", math_expression_1, savemath_expression_2);
+			replace(toReplace, expressionF, noSignalsExpression);
+			sprintf(noSignalsExpression, expressionF);
+		}
+		if (operators[h] == '+') {
+			for (y = 0; noSignalsExpression[y] != '\0'; y++) {
+				if (noSignalsExpression[y] == ' ') {
+					count_spaces++;
+				}
+				if (count_spaces - 1 == h) {
+					break;
+				}
+			}
+			int fg = y;
+			y--;
+			while (noSignalsExpression[y] != ' '&&y != 0) {
+				y--;
+			}
+			int u = 0;
+			char math_expression_1[DIM] = "";
+			if (y > 0) {
+				y++;
+			}
+			while (y < fg) {
+				math_expression_1[u] = noSignalsExpression[y];
+				y++; u++;
+			}
+			math_expression_1[u] = '\0';
+			y++;
+			u = 0;
+			char math_expression_2[DIM] = "";
+			while (noSignalsExpression[y] != ' '&&noSignalsExpression[y] != '\0') {
+				math_expression_2[u] = noSignalsExpression[y];
+				y++; u++;
+			}
+			math_expression_2[u] = '\0';
+			sum_polynomial(math_expression_1, math_expression_2);
+			char toReplace[DIM] = "";
+			sprintf(toReplace, "%s %s", math_expression_1, math_expression_2);
+			replace(toReplace, expressionF, noSignalsExpression);
+			sprintf(noSignalsExpression, expressionF);
+		}
+	}
+	sprintf(expressionF, noSignalsExpression);
+	replaceTimes = 0;
+}
+void simplifyPolynomial(char expression[DIM]) {
+	sprintf(roots, "");
+	polySimplifier = true;
+	char expressionS[DIM] = "";
+	char toSimplify[DIM] = "";
+	char exprProcessed[DIM] = "";
+	sprintf(expressionS, expression);
+	char divExpression[DIM] = "";
+	int saveStrEnd = 0;
+	int i = 0, j = 0;
+	if (isContained(")(", expressionS)) {
+		replace(")(", ")*(", expressionS);
+		sprintf(expressionS, expressionF);
+	}
+	int parent[DIM];
+	int s = 0, c, d, k, l, h;
+	for (s = 0; s < abs((int)strlen(expressionS)); s++) {
+		parent[s] = 0;
+	}
+	int cp = 0, mark = 0;
+	c = 0; d = 0; k = 0; l = 0; h = 0;
+	getNumerationPol(expressionS);
+	for (s = 0; expressionS[s] != '\0'&&s < abs((int)strlen(expressionS)); s++) {
+		parent[s] = parentPol[s];
+	}
+	char newExpressionS[DIM] = "";
+	sprintf(newExpressionS, expressionS);
+	j = 0;
+	l = 0; k = 0;
+	int max = 0;
+	char saveExpression[DIM] = "";
+	char expToSolve[DIM] = "";
+	for (j = 0; j < s; j++) {
+		if (parent[j] == 0) {
+			k = 0;
+			expToSolve[k] = expressionS[j];
+			k++; j++;
+			while (parent[j] == 0 && j < s) {
+				expToSolve[k] = expressionS[j];
+				j++; k++;
+			}
+			expToSolve[k] = '\0';
+			simpleSimplifyPolynomial(expToSolve);
+			sprintf(saveExpression, "%s%s", saveExpression, expressionF);
+			h++;
+		}
+		else {
+			k = 0;
+			l = parent[j];
+			j++;
+			while (parent[j] != l && j < s) {
+				expToSolve[k] = expressionS[j];
+				j++; k++;
+			}
+			expToSolve[k] = '\0';
+			simplifyPolynomial(expToSolve);
+			sprintf(saveExpression, "%s%s", saveExpression, expressionF);
+		}
+	}
+	replaceTimes = 0;
+	simpleSimplifyPolynomial(saveExpression);
+	polySimplifier = false;
+}
+
+void getNumerationPol(char expressionS[DIM]) {
+	if (isContained(")(", expressionS)) {
+		replace(")(", ")*(", expressionS);
+		sprintf(expressionS, expressionF);
+	}
+	int parent[DIM];
+	int s = 0, c, d, k, l, h;
+	for (s = 0; s < abs((int)strlen(expressionS)); s++) {
+		parent[s] = 0;
+	}
+	int cp = 0, mark = 0;
+	c = 0; d = 0; k = 0; l = 0; h = 0;
+	for (s = 0; expressionS[s] != '\0'&&s < abs((int)strlen(expressionS)); s++) {
+		if (expressionS[s] == '('&&expressionS[s + 1] == '(') {
+			d = 0;
+			c++;
+			parent[s] = c;
+			d = 1;
+			k = c;
+		}
+		else {
+			if (expressionS[s] == ')'&&expressionS[s - 1] == ')') {
+				d = 0;
+				h = 0;
+				l = 2;
+				do {
+					l = 0;
+					h = 0;
+					while (h < abs((int)strlen(expressionS))) {
+						if (parent[h] == k) {
+							l++;
+						}
+						if (l == 2) {
+							l = 0;
+							k--;
+						}
+						h++;
+					}
+				} while (l == 2);
+				h = 0;
+				while (l != 1 && h < abs((int)strlen(expressionS))) {
+					h = 0;
+					l = 0;
+					while (h < abs((int)strlen(expressionS))) {
+						if (parent[h] == k) {
+							l++;
+						}
+						if (l == 2) {
+							k--;
+							h = 0;
+							l = 0;
+						}
+						h++;
+					}
+				}
+				parent[s] = k;
+			}
+			else {
+				parent[s] = 0;
+			}
+		}
+	}
+	for (s = 0; expressionS[s] != '\0'&&s < abs((int)strlen(expressionS)); s++) {
+		parentPol[s] = parent[s];
+	}
 }
