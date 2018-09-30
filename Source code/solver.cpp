@@ -25,7 +25,7 @@ double solver(char expression[DIM]) {
 			double a = calcNow(getValue, 0, 0);
 			d++;
 			e = 0;
-			sprintf(getValue,"");
+			sprintf(getValue, "");
 			while (expression[d] != '\\') {
 				getValue[e] = expression[d];
 				e++; d++;
