@@ -77,34 +77,34 @@ void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2,
 					division(minusR, minusI, twoaR, twoaI);
 					double x2R = resultR, x2I = resultI;
 					if (x1R > 0 && x1I > 0) {
-						printf("x%d=%G+%Gi\n", index, x1R, x1I);
+						printf("x%d=%f+%fi\n", index, x1R, x1I);
 					}
 					else {
 						if (x1R > 0 && x1I < 0) {
-							printf("x%d=%G%Gi\n", index, x1R, x1I);
+							printf("x%d=%f%fi\n", index, x1R, x1I);
 						}
 						else {
 							if (x1R < 0 && x1I > 0) {
-								printf("x%d=%G+%Gi\n", index, x1R, x1I);
+								printf("x%d=%f+%fi\n", index, x1R, x1I);
 							}
 							else {
 								if (x1R < 0 && x1I < 0) {
-									printf("x%d=%G%Gi\n", index, x1R, x1I);
+									printf("x%d=%f%fi\n", index, x1R, x1I);
 								}
 								else {
 									if (x1R == 0 && x1I == 0) {
-										printf("x%d=%G\n", index, x1R);
+										printf("x%d=%f\n", index, x1R);
 									}
 									else {
 										if (x1R == 0 && x1I != 0) {
-											printf("x%d=%Gi\n", index, x1I);
+											printf("x%d=%fi\n", index, x1I);
 										}
 										else {
 											if (x1R != 0 && x1I == 0) {
-												printf("x%d=%G\n", index, x1R);
+												printf("x%d=%f\n", index, x1R);
 											}
 											else {
-												printf("x%d=%G+%Gi\n", index, x1R, x1I);
+												printf("x%d=%f+%fi\n", index, x1R, x1I);
 											}
 										}
 									}
@@ -114,34 +114,34 @@ void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2,
 					}
 					index++;
 					if (x2R > 0 && x2I > 0) {
-						printf("x%d=%G+%Gi\n", index, x2R, x2I);
+						printf("x%d=%f+%fi\n", index, x2R, x2I);
 					}
 					else {
 						if (x2R > 0 && x2I < 0) {
-							printf("x%d=%G%Gi\n", index, x2R, x2I);
+							printf("x%d=%f%fi\n", index, x2R, x2I);
 						}
 						else {
 							if (x2R < 0 && x2I > 0) {
-								printf("x%d=%G+%Gi\n", index, x2R, x2I);
+								printf("x%d=%f+%fi\n", index, x2R, x2I);
 							}
 							else {
 								if (x2R < 0 && x2I < 0) {
-									printf("x%d=%G%Gi\n", index, x2R, x2I);
+									printf("x%d=%f%fi\n", index, x2R, x2I);
 								}
 								else {
 									if (x2R == 0 && x2I == 0) {
-										printf("x%d=%G\n", index, x2R);
+										printf("x%d=%f\n", index, x2R);
 									}
 									else {
 										if (x2R == 0 && x2I != 0) {
-											printf("x%d=%Gi\n", index, x2I);
+											printf("x%d=%fi\n", index, x2I);
 										}
 										else {
 											if (x2R != 0 && x2I == 0) {
-												printf("x%d=%G\n", index, x2R);
+												printf("x%d=%f\n", index, x2R);
 											}
 											else {
-												printf("x%d=%G+%Gi\n", index, x2R, x2I);
+												printf("x%d=%f+%fi\n", index, x2R, x2I);
 											}
 										}
 									}
@@ -275,14 +275,14 @@ void rootsToPolynomial(char roots[DIM]) {
 			}
 			for (pol = 0; pol < savePol; pol++) {
 				if (exp > 1) {
-					sprintf(report, "%s(%G+%Gi)x^%d+", report, polynomialRF[pol], polynomialIF[pol], exp);
+					sprintf(report, "%s(%f+%fi)x^%d+", report, polynomialRF[pol], polynomialIF[pol], exp);
 				}
 				else {
 					if (exp == 1) {
-						sprintf(report, "%s(%G+%Gi)x+", report, polynomialRF[pol], polynomialIF[pol]);
+						sprintf(report, "%s(%f+%fi)x+", report, polynomialRF[pol], polynomialIF[pol]);
 					}
 					else {
-						sprintf(report, "%s(%G+%Gi)", report, polynomialRF[pol], polynomialIF[pol]);
+						sprintf(report, "%s(%f+%fi)", report, polynomialRF[pol], polynomialIF[pol]);
 					}
 				}
 				polynomialR[pol] = polynomialRF[pol];
@@ -299,6 +299,10 @@ void rootsToPolynomial(char roots[DIM]) {
 		}
 		if (isContained("+-", report)) {
 			replace("+-", "+_", report);
+			sprintf(report, expressionF);
+		}
+		if (isContained(".000000", report)) {
+			replace(".000000", "", report);
 			sprintf(report, expressionF);
 		}
 		if (polySimplifier == (boolean)false) {
@@ -377,13 +381,13 @@ void equationSolver(char equation[DIM]) {
 		saveMaxExponent = maxExponent;
 		for (i = maxExponent; i > 0; i--) {
 			char ValueR[DIM] = "";
-			sprintf(ValueR, "%G", valuesEqR[i]);
+			sprintf(ValueR, "%f", valuesEqR[i]);
 			for (int v = 0; v < abs((int)(strlen(ValueR))); v++) {
 				if (ValueR[v] == '-')
 					ValueR[v] = '_';
 			}
 			char ValueI[DIM] = "";
-			sprintf(ValueI, "%G", valuesEqI[i]);
+			sprintf(ValueI, "%f", valuesEqI[i]);
 			for (int v = 0; v < abs((int)strlen(ValueI)); v++) {
 				if (ValueI[v] == '-')
 					ValueI[v] = '_';
@@ -391,13 +395,13 @@ void equationSolver(char equation[DIM]) {
 			sprintf(toCalcX, "%s(%s+%si)*(res)^%d+", toCalcX, ValueR, ValueI, i);
 		}
 		char ValueR[DIM] = "";
-		sprintf(ValueR, "%G", valuesEqR[i]);
+		sprintf(ValueR, "%f", valuesEqR[i]);
 		for (int v = 0; v < abs((int)strlen(ValueR)); v++) {
 			if (ValueR[v] == '-')
 				ValueR[v] = '_';
 		}
 		char ValueI[DIM] = "";
-		sprintf(ValueI, "%G", valuesEqI[i]);
+		sprintf(ValueI, "%f", valuesEqI[i]);
 		for (int v = 0; v < abs((int)strlen(ValueI)); v++) {
 			if (ValueI[v] == '-')
 				ValueI[v] = '_';
@@ -476,7 +480,7 @@ void equationSolver(char equation[DIM]) {
 						sprintf(saveToCalcX, expressionF);
 					}
 				}
-				sprintf(divider, "%G", dividerValue);
+				sprintf(divider, "%f", dividerValue);
 				for (int y = 0; divider[y] != '\0'; y++) {
 					if (divider[y] == '-') {
 						divider[y] = '_';
@@ -589,7 +593,7 @@ void equationSolver(char equation[DIM]) {
 			if (dividerValue == 0) {
 				dividerValue = 1;
 			}
-			sprintf(divider, "%G", dividerValue);
+			sprintf(divider, "%f", dividerValue);
 			for (int y = 0; divider[y] != '\0'; y++) {
 				if (divider[y] == '-') {
 					divider[y] = '_';
@@ -667,42 +671,42 @@ void equationSolver(char equation[DIM]) {
 		}
 		if (isContained("\\", saveEquation) || isContained("x^", saveEquation) || (equation_solver == (boolean)true && isContained("x", saveEquation) && isContained("x^", equation) == (boolean)false)) {
 			if (rootR > 0 && rootI > 0) {
-				sprintf(answers, "%sx%d=%G+%Gi\n", answers, rootIndex, rootR, rootI);
-				sprintf(roots, "%s\\%G+%Gi", roots, rootR, rootI);
+				sprintf(answers, "%sx%d=%f+%fi\n", answers, rootIndex, rootR, rootI);
+				sprintf(roots, "%s\\%f+%fi", roots, rootR, rootI);
 			}
 			else {
 				if (rootR > 0 && rootI < 0) {
-					sprintf(answers, "%sx%d=%G%Gi\n", answers, rootIndex, rootR, rootI);
-					sprintf(roots, "%s\\%G%Gi", roots, rootR, rootI);
+					sprintf(answers, "%sx%d=%f%fi\n", answers, rootIndex, rootR, rootI);
+					sprintf(roots, "%s\\%f%fi", roots, rootR, rootI);
 				}
 				else {
 					if (rootR < 0 && rootI > 0) {
-						sprintf(answers, "%sx%d=%G+%Gi\n", answers, rootIndex, rootR, rootI);
+						sprintf(answers, "%sx%d=%f+%fi\n", answers, rootIndex, rootR, rootI);
 						char rootRExp[100] = "";
-						sprintf(rootRExp, "%G", rootR);
+						sprintf(rootRExp, "%f", rootR);
 						replace("-", "_", rootRExp);
 						sprintf(rootRExp, expressionF);
-						sprintf(roots, "%s\\%s+%Gi", roots, rootRExp, rootI);
+						sprintf(roots, "%s\\%s+%fi", roots, rootRExp, rootI);
 					}
 					else {
 						if (rootR < 0 && rootI < 0) {
-							sprintf(answers, "%sx%d=%G%Gi\n", answers, rootIndex, rootR, rootI);
+							sprintf(answers, "%sx%d=%f%fi\n", answers, rootIndex, rootR, rootI);
 							char rootRExp[100] = "";
-							sprintf(rootRExp, "%G", rootR);
+							sprintf(rootRExp, "%f", rootR);
 							replace("-", "_", rootRExp);
 							sprintf(rootRExp, expressionF);
-							sprintf(roots, "%s\\%s%Gi", roots, rootRExp, rootI);
+							sprintf(roots, "%s\\%s%fi", roots, rootRExp, rootI);
 						}
 						else {
 							if (rootR == 0 && rootI == 0) {
-								sprintf(answers, "%sx%d=%G\n", answers, rootIndex, rootR);
-								sprintf(roots, "%s\\%G", roots, rootR);
+								sprintf(answers, "%sx%d=%f\n", answers, rootIndex, rootR);
+								sprintf(roots, "%s\\%f", roots, rootR);
 							}
 							else {
 								if (rootR == 0 && rootI != 0) {
-									sprintf(answers, "%sx%d=%Gi\n", answers, rootIndex, rootI);
+									sprintf(answers, "%sx%d=%fi\n", answers, rootIndex, rootI);
 									char rootIExp[100] = "";
-									sprintf(rootIExp, "%Gi", rootI);
+									sprintf(rootIExp, "%fi", rootI);
 									if (isContained("-", rootIExp)) {
 										replace("-", "_", rootIExp);
 										sprintf(rootIExp, expressionF);
@@ -711,9 +715,9 @@ void equationSolver(char equation[DIM]) {
 								}
 								else {
 									if (rootR != 0 && rootI == 0) {
-										sprintf(answers, "%sx%d=%G\n", answers, rootIndex, rootR);
+										sprintf(answers, "%sx%d=%f\n", answers, rootIndex, rootR);
 										char rootRExp[100] = "";
-										sprintf(rootRExp, "%G", rootR);
+										sprintf(rootRExp, "%f", rootR);
 										if (isContained("-", rootRExp)) {
 											replace("-", "_", rootRExp);
 											sprintf(rootRExp, expressionF);
@@ -721,8 +725,8 @@ void equationSolver(char equation[DIM]) {
 										sprintf(roots, "%s\\%s", roots, rootRExp);
 									}
 									else {
-										sprintf(answers, "%sx%d=%G+%Gi\n", answers, rootIndex, rootR, rootI);
-										sprintf(roots, "%s\\%G+%Gi", roots, rootR, rootI);
+										sprintf(answers, "%sx%d=%f+%fi\n", answers, rootIndex, rootR, rootI);
+										sprintf(roots, "%s\\%f+%fi", roots, rootR, rootI);
 									}
 								}
 							}
@@ -739,6 +743,14 @@ void equationSolver(char equation[DIM]) {
 				roots[y - 1] = roots[y];
 			}
 			roots[y - 1] = '\0';
+		}
+		if (isContained(".000000", roots)) {
+			replace(".000000", "", roots);
+			sprintf(roots, expressionF);
+		}
+		if (isContained(".000000", answers)) {
+			replace(".000000", "", answers);
+			sprintf(answers, expressionF);
 		}
 	}
 	if (polySimplifier == (boolean)false) {

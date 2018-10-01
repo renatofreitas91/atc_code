@@ -226,14 +226,14 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	f = 0;
 	while (maxExponent >= 0) {
 		if (maxExponent > 1) {
-			sprintf(polynomial, "%s(%G+%Gi)x^%d+", polynomial, valuesR[f], valuesI[f], maxExponent);
+			sprintf(polynomial, "%s(%f+%fi)x^%d+", polynomial, valuesR[f], valuesI[f], maxExponent);
 		}
 		else {
 			if (maxExponent == 1) {
-				sprintf(polynomial, "%s(%G+%Gi)x+", polynomial, valuesR[f], valuesI[f]);
+				sprintf(polynomial, "%s(%f+%fi)x+", polynomial, valuesR[f], valuesI[f]);
 			}
 			else {
-				sprintf(polynomial, "%s(%G+%Gi)", polynomial, valuesR[f], valuesI[f]);
+				sprintf(polynomial, "%s(%f+%fi)", polynomial, valuesR[f], valuesI[f]);
 			}
 		}
 		maxExponent--;
@@ -248,6 +248,10 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	if (isContained("\n", expressionF)) {
 		replace("\n", "", expressionF);
 	}
+	if (isContained(".000000", expressionF)) {
+		replace(".000000", "", expressionF);
+	}
+
 	replaceTimes = 1;
 	char toTest[DIM] = "";
 	sprintf(toTest, "(%s)", expressionF);
