@@ -170,13 +170,17 @@ void rootsToPolynomial(char roots[DIM]) {
 			sprintf(report, "%s\nFinal polynomial:\n", report);
 		}
 		calcNow(roots, 0, 0);
-		sprintf(report, "(x-(%G+%Gi))", resultR, resultI);
+		sprintf(report, "(x-(%f+%fi))", resultR, resultI);
 		if (isContained("(-", report)) {
 			replace("(-", "(_", report);
 			sprintf(report, expressionF);
 		}
 		if (isContained("+-", report)) {
 			replace("+-", "+_", report);
+			sprintf(report, expressionF);
+		}
+		if (isContained(".000000", report)) {
+			replace(".000000", "", report);
 			sprintf(report, expressionF);
 		}
 		sprintf(expressionF, report);
@@ -290,20 +294,20 @@ void rootsToPolynomial(char roots[DIM]) {
 				polynomialI[pol] = polynomialIF[pol];
 				polynomialIF[pol] = 0;
 				exp--;
+				if (isContained("(-", report)) {
+					replace("(-", "(_", report);
+					sprintf(report, expressionF);
+				}
+				if (isContained("+-", report)) {
+					replace("+-", "+_", report);
+					sprintf(report, expressionF);
+				}
+				if (isContained(".000000", report)) {
+					replace(".000000", "", report);
+					sprintf(report, expressionF);
+				}
 			}
 			sprintf(report, "%s\n", report);
-		}
-		if (isContained("(-", report)) {
-			replace("(-", "(_", report);
-			sprintf(report, expressionF);
-		}
-		if (isContained("+-", report)) {
-			replace("+-", "+_", report);
-			sprintf(report, expressionF);
-		}
-		if (isContained(".000000", report)) {
-			replace(".000000", "", report);
-			sprintf(report, expressionF);
 		}
 		if (polySimplifier == (boolean)false) {
 			puts(report);
