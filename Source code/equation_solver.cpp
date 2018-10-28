@@ -277,16 +277,19 @@ void rootsToPolynomial(char roots[DIM]) {
 					sprintf(report, "%s\nPolynomial simplified:\n", report);
 				}
 			}
+
 			for (pol = 0; pol < savePol; pol++) {
-				if (exp > 1) {
-					sprintf(report, "%s(%f+%fi)x^%d+", report, polynomialRF[pol], polynomialIF[pol], exp);
-				}
-				else {
-					if (exp == 1) {
-						sprintf(report, "%s(%f+%fi)x+", report, polynomialRF[pol], polynomialIF[pol]);
+				if (polySimplifier == (boolean)false || members == numberRoots) {
+					if (exp > 1) {
+						sprintf(report, "%s(%f+%fi)x^%d+", report, polynomialRF[pol], polynomialIF[pol], exp);
 					}
 					else {
-						sprintf(report, "%s(%f+%fi)", report, polynomialRF[pol], polynomialIF[pol]);
+						if (exp == 1) {
+							sprintf(report, "%s(%f+%fi)x+", report, polynomialRF[pol], polynomialIF[pol]);
+						}
+						else {
+							sprintf(report, "%s(%f+%fi)", report, polynomialRF[pol], polynomialIF[pol]);
+						}
 					}
 				}
 				polynomialR[pol] = polynomialRF[pol];
@@ -294,20 +297,25 @@ void rootsToPolynomial(char roots[DIM]) {
 				polynomialI[pol] = polynomialIF[pol];
 				polynomialIF[pol] = 0;
 				exp--;
-				if (isContained("(-", report)) {
-					replace("(-", "(_", report);
-					sprintf(report, expressionF);
-				}
-				if (isContained("+-", report)) {
-					replace("+-", "+_", report);
-					sprintf(report, expressionF);
-				}
-				if (isContained(".000000", report)) {
-					replace(".000000", "", report);
-					sprintf(report, expressionF);
+				if (polySimplifier == (boolean)false || members == numberRoots) {
+					if (isContained("(-", report)) {
+						replace("(-", "(_", report);
+						sprintf(report, expressionF);
+					}
+					if (isContained("+-", report)) {
+						replace("+-", "+_", report);
+						sprintf(report, expressionF);
+					}
+					if (isContained(".000000", report)) {
+						replace(".000000", "", report);
+						sprintf(report, expressionF);
+					}
+
 				}
 			}
-			sprintf(report, "%s\n", report);
+			if (polySimplifier == (boolean)false || members == numberRoots) {
+				sprintf(report, "%s\n", report);
+			}
 		}
 		if (polySimplifier == (boolean)false) {
 			puts(report);
