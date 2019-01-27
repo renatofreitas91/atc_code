@@ -436,7 +436,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			vaString[x] = '\0';
 			stringVariableToString(vaString);
 			if (strlen(variableSTring) != 0) {
-				printf(variableSTring, result1, result2);
+				print(variableSTring, result1, result2);
 				puts(" ");
 			}
 		}
@@ -448,7 +448,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 			stringV[x] = '\0';
 			stringV[strlen(stringV) - 3] = '\0';
-			printf(stringV, result1, result2);
+			print(stringV, result1, result2);
 			puts(" ");
 		}
 		arithTrig[0] = '\0'; command = true;

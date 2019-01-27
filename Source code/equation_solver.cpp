@@ -610,6 +610,7 @@ void equationSolver(char equation[DIM]) {
 				}
 			}
 			else {
+			solving = false;
 				equationSolverRunning = true;
 				sprintf(toCalcX, "%s", saveEquation);
 				maxExponent = 1;
@@ -928,8 +929,6 @@ void equationSolver(char equation[DIM]) {
 					resultI = RootI[0];
 				}
 			}
-			solving = true;
-			equationSolverRunning = false;
 		}
 		else {
 			if (isContained("-", saveToZeroDiv)) {
@@ -937,7 +936,6 @@ void equationSolver(char equation[DIM]) {
 				sprintf(saveToZeroDiv, "%s", expressionF);
 			}
 			math_processor(saveToZeroDiv);
-			sprintf(expressionF, "------> %G+%Gi", resultR, resultI);
 			if (isContained("-", saveToZeroDiv)) {
 				replace("-", "+_", saveToZeroDiv);
 				sprintf(saveToZeroDiv, "%s", expressionF);
@@ -946,6 +944,7 @@ void equationSolver(char equation[DIM]) {
 			lastDividerR = resultR;
 		}
 	}
+	solving = true;
 }
 
 

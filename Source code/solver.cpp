@@ -68,6 +68,8 @@ double solver(char expression[DIM]) {
 			if (abs(resultR) < 1E-7&&abs(resultI) < 1E-7) {
 				resultR = saveResultR;
 				resultI = saveResultI;
+				solverRunning = false;
+				equationSolverRunning = false;
 				return resultR;
 			}
 		}
@@ -274,6 +276,7 @@ double solver(char expression[DIM]) {
 			resultFR = resultR; resultFI = resultI;
 			solverRunning = false;
 			solving = true;
+			equationSolverRunning = false;
 			return resultFR;
 		}
 		if ((retrySolver && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false && ((resultR > -1E-7&&resultR < 1E-7) == false || (resultI > -1E-7&&resultI < 1E-7) == false)) && equationSolverRunning == (boolean)false) {
@@ -282,6 +285,7 @@ double solver(char expression[DIM]) {
 			solver(expression);
 			resultFR = resultR; resultFI = resultI;
 			solverRunning = false;
+			equationSolverRunning = false;
 			solving = true;
 			puts("");
 			return resultFR;
@@ -292,21 +296,25 @@ double solver(char expression[DIM]) {
 			solver(expression);
 			resultFR = resultR; resultFI = resultI;
 			solverRunning = false;
+			equationSolverRunning = false;
 			solving = true;
 			return resultFR;
 		}
 		resultR = resultFR; resultI = resultFI;
 		solverRunning = false;
+		equationSolverRunning = false;
 		solving = true;
 		return resultFR;
 	}
 	else {
 		puts("\n\nYour expression has errors.\n\n");
 		solverRunning = false;
+		equationSolverRunning = false;
 		solving = true;
 		return NULL;
 	}
 	solverRunning = false;
+	equationSolverRunning = false;
 	solving = true;
 	return NULL;
 }
