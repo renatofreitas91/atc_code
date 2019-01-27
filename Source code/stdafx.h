@@ -16,10 +16,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <dirent.h> 
-extern double returnedR, returnedI, natureValue, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
-extern int parentPol[DIM], replaceTimes, countEnters, countReturn, countBreak, Break, countUseReturn, countUseBreak, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
-extern char roots[DIM], charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
-extern boolean solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver;
+extern double LastDividerR, LastDividerI, lastDividerR, lastDividerI, returnedR, returnedI, natureValue, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
+extern int numSysNum, parentPol[DIM], replaceTimes, countEnters, countReturn, countBreak, Break, countUseReturn, countUseBreak, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
+extern char saveExpressionF[DIM], OutputText[DIM], roots[DIM], charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
+extern boolean isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver;
 double functionProcessor(char trigon[DIM], double result, double amplitude, int res);
 double initialProcessor(char arithTrig[DIM], double result);
 double arithSolver(char trigon1[DIM], double result);
@@ -33,10 +33,11 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 double solveNow(char toSolveNow[DIM], double result1, double result2);
 double numericalSystems(char numSystem[DIM]);
 double calcNow(char toCalc[DIM], double result1, double result2);
-double solver(char expression[DIM]);
 double solve(char equation[DIM]);
 double atcProg(char expression[DIM]);
 double calculateIntegral(double a, double b, char function[DIM]);
+double math_processor(char expression[DIM]);
+double solver(char expression[DIM]);
 int variableValidator(char variable[DIM]);
 int matrixToValues(char matrix[DIM], double result);
 int atcProgramming(char script[DIM]);
@@ -54,6 +55,7 @@ void prefixDeterminator(double n, char path[DIM]);
 void DayofWeek(int d, int m, int y, char calendar[DIM]);
 void Calendar(char yearCalendar[DIM], int year);
 void variableRenamer(char variable[DIM]);
+void print(char data[DIM]);
 void pathNameController(char pathName[DIM], char path[DIM]);
 void pathNameToPath(char pathName[DIM]);
 void stringVariableController(char stringVariable[DIM], char string[DIM]);

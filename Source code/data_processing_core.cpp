@@ -2952,9 +2952,9 @@ void complexNumber(double a, double b) {
 	}
 }
 
-bool IsPreviousToWindowsVista()
+boolean IsPreviousToWindowsVista()
 {
-	bool previousToVista = false;
+	boolean previousToVista = false;
 
 	OSVERSIONINFOEX osversion;
 	ZeroMemory(&osversion, sizeof(OSVERSIONINFOEX));
@@ -3612,7 +3612,7 @@ int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x) {
 }
 
 boolean verifyValue(char number) {
-	char numbers[DIM] = "_.0123456789/*^E";
+	char numbers[DIM] = "_.0123456789/*^Ei";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(numbers)); i++) {
 		if (number == numbers[i]) {

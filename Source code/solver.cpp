@@ -2,10 +2,12 @@
 
 #include "stdafx.h"
 
-boolean solverRunning = false, retrySolver = false, retrySolver_2 = false, retrySolver_3 = false;
+boolean solverRunning = false, retrySolver = false, retrySolver_2 = false, retrySolver_3 = false, poly = true;
 double xValuesR = 0, xValuesI = 0, saveResultRFR = 0, saveResultRFI = 0;
 
 double solver(char expression[DIM]) {
+	char equation[DIM] = "", saveEquation[DIM] = "";
+	sprintf(equation, "%s", expression);
 	if (isContained("\\", expression)) {
 		int d = 0, check_integral = 0;;
 		for (d = 0; expression[d] != '\0'; d++) {
@@ -19,63 +21,75 @@ double solver(char expression[DIM]) {
 			char getValue[DIM] = "";
 			while (expression[d] != '\\') {
 				getValue[e] = expression[d];
-				e++; d++;
+				e++;
+				d++;
 			}
 			getValue[e] = '\0';
-			double a = calcNow(getValue, 0, 0);
+			double a = math_processor(getValue);
 			d++;
 			e = 0;
 			sprintf(getValue, "");
 			while (expression[d] != '\\') {
 				getValue[e] = expression[d];
-				e++; d++;
+				e++;
+				d++;
 			}
 			getValue[e] = '\0';
-			double b = calcNow(getValue, 0, 0);
+			double b = math_processor(getValue);
 			d++;
 			char function[DIM] = "";
 			e = 0;
 			while (expression[d] != '\0') {
 				function[e] = expression[d];
-				e++; d++;
+				e++;
+				d++;
 			}
 			function[e] = '\0';
 			double area = calculateIntegral(a, b, function);
 			return area;
 		}
 	}
-	if (isContained("x", expression)) {
-		replace("x", "res", expression);
-		sprintf(expression, "%s", expressionF);
-	}
-	solverRunning = true;
-	solving = false;
-	resultR = 0; resultI = 0;
-	char equation[DIM] = "", saveEquation[DIM] = "";
-	sprintf(equation, "%s", expression);
-	double precisionR = 0.01, precisionI = 0, resultFR = -0.1, resultFI = 0, savePrecisionR = 0.01, savePrecisionI = 0, saveResultR = -0.1, saveResultI = 0;
-	char Xequal[100] = "";
-	int timesToEvaluate = 300, timesEvaluated = 0, interactions = 30;
-	boolean initialR = true, initialI = true, imaginary = true, counter = true, poly = true;
-	if (retrySolver) {
-		precisionI = 0.01; resultFI = -0.1;
-		savePrecisionI = 0.01; saveResultI = -0.1;
-	}
-	resultR = resultFR;
-	resultI = resultFI;
 	boolean to_solve = dataVerifier(equation, 0, 0, 1, 1);
+	solverRunning = true;
+	poly = true;
 	if (to_solve) {
 		if (poly) {
+			equation_solver = true;
 			equationSolver(equation);
+			equation_solver = false;
 			double saveResultR = resultR, saveResultI = resultI;
-			xValuesR = resultR; xValuesI = resultI;
-			calcNow(equation, 0, 0);
+			xValuesR = resultR;
+			xValuesI = resultI;
+			if (isContained("x", equation)) {
+				replace("x", "res", equation);
+				sprintf(equation, "%s", expressionF);
+			}
+			math_processor(equation);
 			if (abs(resultR) < 1E-7&&abs(resultI) < 1E-7) {
-				resultR = saveResultR; resultI = saveResultI;
+				resultR = saveResultR;
+				resultI = saveResultI;
 				return resultR;
 			}
 		}
 		poly = false;
+
+		if (isContained("x", expression)) {
+			replace("x", "res", expression);
+			sprintf(expression, "%s", expressionF);
+		}
+		solverRunning = true;
+		solving = false;
+		resultR = 0; resultI = 0;
+		double precisionR = 0.01, precisionI = 0, resultFR = -0.1, resultFI = 0, savePrecisionR = 0.01, savePrecisionI = 0, saveResultR = -0.1, saveResultI = 0;
+		char Xequal[100] = "";
+		int timesToEvaluate = 300, timesEvaluated = 0, interactions = 30;
+		boolean initialR = true, initialI = true, imaginary = true, counter = true, poly = true;
+		if (retrySolver) {
+			precisionI = 0.01; resultFI = -0.1;
+			savePrecisionI = 0.01; saveResultI = -0.1;
+		}
+		resultR = resultFR;
+		resultI = resultFI;
 		xValuesR = resultFR; xValuesI = resultFI; saveResultR = -0.1; saveResultI = 0;
 		if ((retrySolver == (boolean)false || retrySolver) && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false) {
 			xValuesR = resultFR; xValuesI = resultFI;
@@ -100,20 +114,20 @@ double solver(char expression[DIM]) {
 				while (resultR != 0 && resultFR < (saveResultR*-1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0) {
 					timesEvaluated++;
 					xValuesR = resultFR; xValuesI = resultFI;
-					calcNow(equation, 0, 0);
+					math_processor(equation);
 					if (resultR < 0) {
 						do {
 							timesEvaluated++;
 							if (resultR < 0) {
 								resultFR = resultFR + precisionR;
 								xValuesR = resultFR; xValuesI = resultFI;
-								calcNow(equation, 0, 0);
+								math_processor(equation);
 							}
 							if (resultR > 0) {
 								resultFR = resultFR - precisionR;
 								precisionR = precisionR / 10;
 								xValuesR = resultFR; xValuesI = resultFI;
-								calcNow(equation, 0, 0);
+								math_processor(equation);
 							}
 						} while (resultR != 0 && resultFR < (saveResultR*-1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
 					}
@@ -123,14 +137,14 @@ double solver(char expression[DIM]) {
 							if (resultR > 0) {
 								resultFR = resultFR + precisionR;
 								xValuesR = resultFR; xValuesI = resultFI;
-								calcNow(equation, 0, 0);
+								math_processor(equation);
 							}
 							else {
 								if (resultR < 0) {
 									resultFR = resultFR - precisionR;
 									precisionR = precisionR / 10;
 									xValuesR = resultFR; xValuesI = resultFI;
-									calcNow(equation, 0, 0);
+									math_processor(equation);
 								}
 							}
 						} while (resultR != 0 && resultFR < (saveResultR*-1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
@@ -144,20 +158,20 @@ double solver(char expression[DIM]) {
 					while (resultI != 0 && resultFI < (saveResultI*-1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0) {
 						timesEvaluated++;
 						xValuesR = resultFR; xValuesI = resultFI;
-						calcNow(equation, 0, 0);
+						math_processor(equation);
 						if (resultI < 0) {
 							do {
 								timesEvaluated++;
 								if (resultI < 0) {
 									resultFI = resultFI + precisionI;
 									xValuesR = resultFR; xValuesI = resultFI;
-									calcNow(equation, 0, 0);
+									math_processor(equation);
 								}
 								if (resultI > 0) {
 									resultFI = resultFI - precisionI;
 									precisionI = precisionI / 10;
 									xValuesR = resultFR; xValuesI = resultFI;
-									calcNow(equation, 0, 0);
+									math_processor(equation);
 								}
 							} while (resultI != 0 && resultFI < (saveResultI*-1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
 						}
@@ -167,14 +181,14 @@ double solver(char expression[DIM]) {
 								if (resultI > 0) {
 									resultFI = resultFI + precisionI;
 									xValuesR = resultFR; xValuesI = resultFI;
-									calcNow(equation, 0, 0);
+									math_processor(equation);
 								}
 								else {
 									if (resultI < 0) {
 										resultFI = resultFI - precisionI;
 										precisionI = precisionI / 10;
 										xValuesR = resultFR; xValuesI = resultFI;
-										calcNow(equation, 0, 0);
+										math_processor(equation);
 									}
 								}
 							} while (resultI != 0 && resultFI < (saveResultI*-1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
@@ -189,7 +203,7 @@ double solver(char expression[DIM]) {
 		else {
 			if (retrySolver_2 && retrySolver == (boolean)false && retrySolver_3 == (boolean)false) {
 				xValuesR = 1E9; xValuesI = 0;
-				atcProg(equation);
+				math_processor(equation);
 				double minMaxR = resultR, minMaxI = resultI;
 				int i = 0, j = 0, interval = 499, c = 1, d = 0;
 				int x_values[1000];
@@ -198,7 +212,7 @@ double solver(char expression[DIM]) {
 				int firstValueR = 0, secondValueR = 0, selected_X = 0;
 				for (i = -interval; i < interval; i++) {
 					xValuesR = (double)i; xValuesI = 0;
-					calcNow(equation, 0, 0);
+					math_processor(equation);
 					x_values[j] = i;
 					y_valuesR[j] = resultR;
 					y_valuesI[j] = resultI;
@@ -226,10 +240,10 @@ double solver(char expression[DIM]) {
 						zero = false;
 						if (y_valuesR[firstValueR] != INF * 2 && y_valuesR[secondValueR] != INF * 2 && y_valuesR[selected_X] != INF * 2) {
 							xValuesR = firstValueR; xValuesI = 0;
-							double negYR = atcProg(equation);
+							double negYR = math_processor(equation);
 							double negYI = resultI;
 							xValuesR = secondValueR; xValuesI = 0;
-							double posYR = atcProg(equation);
+							double posYR = math_processor(equation);
 							double posYI = resultI;
 							double dividend = (((negYR + negYI) - (posYR + posYI))*-1) / 2;
 							division(dividend, 0, minMaxR, minMaxI);
@@ -242,7 +256,7 @@ double solver(char expression[DIM]) {
 									complexNumber(resultFR, resultFI);
 								}
 								xValuesR = resultFR; xValuesI = resultFI;
-								atcProg(equation);
+								math_processor(equation);
 								c++;
 							}
 						}
@@ -251,7 +265,7 @@ double solver(char expression[DIM]) {
 					i++;
 				}
 				xValuesR = resultFR; xValuesI = resultFI;
-				atcProg(equation);
+				math_processor(equation);
 			}
 		}
 		if ((retrySolver == (boolean)false && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false && ((resultR > -1E-2&&resultR < 1E-2) == false || (resultI > -1E-2&&resultI < 1E-2) == false)) && equationSolverRunning == (boolean)false) {
@@ -296,6 +310,7 @@ double solver(char expression[DIM]) {
 	solving = true;
 	return NULL;
 }
+
 
 boolean isSolved() {
 	if (resultR == 0 && resultI == 0) {

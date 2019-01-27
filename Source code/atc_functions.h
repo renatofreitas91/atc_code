@@ -35,7 +35,7 @@ boolean verifySpecifier(char chars);
 boolean verifyNumerical(char number);
 boolean isSolved();
 boolean verifyValue(char number);
-bool IsPreviousToWindowsVista();
+boolean IsPreviousToWindowsVista();
 int datePreciser(double day, double month, double year, double dayS, double monthS, double yearS);
 int applySettings(int toDo);
 double prefToNumber(char prefix);

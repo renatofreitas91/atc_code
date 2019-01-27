@@ -18,6 +18,7 @@ double arcfact(double f);
 double arg(double a, double b);
 double fact(double d);
 double getValue();
+double getPosValue();
 double confidenceLevelToZscore(double confidence_level);
 void currentSettings();
 void cotan(double x, double y);
