@@ -165,18 +165,18 @@ void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2,
 	}
 }
 
-void rootsToPolynomial(char roots[DIM]) {
+void rootsToPolynomial(char rootsF[DIM]) {
 	char report[DIM] = "";
 	double valuesRootsR[DIM], valuesRootsI[DIM], polynomialR[DIM], polynomialI[DIM], newPolynomialR[DIM], newPolynomialI[DIM];
 	int i = 0, numberRoots = 0, rootIndex = 1, saveNumberRoots = 0;
-	for (i = 0; roots[i] != '\0'; i++) {
-		if (roots[i] == '\\') {
+	for (i = 0; rootsF[i] != '\0'; i++) {
+		if (rootsF[i] == '\\') {
 			numberRoots++;
 		}
 	}
 	numberRoots++;
 	if (numberRoots == 1) {
-		math_processor(roots);
+		math_processor(rootsF);
 		multiplication(resultR, resultI, lastDividerR, lastDividerI);
 		sprintf(report, "%s(%G+%Gi)x-(%G+%Gi)", report, lastDividerR, lastDividerI, resultR,
 			resultI);
@@ -219,8 +219,8 @@ void rootsToPolynomial(char roots[DIM]) {
 		char toValue[DIM] = "";
 		while (members < numberRoots) {
 			int b = 0;
-			while (roots[i] != '\\' && roots[i] != '\0') {
-				toValue[b] = roots[i];
+			while (rootsF[i] != '\\' && rootsF[i] != '\0') {
+				toValue[b] = rootsF[i];
 				b++;
 				i++;
 			}
@@ -610,7 +610,7 @@ void equationSolver(char equation[DIM]) {
 				}
 			}
 			else {
-			solving = false;
+				solving = false;
 				equationSolverRunning = true;
 				sprintf(toCalcX, "%s", saveEquation);
 				maxExponent = 1;
@@ -944,6 +944,7 @@ void equationSolver(char equation[DIM]) {
 			lastDividerR = resultR;
 		}
 	}
+	equationSolverRunning = false;
 	solving = true;
 }
 

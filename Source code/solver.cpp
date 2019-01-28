@@ -6,6 +6,7 @@ boolean solverRunning = false, retrySolver = false, retrySolver_2 = false, retry
 double xValuesR = 0, xValuesI = 0, saveResultRFR = 0, saveResultRFI = 0;
 
 double solver(char expression[DIM]) {
+	equation_solver = true;
 	char equation[DIM] = "", saveEquation[DIM] = "";
 	sprintf(equation, "%s", expression);
 	if (isContained("\\", expression)) {
@@ -272,6 +273,7 @@ double solver(char expression[DIM]) {
 		}
 		if ((retrySolver == (boolean)false && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false && ((resultR > -1E-2&&resultR < 1E-2) == false || (resultI > -1E-2&&resultI < 1E-2) == false)) && equationSolverRunning == (boolean)false) {
 			retrySolver = true;
+			solverRunning = true;
 			solver(expression);
 			resultFR = resultR; resultFI = resultI;
 			solverRunning = false;
@@ -282,6 +284,7 @@ double solver(char expression[DIM]) {
 		if ((retrySolver && retrySolver_2 == (boolean)false && retrySolver_3 == (boolean)false && ((resultR > -1E-7&&resultR < 1E-7) == false || (resultI > -1E-7&&resultI < 1E-7) == false)) && equationSolverRunning == (boolean)false) {
 			retrySolver = false;
 			retrySolver_2 = true;
+			solverRunning = true;
 			solver(expression);
 			resultFR = resultR; resultFI = resultI;
 			solverRunning = false;
@@ -293,6 +296,7 @@ double solver(char expression[DIM]) {
 		if ((retrySolver == (boolean)false && retrySolver_2 && retrySolver_3 == (boolean)false && ((resultR > -1 && resultR < 1) == false || (resultI > -1 && resultI < 1) == false)) && equationSolverRunning == (boolean)false) {
 			retrySolver_2 = false;
 			retrySolver_3 = true;
+			solverRunning = true;
 			solver(expression);
 			resultFR = resultR; resultFI = resultI;
 			solverRunning = false;

@@ -498,8 +498,11 @@ void arithmeticMatrixSolver() {
 			puts("\n\nError: Incorrect option id.\n\n");
 		}
 		fflush(NULL);
-		printf("\nContinue? (Yes -> 1 / No -> 0)\n");
-		op1 = (int)getValue();
+		op1 = -1;
+		while (op1 != 0 && op1 != 1) {
+			printf("\nContinue? (Yes -> 1 / No -> 0)\n");
+			op1 = (int)getValue();
+		}
 	} while (op1 != 0);
 }
 

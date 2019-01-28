@@ -97,14 +97,13 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			puts(report);
 			int option = -1;
 			while (option != 0 && option != 1) {
-				puts("Export result? (Yes -> 1 \\ No -> 0)");
+				puts("\nExport result? (Yes -> 1 \\ No -> 0)");
 				option = (int)getValue();
 			}
 			if (option == 1) {
 				saveToReport(report);
 			}
 		}
-		equation_solver = false;
 		puts("");
 	}
 	if (isCommand(arithTrig, "unitconversions")) {
@@ -381,7 +380,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 				}
 				equationSolver(data);
-				equation_solver = false;
 				puts(expressionF);
 			}
 			puts("");
@@ -398,9 +396,20 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 			exprDev[tGet] = '\0';
 			polySimplifier = false;
+			lastDividerR = 1, lastDividerI = 0;
 			rootsToPolynomial(exprDev);
 			puts("");
 			puts(expressionF);
+			char reportF[DIM] = "";
+			sprintf(reportF, "%s", expressionF);
+			int option = -1;
+			while (option != 0 && option != 1) {
+				puts("\nExport result? (Yes -> 1 \\ No -> 0)");
+				option = (int)getValue();
+			}
+			if (option == 1) {
+				saveToReport(reportF);
+			}
 		}
 		puts("");
 	}

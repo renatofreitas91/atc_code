@@ -65,7 +65,7 @@ void geometryCalculations() {
 			double side_1 = getPosValue();
 			puts("Side 2");
 			double side_2 = getPosValue();
-			if ((height+base_1+base_2+side_1)> side_2|| (height + base_1 + base_2 + side_2) > side_1 || (side_1 + base_1 + base_2 + side_2) > height|| (side_1 + height + base_2 + side_2) > base_1|| (side_1 + base_1 + height + side_2) >base_2){
+			if ((height + base_1 + base_2 + side_1) > side_2 || (height + base_1 + base_2 + side_2) > side_1 || (side_1 + base_1 + base_2 + side_2) > height || (side_1 + height + base_2 + side_2) > base_1 || (side_1 + base_1 + height + side_2) > base_2) {
 				double area = 0.5*height*(base_1 + base_2);
 				double perimeter = side_1 + side_2 + base_1 + base_2;
 			}
@@ -82,7 +82,7 @@ void geometryCalculations() {
 			double side_1 = getPosValue();
 			puts("Side 2?");
 			double side_2 = getPosValue();
-			if ((height+side_1+side_2)> base || (base + side_1 + side_2) > height || (base + height + side_2) > side_1 || (base + height + side_1) > side_2) {
+			if ((height + side_1 + side_2) > base || (base + side_1 + side_2) > height || (base + height + side_2) > side_1 || (base + height + side_1) > side_2) {
 				double area = 0.5*base*height;
 				double perimeter = side_1 + side_2 + base;
 				printf("\nArea: %G\nPerimeter: %G\n", area, perimeter);
@@ -149,7 +149,7 @@ void geometryCalculations() {
 			puts("Height?");
 			double height = getPosValue();
 			double volume = (1.0 / 3.0)*length*width*height;
-			double surface_area = (((2 * width + 2 * length)*height) / 2)+(length*width);
+			double surface_area = (((2 * width + 2 * length)*height) / 2) + (length*width);
 			printf("\nVolume: %G\nSurface Area: %G\n", volume, surface_area);
 		}
 		if (op == 13) {
