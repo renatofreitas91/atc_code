@@ -316,7 +316,7 @@ void rootsToPolynomial(char rootsF[DIM]) {
 						else {
 							multiplication(polynomialRF[pol], polynomialIF[pol], lastDividerR,
 								lastDividerI);
-							sprintf(Report, "%s(%G+%fi)", report, resultR,
+							sprintf(Report, "%s(%G+%G)", report, resultR,
 								resultI);
 						}
 					}
@@ -548,7 +548,7 @@ void equationSolver(char equation[DIM]) {
 									t++;
 								}
 								while (!(saveToCalcX[b + 1] == '(' && saveToCalcX[b + 2] == 'r' &&
-									saveToCalcX[b + 3] == 'e' && saveToCalcX[b + 4] == 's')) {
+									saveToCalcX[b + 3] == 'e' && saveToCalcX[b + 4] == 's'&& saveToCalcX[b + 5] == ')')) {
 									divider[t] = saveToCalcX[b];
 									b++;
 									t++;
@@ -607,6 +607,7 @@ void equationSolver(char equation[DIM]) {
 						}
 						maxExponent = 2;
 					}
+
 				}
 			}
 			else {
@@ -705,7 +706,7 @@ void equationSolver(char equation[DIM]) {
 								t++;
 							}
 							while (!(saveToCalcX[b + 1] == '(' && saveToCalcX[b + 2] == 'r' &&
-								saveToCalcX[b + 3] == 'e' && saveToCalcX[b + 4] == 's')) {
+								saveToCalcX[b + 3] == 'e' && saveToCalcX[b + 4] == 's'&& saveToCalcX[b + 5] == ')')) {
 								divider[t] = saveToCalcX[b];
 								b++;
 								t++;
@@ -761,8 +762,8 @@ void equationSolver(char equation[DIM]) {
 			double RootR[dim], RootI[dim], to_numR[dim], to_numI[dim];
 			int g = 0;
 			while (g < maxExponent) {
-				RootR[g] = 0.4;
-				RootI[g] = 0.9;
+				RootR[g] = 0.5;
+				RootI[g] = 0.5;
 				if (g < 3) {
 					exponentiation(RootR[g], RootI[g], g, 0, 1);
 				}
@@ -779,14 +780,19 @@ void equationSolver(char equation[DIM]) {
 			int n = 0;
 			resultR = 1;
 			resultI = 1;
-			while ((abs(saveResultR) > 1E-17 || abs(saveResultI) > 1E-17) && n < 37) {
+			boolean notSolved = true;
+			while (notSolved&&n < 30) {
 				g = 0;
+				notSolved = false;
 				while (g < maxExponent) {
 					xValuesR = RootR[g];
 					xValuesI = RootI[g];
 					math_processor(toCalcX);
 					saveResultR = resultR;
 					saveResultI = resultI;
+					if ((abs(saveResultR) < 1E-14 && abs(saveResultI) < 1E-14) == false) {
+						notSolved = true;
+					}
 					double numR = resultR, numI = resultI, resultSubR[dim], resultSubI[dim], denR = 1, denI = 0;
 					int w = 0, h = 0;
 					while (w < maxExponent) {
@@ -931,15 +937,13 @@ void equationSolver(char equation[DIM]) {
 			}
 		}
 		else {
+			solving = true;
+			equationSolverRunning = false;
 			if (isContained("-", saveToZeroDiv)) {
 				replace("-", "+_", saveToZeroDiv);
 				sprintf(saveToZeroDiv, "%s", expressionF);
 			}
 			math_processor(saveToZeroDiv);
-			if (isContained("-", saveToZeroDiv)) {
-				replace("-", "+_", saveToZeroDiv);
-				sprintf(saveToZeroDiv, "%s", expressionF);
-			}
 			lastDividerI = resultI;
 			lastDividerR = resultR;
 		}

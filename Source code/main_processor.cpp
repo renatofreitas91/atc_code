@@ -228,7 +228,16 @@ double math_processor(char expression[DIM]) {
 		verified = 1;
 		resultR = 0;
 		resultI = 0;
-		initialProcessor(arithTrig, 0);
+		initialProcessor(arithTrig, resultR);
+		if (resultR == 0 && solverRunning == false) {
+			initialProcessor(arithTrig, resultR);
+		}
+		if (resultR == 0 && solverRunning == false) {
+			initialProcessor(arithTrig, resultR);
+		}
+		if (resultR == 0 && solverRunning == false) {
+			initialProcessor(arithTrig, resultR);
+		}
 		sprintf(arithTrig, "");
 		if (res == '+') {
 			sum(ansRV, ansIV, resultR, resultI);

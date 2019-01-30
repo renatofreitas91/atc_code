@@ -33,6 +33,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		command = true;
 		equation_solver = true;
 		isDivisible = true;
+		lastDividerR = 1, lastDividerI = 0;
 		if (arithTrig[18] == '(') {
 			int tDev = 19, tGet = 0;
 			char exprDev[DIM] = "";
@@ -347,6 +348,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		command = true;
 		equation_solver = true;
 		isDivisible = true;
+		lastDividerR = 1, lastDividerI = 0;
 		if (arithTrig[13] == '(') {
 			int tDev = 14, tGet = 0;
 			char exprDev[DIM] = "";
