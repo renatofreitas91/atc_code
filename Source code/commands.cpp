@@ -45,6 +45,10 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			char data[DIM] = "", errorText[DIM] = "";
 			sprintf(data, "%s", exprDev);
 			sprintf(saveExpressionF, "%s", data);
+			if (isContained(")(", data)) {
+				replace(")(", ")*(", data);
+				sprintf(data, "%s", expressionF);
+			}
 			char solution[DIM] = "";
 			synTest = 0;
 			if (dataVerifier(data, 0, 0, 0, 1)) {
@@ -52,18 +56,18 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				replaceTimes = 0;
 				if (!isContained("(", data)) {
 					char saveData[dim] = "";
-					sprintf(saveData, "(%s)(0x+1)", data);
+					sprintf(saveData, "(%s)+(0x+0)", data);
 					sprintf(data, "%s", saveData);
 				}
 				else {
-					if (countOccurrences("(", data) == 1) {
+					if (isContained("((", data) && isContained("))", data)) {
 						char saveData[dim] = "";
-						sprintf(saveData, "%s(0x+1)", data);
+						sprintf(saveData, "%s+(0x+0)", data);
 						sprintf(data, "%s", saveData);
 					}
 					else {
 						char saveData[dim] = "";
-						sprintf(saveData, "%s(0x+1)", data);
+						sprintf(saveData, "(%s)+(0x+0)", data);
 						sprintf(data, "%s", saveData);
 					}
 				}
@@ -366,18 +370,18 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				replaceTimes = 0;
 				if (!isContained("(", data)) {
 					char saveData[dim] = "";
-					sprintf(saveData, "(%s)(0x+1)", data);
+					sprintf(saveData, "(%s)+(0x+0)", data);
 					sprintf(data, "%s", saveData);
 				}
 				else {
-					if (countOccurrences("(", data) == 1) {
+					if (isContained("((", data) && isContained("))", data)) {
 						char saveData[dim] = "";
-						sprintf(saveData, "%s(0x+1)", data);
+						sprintf(saveData, "%s+(0x+0)", data);
 						sprintf(data, "%s", saveData);
 					}
 					else {
 						char saveData[dim] = "";
-						sprintf(saveData, "%s(0x+1)", data);
+						sprintf(saveData, "(%s)+(0x+0)", data);
 						sprintf(data, "%s", saveData);
 					}
 				}
