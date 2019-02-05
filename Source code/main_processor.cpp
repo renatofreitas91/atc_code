@@ -471,7 +471,6 @@ double math_processor(char expression[DIM]) {
 				sprintf(bufText, "%s\n%s", bufText, timeText);
 			}
 		}
-
 	}
 	else {
 		sprintf(bufText, "%s%s\n\nError in syntax\n", bufText, errorText);

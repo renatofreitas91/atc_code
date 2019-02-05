@@ -7,19 +7,38 @@ boolean isDivisible = true;
 
 
 void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
-	/*sprintf(expressionF, "%s*(0x+1)",polynomial_1);
+	sprintf(roots, "");
+	sprintf(expressionF, "%s*(0x+1)", polynomial_1);
 	simpleSimplifyPolynomial(expressionF);
-	sprintf(polynomial_1, "%s",expressionF);
+	sprintf(polynomial_1, "%s", expressionF);
+	sprintf(roots, "");
 	sprintf(expressionF, "%s*(0x+1)", polynomial_2);
 	simpleSimplifyPolynomial(expressionF);
-	sprintf(polynomial_2, "%s",expressionF);*/
+	sprintf(polynomial_2, "%s", expressionF);
+	sprintf(roots, "");
 	lastDividerR = 1;
 	lastDividerI = 0;
 	LastDividerR = 1;
 	LastDividerI = 0;
 	sprintf(roots, "");
 	char polynomial_sum[DIM] = "";
-	sprintf(polynomial_sum, "%s+%s+(0x+0)", polynomial_1, polynomial_2);
+	if (isContained("((", polynomial_1)) {
+		replace("((", "(", polynomial_1);
+		sprintf(polynomial_1, "%s", expressionF);
+	}
+	if (isContained("))", polynomial_1)) {
+		replace("))", ")", polynomial_1);
+		sprintf(polynomial_1, "%s", expressionF);
+	}
+	if (isContained("((", polynomial_2)) {
+		replace("((", "(", polynomial_2);
+		sprintf(polynomial_2, "%s", expressionF);
+	}
+	if (isContained("))", polynomial_2)) {
+		replace("))", ")", polynomial_2);
+		sprintf(polynomial_2, "%s", expressionF);
+	}
+	sprintf(polynomial_sum, "%s+%s", polynomial_1, polynomial_2);
 	equationSolver(polynomial_sum);
 	sprintf(expressionF, "");
 	if (isContained("\\", roots) || strlen(roots) > 0) {
@@ -40,17 +59,20 @@ void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 }
 
 void sub_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
+	sprintf(roots, "");
 	sprintf(expressionF, "%s*(0x+1)", polynomial_1);
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_1, "%s", expressionF);
+	sprintf(roots, "");
 	sprintf(expressionF, "%s*(0x+1)", polynomial_2);
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_2, "%s", expressionF);
+	sprintf(roots, "");
 	if (!isEqual(polynomial_1, polynomial_2)) {
 		int v = 0;
 		char to_replace[DIM] = "";
 		if (polynomial_1[v + 1] == polynomial_2[v + 1]) {
-			while (polynomial_1[v + 2] == polynomial_2[v + 2] && polynomial_2[v + 2] != '(') {
+			while (polynomial_1[v + 2] == polynomial_2[v + 2]) {
 				to_replace[v] = polynomial_1[v + 1];
 				v++;
 			}

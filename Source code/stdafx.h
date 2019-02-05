@@ -43,6 +43,7 @@ int matrixToValues(char matrix[DIM], double result);
 int atcProgramming(char script[DIM]);
 int countOccurrences(char to_find[DIM], char expression[DIM]);
 int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x);
+int getCorrectExponent(char expression[DIM], char maxExp[10], int maxExponent);
 void getNumerationPol(char expression[DIM]);
 void simplifyPolynomial(char expression[DIM]);
 void simpleSimplifyPolynomial(char expression[DIM]);
