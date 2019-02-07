@@ -3612,7 +3612,7 @@ int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x) {
 }
 
 boolean verifyValue(char number) {
-	char numbers[DIM] = "_.0123456789/*^Ei";
+	char numbers[DIM] = "_.0123456789/*^Epie";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(numbers)); i++) {
 		if (number == numbers[i]) {

@@ -56,6 +56,7 @@ void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		}
 	}
 	replaceTimes = 0;
+	sprintf(roots, "");
 }
 
 void sub_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
@@ -97,10 +98,11 @@ void sub_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		sprintf(expressionF, "(0x+0)");
 	}
 	replaceTimes = 0;
+	sprintf(roots, "");
 }
 
 void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
-	sprintf(expressionF, "%s", polynomial_1);
+	sprintf(roots, "");
 	if (isContained("((", polynomial_1)) {
 		replace("((", "(", polynomial_1);
 		sprintf(polynomial_1, "%s", expressionF);
@@ -109,7 +111,6 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		replace("))", ")", polynomial_1);
 		sprintf(polynomial_1, "%s", expressionF);
 	}
-	sprintf(expressionF, "%s", polynomial_2);
 	if (isContained("((", polynomial_2)) {
 		replace("((", "(", polynomial_2);
 		sprintf(polynomial_2, "%s", expressionF);
@@ -118,63 +119,53 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		replace("))", ")", polynomial_2);
 		sprintf(polynomial_2, "%s", expressionF);
 	}
-	sprintf(expressionF, "%s", polynomial_1);
-	char express[DIM] = "";
-	sprintf(express, "(%s)", polynomial_1);
-	if (isContained("/", express)) {
-		replace("/", ")\\(", express);
-		replace("\\", "/", expressionF);
-		sprintf(polynomial_1, "%s", expressionF);
+
+	replaceTimes = 0;
+	equationSolver(polynomial_1);
+	if (abs(lastDividerR) != 0 || abs(lastDividerI) != 0) {
+		LastDividerR = lastDividerR;
+		LastDividerI = lastDividerI;
 	}
 	else {
-		sprintf(roots, "");
-		replaceTimes = 0;
-		equationSolver(polynomial_1);
-		if (abs(lastDividerR) != 0 || abs(lastDividerI) != 0) {
-			LastDividerR = lastDividerR;
-			LastDividerI = lastDividerI;
-		}
-		else {
-			LastDividerR = 0;
-			LastDividerI = 0;
-		}
-		equationSolver(polynomial_2);
-		multiplication(LastDividerR, LastDividerI, lastDividerR, lastDividerI);
-		LastDividerR = resultR;
-		LastDividerI = resultI;
-		lastDividerR = LastDividerR;
-		lastDividerI = LastDividerI;
-		if (isContained("\\", roots)) {
-			rootsToPolynomial(roots);
-		}
-		else {
-			if (strlen(roots) > 0) {
-				math_processor(roots);
-				multiplication(-1, 0, resultR, resultI);
-				if (abs(LastDividerI) != 0 || abs(LastDividerR) != 0) {
-					multiplication(LastDividerR, LastDividerI, resultR, resultI);
-				}
-				sprintf(expressionF, "(%G+%Gi)x+(%G+%Gi)", LastDividerR, LastDividerI, resultR,
-					resultI);
-				if (isContained("+-", expressionF)) {
-					replaceTimes = 0;
-					replace("+-", "+_", expressionF);
-				}
-				if (isContained("(-", expressionF)) {
-					replaceTimes = 0;
-					replace("(-", "(_", expressionF);
-				}
+		LastDividerR = 0;
+		LastDividerI = 0;
+	}
+	equationSolver(polynomial_2);
+	multiplication(LastDividerR, LastDividerI, lastDividerR, lastDividerI);
+	LastDividerR = resultR;
+	LastDividerI = resultI;
+	lastDividerR = LastDividerR;
+	lastDividerI = LastDividerI;
+	if (isContained("\\", roots)) {
+		rootsToPolynomial(roots);
+	}
+	else {
+		if (strlen(roots) > 0) {
+			math_processor(roots);
+			multiplication(-1, 0, resultR, resultI);
+			if (abs(LastDividerI) != 0 || abs(LastDividerR) != 0) {
+				multiplication(LastDividerR, LastDividerI, resultR, resultI);
 			}
-			else {
-				sprintf(expressionF, "(%G+%Gi)x+(%G+%Gi)", 0.0, 0.0, resultR, resultI);
-				if (isContained("+-", expressionF)) {
-					replaceTimes = 0;
-					replace("+-", "+_", expressionF);
-				}
-				if (isContained("(-", expressionF)) {
-					replaceTimes = 0;
-					replace("(-", "(_", expressionF);
-				}
+			sprintf(expressionF, "(%G+%Gi)x+(%G+%Gi)", LastDividerR, LastDividerI, resultR,
+				resultI);
+			if (isContained("+-", expressionF)) {
+				replaceTimes = 0;
+				replace("+-", "+_", expressionF);
+			}
+			if (isContained("(-", expressionF)) {
+				replaceTimes = 0;
+				replace("(-", "(_", expressionF);
+			}
+		}
+		else {
+			sprintf(expressionF, "(%G+%Gi)x+(%G+%Gi)", 0.0, 0.0, lastDividerR, lastDividerI);
+			if (isContained("+-", expressionF)) {
+				replaceTimes = 0;
+				replace("+-", "+_", expressionF);
+			}
+			if (isContained("(-", expressionF)) {
+				replaceTimes = 0;
+				replace("(-", "(_", expressionF);
 			}
 		}
 		lastDividerR = 0;
@@ -185,16 +176,22 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 			replace("\n", "", expressionF);
 		}
 		char expression[DIM] = "";
+		char saveExpression[DIM] = "";
+		sprintf(saveExpression, "%s", expressionF);
 		sprintf(expression, "(%s)", expressionF);
 		sprintf(expressionF, "%s", expression);
 		if (dataVerifier(expression, 0, 0, 0, 1)) {
 			sprintf(expressionF, "%s", expression);
 		}
-		replaceTimes = 0;
+		else {
+			sprintf(expressionF, "%s", saveExpression);
+		}
 	}
+	replaceTimes = 0;
 }
 
 void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
+	sprintf(roots, "");
 	if (!dataVerifier(polynomial_1, 0, 0, 0, 1)) {
 		if (isContained("((", polynomial_1)) {
 			replace("((", "(", polynomial_1);
@@ -343,4 +340,5 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	else {
 		sprintf(expressionF, "(%s)/(%s)", polynomial_1, polynomial_2);
 	}
+	sprintf(roots, "");
 }

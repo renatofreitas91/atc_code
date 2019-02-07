@@ -57,6 +57,7 @@ void DayofWeek(int d, int m, int y, char calendar[DIM]);
 void Calendar(char yearCalendar[DIM], int year);
 void variableRenamer(char variable[DIM]);
 void print(char data[DIM]);
+void simplifyExpression(char expression[DIM]);
 void pathNameController(char pathName[DIM], char path[DIM]);
 void pathNameToPath(char pathName[DIM]);
 void stringVariableController(char stringVariable[DIM], char string[DIM]);

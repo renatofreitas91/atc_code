@@ -50,7 +50,7 @@ double solver(char expression[DIM]) {
 			return area;
 		}
 	}
-	boolean to_solve = dataVerifier(equation, 0, 0, 1, 1);
+	boolean to_solve = dataVerifier(equation, 0, 0, 0, 1);
 	solverRunning = true;
 	poly = true;
 	if (to_solve) {

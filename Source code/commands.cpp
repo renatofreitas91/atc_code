@@ -67,7 +67,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					}
 					else {
 						char saveData[dim] = "";
-						sprintf(saveData, "(%s)+(0x+0)", data);
+						sprintf(saveData, "%s+(0x+0)", data);
 						sprintf(data, "%s", saveData);
 					}
 				}
@@ -82,6 +82,8 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					LastDividerR = 1;
 					lastDividerI = 0;
 					LastDividerI = 0;
+					simplifyExpression(data);
+					sprintf(data, "%s", expressionF);
 					simplifyPolynomial(data);
 					if (isContained("(((", expressionF)) {
 						replace("(((", "((", expressionF);
@@ -376,15 +378,21 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 				else {
 					if (isContained("((", data) && isContained("))", data)) {
 						char saveData[dim] = "";
-						sprintf(saveData, "%s+(0x+0)", data);
+						sprintf(saveData, "%s", data);
 						sprintf(data, "%s", saveData);
 					}
 					else {
 						char saveData[dim] = "";
-						sprintf(saveData, "(%s)+(0x+0)", data);
+						sprintf(saveData, "%s", data);
 						sprintf(data, "%s", saveData);
 					}
 				}
+				lastDividerR = 1;
+				LastDividerR = 1;
+				lastDividerI = 0;
+				LastDividerI = 0;
+				simplifyExpression(data);
+				sprintf(data, "%s", expressionF);
 				equationSolver(data);
 				puts(expressionF);
 			}
