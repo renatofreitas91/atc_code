@@ -85,8 +85,12 @@ void unitConversions() {
 					printf("\nLight Year: %G", valueInMeters * 1.057008707E-16);
 				}
 				fflush(NULL);
-				printf("\n\nContinue with Length conversions? (Yes -> 1 / No -> 0)\n");
-				opLength1 = (int)getValue();
+				opLength1 = -1;
+				while (opLength1 != 0 && opLength1 != 1) {
+					I_O = true;
+					printf("\n\nContinue with Length conversions? (Yes -> 1 / No -> 0)\n");
+					opLength1 = (int)getValue();
+				}
 			} while (opLength1 != 0);
 		}
 		if (op == 2) {
@@ -120,8 +124,12 @@ void unitConversions() {
 					printf("\nFahrenheit: %G", valueInCelsius*1.8 + 32);
 				}
 				fflush(NULL);
-				printf("\n\nContinue with Temperature Conversions? (Yes -> 1 / No -> 0)\n");
-				opTemperature1 = (int)getValue();
+				opTemperature1 = -1;
+				while (opTemperature1 != 0 && opTemperature1 != 1) {
+					I_O = true;
+					printf("\n\nContinue with Temperature Conversions? (Yes -> 1 / No -> 0)\n");
+					opTemperature1 = (int)getValue();
+				}
 			} while (opTemperature1 != 0);
 		}
 		if (op == 3) {
@@ -195,8 +203,12 @@ void unitConversions() {
 					printf("\nAcre: %G", valueInSquareMeters * 0.0002471054);
 				}
 				fflush(NULL);
-				printf("\n\nContinue with Area conversions? (Yes -> 1 / No -> 0)\n");
-				opArea1 = (int)getValue();
+				opArea1 = -1;
+				while (opArea1 != 0 && opArea1 != 1) {
+					I_O = true;
+					printf("\n\nContinue with Area conversions? (Yes -> 1 / No -> 0)\n");
+					opArea1 = (int)getValue();
+				}
 			} while (opArea1 != 0);
 		}
 		if (op == 4) {
@@ -331,8 +343,12 @@ void unitConversions() {
 					printf("\nCubic Inch: %G", valueInCubicMeters*61023.744095);
 				}
 				fflush(NULL);
-				printf("\n\nContinue with Volume conversions? (Yes -> 1 / No -> 0)\n");
-				opVolume1 = (int)getValue();
+				opVolume1 = -1;
+				while (opVolume1 != 0 && opVolume1 != 1) {
+					I_O = true;
+					printf("\n\nContinue with Volume conversions? (Yes -> 1 / No -> 0)\n");
+					opVolume1 = (int)getValue();
+				}
 			} while (opVolume1 != 0);
 		}
 		if (op == 5) {
@@ -402,8 +418,12 @@ void unitConversions() {
 					printf("\nAtomic Mass Unit: %G", valueInKilograms * 6.022136652E+26);
 				}
 				fflush(NULL);
-				printf("\n\nContinue with Weight conversions? (Yes -> 1 / No -> 0)\n");
-				opWeight1 = (int)getValue();
+				opWeight1 = -1;
+				while (opWeight1 != 0 && opWeight1 != 1) {
+					I_O = true;
+					printf("\n\nContinue with Weight conversions? (Yes -> 1 / No -> 0)\n");
+					opWeight1 = (int)getValue();
+				}
 			} while (opWeight1 != 0);
 		}
 		if (op == 6) {
@@ -477,8 +497,12 @@ void unitConversions() {
 					printf("\nYear: %G", valueInSeconds * 3.168808781E-8);
 				}
 				fflush(NULL);
-				printf("\n\nContinue with Time conversions? (Yes -> 1 / No -> 0)\n");
-				opTime1 = (int)getValue();
+				opTime1 = -1;
+				while (opTime1 != 0 && opTime1 != 1) {
+					I_O = true;
+					printf("\n\nContinue with Time conversions? (Yes -> 1 / No -> 0)\n");
+					opTime1 = (int)getValue();
+				}
 			} while (opTime1 != 0);
 		}
 		if (op == 7) {
@@ -547,8 +571,12 @@ void unitConversions() {
 					printf("\nMilliradian: %G", valueInDegree * 6400 / 360);
 				}
 				fflush(NULL);
-				printf("\n\nContinue with Angle Conversions? (Yes -> 1 / No -> 0)\n");
-				opAngle1 = (int)getValue();
+				opAngle1 = -1;
+				while (opAngle1 != 0 && opAngle1 != 1) {
+					I_O = true;
+					printf("\n\nContinue with Angle Conversions? (Yes -> 1 / No -> 0)\n");
+					opAngle1 = (int)getValue();
+				}
 			} while (opAngle1 != 0);
 		}
 		if (op < 1 || op>7) {
@@ -557,6 +585,7 @@ void unitConversions() {
 		fflush(NULL);
 		op1 = -1;
 		while (op1 != 0 && op1 != 1) {
+			I_O = true;
 			printf("\nContinue? (Yes -> 1 / No -> 0)\n");
 			op1 = (int)getValue();
 		}

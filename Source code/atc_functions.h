@@ -12,6 +12,7 @@ void printTimer(int hours, int minutes, int seconds);
 void printBigTimer(int hours, int minutes, int seconds);
 void openTxt();
 void cls();
+void leftClick();
 void wait(int seconds);
 void on_start();
 void addATCPath();

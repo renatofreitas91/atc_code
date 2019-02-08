@@ -82,7 +82,7 @@ void mode() {
 	int option = 0;
 	char value[DIM] = "";
 	while (option != 1 && option != 2 && option != 3) {
-		printf("radian -> 1\ndegree -> 2\ngradian -> 3\n");
+		printf("radian -> 1\ndegree -> 2\ngradian -> 3\n"); I_O = true;
 		option = (int)getValue();
 		if (option > 3 || option < 1) {
 			printf("Error, incorrect choice.\n");
@@ -205,6 +205,7 @@ void graphSettings() {
 	}
 	int op = -1;
 	while (op > 1 || op < 0) {
+		I_O = true;
 		puts("Would you like to change them? (Yes -> 1 \\ No -> 0)");
 		op = (int)getValue();
 	}
@@ -409,9 +410,9 @@ boolean about() {
 	printf("                              %c   %c%c%c%c%c %c  %c%c%c  %c    %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n         To support the development of this application please enter \"donate\"\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
-	printf("     PRESS THE BUTTON \"Enter\" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS\n");
+	leftClick();
+	system("pause");
 	ShowConsoleCursor(TRUE);
-	gets_s(exit);
 	if (isEqual(exit, "user guide")) {
 		puts(" ");
 		ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator - User Guide.pdf"), NULL, NULL, SW_SHOW);

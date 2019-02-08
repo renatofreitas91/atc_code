@@ -300,6 +300,7 @@ void designGraph(char function[DIM]) {
 	solving = true;
 	int option = -1;
 	while (option != 1 && option != 0) {
+		I_O = true;
 		puts("\nDo you want to see the graph data in table form? (Yes -> 1 \\ No -> 0)");
 		option = (int)getValue();
 	}

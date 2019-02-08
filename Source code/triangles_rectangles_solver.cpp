@@ -169,15 +169,23 @@ void trianglesRectanglesSolver() {
 			sprintf(report, "\n\nReport of results\n\nThe percentage of slope is equal to %lf percent;\nThe adjacent is equal to %G;\nThe opposite is equal to %G;\nThe hypotenuse is equal to %G;\nThe angle formed by the hypotenuse with the adjacent is equal to %G;\nThe angle formed by the hypotenuse with the opposite is equal to %G.\n\n", perslope, adjacent, opposite, hypotenuse, angleH, angleH1);
 			int reportOption = 0;
 			puts(report);
-			printf("\nDo you want to export the report? (Yes -> 1 / No -> 0)\n");
-			reportOption = (int)getValue();
+			reportOption = -1;
+			while (reportOption != 0 && reportOption != 1) {
+				I_O = true;
+				printf("\nDo you want to export the report? (Yes -> 1 / No -> 0)\n");
+				reportOption = (int)getValue();
+			}
 			fflush(NULL);
 			if (reportOption == 1) {
 				saveToReport(report);
 			}
 		}
-		printf("Do you want to analyze more some triangles rectangles?\n(Yes -> 1 / No -> 0)\n");
-		continuF = (int)getValue();
+		continuF = -1;
+		while (continuF != 0 && continuF != 1) {
+			I_O = true;
+			printf("Do you want to analyze more some triangles rectangles?\n(Yes -> 1 / No -> 0)\n");
+			continuF = (int)getValue();
+		}
 	} while (continuF == 1);
 }
 

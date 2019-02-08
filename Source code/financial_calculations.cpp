@@ -71,8 +71,12 @@ void financialCalculations() {
 		puts(" ");
 		if (op == 1) {
 			int answer = 0;
-			puts("Do you have the Cash Flow at period 1?  (Yes -> 1 / No -> 0)");
-			answer = (int)getValue();
+			answer = -1;
+			while (answer != 0 && answer != 1) {
+				I_O = true;
+				puts("Do you have the Cash Flow at period 1?  (Yes -> 1 / No -> 0)");
+				answer = (int)getValue();
+			}
 			if (answer == 1) {
 				puts("Cash Flow at period 1?");
 				double c_1 = getValue();
@@ -86,8 +90,12 @@ void financialCalculations() {
 				printf("\nPresent Value: $%.2f\n", present_value);
 			}
 			else {
-				puts("Do you have the Future Value?  (Yes -> 1 / No -> 0)");
-				answer = (int)getValue();
+				answer = -1;
+				while (answer != 0 && answer != 1) {
+					I_O = true;
+					puts("Do you have the Future Value?  (Yes -> 1 / No -> 0)");
+					answer = (int)getValue();
+				}
 				if (answer == 1) {
 					puts("Future Value?");
 					double future_value = getValue();
@@ -107,8 +115,12 @@ void financialCalculations() {
 		}
 		if (op == 2) {
 			int answer = 0;
-			puts("Do you have the Cash Flow at period 0?  (Yes -> 1 / No -> 0)");
-			answer = (int)getValue();
+			answer = -1;
+			while (answer != 0 && answer != 1) {
+				I_O = true;
+				puts("Do you have the Cash Flow at period 0?  (Yes -> 1 / No -> 0)");
+				answer = (int)getValue();
+			}
 			if (answer == 1) {
 				puts("Cash Flow at period 0?");
 				double c_0 = getValue();
@@ -122,8 +134,12 @@ void financialCalculations() {
 				printf("\nFuture Value: $%.2f\n", future_value);
 			}
 			else {
-				puts("Do you have the Present Value?  (Yes -> 1 / No -> 0)");
-				answer = (int)getValue();
+				answer = -1;
+				while (answer != 0 && answer != 1) {
+					I_O = true;
+					puts("Do you have the Present Value?  (Yes -> 1 / No -> 0)");
+					answer = (int)getValue();
+				}
 				if (answer == 1) {
 					puts("Present Value?");
 					double present_value = getValue();
@@ -1166,6 +1182,7 @@ void financialCalculations() {
 		fflush(NULL);
 		op1 = -1;
 		while (op1 != 0 && op1 != 1) {
+			I_O = true;
 			printf("\nContinue? (Yes -> 1 / No -> 0)\n");
 			op1 = (int)getValue();
 		}

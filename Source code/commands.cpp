@@ -104,6 +104,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			puts(report);
 			int option = -1;
 			while (option != 0 && option != 1) {
+				I_O = true;
 				puts("\nExport result? (Yes -> 1 \\ No -> 0)");
 				option = (int)getValue();
 			}
@@ -418,6 +419,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			sprintf(reportF, "%s", expressionF);
 			int option = -1;
 			while (option != 0 && option != 1) {
+				I_O = true;
 				puts("\nExport result? (Yes -> 1 \\ No -> 0)");
 				option = (int)getValue();
 			}

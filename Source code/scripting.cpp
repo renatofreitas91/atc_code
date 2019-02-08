@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-boolean runningScript = false;
+boolean runningScript = false, I_O = false;
 int Break = 0, countUseBreak = 0, countUseReturn = 0, countBreak = 0, countReturn = 0, countEnters = 0, countUseEnters = 0;
 double returnedR = 0, returnedI = 0;
 
@@ -702,16 +702,27 @@ double atcProg(char exprDev[DIM]) {
 }
 
 double getValue() {
-	verified = 0;
-	while (verified == 0) {
-		char value[DIM] = "";
-		gets_s(value);
-		solving = false;
-		calcNow(value, 0, 0);
-		sprintf(expressionF, value);
-		solving = true;
+	if (I_O) {
+		char decision = _getch();
+		char value[3] = "";
+		sprintf(value, "%c", decision);
+		puts(value);
+		math_processor(value);
+		I_O = false;
+		return resultR;
 	}
-	return resultR;
+	else {
+		verified = 0;
+		while (verified == 0) {
+			char value[DIM] = "";
+			gets_s(value);
+			solving = false;
+			calcNow(value, 0, 0);
+			sprintf(expressionF, value);
+			solving = true;
+		}
+		return resultR;
+	}
 }
 
 int atcProgramming(char script[DIM]) {

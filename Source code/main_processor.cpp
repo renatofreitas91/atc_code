@@ -1,6 +1,4 @@
-//
-// Created by Renato Freitas on 16/10/2018.
-//
+
 #include "stdafx.h"
 
 char *buf = (char *)malloc(300);

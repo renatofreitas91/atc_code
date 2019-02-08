@@ -500,6 +500,7 @@ void arithmeticMatrixSolver() {
 		fflush(NULL);
 		op1 = -1;
 		while (op1 != 0 && op1 != 1) {
+			I_O = true;
 			printf("\nContinue? (Yes -> 1 / No -> 0)\n");
 			op1 = (int)getValue();
 		}
@@ -521,6 +522,7 @@ void fmsum(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[
 	puts(report);
 	int option = -1;
 	while (option != 0 && option != 1) {
+		I_O = true;
 		puts("Export result? (Yes -> 1 \\ No -> 0)");
 		option = (int)getValue();
 	}
@@ -544,6 +546,7 @@ void fmsubt(int lins, int cols, double v[dim][dim], double u[dim][dim], double r
 	puts(report);
 	int option = -1;
 	while (option != 0 && option != 1) {
+		I_O = true;
 		puts("Export result? (Yes -> 1 \\ No -> 0)");
 		option = (int)getValue();
 	}
@@ -567,6 +570,7 @@ void fmmulr(int lins, int cols, double v[dim][dim], double r[dim][dim], double r
 	puts(report);
 	int option = -1;
 	while (option != 0 && option != 1) {
+		I_O = true;
 		puts("Export result? (Yes -> 1 \\ No -> 0)");
 		option = (int)getValue();
 	}
@@ -603,6 +607,7 @@ void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], doub
 		puts(report);
 		int option = -1;
 		while (option != 0 && option != 1) {
+			I_O = true;
 			puts("Export result? (Yes -> 1 \\ No -> 0)");
 			option = (int)getValue();
 		}
@@ -631,6 +636,7 @@ void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim
 	puts(report);
 	int option = -1;
 	while (option != 0 && option != 1) {
+		I_O = true;
 		puts("Export result? (Yes -> 1 \\ No -> 0)");
 		option = (int)getValue();
 	}
@@ -894,6 +900,7 @@ void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim])
 	puts(report);
 	int option = -1;
 	while (option != 0 && option != 1) {
+		I_O = true;
 		puts("Export result? (Yes -> 1 \\ No -> 0)");
 		option = (int)getValue();
 	}
@@ -947,6 +954,7 @@ void fmpowerm(double v[dim][dim], double vI[dim][dim], int power, int lins, int 
 		puts(report);
 		int option = -1;
 		while (option != 0 && option != 1) {
+			I_O = true;
 			puts("Export result? (Yes -> 1 \\ No -> 0)");
 			option = (int)getValue();
 		}
@@ -1018,6 +1026,7 @@ void fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]) {
 	puts(report);
 	int option = -1;
 	while (option != 0 && option != 1) {
+		I_O = true;
 		puts("Export result? (Yes -> 1 \\ No -> 0)");
 		option = (int)getValue();
 	}

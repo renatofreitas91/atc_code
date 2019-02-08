@@ -404,6 +404,7 @@ void statisticsCalculations() {
 		fflush(NULL);
 		op1 = -1;
 		while (op1 != 0 && op1 != 1) {
+			I_O = true;
 			printf("\nContinue? (Yes -> 1 / No -> 0)\n");
 			op1 = (int)getValue();
 		}

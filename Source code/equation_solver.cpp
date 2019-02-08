@@ -601,8 +601,6 @@ void equationSolver(char equation[DIM]) {
 				sprintf(toCalcX, "%s", newExpre);
 			}
 			if (maxExponent == 1) {
-				//replace("1*(res)^1", "(res)", toCalcX);
-				//sprintf(toCalcX, "%s", expressionF);
 				isFirstDegree = true;
 				maxExponent = 2;
 				sprintf(toCalcX, "%s*(res)", toCalcX);

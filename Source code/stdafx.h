@@ -10,6 +10,7 @@
 #include "resource.h"
 #include <boost/math/special_functions/erf.hpp>
 #include "calc.h"
+#include <conio.h>
 #include "atc_functions.h"
 #define DIM 5900
 #define dim 1000
@@ -19,7 +20,7 @@
 extern double LastDividerR, LastDividerI, lastDividerR, lastDividerI, returnedR, returnedI, natureValue, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
 extern int numSysNum, parentPol[DIM], replaceTimes, countEnters, countReturn, countBreak, Break, countUseReturn, countUseBreak, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
 extern char saveExpressionF[DIM], OutputText[DIM], roots[DIM], charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
-extern boolean isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver;
+extern boolean I_O, isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver;
 double functionProcessor(char trigon[DIM], double result, double amplitude, int res);
 double initialProcessor(char arithTrig[DIM], double result);
 double arithSolver(char trigon1[DIM], double result);

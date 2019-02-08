@@ -8,6 +8,7 @@ void numSystemsController() {
 	FILE *open;
 	int state = -1;
 	while (state != 1 && state != 0) {
+		I_O = true;
 		printf("Enable -> 1\nDisable -> 0\n");
 		state = (int)getValue();
 		if (state != 1 && state != 0) {
@@ -25,6 +26,7 @@ void verboseResolutionController() {
 	FILE *open;
 	int state = -1;
 	while (state != 1 && state != 0) {
+		I_O = true;
 		printf("Enable -> 1\nDisable -> 0\n");
 		state = (int)getValue();
 		if (state != 1 && state != 0) {
@@ -42,6 +44,7 @@ void siPrefixController() {
 	FILE *open;
 	int state = -1;
 	while (state != 1 && state != 0) {
+		I_O = true;
 		printf("Enable -> 1\nDisable -> 0\n");
 		state = (int)getValue();
 		if (state != 1 && state != 0) {
@@ -59,6 +62,7 @@ void actualTimeController() {
 	FILE *open;
 	int state = -1;
 	while (state != 1 && state != 0) {
+		I_O = true;
 		printf("Enable -> 1\nDisable -> 0\n");
 		state = (int)getValue();
 		if (state != 1 && state != 0) {
@@ -2266,6 +2270,18 @@ boolean isVariable(char variable[DIM]) {
 	}
 	return false;
 }
+
+void leftClick()
+{
+	INPUT    Input = { 0 };
+	Input.type = INPUT_MOUSE;
+	Input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+	::SendInput(1, &Input, sizeof(INPUT));
+	::ZeroMemory(&Input, sizeof(INPUT));
+	Input.type = INPUT_MOUSE;
+	Input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
+	::SendInput(1, &Input, sizeof(INPUT));
+}
 void cls()
 {
 	HANDLE hConsole;
@@ -2527,6 +2543,7 @@ int toSolve(int re) {
 			if (numFiles != 0) {
 				printf("\n==> ATC has detected %d file(s) in the \"To solve\" folder. <==\n\nDo you want to solve the file(s)? (Yes -> 1 / No -> 0)\n", numFiles);
 				while (action != 0 && action != 1) {
+					I_O = true;
 					action = (int)getValue();
 					if (action != 0 && action != 1) {
 						puts("(Yes -> 1 / No -> 0)");
@@ -2555,6 +2572,7 @@ int toSolve(int re) {
 					int disable = -1;
 					printf("Do you want to disable the feature? (Yes -> 1 / No -> 0)\n");
 					while (disable != 0 && disable != 1) {
+						I_O = true;
 						disable = (int)getValue();
 						if (disable != 0 && disable != 1) {
 							puts("(Yes -> 1 / No -> 0)");
