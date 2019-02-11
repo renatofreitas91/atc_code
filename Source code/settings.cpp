@@ -410,7 +410,7 @@ boolean about() {
 	printf("                              %c   %c%c%c%c%c %c  %c%c%c  %c    %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n         To support the development of this application please enter \"donate\"\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
-	leftClick();
+	trackMouse();
 	system("pause");
 	ShowConsoleCursor(TRUE);
 	if (isEqual(exit, "user guide")) {

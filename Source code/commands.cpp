@@ -367,38 +367,40 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			polySimplifier = false;
 			char data[DIM] = "";
 			sprintf(data, "%s", exprDev);
-			synTest = 0;
-			if (dataVerifier(data, 0, 0, 0, 1)) {
-				sprintf(OutputText, "");
-				replaceTimes = 0;
-				if (!isContained("(", data)) {
-					char saveData[dim] = "";
-					sprintf(saveData, "(%s)+(0x+0)", data);
-					sprintf(data, "%s", saveData);
-				}
-				else {
-					if (isContained("((", data) && isContained("))", data)) {
+			if (!isContained("\\", data)) {
+				synTest = 0;
+				if (dataVerifier(data, 0, 0, 0, 1)) {
+					sprintf(OutputText, "");
+					replaceTimes = 0;
+					if (!isContained("(", data)) {
 						char saveData[dim] = "";
-						sprintf(saveData, "%s", data);
+						sprintf(saveData, "(%s)+(0x+0)", data);
 						sprintf(data, "%s", saveData);
 					}
 					else {
-						char saveData[dim] = "";
-						sprintf(saveData, "%s", data);
-						sprintf(data, "%s", saveData);
+						if (isContained("((", data) && isContained("))", data)) {
+							char saveData[dim] = "";
+							sprintf(saveData, "%s", data);
+							sprintf(data, "%s", saveData);
+						}
+						else {
+							char saveData[dim] = "";
+							sprintf(saveData, "%s", data);
+							sprintf(data, "%s", saveData);
+						}
 					}
+					lastDividerR = 1;
+					LastDividerR = 1;
+					lastDividerI = 0;
+					LastDividerI = 0;
+					simplifyExpression(data);
+					sprintf(data, "%s", expressionF);
 				}
-				lastDividerR = 1;
-				LastDividerR = 1;
-				lastDividerI = 0;
-				LastDividerI = 0;
-				simplifyExpression(data);
-				sprintf(data, "%s", expressionF);
-				equationSolver(data);
-				puts(expressionF);
 			}
-			puts("");
+			equationSolver(data);
+			puts(expressionF);
 		}
+		puts("");
 	}
 	if (isCommand(arithTrig, "rootstopolynomial")) {
 		command = true;
