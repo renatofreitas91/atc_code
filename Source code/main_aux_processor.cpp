@@ -4,6 +4,7 @@
 
 int rasf = 0, maxLength = 0;
 boolean solving = true;
+char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "";
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);
@@ -417,13 +418,24 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 	s = 0;
 	if (verify == 1) {
 		synTest = 0;
-		manageExpression(arithTrig, result1, result2, verify);
-		for (i = 0; expressionF[i] != '\0'; i++) {
-			arithTrig[i] = expressionF[i];
+		if (equationSolverRunning == false && solverRunning == false) {
+			manageExpression(arithTrig, 0, 0, 1);
+			synTest = 0;
+			verify = dataVerifier(arithTrig, 0, 0, isFromMain, 1);
 		}
-		arithTrig[i] = '\0';
-		synTest = 0;
-		verify = dataVerifier(arithTrig, result1, result2, isFromMain, verify);
+		else {
+			if ((equationSolverRunning || solverRunning) && !isEqual(arithTrig, saveArithTrig)) {
+				sprintf(saveArithTrig, "%s", arithTrig);
+				manageExpression(arithTrig, 0, 0, 1);
+				synTest = 0;
+				verify = dataVerifier(arithTrig, 0, 0, isFromMain, 1);
+				sprintf(saveExpressionFF, "%s", expressionF);
+			}
+			else {
+				sprintf(expressionF, "%s", saveExpressionFF);
+				verify = 1;
+			}
+		}
 	}
 	fclose(fout);
 	if (arithTrig[0] != '\0'&&isFromMain == 1 && feedbackValidation == 0) {

@@ -15,6 +15,76 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	int i = 0, r = 0, year = 0, s = 0;
 	boolean command = false;
 	i = 0;
+	if (isCommand(arithTrig, "functionstudy")) {
+		command = true;
+		if (arithTrig[13] == '(') {
+			int tDev = 14, tGet = 0;
+			char exprDev[DIM] = "";
+			while ((arithTrig[tDev] == ')'&&arithTrig[tDev + 1] == '+'&&arithTrig[tDev + 2] == '0'&&arithTrig[tDev + 3] == '\0') == false && arithTrig[tDev] != '\0') {
+				exprDev[tGet] = arithTrig[tDev];
+				tGet++; tDev++;
+			}
+			exprDev[tGet] = '\0';
+			char data[DIM] = "", errorText[DIM] = "";
+			sprintf(data, "%s", exprDev);
+			sprintf(saveExpressionF, "%s", data);
+			if (isContained(")(", data)) {
+				replace(")(", ")*(", data);
+				sprintf(data, "%s", expressionF);
+			}
+			char solution[DIM] = "";
+			synTest = 0;
+			if (dataVerifier(data, 0, 0, 0, 1)) {
+				sprintf(OutputText, "");
+				replaceTimes = 0;
+				if (!isContained("(", data)) {
+					char saveData[dim] = "";
+					sprintf(saveData, "(%s)+(0x+0)", data);
+					sprintf(data, "%s", saveData);
+				}
+				else {
+					if (isContained("((", data) && isContained("))", data)) {
+						char saveData[dim] = "";
+						sprintf(saveData, "%s+(0x+0)", data);
+						sprintf(data, "%s", saveData);
+					}
+					else {
+						char saveData[dim] = "";
+						sprintf(saveData, "%s+(0x+0)", data);
+						sprintf(data, "%s", saveData);
+					}
+				}
+				resultR = 0;
+				resultI = 0;
+				if (!isContained("x", data)) {
+					sprintf(solution, "\nVariable 'x' is missing in your expression.\n");
+				}
+				else {
+					synTest = 0;
+					lastDividerR = 1;
+					LastDividerR = 1;
+					lastDividerI = 0;
+					LastDividerI = 0;
+					simplifyExpression(data);
+					sprintf(data, "%s", expressionF);
+					if (isContained("(((", expressionF)) {
+						replace("(((", "((", expressionF);
+					}
+					if (isContained(")))", expressionF)) {
+						replace(")))", "))", expressionF);
+					}
+					if (strlen(expressionF) > 0) {
+						sprintf(solution, "%s", expressionF);
+						functionStudy(solution);
+					}
+					else {
+						sprintf(solution, "Error: Impossible simplify that polynomial.");
+					}
+				}
+			}
+		}
+		puts("");
+	}
 	if (isCommand(arithTrig, "graph")) {
 		command = true;
 		if (arithTrig[5] == '(') {

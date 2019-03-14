@@ -1,8 +1,9 @@
 #include "stdafx.h"
 
-void designGraph(char function[DIM]) {
-	if (isContained("x", function)) {
-		replace("x", "res", function);
+void designGraph(char functionF[DIM]) {
+	char function[DIM] = "";
+	if (isContained("x", functionF)) {
+		replace("x", "res", functionF);
 		sprintf(function, expressionF);
 	}
 	FILE *graph = NULL;

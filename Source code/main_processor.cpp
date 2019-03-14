@@ -215,13 +215,25 @@ double math_processor(char expression[DIM]) {
 	sprintf(expressionF, "");
 
 	synTest = 0;
-
-
-	manageExpression(arithTrig, 0, 0, 1);
+	if (equationSolverRunning == false && solverRunning == false) {
+		manageExpression(arithTrig, 0, 0, 1);
+		synTest = 0;
+		verify = dataVerifier(arithTrig, 0, 0, isFromMain, 1);
+	}
+	else {
+		if ((equationSolverRunning || solverRunning) && !isEqual(arithTrig, saveArithTrig)) {
+			sprintf(saveArithTrig, "%s", arithTrig);
+			manageExpression(arithTrig, 0, 0, 1);
+			synTest = 0;
+			verify = dataVerifier(arithTrig, 0, 0, isFromMain, 1);
+			sprintf(saveExpressionFF, "%s", expressionF);
+		}
+		else {
+			sprintf(expressionF, "%s", saveExpressionFF);
+			verify = 1;
+		}
+	}
 	sprintf(arithTrig, "%s", expressionF);
-	synTest = 0;
-	verify = dataVerifier(arithTrig, 0, 0, 1, 1);
-
 	if (verify == 1) {
 		verified = 1;
 		resultR = 0;

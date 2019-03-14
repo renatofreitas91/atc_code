@@ -73,6 +73,8 @@ double solver(char expression[DIM]) {
 				equationSolverRunning = false;
 				return resultR;
 			}
+			retrySolver_2 = true;
+			retrySolver = false;
 		}
 		poly = false;
 
