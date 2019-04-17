@@ -2792,7 +2792,7 @@ void currentSettings() {
 		printf("Dimensions------------------------------> Lines: %d - Columns: %d | Info: Enter \"dimensions\" to change.\n", lines, columns);
 	}
 	else {
-		puts("Dimensions------------------------------> Lines: 150 - Columns: 150 | Info: Enter \"dimensions\" to change.");
+		puts("Dimensions------------------------------> Lines: 5000 - Columns: 167 | Info: Enter \"dimensions\" to change.");
 	}
 }
 
@@ -3631,7 +3631,7 @@ int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x) {
 }
 
 boolean verifyValue(char number) {
-	char numbers[DIM] = "_.0123456789/*^Epie";
+	char numbers[DIM] = "_.0123456789*/^Epie";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(numbers)); i++) {
 		if (number == numbers[i]) {

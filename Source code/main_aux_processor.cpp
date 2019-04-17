@@ -9,8 +9,9 @@ char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "";
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);
 	if (isContained("solver", arithTrig)) {
-		if (isContained("x", arithTrig)) {
-			resultR = 0; resultI = 0;
+		if (isContainedByIndex("-x", arithTrig, 1)) {
+			replace("-x", "+_x", arithTrig);
+			sprintf(arithTrig, "%s", expressionF);
 		}
 	}
 	verbose = 0;
@@ -266,16 +267,11 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				fprintf(fout, ">%s\n", savefTrig);
 			}
 			command = commands(arithTrig, path, result1, result2);
-			fflush(NULL);
-			fout = NULL;
-			fout = fopen(path, "a+");
-			while (fout == NULL) {
-				fout = fopen(path, "a+");
-			}
-			if (command == false && continu) {
+			if (command == false && continu&&strlen(arithTrig)>0) {
 				main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
 				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 			}
+			fclose(fout);
 		}
 	}
 	return result1;
@@ -420,6 +416,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		synTest = 0;
 		if (equationSolverRunning == false && solverRunning == false) {
 			manageExpression(arithTrig, 0, 0, 1);
+			sprintf(arithTrig, "%s", expressionF);
 			synTest = 0;
 			verify = dataVerifier(arithTrig, 0, 0, isFromMain, 1);
 		}
@@ -427,12 +424,14 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 			if ((equationSolverRunning || solverRunning) && !isEqual(arithTrig, saveArithTrig)) {
 				sprintf(saveArithTrig, "%s", arithTrig);
 				manageExpression(arithTrig, 0, 0, 1);
+				sprintf(arithTrig, "%s", expressionF);
 				synTest = 0;
 				verify = dataVerifier(arithTrig, 0, 0, isFromMain, 1);
 				sprintf(saveExpressionFF, "%s", expressionF);
 			}
 			else {
 				sprintf(expressionF, "%s", saveExpressionFF);
+				sprintf(arithTrig, "%s", saveExpressionFF);
 				verify = 1;
 			}
 		}

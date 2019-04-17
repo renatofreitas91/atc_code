@@ -56,11 +56,48 @@ double solver(char expression[DIM]) {
 	if (to_solve) {
 		if (poly) {
 			equation_solver = true;
+			synTest = 0;
+			char data[DIM] = "";
+			sprintf(data, "%s", equation);
+			if (isContained("*1i", data)) {
+				replace("*1i", "i", data);
+				sprintf(data, "%s", expressionF);
+			}
+			sprintf(expressionF, "(%s)", data);
+			sprintf(data, "%s", expressionF);
+			if (dataVerifier(data, 0, 0, 0, 1)) {
+				sprintf(OutputText, "");
+				replaceTimes = 0;
+				if (!isContained("(", data)) {
+					char saveData[dim] = "";
+					sprintf(saveData, "(%s)", data);
+					sprintf(data, "%s", saveData);
+				}
+				else {
+					if (isContained("((", data) && isContained("))", data)) {
+						char saveData[dim] = "";
+						sprintf(saveData, "%s", data);
+						sprintf(data, "%s", saveData);
+					}
+					else {
+						char saveData[dim] = "";
+						sprintf(saveData, "%s", data);
+						sprintf(data, "%s", saveData);
+					}
+				}
+				lastDividerR = 1;
+				LastDividerR = 1;
+				lastDividerI = 0;
+				LastDividerI = 0;
+				simplifyExpression(data);
+				sprintf(data, "%s", expressionF);
+			}
+			sprintf(equation, "%s", data);
 			equationSolver(equation);
-			equation_solver = false;
 			double saveResultR = resultR, saveResultI = resultI;
 			xValuesR = resultR;
 			xValuesI = resultI;
+			solverRunning = true;
 			if (isContained("x", equation)) {
 				replace("x", "res", equation);
 				sprintf(equation, "%s", expressionF);
@@ -73,11 +110,9 @@ double solver(char expression[DIM]) {
 				equationSolverRunning = false;
 				return resultR;
 			}
-			retrySolver_2 = true;
-			retrySolver = false;
 		}
-		poly = false;
 
+		poly = false;
 		if (isContained("x", expression)) {
 			replace("x", "res", expression);
 			sprintf(expression, "%s", expressionF);
