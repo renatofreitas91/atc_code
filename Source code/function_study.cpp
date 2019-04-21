@@ -1075,9 +1075,8 @@ void functionStudy(char function[DIM]) {
 		o = 0;
 		puts(" ");
 	}
-
-	printf("\n==> Codomain and absolute extremes <==\n");
 	if (strlen(numerator) == 0 && strlen(denominator) == 0) {
+		printf("\n==> Codomain and absolute extremes <==\n");
 		if (saveZ != 1) {
 			printf("\nCodomain: ]-inf,");
 		}
@@ -1122,6 +1121,8 @@ void functionStudy(char function[DIM]) {
 		puts("");
 	}
 	else {
+		puts(" ");
+		printf("\n==> Direction of concavity and inflection points <==\n");
 		pl = 0;
 		char * d_numerator = getDerivative(new_numerator);
 		char de_numerator[DIM] = "";
@@ -1141,18 +1142,24 @@ void functionStudy(char function[DIM]) {
 		simpleSimplifyPolynomial(sec_new_numerator_1);
 		sprintf(sec_new_numerator_1, "%s", expressionF);
 		sprintf(expressionF, "%s/(%s)", sec_new_numerator_1, denominator);
-		simpleSimplifyPolynomial(expressionF);
-		sprintf(sec_new_numerator_1, "%s", expressionF);
-		simpleSimplifyPolynomial(sec_new_numerator_2);
-		sprintf(sec_new_numerator_2, "%s", expressionF);
-		sprintf(expressionF, "%s/(%s)", sec_new_numerator_2, denominator);
-		simpleSimplifyPolynomial(expressionF);
 		if (isContained("(((", expressionF)) {
 			replace("(((", "((", expressionF);
 		}
 		if (isContained(")))", expressionF)) {
 			replace(")))", "))", expressionF);
 		}
+		simpleSimplifyPolynomial(expressionF);
+		sprintf(sec_new_numerator_1, "%s", expressionF);
+		simpleSimplifyPolynomial(sec_new_numerator_2);
+		sprintf(sec_new_numerator_2, "%s", expressionF);
+		sprintf(expressionF, "%s/(%s)", sec_new_numerator_2, denominator);
+		if (isContained("(((", expressionF)) {
+			replace("(((", "((", expressionF);
+		}
+		if (isContained(")))", expressionF)) {
+			replace(")))", "))", expressionF);
+		}
+		simpleSimplifyPolynomial(expressionF);
 		sprintf(sec_new_numerator_2, "%s", expressionF);
 		sprintf(sec_new_numerator, "%s-%s", sec_new_numerator_1, sec_new_numerator_2);
 		simpleSimplifyPolynomial(sec_new_numerator);
@@ -1374,12 +1381,53 @@ void functionStudy(char function[DIM]) {
 			o++;
 		}
 		puts(" ");
-		printf("\nCodomain: ]-inf");
-		printf(",%.3f[", horizontalAssimptote);
-		printf("U]%.3f,", intersectYY);
-		printf("+inf[");
+		resultR = saveResultR;  resultI = saveResultI;
+		variableController("x", 0);
+		printf("\n==> Codomain and absolute extremes <==\n");
+		puts(" ");
+		o = 0;
+		if (saveZ != 1) {
+			printf("\nCodomain: ]-inf,");
+		}
+		else {
+			printf("\nCodomain: ]-inf");
+		}
+		o = 0;
+		while (o < saveZ) {
+			resultR = sortZeroR[o];
+			resultI = sortZeroI[o];
+			variableController("x", 0);
+			resultR = math_processor(originalFunction);
+			if (saveZ == 1) {
+				printf(",%.3f]", resultR);
+			}
+			else {
+				if (o % 2 == 1) {
+					printf("%.3f[", resultR);
+				}
+				else {
+					printf("U]%.3f,", resultR);
+				}
+			}
+			o++;
+		}
+		if (saveZ != 1) {
+			printf("+inf[\n");
+		}
+		o = 0;
+		while (o < saveZ) {
+			resultR = sortZeroR[o];
+			resultI = sortZeroI[o];
+			variableController("x", 0);
+			resultR = math_processor(originalFunction);
+			if (resultR >= 0) {
+				printf("\nMax: (%.3f,%.3f)\n", sortZeroR[o], resultR);
+			}
+			else {
+				printf("\nMin: (%.3f,%.3f)\n", sortZeroR[o], resultR);
+			}
+			o++;
+		}
+		puts("");
 	}
-	resultR = saveResultR;  resultI = saveResultI;
-	variableController("x", 0);
-	puts(" ");
 }

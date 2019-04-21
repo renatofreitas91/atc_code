@@ -1912,10 +1912,10 @@ void simplifyExpression(char expression[DIM]) {
 			p++;
 		}
 		equaSimplified[strlen(equaSimplified)] = '\0';
-		if (isContained("+(0x+0)", equaSimplified)) {
+		/*if (isContained("+(0x+0)", equaSimplified)) {
 			replace("+(0x+0)", "+[0+0i]x+[0+0i]", equaSimplified);
 			sprintf(equaSimplified, "%s", expressionF);
-		}
+		}*/
 		p = 0; q = 0;
 		while (p < abs((int)strlen(equaSimplified))) {
 			if (equaSimplified[p] == ' ') {

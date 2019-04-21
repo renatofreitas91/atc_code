@@ -7,6 +7,8 @@ boolean solving = true;
 char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "";
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
+
+
 	fflush(NULL);
 	if (isContained("solver", arithTrig)) {
 		if (isContainedByIndex("-x", arithTrig, 1)) {
@@ -166,6 +168,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			arithTrig[0] = '\0';
 		}
 	}
+
 	if (str == 1) {
 		str = 0;
 		int p = 0;
@@ -207,7 +210,9 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			arithTrig[0] = '\0';
 		}
 	}
+
 	else {
+
 		if (strlen(arithTrig) > 0) {
 			arithTrig[i] = '+'; arithTrig[i + 1] = '0'; arithTrig[i + 2] = '\0';
 		}
@@ -263,15 +268,21 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 					}
 				}
 			}
+			if (fout != NULL) {
+				fclose(fout);
+			}
+			fout = NULL;
+			while (fout == NULL) {
+				fout = fopen(path, "a+");
+			}
 			if (verify == 1) {
 				fprintf(fout, ">%s\n", savefTrig);
 			}
 			command = commands(arithTrig, path, result1, result2);
-			if (command == false && continu&&strlen(arithTrig)>0) {
+			if (command == false && continu&&strlen(arithTrig) > 0) {
 				main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
 				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 			}
-			fclose(fout);
 		}
 	}
 	return result1;

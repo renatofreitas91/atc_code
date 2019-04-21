@@ -50,7 +50,7 @@ void main(int argc, char *argv[]) {
 			}
 			else {
 				arG = 1;
-				trigData[0] = '\0';
+				sprintf(trigData, "");
 				while (arG < argc) {
 					sprintf(trigData, "%s%s", trigData, argv[arG]);
 					arG++;
@@ -62,16 +62,18 @@ void main(int argc, char *argv[]) {
 				fclose(fout);
 			}
 			fout = NULL;
+			char fTrig[DIM] = "", arithTrig[DIM] = "";
 			while (fout == NULL) {
 				fout = fopen(path, "a+");
 			}
 			for (tD = 0; trigData[tD] != '\0'; tD++) {
 				runningScript = false;
 				fflush(NULL);
-				char fTrig[DIM] = "", arithTrig[DIM] = "";
-				varRename[0] = '\0'; revariable[0] = '\0';
+				sprintf(varRename, "");
+				sprintf(revariable, "");
 				validVar = 1; 	processingOK = 1;
-				fTrig[0] = '\0';
+				sprintf(varRename, "");
+				sprintf(fTrig, "");
 				i = 0;
 				int fl = 1, fr = 0;
 				while (trigData[tD] != '\0'&&trigData[tD] != ','&&tD < abs((int)strlen(trigData))) {
@@ -107,7 +109,7 @@ void main(int argc, char *argv[]) {
 				variableController("x", 0);
 				sprintf(fTrig, "%s", arithTrig); verbose = 0;
 				main_core(arithTrig, fTrig, fout, path, result1, result2, 1);
-				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
+				sprintf(arithTrig, ""); sprintf(fTrig, "");
 				if (verified == 1) {
 					result1 = resultR;
 					result2 = resultI;
