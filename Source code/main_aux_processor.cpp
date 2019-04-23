@@ -7,8 +7,6 @@ boolean solving = true;
 char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "";
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
-
-
 	fflush(NULL);
 	if (isContained("solver", arithTrig)) {
 		if (isContainedByIndex("-x", arithTrig, 1)) {

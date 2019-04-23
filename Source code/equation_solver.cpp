@@ -777,7 +777,7 @@ void equationSolver(char equation[DIM]) {
 					saveResultR = resultR;
 					saveResultI = resultI;
 					char value[dim] = "";
-					sprintf(value, "%.14f+%.14fi", resultR, resultI);
+					sprintf(value, "%.9f+%.9fi", resultR, resultI);
 					if (isContained("-", value)) {
 						replace("-", "_", value);
 						sprintf(value, "%s", expressionF);
