@@ -463,6 +463,53 @@ void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]) {
 	}
 }
 
+void replaceByIndex(char toReplace[DIM], char replacement[DIM], char string[DIM], int index) {
+	char expression[DIM] = "", expressionG[DIM] = "", check_for_variable[DIM] = "";
+	int i = 0, g = 0, j = 0, is_variable = 0, k = 0, n = 0;
+	sprintf(expression, "%s", string);
+	sprintf(expressionG, "%s", string);
+	isContainedByIndex(toReplace, expressionG, index);
+	if (replaceTimes == 0) {
+		do {
+			i = strStart; j = 0;
+			while (j < abs((int)strlen(replacement)) && i < DIM)
+			{
+				expression[i] = replacement[j];
+				i++; j++;
+			}
+			g = strEnd;
+			while (g < abs((int)strlen(expressionG)) && g < DIM&&i < DIM) {
+				expression[i] = expressionG[g];
+				g++;
+				i++;
+			}
+			if (i < DIM) {
+				expression[i] = '\0';
+			}
+			sprintf(expressionG, "%s", expression);
+		} while (isContainedByIndex(toReplace, expressionG, index) && i < DIM&&g < DIM);
+		sprintf(expressionF, "%s", expressionG);
+	}
+	else {
+		i = strStart; j = 0;
+		while (j < abs((int)strlen(replacement)) && i < DIM)
+		{
+			expression[i] = replacement[j];
+			i++; j++;
+		}
+		g = strEnd;
+		while (g < abs((int)strlen(expressionG)) && g < DIM&&i < DIM) {
+			expression[i] = expressionG[g];
+			g++;
+			i++;
+		}
+		if (i < DIM) {
+			expression[i] = '\0';
+		}
+		sprintf(expressionF, "%s", expression);
+	}
+}
+
 void renamer(char expression[DIM]) {
 	expressionF[0] = '\0';
 	char varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm", varToRename[DIM] = "";
@@ -3560,7 +3607,18 @@ boolean verifyLetter(char letter) {
 }
 
 boolean verifyNumber(char number) {
-	char numbers[DIM] = "0123456789";
+	char numbers[DIM] = "_0.123456789E";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (number == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean verifyNumberExpression(char number) {
+	char numbers[DIM] = "_0.123456789Epiex(^)S";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(numbers)); i++) {
 		if (number == numbers[i]) {
@@ -3971,4 +4029,39 @@ void MouseMove(int x, int y)
 	Input.mi.dx = (long)fx;
 	Input.mi.dy = (long)fy;
 	::SendInput(1, &Input, sizeof(INPUT));
+}
+
+
+void split(char splitter[DIM], char data[DIM]) {
+	int i = 0, x = 0, y = 0, k = 0;
+	while (i <= countSplits) {
+		sprintf(splitResult[i], "");
+		i++;
+	}
+	i = 0;
+	if (isContained(splitter, data)) {
+		while (isContained(splitter, data)) {
+			i = 0;
+			x = 0;
+			while (i < strStart) {
+				splitResult[y][x] = data[i];
+				x++; i++;
+			}
+			splitResult[y][x] = '\0';
+			y++;
+			k = 0;
+			while (data[k + strEnd] != '\0') {
+				data[k] = data[k + strEnd];
+				k++;
+			}
+			data[k] = '\0';
+		}
+		x = 0;
+		i = 0;
+		while (data[i] != '\0') {
+			splitResult[y][x] = data[i];
+			x++; i++;
+		}
+		splitResult[y][x] = '\0';
+	}
 }

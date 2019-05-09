@@ -8,19 +8,14 @@ char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "";
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);
-	if (isContained("solver", arithTrig)) {
-		if (isContainedByIndex("-x", arithTrig, 1)) {
-			replace("-x", "+_x", arithTrig);
-			sprintf(arithTrig, "%s", expressionF);
-		}
-	}
 	verbose = 0;
 	verified = 0;
 	rasf = 0;
 	resultR = 0; resultI;
-	int txt = 0, command = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0, StringManual = 0;
+	int txt = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0, StringManual = 0;
 	char variable[DIM] = "", getVarName[DIM] = "", getVar[DIM] = "", savefTrig[DIM] = "";
-	cleanhistory = 0;
+	boolean command = 0,
+		cleanhistory = 0;
 	txt = 0;
 	valid = 1;
 	validVar = 1;
@@ -277,7 +272,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				fprintf(fout, ">%s\n", savefTrig);
 			}
 			command = commands(arithTrig, path, result1, result2);
-			if (command == false && continu&&strlen(arithTrig) > 0) {
+			if (command == (boolean)false && continu&&strlen(arithTrig) > 0) {
 				main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
 				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 			}
@@ -288,12 +283,20 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 
 double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM], int txt, char variable[DIM], int v, int j, double result1, double result2, int isFromMain, int var, int valGet, int command) {
 	FILE *open = NULL;
+	if (isContained("solver", arithTrig)) {
+		if (isContainedByIndex("-x", arithTrig, 1)) {
+			replace("-x", "+_x", arithTrig);
+			sprintf(arithTrig, "%s", expressionF);
+		}
+	}
 	int  g = 0, Dimensions = 2, Window = 3, r = 0, i = 0, s = 0;
-	char exit[DIM] = "", res, varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm", saveArithTr[DIM] = "";;
-	res = arithTrig[0];
-	if (res == '+' || res == '-' || res == '/' || res == '*' || res == '^') {
-		for (i = 0; arithTrig[i] != '\0'; i++) {
-			arithTrig[i] = arithTrig[i + 1];
+	char exit[DIM] = "", res, varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm", saveArithTr[DIM] = "";
+	if (!solverRunning && !equationSolverRunning) {
+		res = arithTrig[0];
+		if (res == '+' || res == '-' || res == '/' || res == '*' || res == '^') {
+			for (i = 0; arithTrig[i] != '\0'; i++) {
+				arithTrig[i] = arithTrig[i + 1];
+			}
 		}
 	}
 	if (var == 1) {
@@ -472,13 +475,13 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				}
 				maxLength = (int)strlen(arithTrig);
 				initialProcessor(arithTrig, result1);
-				if (resultR == 0 && solverRunning == false) {
+				if (resultR == 0 && solverRunning == false && equationSolverRunning == false) {
 					initialProcessor(arithTrig, result1);
 				}
-				if (resultR == 0 && solverRunning == false) {
+				if (resultR == 0 && solverRunning == false && equationSolverRunning == false) {
 					initialProcessor(arithTrig, result1);
 				}
-				if (resultR == 0 && solverRunning == false) {
+				if (resultR == 0 && solverRunning == false && equationSolverRunning == false) {
 					initialProcessor(arithTrig, result1);
 				}
 				verbose = 0;

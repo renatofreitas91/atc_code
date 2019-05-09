@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "calc.h"
 
-double LastDividerR = 1, LastDividerI = 1;
+double LastDividerR = 0, LastDividerI = 0;
 boolean isDivisible = true;
 
 
@@ -22,13 +22,13 @@ void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	}
 	removeDuplPars(polynomial_1);
 	sprintf(polynomial_1, "%s", expressionF);
-	sprintf(expressionF, "(%s)*(0x+1)", polynomial_1);
+	sprintf(expressionF, "(%s)*(0x^1+1)", polynomial_1);
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_1, "%s", expressionF);
 	sprintf(roots, "");
 	removeDuplPars(polynomial_2);
 	sprintf(polynomial_2, "%s", expressionF);
-	sprintf(expressionF, "(%s)*(0x+1)", polynomial_2);
+	sprintf(expressionF, "(%s)*(0x^1+1)", polynomial_2);
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_2, "%s", expressionF);
 	sprintf(roots, "");
@@ -67,7 +67,7 @@ void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		rootsToPolynomial(roots);
 	}
 	else {
-		sprintf(expressionF, "((%G+%Gi)x+(%G+%Gi))", 0.0, 0.0, lastDividerR, lastDividerI);
+		sprintf(expressionF, "((%.5f+%.5fi)x+(%.5f+%.5fi))", 0.0, 0.0, lastDividerR, lastDividerI);
 		if (isContained("+-", expressionF)) {
 			replaceTimes = 0;
 			replace("+-", "-", expressionF);
@@ -85,17 +85,17 @@ void sub_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	sprintf(roots, "");
 	removeDuplPars(polynomial_1);
 	sprintf(polynomial_1, "%s", expressionF);
-	sprintf(expressionF, "(%s)*(0x+1)", polynomial_1);
+	sprintf(expressionF, "(%s)*(0x^1+1)", polynomial_1);
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_1, "%s", expressionF);
 	sprintf(roots, "");
 	removeDuplPars(polynomial_2);
 	sprintf(polynomial_2, "%s", expressionF);
-	sprintf(expressionF, "(%s)*(0x+1)", polynomial_2);
+	sprintf(expressionF, "(%s)*(0x^1+1)", polynomial_2);
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_2, "%s", expressionF);
 	sprintf(roots, "");
-	sprintf(expressionF, "(%s)*(0x-1)", polynomial_2);
+	sprintf(expressionF, "(%s)*(0x^1-1)", polynomial_2);
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_2, "%s", expressionF);
 	sum_polynomial(polynomial_1, polynomial_2);
@@ -104,6 +104,7 @@ void sub_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 }
 
 void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
+	sprintf(roots, "");
 	if (isEqual(polynomial_2, "(0+0i)") || isEqual(polynomial_1, "(0+0i)")) {
 		sprintf(expressionF, "(0+0i)");
 	}
@@ -127,6 +128,7 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		}
 
 		replaceTimes = 0;
+		sprintf(roots, "");
 		equationSolver(polynomial_1);
 		if (abs(lastDividerR) != 0 || abs(lastDividerI) != 0) {
 			LastDividerR = lastDividerR;
@@ -152,7 +154,7 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 				if (abs(LastDividerI) != 0 || abs(LastDividerR) != 0) {
 					multiplication(LastDividerR, LastDividerI, resultR, resultI);
 				}
-				sprintf(expressionF, "(%G+%Gi)x+(%G+%Gi)", LastDividerR, LastDividerI, resultR,
+				sprintf(expressionF, "(%.5f+%.5fi)x+(%.5f+%.5fi)", LastDividerR, LastDividerI, resultR,
 					resultI);
 				if (isContained("+-", expressionF)) {
 					replaceTimes = 0;
@@ -164,7 +166,7 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 				}
 			}
 			else {
-				sprintf(expressionF, "(%G+%Gi)x+(%G+%Gi)", 0.0, 0.0, lastDividerR, lastDividerI);
+				sprintf(expressionF, "(%.5f+%.5fi)x+(%.5f+%.5fi)", 0.0, 0.0, lastDividerR, lastDividerI);
 				if (isContained("+-", expressionF)) {
 					replaceTimes = 0;
 					replace("+-", "+_", expressionF);
@@ -234,7 +236,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		sprintf(roots, "");
 		equationSolver(polynomial_2);
 		division(LastDividerR, LastDividerI, lastDividerR, lastDividerI);
-		sprintf(expressionF, "(%G+%Gi)/(%G+%Gi)", LastDividerR, LastDividerI, lastDividerR, lastDividerI);
+		sprintf(expressionF, "(%.5f+%.5fi)/(%.5f+%.5fi)", LastDividerR, LastDividerI, lastDividerR, lastDividerI);
 		if (isContained("(-", expressionF)) {
 			replace("(-", "(_", expressionF);
 		}
@@ -301,7 +303,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 			sprintf(roots, "");
 			for (i = 0; i < s; i++) {
 				if (rootR1[i] != -7777) {
-					sprintf(roots, "%s%G+%Gi\\", roots, rootR1[i], rootI1[i]);
+					sprintf(roots, "%s%.5f+%.5fi\\", roots, rootR1[i], rootI1[i]);
 				}
 			}
 			if (strlen(roots) >= 1) {
@@ -314,7 +316,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 			sprintf(roots_2, "");
 			for (i = 0; i < r; i++) {
 				if (rootR2[i] != -7777) {
-					sprintf(roots_2, "%s%G+%Gi\\", roots_2, rootR2[i], rootI2[i]);
+					sprintf(roots_2, "%s%.5f+%.5fi\\", roots_2, rootR2[i], rootI2[i]);
 				}
 			}
 			if (strlen(roots_2) >= 1) {
@@ -346,7 +348,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 				}
 			}
 			else {
-				sprintf(expressionF, "(0x+%G+%Gi)", lastDividerR, lastDividerI);
+				sprintf(expressionF, "(0x^1+%.5f+%.5fi)", lastDividerR, lastDividerI);
 				if (isContained("+-", expressionF)) {
 					replaceTimes = 0;
 					replace("+-", "-", expressionF);
@@ -369,12 +371,26 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 }
 
 void removeDuplPars(char expression[DIM]) {
+	replaceTimes = 0;
 	if (isContained("((", expression)) {
 		replace("((", "(", expression);
 		sprintf(expression, "%s", expressionF);
 	}
 	if (isContained("))", expression)) {
 		replace("))", ")", expression);
+		sprintf(expression, "%s", expressionF);
+	}
+	sprintf(expressionF, "%s", expression);
+}
+
+void removeTriplPars(char expression[DIM]) {
+	replaceTimes = 0;
+	if (isContained("(((", expression)) {
+		replace("(((", "((", expression);
+		sprintf(expression, "%s", expressionF);
+	}
+	if (isContained(")))", expression)) {
+		replace(")))", "))", expression);
 		sprintf(expression, "%s", expressionF);
 	}
 	sprintf(expressionF, "%s", expression);

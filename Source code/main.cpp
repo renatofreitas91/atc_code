@@ -25,11 +25,11 @@ void main(int argc, char *argv[]) {
 		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v2.0.2");
+		system("title Advanced Trigonometry Calculator v2.0.3");
 		continu = about();
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v2.0.2       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v2.0.3       ==) ATC is ready to process data. (==");
 		do {
 			resultR = 0; resultI = 0;
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
@@ -46,7 +46,7 @@ void main(int argc, char *argv[]) {
 				}
 				gets_s(trigData);
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v2.0.2       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v2.0.3       ==) Processing... (==");
 			}
 			else {
 				arG = 1;
@@ -197,7 +197,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v2.0.2       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v2.0.3       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -998,12 +998,14 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				}
 			}
 			text[v] = '\0';
-			decision = dataVerifier(text, result1, result2, comment, verify);
-			if (decision == 0) {
-				if (comment == 1) {
-					puts("\nYou entered invalid values.\n");
+			if (strlen(text) > 0) {
+				decision = dataVerifier(text, result1, result2, comment, verify);
+				if (decision == 0) {
+					if (comment == 1) {
+						puts("\nYou entered invalid values.\n");
+					}
+					return decision;
 				}
-				return decision;
 			}
 		}
 		for (i = 0; data[i] != '\0'; i++) {
@@ -1094,10 +1096,11 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 							expression[p] = expressionF[p];
 						}
 						expression[p] = '\0';
-
-						decision = dataVerifier(expression, result1, result2, comment, verify);
-						if (decision == 0) {
-							return decision;
+						if (strlen(expression) > 0) {
+							decision = dataVerifier(expression, result1, result2, comment, verify);
+							if (decision == 0) {
+								return decision;
+							}
 						}
 						if (data[i] == 'b') {
 							k++;
@@ -1144,9 +1147,11 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 							expression[p] = expressionF[p];
 						}
 						expression[p] = '\0';
-						decision = dataVerifier(expression, result1, result2, comment, verify);
-						if (decision == 0) {
-							return decision;
+						if (strlen(expression) > 0) {
+							decision = dataVerifier(expression, result1, result2, comment, verify);
+							if (decision == 0) {
+								return decision;
+							}
 						}
 						if (data[i] == 'D') {
 							k++;

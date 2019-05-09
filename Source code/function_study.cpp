@@ -1,7 +1,12 @@
 
 #include "stdafx.h"
 
+boolean studyFunction = false;
+
 void functionStudy(char function[DIM]) {
+	studyFunction = true;
+	double coDomain[dim];
+	int u = 0;
 	char saveFunctionF[DIM] = "";
 	sprintf(saveFunctionF, "%s", function);
 	char originalFunction[DIM] = "";
@@ -190,6 +195,8 @@ void functionStudy(char function[DIM]) {
 	puts("\n\nIt intersects the yy-axis in the point below:\n");
 	printf("\n(0,%.3f)\n", resultR);
 	intersectYY = resultR;
+	coDomain[u] = intersectYY;
+	u++;
 	printf("\n==> Asymptotes <==\n");
 	char verticalAsymptotes[DIM] = "";
 	if (strlen(denominator) > 0) {
@@ -233,6 +240,8 @@ void functionStudy(char function[DIM]) {
 	if (abs(resultR) < 1E50) {
 		printf("\nHas a horizontal asymptote when lim x-> +inf: %.3f\n", resultR);
 		horizontalAssimptote = resultR;
+		coDomain[u] = horizontalAssimptote;
+		u++;
 	}
 	else {
 		puts("\nIt does not have a horizontal asymptote when lim x-> +inf");
@@ -947,7 +956,7 @@ void functionStudy(char function[DIM]) {
 			}
 			poleZerosR[saveIndex] = 1E12;
 			poleZerosI[saveIndex] = 0;
-			if (sortZeroR[o - 1] != theSmallerR && theSmallerR != 1E12) {
+			if (sortZeroR[o - 1] != theSmallerR && theSmallerR != 1E12 || o - 1 == -1) {
 				sortZeroR[o] = theSmallerR;
 				sortZeroI[o] = theSmallerI;
 				o++;
@@ -1258,7 +1267,7 @@ void functionStudy(char function[DIM]) {
 			}
 			poleZerosR[saveIndex] = 1E12;
 			poleZerosI[saveIndex] = 0;
-			if (sortZeroR[o - 1] != theSmallerR && theSmallerR != 1E12) {
+			if (sortZeroR[o - 1] != theSmallerR && theSmallerR != 1E12 || o - 1 == -1) {
 				sortZeroR[o] = theSmallerR;
 				sortZeroI[o] = theSmallerI;
 				o++;
@@ -1385,24 +1394,39 @@ void functionStudy(char function[DIM]) {
 		variableController("x", 0);
 		printf("\n==> Codomain and absolute extremes <==\n");
 		puts(" ");
+		o = 0; saveIndex = -1;
+		saveZ = u;
+		while (o < saveZ) {
+			theSmallerR = 1E12;
+			theSmallerI = 0;
+			for (z = 0; z < u; z++) {
+				if (theSmallerR > coDomain[z]) {
+					theSmallerR = coDomain[z];
+					saveIndex = z;
+				}
+			}
+			coDomain[saveIndex] = 1E12;
+			if (sortZeroR[o - 1] != theSmallerR && theSmallerR != 1E12 || o - 1 == -1) {
+				sortZeroR[o] = theSmallerR;
+				sortZeroI[o] = theSmallerI;
+				o++;
+			}
+			else {
+				saveZ--;
+			}
+		}
+		saveZ = u;
 		o = 0;
-		if (saveZ != 1) {
-			printf("\nCodomain: ]-inf,");
-		}
-		else {
-			printf("\nCodomain: ]-inf");
-		}
+		printf("\nCodomain: ]-inf,");
 		o = 0;
 		while (o < saveZ) {
 			resultR = sortZeroR[o];
 			resultI = sortZeroI[o];
-			variableController("x", 0);
-			resultR = math_processor(originalFunction);
 			if (saveZ == 1) {
-				printf(",%.3f]", resultR);
+				printf("%.3f]", resultR);
 			}
 			else {
-				if (o % 2 == 1) {
+				if (o % 2 == 0) {
 					printf("%.3f[", resultR);
 				}
 				else {
@@ -1414,6 +1438,86 @@ void functionStudy(char function[DIM]) {
 		if (saveZ != 1) {
 			printf("+inf[\n");
 		}
+		o = 0;
+		saveZ = pl;
+		saveIndex = -1;
+		while (o < saveZ) {
+			theSmallerR = 1E12;
+			theSmallerI = 0;
+			for (z = 0; z < pl; z++) {
+				if (theSmallerR > poleZerosR[z]) {
+					theSmallerR = poleZerosR[z];
+					theSmallerI = poleZerosI[z];
+					saveIndex = z;
+				}
+			}
+			poleZerosR[saveIndex] = 1E12;
+			poleZerosI[saveIndex] = 0;
+			if (sortZeroR[o - 1] != theSmallerR && theSmallerR != 1E12 || o - 1 == -1) {
+				sortZeroR[o] = theSmallerR;
+				sortZeroI[o] = theSmallerI;
+				o++;
+			}
+			else {
+				saveZ--;
+			}
+		}
+		saveZ = o;
+		equationSolver(new_numerator);
+		i = 0, j = 0, z = 0;
+		replaceTimes = 0;
+		sprintf(saveExpF, "%s", expressionF);
+		pl = 0;
+		while (isContained("=", saveExpF)) {
+			j = 0;
+			i = strEnd;
+			saveExpF[strStart] = ' ';
+			while (saveExpF[i] != '\0'&&saveExpF[i] != '\n') {
+				value[j] = saveExpF[i];
+				i++; j++;
+			}
+			value[j] = '\0';
+			if (isContained("-", value)) {
+				replace("-", "_", value);
+				sprintf(value, "%s", expressionF);
+			}
+			math_processor(value);
+			zeroR[z] = resultR; zeroI[z] = resultI;
+			poleZerosR[pl] = resultR; poleZerosI[pl] = resultI;
+			pl++;
+			z++;
+		}
+
+
+
+
+
+
+		saveZ = pl;
+		o = 0, saveIndex = -1;
+		while (o < saveZ) {
+			theSmallerR = 1E12;
+			theSmallerI = 0;
+			for (z = 0; z < pl; z++) {
+				if (theSmallerR > poleZerosR[z]) {
+					theSmallerR = poleZerosR[z];
+					theSmallerI = poleZerosI[z];
+					saveIndex = z;
+				}
+			}
+			poleZerosR[saveIndex] = 1E12;
+			poleZerosI[saveIndex] = 0;
+			if (sortZeroR[o - 1] != theSmallerR && theSmallerR != 1E12 || o - 1 == -1) {
+				sortZeroR[o] = theSmallerR;
+				sortZeroI[o] = theSmallerI;
+				o++;
+			}
+			else {
+				saveZ--;
+			}
+		}
+		saveZ = o;
+
 		o = 0;
 		while (o < saveZ) {
 			resultR = sortZeroR[o];
@@ -1430,4 +1534,5 @@ void functionStudy(char function[DIM]) {
 		}
 		puts("");
 	}
+	studyFunction = false;
 }

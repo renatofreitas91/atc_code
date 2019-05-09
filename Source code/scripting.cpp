@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 boolean runningScript = false, I_O = false;
-int Break = 0, countUseBreak = 0, countUseReturn = 0, countBreak = 0, countReturn = 0, countEnters = 0, countUseEnters = 0;
+int Break = 0, countUseBreak = 0, countUseReturn = 0, countBreak = 0, countReturn = 0, countEnters = 0, countUseEnters = 0, countSplits = 0;
 double returnedR = 0, returnedI = 0;
 
 void print(char text[DIM], double result1, double result2) {

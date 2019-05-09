@@ -2,10 +2,12 @@
 
 #include "stdafx.h"
 
-boolean returned = false, equation_solver = false, command = false;
+boolean returned = false, equation_solver = false;
 char saveExpressionF[DIM] = "";
 
-boolean commands(char arithTrig[DIM], char path[DIM], double result1, double result2) {
+boolean commands(char expression[DIM], char path[DIM], double result1, double result2) {
+	char arithTrig[DIM] = "";
+	sprintf(arithTrig, "%s", expression);
 	FILE *fout = NULL, *fclean = NULL;
 	char stringV[DIM] = "";
 	fout = NULL;
@@ -13,7 +15,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		fout = fopen(path, "a+");
 	}
 	int i = 0, r = 0, year = 0, s = 0;
-	command = false;
+	boolean command = false;
 	i = 0;
 	if (isCommand(arithTrig, "functionstudy")) {
 		command = true;
@@ -139,7 +141,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 					LastDividerI = 0;
 					simplifyExpression(data);
 					sprintf(data, "%s", expressionF);
-					sprintf(expressionF, "(%s)*(0x+1)", data);
+					sprintf(expressionF, "(%s)*(0x^1+1)", data);
 					simplifyPolynomial(expressionF);
 					if (strlen(expressionF) > 0) {
 						sprintf(solution, "%s", expressionF);
@@ -404,6 +406,9 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 	if (isCommand(arithTrig, "solveequation")) {
 		command = true;
 		equation_solver = true;
+		resultR = 0; resultI = 0;
+		lastDividerR = 1, lastDividerI = 0, natureValue = 1;
+		sprintf(roots, ""), sprintf(answers, "");
 		isDivisible = true;
 		lastDividerR = 1, lastDividerI = 0;
 		if (arithTrig[13] == '(') {
@@ -417,6 +422,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			polySimplifier = false;
 			char data[DIM] = "";
 			sprintf(data, "%s", exprDev);
+			printf("\nexpression-> %s\n", data);
 			if (!isContained("\\", data)) {
 				synTest = 0;
 				if (dataVerifier(data, 0, 0, 0, 1)) {
@@ -439,21 +445,22 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 							sprintf(data, "%s", saveData);
 						}
 					}
-					lastDividerR = 1;
-					LastDividerR = 1;
+					lastDividerR = 0;
+					LastDividerR = 0;
 					lastDividerI = 0;
 					LastDividerI = 0;
 				}
+				simplifyExpression(data);
+				sprintf(data, "%s", expressionF);
 			}
-			simplifyExpression(data);
-			sprintf(data, "%s", expressionF);
+			printf("\ndata-> %s\n", data);
 			equationSolver(data);
 			puts("");
 			puts(expressionF);
 		}
+		sprintf(arithTrig, "");
 		puts("");
 	}
-
 	if (isCommand(arithTrig, "rootstopolynomial")) {
 		command = true;
 		if (arithTrig[17] == '(') {
@@ -1504,7 +1511,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.2  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.3  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(thours, tminutes, tseconds);
 									}
@@ -1702,7 +1709,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.2  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.3  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(thours, tminutes, tseconds);
 									}
@@ -1915,7 +1922,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.2 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.3 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n  %02d:%02d:%02d\n", thours, tminutes, tseconds);
@@ -1938,7 +1945,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		ShowConsoleCursor(TRUE);
 		return command;
 	}
-
 	if (isCommand(arithTrig, "bigclock") && arithTrig[i + 8] == '(' || isCommand(arithTrig, "runbigclock") && arithTrig[i + 11] == '(') {
 		if (isCommand(arithTrig, "runbigclock")) {
 			command = true;
@@ -2123,7 +2129,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.2 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.3 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(Hours, Minutes, Seconds);
 										printf("\n\n    %02d:%02d:%02d\n\n", thours, tminutes, tseconds);
@@ -2145,7 +2151,6 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		ShowConsoleCursor(TRUE);
 		return command;
 	}
-
 	if (isCommand(arithTrig, "verboseresolution")) {
 		arithTrig[0] = '\0'; command = true;
 		printf("\n==> Configuration of verbose resolution <==\n\n");
@@ -2622,6 +2627,7 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 		}
 	}
 	if (isCommand(arithTrig, "calendar") && (arithTrig[i + 8] == '(' || arithTrig[i + 8] == '+')) {
+		command = true;
 		char ye[100], calendar[DIM], lineWeekDays[150] = "";
 		char month[20] = "";
 		char day[3] = "";
@@ -2903,9 +2909,13 @@ boolean commands(char arithTrig[DIM], char path[DIM], double result1, double res
 			}
 		}
 	}
+	if (command == (boolean)true) {
+		sprintf(arithTrig, "");
+	}
 	if (fout != NULL) {
 		fclose(fout);
 	}
+
 	return command;
 }
 

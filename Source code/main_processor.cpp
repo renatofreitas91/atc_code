@@ -50,14 +50,17 @@ double math_processor(char expression[DIM]) {
 	sprintf(bufText, "");
 	char arithTrig[DIM] = "";
 	char variable[DIM] = "";
+	char res = ' ';
 	sprintf(arithTrig, "%s", expression);
-	char res = arithTrig[0];
-	int i = 0;
-	if (res == '+' || res == '-' || res == '/' || res == '*' || res == '^') {
-		for (i = 0; arithTrig[i + 1] != '\0'; i++) {
-			arithTrig[i] = arithTrig[i + 1];
+	if (!solverRunning && !equationSolverRunning) {
+		res = arithTrig[0];
+		int i = 0;
+		if (res == '+' || res == '-' || res == '/' || res == '*' || res == '^') {
+			for (i = 0; arithTrig[i + 1] != '\0'; i++) {
+				arithTrig[i] = arithTrig[i + 1];
+			}
+			arithTrig[i] = '\0';
 		}
-		arithTrig[i] = '\0';
 	}
 	resultR = 0;
 	resultI = 0;
@@ -78,6 +81,7 @@ double math_processor(char expression[DIM]) {
 	char variableFeedback[DIM] = "";
 	if (isContained("=", arithTrig)) {
 		var = 1;
+		int i = 0;
 		for (i = 0; arithTrig[i] != '=' && arithTrig[i] != '\0'; i++) {
 			variable[i] = arithTrig[i];
 		}
@@ -241,13 +245,13 @@ double math_processor(char expression[DIM]) {
 		resultR = 0;
 		resultI = 0;
 		initialProcessor(arithTrig, resultR);
-		if (resultR == 0 && solverRunning == false) {
+		if (resultR == 0 && solverRunning == false && equationSolverRunning == false) {
 			initialProcessor(arithTrig, resultR);
 		}
-		if (resultR == 0 && solverRunning == false) {
+		if (resultR == 0 && solverRunning == false && equationSolverRunning == false) {
 			initialProcessor(arithTrig, resultR);
 		}
-		if (resultR == 0 && solverRunning == false) {
+		if (resultR == 0 && solverRunning == false && equationSolverRunning == false) {
 			initialProcessor(arithTrig, resultR);
 		}
 		sprintf(arithTrig, "");

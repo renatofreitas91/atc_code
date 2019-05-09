@@ -46,7 +46,8 @@ void qu_complex(double dividend, double dividendI, double divider, double divide
 	int i = 0;
 	division(dividend, dividendI, divider, dividerI);
 	sprintf(quot, "%f", resultR);
-	while (quot[i] != '.') {
+	i = 0;
+	while (quot[i] != '.'&&quot[i]!='\0') {
 		quo[i] = quot[i];
 		i++;
 	}
@@ -54,7 +55,7 @@ void qu_complex(double dividend, double dividendI, double divider, double divide
 	resultR = strtod(quo, &pointer);
 	i = 0;
 	sprintf(quotI, "%f", resultI);
-	while (quotI[i] != '.') {
+	while (quotI[i] != '.'&&quot[i] != '\0') {
 		quoI[i] = quotI[i];
 		i++;
 	}
