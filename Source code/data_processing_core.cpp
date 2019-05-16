@@ -187,7 +187,7 @@ void variableController(char variable[DIM], double result) {
 		while (open == NULL) {
 			open = fopen(toOpen, "a+");
 		}
-		fprintf(open, "%s %G %G\n", variable, resultR, resultI);
+		fprintf(open, "%s %f %f\n", variable, resultR, resultI);
 		fclose(open);
 	}
 }

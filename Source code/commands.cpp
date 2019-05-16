@@ -422,7 +422,6 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			polySimplifier = false;
 			char data[DIM] = "";
 			sprintf(data, "%s", exprDev);
-			printf("\nexpression-> %s\n", data);
 			if (!isContained("\\", data)) {
 				synTest = 0;
 				if (dataVerifier(data, 0, 0, 0, 1)) {
@@ -453,7 +452,6 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 				simplifyExpression(data);
 				sprintf(data, "%s", expressionF);
 			}
-			printf("\ndata-> %s\n", data);
 			equationSolver(data);
 			puts("");
 			puts(expressionF);

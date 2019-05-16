@@ -426,7 +426,6 @@ boolean about() {
 		cls();
 	}
 	if (continu) {
-
 		int Window = 3, Dimensions = 2;
 		applySettings(Window);
 		applySettings(Dimensions);
