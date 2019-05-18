@@ -2008,7 +2008,6 @@ void simplifyExpression(char data[DIM]) {
 		replace("-", "+_", expression);
 		sprintf(expression, "%s", expressionF);
 	}
-
 	if (isContained("/", expression) && studyFunction == (boolean)false) {
 		replaceTimes = 1;
 		if (isContained(")/(", expression)) {
@@ -2164,7 +2163,6 @@ void simplifyExpression(char data[DIM]) {
 				}
 			}
 		}
-
 		replaceTimes = 1;
 		if (isContained("/", expression)) {
 			while (!(isContained("/", expression) && verifyNumberExpression(expression[strStart - 1]) && verifyNumberExpression(expression[strEnd])) && isContained("/", expression)) {
@@ -2211,7 +2209,7 @@ void simplifyExpression(char data[DIM]) {
 							sprintf(expressionF, "(0xS%s)/(0xS1)", numbersData);
 							sprintf(numbersData, "%s", expressionF);
 							replaceTimes = 1;
-							replace(saveNumbersData, numbersData, expression);
+							replaceByIndex(saveNumbersData, numbersData, expression, y - (int)strlen(numbersData));
 							sprintf(expression, "%s", expressionF);
 							if (isContainedByIndex(numbersData, expression, y)) {
 								y = strEnd;
@@ -2238,8 +2236,6 @@ void simplifyExpression(char data[DIM]) {
 			replace("D", "/", expression);
 			sprintf(expression, "%s", expressionF);
 		}
-
-
 		char alphabet[DIM] = "ABCDEFGHIJKLMNOPQRSTUWVXYZabcdefghijklmnopqrstuwvxyz";
 		char saveConversions[dim][dim];
 		int z = 0;
@@ -2466,6 +2462,40 @@ void simplifyExpression(char data[DIM]) {
 			replace("D", "/", expression);
 			sprintf(expression, "%s", expressionF);
 		}
+	}
+	int b = 0;
+	if (isContained("+", expression)) {
+		while (isContained("+", expression)) {
+			if (isContainedByIndex("+", expression, b) && verifyValue(expression[strStart - 1])) {
+				expression[strStart] = 'P';
+				char number[dim] = "";
+				int n = 0;
+				b = strStart - 1;
+				while (verifyValue(expression[b])) {
+					b--;
+				}
+				b++;
+				while (verifyValue(expression[b])) {
+					number[n] = expression[b];
+					n++; b++;
+				}
+				number[n] = '\0';
+				char saveNumber[dim] = "";
+				sprintf(saveNumber, "%s", number);
+				sprintf(expressionF, "(0xS%s)/(0xS1)", number);
+				sprintf(number, "%s", expressionF);
+				replaceTimes = 1;
+				replaceByIndex(saveNumber, number, expression, b - (int)strlen(saveNumber));
+				sprintf(expression, "%s", expressionF);
+			}
+			else {
+				expression[strStart] = 'P';
+				b = strStart;
+			}
+		}
+		replaceTimes = 0;
+		replace("P", "+", expression);
+		sprintf(expression, "%s", expressionF);
 	}
 	if (isContained("/", expression)) {
 		int u = 0;
