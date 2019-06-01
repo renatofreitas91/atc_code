@@ -187,7 +187,7 @@ void variableController(char variable[DIM], double result) {
 		while (open == NULL) {
 			open = fopen(toOpen, "a+");
 		}
-		fprintf(open, "%s %f %f\n", variable, resultR, resultI);
+		fprintf(open, "%s %G %G\n", variable, resultR, resultI);
 		fclose(open);
 	}
 }
@@ -3617,6 +3617,17 @@ boolean verifyNumber(char number) {
 	return false;
 }
 
+boolean verifyOperator(char operatorF) {
+	char numbers[DIM] = "+_^/*S)";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (operatorF == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
 boolean verifyNumberExpression(char number) {
 	char numbers[DIM] = "_0.123456789Epiex(^)S";
 	int i = 0;
@@ -3690,6 +3701,17 @@ int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x) {
 
 boolean verifyValue(char number) {
 	char numbers[DIM] = "_.0123456789*/^Epie";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (number == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean verifyNumerator(char number) {
+	char numbers[DIM] = "_.0123456789*^Epie";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(numbers)); i++) {
 		if (number == numbers[i]) {

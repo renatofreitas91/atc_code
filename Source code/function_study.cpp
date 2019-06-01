@@ -70,6 +70,8 @@ void functionStudy(char function[DIM]) {
 			sprintf(saveFunctionF, "%s", expressionF);
 		}
 		simplifyExpression(numerator);
+		sprintf(numerator, "(%s)*(0x^1+1)", expressionF);
+		simpleSimplifyPolynomial(numerator);
 		sprintf(numerator, "%s", expressionF);
 		if (isContained("[", numerator)) {
 			replace("[", "(", numerator);
@@ -80,6 +82,8 @@ void functionStudy(char function[DIM]) {
 			sprintf(numerator, "%s", expressionF);
 		}
 		simplifyExpression(denominator);
+		sprintf(denominator, "(%s)*(0x^1+1)", expressionF);
+		simpleSimplifyPolynomial(denominator);
 		sprintf(denominator, "%s", expressionF);
 		if (isContained("[", denominator)) {
 			replace("[", "(", denominator);
@@ -92,6 +96,8 @@ void functionStudy(char function[DIM]) {
 	}
 	else {
 		simplifyExpression(saveFunctionF);
+		sprintf(saveFunctionF, "(%s)*(0x^1+1)", expressionF);
+		simpleSimplifyPolynomial(saveFunctionF);
 		sprintf(saveFunctionF, "%s", expressionF);
 	}
 	if (strlen(denominator) > 0) {
@@ -503,11 +509,13 @@ void functionStudy(char function[DIM]) {
 			sortZeroI[o] = theSmallerI;
 			o++;
 		}
+		removeTriplPars(numerator);
+		sprintf(numerator, "%s", expressionF);
 		printf("\nNumerator-> %s\n", numerator);
-		sprintf(expressionF, "(%s)+(0+0i)", numerator);
+		sprintf(expressionF, "(%s)*(0x^1+1)", numerator);
 		sprintf(numerator, "%s", expressionF);
 		printf("\nDenominator-> %s\n", denominator);
-		sprintf(expressionF, "(%s)+(0+0i)", denominator);
+		sprintf(expressionF, "(%s)*(0x^1+1)", denominator);
 		sprintf(denominator, "%s", expressionF);
 		printf("\nx\t\t-inf\t");
 		o = 0;
@@ -684,27 +692,14 @@ void functionStudy(char function[DIM]) {
 	char new_numerator[DIM] = "";
 	char new_denominator[DIM] = "";
 	if (strlen(numerator) == 0 && strlen(denominator) == 0) {
-		printf("\nf(x)=%s\n", saveFunction);
+		removeTriplPars(saveFunction);
+		printf("\nf(x)=%s\n", expressionF);
 		char* derivate = getDerivative(saveFunction);
 		printf("\nf'(x)=%s\n", derivate);
 		printf("\nx\t-inf\t");
 		replaceTimes = 0;
 		char data[DIM] = "";
 		sprintf(data, "%s", derivate);
-		if (!isContained("\\", data)) {
-			synTest = 0;
-			if (dataVerifier(data, 0, 0, 0, 1)) {
-				sprintf(OutputText, "");
-				replaceTimes = 0;
-				lastDividerR = 1;
-				LastDividerR = 1;
-				lastDividerI = 0;
-				LastDividerI = 0;
-				simplifyExpression(data);
-				simpleSimplifyPolynomial(expressionF);
-				sprintf(data, "%s", expressionF);
-			}
-		}
 		equationSolver(data);
 		sprintf(saveExpF, "%s", expressionF);
 		z = 0;
@@ -861,7 +856,8 @@ void functionStudy(char function[DIM]) {
 		simpleSimplifyPolynomial(denominator);
 		sprintf(denominator, "%s", expressionF);
 		sprintf(saveFunctionF, "%s/%s", numerator, denominator);
-		printf("\nf(x)=%s\n", saveFunctionF);
+		removeTriplPars(saveExpressionF);
+		printf("\nf(x)=%s\n", expressionF);
 		char * d_denominator = getDerivative(denominator);
 		char de_denominator[DIM] = "";
 		sprintf(de_denominator, "%s", d_denominator);
@@ -1487,12 +1483,6 @@ void functionStudy(char function[DIM]) {
 			pl++;
 			z++;
 		}
-
-
-
-
-
-
 		saveZ = pl;
 		o = 0, saveIndex = -1;
 		while (o < saveZ) {

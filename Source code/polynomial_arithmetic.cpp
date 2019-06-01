@@ -67,7 +67,7 @@ void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		rootsToPolynomial(roots);
 	}
 	else {
-		sprintf(expressionF, "((%.5f+%.5fi)x+(%.5f+%.5fi))", 0.0, 0.0, lastDividerR, lastDividerI);
+		sprintf(expressionF, "((%f+%fi)x+(%f+%fi))", 0.0, 0.0, lastDividerR, lastDividerI);
 		if (isContained("+-", expressionF)) {
 			replaceTimes = 0;
 			replace("+-", "-", expressionF);
@@ -154,7 +154,7 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 				if (abs(LastDividerI) != 0 || abs(LastDividerR) != 0) {
 					multiplication(LastDividerR, LastDividerI, resultR, resultI);
 				}
-				sprintf(expressionF, "(%.5f+%.5fi)x+(%.5f+%.5fi)", LastDividerR, LastDividerI, resultR,
+				sprintf(expressionF, "(%f+%fi)x+(%f+%fi)", LastDividerR, LastDividerI, resultR,
 					resultI);
 				if (isContained("+-", expressionF)) {
 					replaceTimes = 0;
@@ -166,7 +166,7 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 				}
 			}
 			else {
-				sprintf(expressionF, "(%.5f+%.5fi)x+(%.5f+%.5fi)", 0.0, 0.0, lastDividerR, lastDividerI);
+				sprintf(expressionF, "(%f+%fi)x+(%f+%fi)", 0.0, 0.0, lastDividerR, lastDividerI);
 				if (isContained("+-", expressionF)) {
 					replaceTimes = 0;
 					replace("+-", "+_", expressionF);
@@ -236,7 +236,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		sprintf(roots, "");
 		equationSolver(polynomial_2);
 		division(LastDividerR, LastDividerI, lastDividerR, lastDividerI);
-		sprintf(expressionF, "(%.5f+%.5fi)/(%.5f+%.5fi)", LastDividerR, LastDividerI, lastDividerR, lastDividerI);
+		sprintf(expressionF, "(%f+%fi)/(%f+%fi)", LastDividerR, LastDividerI, lastDividerR, lastDividerI);
 		if (isContained("(-", expressionF)) {
 			replace("(-", "(_", expressionF);
 		}
@@ -303,7 +303,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 			sprintf(roots, "");
 			for (i = 0; i < s; i++) {
 				if (rootR1[i] != -7777) {
-					sprintf(roots, "%s%.5f+%.5fi\\", roots, rootR1[i], rootI1[i]);
+					sprintf(roots, "%s%f+%fi\\", roots, rootR1[i], rootI1[i]);
 				}
 			}
 			if (strlen(roots) >= 1) {
@@ -316,7 +316,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 			sprintf(roots_2, "");
 			for (i = 0; i < r; i++) {
 				if (rootR2[i] != -7777) {
-					sprintf(roots_2, "%s%.5f+%.5fi\\", roots_2, rootR2[i], rootI2[i]);
+					sprintf(roots_2, "%s%f+%fi\\", roots_2, rootR2[i], rootI2[i]);
 				}
 			}
 			if (strlen(roots_2) >= 1) {
@@ -348,7 +348,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 				}
 			}
 			else {
-				sprintf(expressionF, "(0x^1+%.5f+%.5fi)", lastDividerR, lastDividerI);
+				sprintf(expressionF, "(0x^1+%f+%fi)", lastDividerR, lastDividerI);
 				if (isContained("+-", expressionF)) {
 					replaceTimes = 0;
 					replace("+-", "-", expressionF);

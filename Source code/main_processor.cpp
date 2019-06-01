@@ -489,7 +489,7 @@ double math_processor(char expression[DIM]) {
 		}
 	}
 	else {
-		sprintf(bufText, "%s%s\n\nError in syntax\n", bufText, errorText);
+		sprintf(bufText, "%s%s\n\nError in syntax\n\n%s\n", bufText, errorText, expression);
 	}
 	sprintf(expressionF, "%s", bufText);
 	return resultR;

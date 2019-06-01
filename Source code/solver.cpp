@@ -58,15 +58,6 @@ double solver(char expression[DIM]) {
 
 	if (to_solve) {
 		if (poly) {
-			if (isContained("(x)", expression)) {
-				replace("(x)", "X", expression);
-				replace("X", "x", expressionF);
-				sprintf(expression, "%s", expressionF);
-			}
-			if (isContained("*x", expression)) {
-				replace("*x", "x", expression);
-				sprintf(expression, "%s", expressionF);
-			}
 			sprintf(saveEquation, "%s", expression);
 			sprintf(equation, "%s", expression);
 			equation_solver = true;
@@ -78,36 +69,22 @@ double solver(char expression[DIM]) {
 			polySimplifier = false;
 			char data[DIM] = "";
 			sprintf(data, "%s", equation);
+			sprintf(saveExpressionF, "%s", data);
 			if (!isContained("\\", data)) {
 				synTest = 0;
 				if (dataVerifier(data, 0, 0, 0, 1)) {
 					sprintf(OutputText, "");
 					replaceTimes = 0;
-					if (!isContained("(", data)) {
-						char saveData[dim] = "";
-						sprintf(saveData, "(%s)", data);
-						sprintf(data, "%s", saveData);
-					}
-					else {
-						if (isContained("((", data) && isContained("))", data)) {
-							char saveData[dim] = "";
-							sprintf(saveData, "%s", data);
-							sprintf(data, "%s", saveData);
-						}
-						else {
-							char saveData[dim] = "";
-							sprintf(saveData, "%s", data);
-							sprintf(data, "%s", saveData);
-						}
-					}
 					lastDividerR = 0;
 					LastDividerR = 0;
 					lastDividerI = 0;
 					LastDividerI = 0;
 				}
-				simplifyExpression(data);
-				sprintf(data, "%s", expressionF);
 			}
+			manageExpression(data, 0, 0, 1);
+			sprintf(data, "%s+1-1", expressionF);
+			simplifyExpression(data);
+			sprintf(data, "%s", expressionF);
 			equationSolver(data);
 			int i = 0, j = 0, z = 0;
 			double zeroR[dim], zeroI[dim];
@@ -146,7 +123,7 @@ double solver(char expression[DIM]) {
 				sprintf(equation, "%s", expressionF);
 			}
 			math_processor(equation);
-			if (abs(resultR) < 1E-4&&abs(resultI) < 1E-4) {
+			if (abs(resultR) < 1E-2&&abs(resultI) < 1E-2) {
 				resultR = saveResultR;
 				resultI = saveResultI;
 				solverRunning = false;

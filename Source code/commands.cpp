@@ -36,6 +36,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			}
 			char solution[DIM] = "";
 			synTest = 0;
+			manageExpression(data, 0, 0, 1);
+			sprintf(data, "%s", expressionF);
 			sprintf(expressionF, "%s", data);
 			if (dataVerifier(data, 0, 0, 0, 1)) {
 				sprintf(OutputText, "");
@@ -100,34 +102,14 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			}
 			exprDev[tGet] = '\0';
 			char data[DIM] = "", errorText[DIM] = "";
+			polySimplifier = false;
 			sprintf(data, "%s", exprDev);
 			sprintf(saveExpressionF, "%s", data);
-			if (isContained(")(", data)) {
-				replace(")(", ")*(", data);
-				sprintf(data, "%s", expressionF);
-			}
 			char solution[DIM] = "";
 			synTest = 0;
 			if (dataVerifier(data, 0, 0, 0, 1)) {
 				sprintf(OutputText, "");
 				replaceTimes = 0;
-				if (!isContained("(", data)) {
-					char saveData[dim] = "";
-					sprintf(saveData, "(%s)", data);
-					sprintf(data, "%s", saveData);
-				}
-				else {
-					if (isContained("((", data) && isContained("))", data)) {
-						char saveData[dim] = "";
-						sprintf(saveData, "%s", data);
-						sprintf(data, "%s", saveData);
-					}
-					else {
-						char saveData[dim] = "";
-						sprintf(saveData, "%s", data);
-						sprintf(data, "%s", saveData);
-					}
-				}
 				resultR = 0;
 				resultI = 0;
 				if (!isContained("x", data)) {
@@ -135,14 +117,15 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 				}
 				else {
 					synTest = 0;
-					lastDividerR = 1;
-					LastDividerR = 1;
+					lastDividerR = 0;
+					LastDividerR = 0;
 					lastDividerI = 0;
 					LastDividerI = 0;
+					manageExpression(data, 0, 0, 1);
+					sprintf(data, "%s+1-1", expressionF);
 					simplifyExpression(data);
-					sprintf(data, "%s", expressionF);
-					sprintf(expressionF, "(%s)*(0x^1+1)", data);
-					simplifyPolynomial(expressionF);
+					sprintf(data, "(%s)*(0x^1+1)", expressionF);
+					simplifyPolynomial(data);
 					if (strlen(expressionF) > 0) {
 						sprintf(solution, "%s", expressionF);
 					}
@@ -422,35 +405,21 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			polySimplifier = false;
 			char data[DIM] = "";
 			sprintf(data, "%s", exprDev);
+			sprintf(saveExpressionF, "%s", data);
 			if (!isContained("\\", data)) {
 				synTest = 0;
 				if (dataVerifier(data, 0, 0, 0, 1)) {
 					sprintf(OutputText, "");
 					replaceTimes = 0;
-					if (!isContained("(", data)) {
-						char saveData[dim] = "";
-						sprintf(saveData, "(%s)", data);
-						sprintf(data, "%s", saveData);
-					}
-					else {
-						if (isContained("((", data) && isContained("))", data)) {
-							char saveData[dim] = "";
-							sprintf(saveData, "%s", data);
-							sprintf(data, "%s", saveData);
-						}
-						else {
-							char saveData[dim] = "";
-							sprintf(saveData, "%s", data);
-							sprintf(data, "%s", saveData);
-						}
-					}
 					lastDividerR = 0;
 					LastDividerR = 0;
 					lastDividerI = 0;
 					LastDividerI = 0;
+					manageExpression(data, 0, 0, 1);
+					sprintf(data, "%s+1-1", expressionF);
+					simplifyExpression(data);
+					sprintf(data, "%s", expressionF);
 				}
-				simplifyExpression(data);
-				sprintf(data, "%s", expressionF);
 			}
 			equationSolver(data);
 			puts("");
