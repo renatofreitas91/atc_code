@@ -201,6 +201,7 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 }
 
 void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
+	isDivisible = true;
 	if ((!isEqual(polynomial_2, "((0+0i)x+(0+0i))") && isEqual(polynomial_1, "((0+0i)x+(0+0i))")) || (!isEqual(polynomial_2, "((0+0i))") && isEqual(polynomial_1, "((0+0i))"))) {
 		sprintf(expressionF, "(0+0i)");
 	}
@@ -363,7 +364,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 			sprintf(roots_2, "");
 		}
 		else {
-			sprintf(expressionF, "(%s)/(%s)", polynomial_1, polynomial_2);
+			sprintf(saveExpressionF, "(%s)/(%s)", polynomial_1, polynomial_2);
 		}
 		sprintf(roots, "");
 		sprintf(roots_2, "");

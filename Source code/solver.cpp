@@ -5,6 +5,7 @@
 boolean solverRunning = false, retrySolver = false, retrySolver_2 = false, retrySolver_3 = false, poly = true;
 double xValuesR = 0, xValuesI = 0, saveResultRFR = 0, saveResultRFI = 0;
 int countEntriesSolver = 0;
+char saveSimplification[DIM] = "", saveSimplified[DIM] = "";
 
 double solver(char expression[DIM]) {
 	replaceTimes = 0;
@@ -82,9 +83,10 @@ double solver(char expression[DIM]) {
 				}
 			}
 			manageExpression(data, 0, 0, 1);
-			sprintf(data, "%s+1-1", expressionF);
+			sprintf(data, "%s", expressionF);
 			simplifyExpression(data);
 			sprintf(data, "%s", expressionF);
+			sprintf(saveSimplified, "%s", expressionF);
 			equationSolver(data);
 			int i = 0, j = 0, z = 0;
 			double zeroR[dim], zeroI[dim];
