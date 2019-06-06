@@ -853,18 +853,27 @@ double equationSolver(char equation[DIM]) {
 				int x = 0;
 				resultR = 1;
 				resultI = 1;
+				int countSolutions = 0;
 				char value[DIM] = "";
 				int n = 0;
-				while (n < 42) {
+				boolean notSolved = true;
+				while (notSolved&&n < 42) {
 					g = 0;
+					countSolutions = 0;
 					replaceTimes = 0;
-					while (g < maxExponent) {
+					while (notSolved&&g < maxExponent) {
 						xValuesR = RootR[g];
 						xValuesI = RootI[g];
 						math_processor(toCalcX);
+						if (abs(resultR) < 1E-6&&abs(resultI) < 1E-6) {
+							countSolutions++;
+							if (countSolutions == maxExponent) {
+								notSolved = false;
+							}
+						}
 						double numR = resultR, numI = resultI, denR = 1, denI = 0;
 						int w = 0, h = 0;
-						while (w < maxExponent) {
+						while (notSolved&&w < maxExponent) {
 							if (w != g) {
 								subtraction(RootR[g], RootI[g], RootR[w], RootI[w]);
 								resultSubR[h] = resultR;
@@ -875,7 +884,7 @@ double equationSolver(char equation[DIM]) {
 						}
 						int k = h;
 						h = 1;
-						while (h < k) {
+						while (notSolved&&h < k) {
 							multiplication(resultSubR[0], resultSubI[0], resultSubR[h], resultSubI[h]);
 							resultSubR[0] = resultR;
 							resultSubI[0] = resultI;
@@ -3017,6 +3026,7 @@ void simplifyExpression(char data[DIM]) {
 			sprintf(expression, "%s", expressionF);
 		}
 	}
+	replaceTimes = 0;
 	if (isContained("i)", expression)) {
 		replace("i)", "i]", expression);
 		sprintf(expression, "%s", expressionF);
@@ -3140,6 +3150,15 @@ void simplifyExpression(char data[DIM]) {
 		else {
 			sprintf(expressionF, "(%s)", equaSimplified);
 		}
+	}
+	replaceTimes = 0;
+	if (isContained("[", expression)) {
+		replace("[", "(", expression);
+		sprintf(expression, "%s", expressionF);
+	}
+	if (isContained("]", expression)) {
+		replace("]", ")", expression);
+		sprintf(expression, "%s", expressionF);
 	}
 }
 
