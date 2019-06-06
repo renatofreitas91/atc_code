@@ -865,7 +865,7 @@ double equationSolver(char equation[DIM]) {
 						xValuesR = RootR[g];
 						xValuesI = RootI[g];
 						math_processor(toCalcX);
-						if (abs(resultR) < 1E-6&&abs(resultI) < 1E-6) {
+						if (abs(resultR) < 1E-9&&abs(resultI) < 1E-9) {
 							countSolutions++;
 							if (countSolutions == maxExponent) {
 								notSolved = false;
@@ -1840,62 +1840,64 @@ void simplifyExpression(char data[DIM]) {
 		replace("*1i", "i", expression);
 		sprintf(expression, "%s", expressionF);
 	}
-	if (isContained("(x)", expression)) {
-		replaceTimes = 1;
-		while (isContained("(x)", expression)) {
-			if (verifyNumber(expression[strStart - 1])) {
-				replace("(x)", "*X", expression);
-				sprintf(expression, "%s", expressionF);
-			}
-			else {
-				if (expression[strStart - 1] == '/' && !(expression[strEnd] == '^')) {
-					replace("(x)", "(X)", expression);
+
+	if ((isContained("/(", expression) || isContained(")/", expression)) && studyFunction == (boolean)false) {
+
+		if (isContained("(x)", expression)) {
+			replaceTimes = 1;
+			while (isContained("(x)", expression)) {
+				if (verifyNumber(expression[strStart - 1])) {
+					replace("(x)", "*X", expression);
 					sprintf(expression, "%s", expressionF);
 				}
 				else {
-					if (expression[strEnd] == '^') {
-						char getExp[12] = "";
-						int h = 0, m = strEnd + 1;
-						while (verifyNumber(expression[m]) && m < abs((int)strlen(expression))) {
-							getExp[h] = expression[m];
-							h++; m++;
-						}
-						getExp[h] = '\0';
-						char replacement[DIM] = "";
-						char toReplace[DIM] = "";
-						sprintf(replacement, "(X^%sS0)", getExp);
-						sprintf(toReplace, "(x)^%s", getExp);
-						replace(toReplace, replacement, expression);
+					if (expression[strStart - 1] == '/' && !(expression[strEnd] == '^')) {
+						replace("(x)", "(X)", expression);
 						sprintf(expression, "%s", expressionF);
 					}
 					else {
-						replace("(x)", "X", expression);
-						sprintf(expression, "%s", expressionF);
+						if (expression[strEnd] == '^') {
+							char getExp[12] = "";
+							int h = 0, m = strEnd + 1;
+							while (verifyNumber(expression[m]) && m < abs((int)strlen(expression))) {
+								getExp[h] = expression[m];
+								h++; m++;
+							}
+							getExp[h] = '\0';
+							char replacement[DIM] = "";
+							char toReplace[DIM] = "";
+							sprintf(replacement, "(X^%sS0)", getExp);
+							sprintf(toReplace, "(x)^%s", getExp);
+							replace(toReplace, replacement, expression);
+							sprintf(expression, "%s", expressionF);
+						}
+						else {
+							replace("(x)", "X", expression);
+							sprintf(expression, "%s", expressionF);
+						}
 					}
 				}
 			}
+			replaceTimes = 0;
+			if (isContained("X", expression)) {
+				replace("X", "x", expression);
+				sprintf(expression, "%s", expressionF);
+			}
 		}
-		replaceTimes = 0;
-		if (isContained("X", expression)) {
-			replace("X", "x", expression);
+		replaceTimes = 1;
+		if (isContained("x", expression) && strStart == 0) {
+			replace("x", "1x", expression);
 			sprintf(expression, "%s", expressionF);
 		}
-	}
-	replaceTimes = 1;
-	if (isContained("x", expression) && strStart == 0) {
-		replace("x", "1x", expression);
-		sprintf(expression, "%s", expressionF);
-	}
-	replaceTimes = 0;
-	if (isContained("_x", expression)) {
-		replace("_x", "_1x", expression);
-		sprintf(expression, "%s", expressionF);
-	}
-	if (isContained("+x", expression)) {
-		replace("+x", "+1x", expression);
-		sprintf(expression, "%s", expressionF);
-	}
-	if ((isContained("/(", expression) || isContained(")/", expression)) && studyFunction == (boolean)false) {
+		replaceTimes = 0;
+		if (isContained("_x", expression)) {
+			replace("_x", "_1x", expression);
+			sprintf(expression, "%s", expressionF);
+		}
+		if (isContained("+x", expression)) {
+			replace("+x", "+1x", expression);
+			sprintf(expression, "%s", expressionF);
+		}
 		replaceTimes = 0;
 		if (isContained("_(", expression)) {
 			replace("_(", "(_1)(", expression);
@@ -2839,9 +2841,9 @@ void simplifyExpression(char data[DIM]) {
 						replaceTimes = 1;
 						replace(expressionToSimplify, expressionSimplified, saveExpressionSS);
 						sprintf(saveExpressionSS, "%s", expressionF);
-						sprintf(expression, "%s", saveExpressionSS);
 					}
 				}
+				sprintf(expression, "%s", saveExpressionSS);
 				v++;
 			}
 			replaceTimes = 0;
@@ -3026,6 +3028,25 @@ void simplifyExpression(char data[DIM]) {
 			sprintf(expression, "%s", expressionF);
 		}
 	}
+	if (isContained("(x)", expression)) {
+		replace("(x)", "X", expression);
+		replace("X", "x", expressionF);
+		sprintf(expression, "%s", expressionF);
+	}
+	replaceTimes = 1;
+	if (isContained("x", expression) && strStart == 0) {
+		replace("x", "1x", expression);
+		sprintf(expression, "%s", expressionF);
+	}
+	replaceTimes = 0;
+	if (isContained("_x", expression)) {
+		replace("_x", "_1x", expression);
+		sprintf(expression, "%s", expressionF);
+	}
+	if (isContained("+x", expression)) {
+		replace("+x", "+1x", expression);
+		sprintf(expression, "%s", expressionF);
+	}
 	replaceTimes = 0;
 	if (isContained("i)", expression)) {
 		replace("i)", "i]", expression);
@@ -3040,6 +3061,11 @@ void simplifyExpression(char data[DIM]) {
 		sprintf(expressionF, "%s", expression);
 	}
 	else {
+		replaceTimes = 0;
+		if (isContained("*", expression)) {
+			replace("*", "", expression);
+			sprintf(expression, "%s", expressionF);
+		}
 		char equa[dim] = "";
 		boolean putPars = true;
 		char newEquation[DIM] = "";
