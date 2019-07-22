@@ -67,7 +67,6 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					}
 					else {
 						sprintf(solution, "Error: Impossible study that function.");
-						puts(solution);
 					}
 				}
 			}
@@ -469,7 +468,48 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		solveQuadraticEquation(arithTrig, result1, result2, 1);
 		puts("");
 	}
+	if (isCommand(arithTrig, "opentxt") && arithTrig[i + 7] == '(') {
+		char vaString[DIM] = "";
+		int x = 0, y = 0;
+		y = i + 8;
+		for (x = 0; arithTrig[y] != '\0' && (arithTrig[y - 1] == ')'&&arithTrig[y] == '+'&&arithTrig[y + 1] == '0'&&arithTrig[y + 2] == '\0') == false; x++) {
+			stringV[x] = arithTrig[y];
+			y++;
+		}
+		stringV[x] = '\0';
+		stringV[strlen(stringV) - 1] = '\0';
+		sprintf(expressionF, "%s", stringV);
+		replaceTimes = 0;
+		if (isContained("\"", expressionF)) {
+			replace("\"", "", expressionF);
+		}
+		if (isContained("RASF", expressionF)) {
+			replaceTimes = 0;
+			replace("RASF", " ", expressionF);
+		}
+		printf("\n==> Close the file that was open to continue. <==\n\n");
+		openTxt();
+		puts(" ");
+		arithTrig[0] = '\0'; command = true;
+	}
 	if (isCommand(arithTrig, "sprint") && arithTrig[i + 6] == '(') {
+		if (isContained("\",", arithTrig)) {
+			char arguments[DIM] = "";
+			int p = 0, q = strEnd;
+			while (arithTrig[q] != '\0') {
+				arguments[p] = arithTrig[q];
+				p++; q++;
+			}
+			arguments[p] = '\0';
+			char saveArguments[DIM] = "";
+			sprintf(saveArguments, "%s", arguments);
+			renamer(arguments);
+			replaceTimes = 1;
+			if (!isEqual(arguments, saveArguments)) {
+				replace(saveArguments, arguments, arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+			}
+		}
 		char vaString[DIM] = "";
 		int x = 0, y = 0;
 		y = i + 7;
@@ -484,6 +524,23 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		arithTrig[0] = '\0'; command = true;
 	}
 	if (isCommand(arithTrig, "print") && arithTrig[i + 5] == '(') {
+		if (isContained("\",", arithTrig)) {
+			char arguments[DIM] = "";
+			int p = 0, q = strEnd;
+			while (arithTrig[q] != '\0') {
+				arguments[p] = arithTrig[q];
+				p++; q++;
+			}
+			arguments[p] = '\0';
+			char saveArguments[DIM] = "";
+			sprintf(saveArguments, "%s", arguments);
+			renamer(arguments);
+			replaceTimes = 1;
+			if (!isEqual(arguments, saveArguments)) {
+				replace(saveArguments, arguments, arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+			}
+		}
 		char vaString[DIM] = "";
 		int x = 0, y = 0;
 		y = i + 6;
@@ -1484,7 +1541,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.3  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.4  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(thours, tminutes, tseconds);
 									}
@@ -1682,7 +1739,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.3  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.4  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(thours, tminutes, tseconds);
 									}
@@ -1895,7 +1952,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.3 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.4 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n  %02d:%02d:%02d\n", thours, tminutes, tseconds);
@@ -2102,7 +2159,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.3 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.4 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(Hours, Minutes, Seconds);
 										printf("\n\n    %02d:%02d:%02d\n\n", thours, tminutes, tseconds);

@@ -689,6 +689,7 @@ double solveNow(char toSolveNow[DIM], double result1, double result2) {
 }
 
 double atcProg(char exprDev[DIM]) {
+	fflush(NULL);
 	FILE *atcDev = NULL;
 	char path[DIM] = "";
 	sprintf(path, "%s\\temp.txt", atcPath);
@@ -1150,5 +1151,10 @@ int atcProgramming(char script[DIM]) {
 }
 
 
-
-
+int strlength(char stringV[DIM]) {
+	renamer(stringV);
+	sprintf(stringV, "%s", expressionF);
+	stringVariableToString(stringV);
+	sprintf(stringV, "%s", variableSTring);
+	return (int)strlen(stringV);
+}

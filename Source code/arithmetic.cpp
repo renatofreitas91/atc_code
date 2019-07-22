@@ -39,6 +39,20 @@ void division(double numR, double numI, double denR, double denI) {
 	}
 }
 
+double abs_complex(double real, double imaginary) {
+	if (imaginary == 0) {
+		if (real < 0) {
+			real = real * -1;
+		}
+		return real;
+	}
+	else {
+		exponentiation(pot(real, 2.0, 1) + pot(imaginary, 2.0, 1), 0.0, 0.5, 0.0, 1);
+		resultI = 0;
+		return resultR;
+	}
+}
+
 void qu_complex(double dividend, double dividendI, double divider, double dividerI) {
 	double  rest = 0;
 	char quot[DIM] = "", quotI[DIM] = "", quo[DIM] = "", quoI[DIM] = "";

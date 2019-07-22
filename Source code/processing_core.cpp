@@ -114,7 +114,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 			while (verifyLetter(paTrig[u]) == 1) {
 				u++;
 			}
-			if (paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != ')') {
+			if (paTrig[u] != '\\'&&paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != ')') {
 				double check = 0;
 				if (verifyLetter(paTrig[u - 1]) == 1) {
 					int z = u - 1, v = 0;
@@ -182,7 +182,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	}
 	s = 0;
 	for (s; paTrig[s] != '\0'; s++) {
-		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'i'&&paTrig[s + 1] != 'e'&&paTrig[s - 1] == 'p' || (paTrig[s - 1] == 'v'&&paTrig[s - 2] == 'l'&&paTrig[s - 3] == 'o'&&paTrig[s - 4] == 's'&&paTrig[s + 1] == 'r') == false && paTrig[s] == 'e'&&paTrig[s - 1] != 'd'&&paTrig[s - 1] != 'r'&&paTrig[s - 1] != 's'&&paTrig[s - 1] != 'i'&&paTrig[s + 2] != 't' || paTrig[s] == ')') && (paTrig[s + 1] == '(' || paTrig[s + 1] == 'a' || paTrig[s + 1] == 's' || paTrig[s + 1] == 'c' || paTrig[s + 1] == 't' || paTrig[s + 1] == 'l' || paTrig[s + 1] == 'p' || paTrig[s + 1] == 'e' || paTrig[s + 1] == 'r'&&paTrig[s + 2] != 'r' || paTrig[s + 1] == 'd' || paTrig[s + 1] == 'q' || paTrig[s + 1] == 'g'&&paTrig[s - 1] != 'd')) {
+		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'i'&&paTrig[s + 1] != 'e'&&paTrig[s - 1] == 'p' || (paTrig[s - 1] == 'v'&&paTrig[s - 2] == 'l'&&paTrig[s - 3] == 'o'&&paTrig[s - 4] == 's'&&paTrig[s + 1] == 'r') == false && paTrig[s] == 'e'&&paTrig[s - 1] != 'c'&&paTrig[s - 1] != 'd'&&paTrig[s - 1] != 'r'&&paTrig[s - 1] != 's'&&paTrig[s - 1] != 'i'&&paTrig[s + 2] != 't' || paTrig[s] == ')') && (paTrig[s + 1] == '(' || paTrig[s + 1] == 'a' || paTrig[s + 1] == 's' || paTrig[s + 1] == 'c' || paTrig[s + 1] == 't' || paTrig[s + 1] == 'l' || paTrig[s + 1] == 'p' || paTrig[s + 1] == 'e' || paTrig[s + 1] == 'r'&&paTrig[s + 2] != 'r' || paTrig[s + 1] == 'd' || paTrig[s + 1] == 'q' || paTrig[s + 1] == 'g'&&paTrig[s - 1] != 'd')) {
 			s++;
 			arithTrig[s] = '*';
 			for (s; paTrig[s] != '\0'; s++) {
@@ -384,7 +384,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 						jk = 1;
 					}ju = 0;
 					while (arithTrig[i] != '('&&arithTrig[i] != '\0') {
-						if ((arithTrig[i] == 'b'&&arithTrig[i - 1] != 'c') || arithTrig[i] == 'D') {
+						if ((arithTrig[i] == 'b'&&arithTrig[i - 1] != 'c'&&arithTrig[i - 1] != 'a') || arithTrig[i] == 'D') {
 							op[ju] = arithTrig[i];
 							ju++; i++;
 							while ((arithTrig[i] == 'b'&&arithTrig[i + 1] == '(') == false && (arithTrig[i] == 'D'&&arithTrig[i + 1] == '(') == false && arithTrig[i] != '\0') {
@@ -450,6 +450,8 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				}
 				a = 0;
 				if (kl == 0) {
+					renamer(pas);
+					sprintf(pas, "%s", expressionF);
 					if (isContained("det", op)) {
 						startDetProcessing(pas);
 						triArith[b] = resultR;
@@ -461,35 +463,90 @@ double initialProcessor(char arithTrig[DIM], double result) {
 						}
 					}
 					else {
-						triArith[b] = arithSolver(pas, result);
-						sprintf(expressionF, pas);
-						triArithI[b] = resultI;
-						sig[b] = 1;
-						pas[0] = '\0';
-						ju = 0;
-						if (strlen(op) > 0) {
-							if (op[3] == 't' && (op[2] == 's' || op[2] == 'o'&&op[1] != 'c')) {
-								resultI = triArithI[b]; resultR = triArithI[b - 1];
-								triArith[b - 1] = functionProcessor(op, triArith[b], triArith[b - 1], rf);
-								triArith[b] = 0;
-								triArithI[b - 1] = resultI;
-								triArithI[b] = 0;
-								arTrig[b - 1] = '+';
+						if (isContained("strlen", op)) {
+							triArith[b] = (double)strlength(pas);
+							triArithI[b] = 0;
+						}
+						else {
+							if (isContained("countoccurrences", op)) {
+								if (countOccurrences("\\", arithTrig) == 1) {
+									renamer(pas);
+									sprintf(pas, "%s", expressionF);
+									int p = 0, q = 0;
+									char string[DIM] = "";
+									char to_find[DIM] = "";
+									while (pas[p] != '\\') {
+										to_find[p] = pas[p];
+										p++;
+									}
+									to_find[p] = '\0';
+									renamer(to_find);
+									sprintf(to_find, "%s", expressionF);
+									p++;
+									q = 0;
+									while (pas[p] != '\0') {
+										string[q] = pas[p];
+										p++; q++;
+									}
+									string[q] = '\0';
+									renamer(string);
+									sprintf(string, "%s", expressionF);
+									stringVariableToString(to_find);
+									sprintf(to_find, "%s", variableSTring);
+									stringVariableToString(string);
+									sprintf(string, "%s", variableSTring);
+									triArith[b] = (double)countOccurrences(to_find, string);
+									triArithI[b] = 0;
+								}
+								else {
+									puts("\nError: Please use a \"\\\" to separate the variables.\n");
+								}
 							}
 							else {
-								triArith[b] = functionProcessor(op, triArith[b], amplitude, rf);
-								triArithI[b] = resultI;
+								if (isContained("calc", op)) {
+									renamer(pas);
+									sprintf(pas, "%s", expressionF);
+									stringVariableToString(pas);
+									sprintf(pas, "%s", variableSTring);
+									calcNow(pas, 0, 0);
+									triArith[b] = resultR;
+									triArithI[b] = resultI;;
+								}
+								else {
+									triArith[b] = arithSolver(pas, result);
+									sprintf(expressionF, pas);
+									triArithI[b] = resultI;
+									sig[b] = 1;
+									pas[0] = '\0';
+									ju = 0;
+									if (strlen(op) > 0) {
+										if (op[3] == 't' && (op[2] == 's' || op[2] == 'o'&&op[1] != 'c')) {
+											resultI = triArithI[b]; resultR = triArithI[b - 1];
+											triArith[b - 1] = functionProcessor(op, triArith[b], triArith[b - 1], rf);
+											triArith[b] = 0;
+											triArithI[b - 1] = resultI;
+											triArithI[b] = 0;
+											arTrig[b - 1] = '+';
+										}
+										else {
+											triArith[b] = functionProcessor(op, triArith[b], amplitude, rf);
+											triArithI[b] = resultI;
+										}
+										if (thj == 1) { thj = 0; sig[b] = 0; }
+										else {
+											sig[b] = 1;
+										}
+										pas[0] = '\0';
+										ju = 0;
+									}
+								}
 							}
-							if (thj == 1) { thj = 0; sig[b] = 0; }
-							else {
-								sig[b] = 1;
-							}
-							pas[0] = '\0';
-							ju = 0;
 						}
 					}
 				}
 				if (kl == 1) {
+					renamer(pas);
+					sprintf(pas, "%s", expressionF);
 					if (isContained("solver", op)) {
 						retrySolver = false; retrySolver_2 = false; retrySolver_3 = false; equation_solver = true;
 						poly = true;
@@ -517,22 +574,75 @@ double initialProcessor(char arithTrig[DIM], double result) {
 							}
 						}
 						else {
-							triArith[b] = initialProcessor(pas, result);
-							sprintf(expressionF, pas);
-							triArithI[b] = resultI;
-							sig[b] = 1;
-							char pas[DIM] = "";
-							if (strlen(op) > 0) {
-								resultI = triArithI[b];
-								triArith[b] = functionProcessor(op, triArith[b], amplitude, rf);
-								triArithI[b] = resultI;
-								if (thj == 1) { thj = 0; sig[b] = 0; }
-								else {
-									sig[b] = 1;
-								}
-								pas[0] = '\0';
+							if (isContained("strlen", op)) {
+								triArith[b] = (double)strlength(pas);
+								triArithI[b] = 0;
 							}
-							ju = 0;
+							else {
+								if (isContained("countoccurrences", op)) {
+									if (countOccurrences("\\", arithTrig) == 1) {
+										renamer(pas);
+										sprintf(pas, "%s", expressionF);
+										int p = 0, q = 0;
+										char string[DIM] = "";
+										char to_find[DIM] = "";
+										while (pas[p] != '\\') {
+											to_find[p] = pas[p];
+											p++;
+										}
+										to_find[p] = '\0';
+										renamer(to_find);
+										sprintf(to_find, "%s", expressionF);
+										p++;
+										q = 0;
+										while (pas[p] != '\0') {
+											string[q] = pas[p];
+											p++; q++;
+										}
+										string[q] = '\0';
+										renamer(string);
+										sprintf(string, "%s", expressionF);
+										stringVariableToString(to_find);
+										sprintf(to_find, "%s", variableSTring);
+										stringVariableToString(string);
+										sprintf(string, "%s", variableSTring);
+										triArith[b] = (double)countOccurrences(to_find, string);
+										triArithI[b] = 0;
+									}
+									else {
+										puts("\nError: Please use a \"\\\" to separate the variables.\n");
+									}
+								}
+								else {
+									if (isContained("calc", op)) {
+										renamer(pas);
+										sprintf(pas, "%s", expressionF);
+										stringVariableToString(pas);
+										sprintf(pas, "%s", variableSTring);
+										calcNow(pas, 0, 0);
+										triArith[b] = resultR;
+										triArithI[b] = resultI;;
+									}
+									else {
+										triArith[b] = initialProcessor(pas, result);
+										sprintf(expressionF, pas);
+										triArithI[b] = resultI;
+										sig[b] = 1;
+										char pas[DIM] = "";
+										if (strlen(op) > 0) {
+											resultI = triArithI[b];
+											triArith[b] = functionProcessor(op, triArith[b], amplitude, rf);
+											triArithI[b] = resultI;
+											if (thj == 1) { thj = 0; sig[b] = 0; }
+											else {
+												sig[b] = 1;
+											}
+											pas[0] = '\0';
+										}
+										ju = 0;
+									}
+								}
+							}
 						}
 					}
 				}
@@ -1339,7 +1449,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 		printf("\n\n==> functionProcessor <==\n\nFunction: %s", trigon);
 	}
 	int i = 0, var = 0, j = 0, n = 0, count = 0, opt = 0, l = 0, p = 0, cn = 0, s, rad = 1, jg = 1, gon = 0, tri = 0, co = 0, trigono = 0, paren = 1, pare = 0, parent = 0, e = 0, f = 0, kl = 0, ar = 0, deg = 0, type = 0, g = 0;
-	char trig[DIM] = "0", base[DIM], number[DIM] = "0", number1[DIM] = "0", number2[DIM] = "0", op[DIM] = "0", signal = '*', numb[DIM] = "0", sig = '0', point = '0', cieNot[DIM] = "0", arg[DIM] = "0", amp[DIM] = "0", trigon1[DIM] = "0", ex[DIM] = "", eX[DIM] = "", trig1[DIM] = "", function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res,pi,e,solver,det";
+	char trig[DIM] = "0", base[DIM], number[DIM] = "0", number1[DIM] = "0", number2[DIM] = "0", op[DIM] = "0", signal = '*', numb[DIM] = "0", sig = '0', point = '0', cieNot[DIM] = "0", arg[DIM] = "0", amp[DIM] = "0", trigon1[DIM] = "0", ex[DIM] = "", eX[DIM] = "", trig1[DIM] = "", function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res,pi,e,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,";
 	double num = 0, v[DIM], vI[DIM], argu[DIM], ampl[DIM], exp = 1, result1 = 0, baLog = 0, dgrt = 0, result2 = resultI, dgrt2 = 0;
 	char userFunc[DIM] = "", atcFunc[DIM] = "", funcU[DIM] = "";
 	char saveFunction[DIM] = "";
@@ -1531,6 +1641,9 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 		}
 		trigon[s] = '\0';
 	}
+	if (isEqual("strlen", trigon)) {
+		return 0.5;
+	}
 	if (var == 1) {
 		if (trigon[0] == 'a'&&trigon[1] == 't'&&trigon[2] == 'c'&&trigon[3] == '_') {
 			for (i = 0; trigon[i + 4] != '\0'; i++) {
@@ -1693,6 +1806,13 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 		complex_log(v[1], result2);
 		result1 = resultR;
 		result2 = resultI;
+	}
+	if (isEqual("abs", op)) {
+		resultR = abs_complex(v[1], vI[1]);
+		resultI = 0;
+		result1 = resultR;
+		result2 = resultI;
+		type = 1;
 	}
 	if (isEqual("cosec", op)) {
 		if (deg == 1) {
@@ -1960,7 +2080,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 			system(txtSolved);
 		}
 		type = 1;
-		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det";
+		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,";
 		return result1;
 	}
 	if (op[0] == 'a'&&type == 0) {

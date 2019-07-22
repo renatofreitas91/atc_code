@@ -22,46 +22,18 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 	str = 0;
 	nPlaces = 0;
 	sprintf(savefTrig, "%s", fTrig);
-	if (isContained(":\\", arithTrig) == false && isContained("=\"", arithTrig)) {
-		StringManual = 1;
-		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (arithTrig[i] == '='&&arithTrig[i + 1] == '"') {
-				int p = 0;
-				char variableString[DIM] = "";
-				i = 0;
-				while (arithTrig[i] != '=') {
-					variableString[p] = arithTrig[i];
-					p++; i++;
-				}
-				char string[DIM] = "";
-				p = 0;
-				while (arithTrig[i] != '\0') {
-					string[p] = arithTrig[i];
-					i++;
-					p++;
-				}
-				string[p] = '\0';
-				replace("=", "", string);
-				replace("\"", "", expressionF);
-				sprintf(string, expressionF);
-				variableString[p] = '\0';
-				p = 0;
-				while (verifyLetter(variableString[p]) || verifyNumber(variableString[p])) {
-					p++;
-				}
-				if (p == strlen(variableString)) {
-					stringVariableController(variableString, string);
-					puts(" ");
-				}
-				else {
-					printf("\n==> Invalid string name! Only letters from latin alphabet and digits 0-9 can be used. <==\n\n");
-					fprintf(fout, "\n==> Invalid string name! Only letters from latin alphabet and digits 0-9 can be used. <==\n\n");
-					arithTrig[0] = '\0';
-				}
-			}
-		}
-
+	replaceTimes = 0;
+	char withoutSpaces[DIM] = "";
+	replaceTimes = 0;
+	if (isContained(" ", arithTrig)) {
+		replaceTimes = 0;
+		replace(" ", "", arithTrig);
+		sprintf(withoutSpaces, "%s", expressionF);
 	}
+	else {
+		sprintf(withoutSpaces, "%s", arithTrig);
+	}
+	int getString = 0;
 	if (arithTrig[0] == 'g'&&arithTrig[1] == 'e'&&arithTrig[2] == 't'&&arithTrig[3] == '(') {
 		i = 4;
 		for (i = 4; arithTrig[i] != '\0'; i++) {
@@ -93,6 +65,9 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				arithTrig[0] = '\0';
 			}
 			sprintf(arithTrig, "%s=%s", getVarName, getVar);
+			if (isContained("\"", arithTrig)) {
+				getString = 1;
+			}
 			command = 0;
 		}
 		else {
@@ -101,14 +76,370 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			arithTrig[0] = '\0';
 		}
 	}
-	variable[0] = '\0';
+	if (isContained("opentxt", withoutSpaces) == false && isContained(":\\", withoutSpaces) == false && (isContained("=\"", withoutSpaces) || isContained("=replace(", withoutSpaces) || isContained("=replacebyindex(", withoutSpaces) || isContained("=deletexoccurrences(", withoutSpaces))) {
+		StringManual = 1;
+		if (isContained("=deletexoccurrences(", arithTrig)) {
+			renamer(arithTrig);
+			sprintf(arithTrig, "%s", expressionF);
+			int i = strEnd, j = 0;
+			char to_find[DIM] = "", value[DIM] = "", string[DIM] = "";
+			if (countOccurrences("\\", arithTrig) == 2) {
+				while (arithTrig[i] != '\\') {
+					to_find[j] = arithTrig[i];
+					j++; i++;
+				}
+				to_find[j] = '\0';
+				stringVariableToString(to_find);
+				sprintf(to_find, "%s", variableSTring);
+				i++;
+				j = 0;
+				while (arithTrig[i] != '\\') {
+					string[j] = arithTrig[i];
+					j++; i++;
+				}
+				string[j] = '\0';
+				stringVariableToString(string);
+				sprintf(string, "%s", variableSTring);
+				i++;
+				j = 0;
+				while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+					value[j] = arithTrig[i];
+					j++; i++;
+				}
+				value[j] = '\0';
+				int times = (int)calcNow(value, 0, 0);
+				replaceTimes = 0;
+				deleteXOccurrences(to_find, string, times);
+				replaceTimes = 0;
+				char stringObtained[DIM] = "";
+				sprintf(stringObtained, "%s", expressionF);
+				char variableString[DIM] = "";
+				int p = 0;
+				i = 0;
+				while (arithTrig[i] != '=') {
+					variableString[p] = arithTrig[i];
+					p++; i++;
+				}
+				variableString[p] = '\0';
+				int hk = variableValidator(variableString);
+				char variableFeedback[DIM] = "";
+				if (hk == 1) {
+					processVariable(revariable);
+					sprintf(variableString, "%s", revariable);
+					stringVariableController(variableString, stringObtained);
+				}
+				if (hk == 2) {
+					sprintf(variableFeedback, "\n==> Your variable was renamed to \"%s\". <==\n\n",
+						revariable);
+					sprintf(variableString, "%s", revariable);
+					stringVariableController(variableString, stringObtained);
+				}
+				if (hk == 0) {
+					sprintf(variableFeedback,
+						"\n==> Invalid variable. Use only latin alphabet letters. <==\n\n");
+					var = 0;
+				}
+				puts(variableFeedback);
+				stringVariableController(variableString, stringObtained);
+			}
+			else {
+				puts("\nError: Please use two \"\\\" to separate the variables.\n");
+			}
+			arithTrig[0] = '\0';
+
+		}
+		else {
+			if (isContained("=replacebyindex(", arithTrig)) {
+				renamer(arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+				int i = strEnd, j = 0;
+				char to_find[DIM] = "", replacement[DIM] = "", value[DIM] = "", string[DIM] = "";
+				if (countOccurrences("\\", arithTrig) == 4) {
+					while (arithTrig[i] != '\\') {
+						to_find[j] = arithTrig[i];
+						j++; i++;
+					}
+					to_find[j] = '\0';
+					renamer(to_find);
+					sprintf(to_find, "%s", expressionF);
+					stringVariableToString(to_find);
+					sprintf(to_find, "%s", variableSTring);
+					i++;
+					j = 0;
+					while (arithTrig[i] != '\\') {
+						replacement[j] = arithTrig[i];
+						j++; i++;
+					}
+					replacement[j] = '\0';
+					renamer(replacement);
+					sprintf(replacement, "%s", expressionF);
+					stringVariableToString(replacement);
+					sprintf(replacement, "%s", variableSTring);
+					i++;
+					j = 0;
+					while (arithTrig[i] != '\\') {
+						string[j] = arithTrig[i];
+						j++; i++;
+					}
+					string[j] = '\0';
+					renamer(string);
+					sprintf(string, "%s", expressionF);
+					stringVariableToString(string);
+					sprintf(string, "%s", variableSTring);
+					i++;
+					j = 0;
+					while (arithTrig[i] != '\\') {
+						value[j] = arithTrig[i];
+						j++; i++;
+					}
+					value[j] = '\0';
+					int index = (int)calcNow(value, 0, 0);
+					j = 0;
+					while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+						value[j] = arithTrig[i];
+						j++; i++;
+					}
+					value[j] = '\0';
+					replaceTimes = (int)calcNow(value, 0, 0);
+					replaceByIndex(to_find, replacement, string, index);
+					replaceTimes = 0;
+					char stringObtained[DIM] = "";
+					sprintf(stringObtained, "%s", expressionF);
+					char variableString[DIM] = "";
+					int p = 0;
+					i = 0;
+					while (arithTrig[i] != '=') {
+						variableString[p] = arithTrig[i];
+						p++; i++;
+					}
+					variableString[p] = '\0';
+					int hk = variableValidator(variableString);
+					char variableFeedback[DIM] = "";
+					if (hk == 1) {
+						processVariable(revariable);
+						sprintf(variableString, "%s", revariable);
+						stringVariableController(variableString, stringObtained);
+					}
+					if (hk == 2) {
+						sprintf(variableFeedback, "\n==> Your variable was renamed to \"%s\". <==\n\n",
+							revariable);
+						sprintf(variableString, "%s", revariable);
+						stringVariableController(variableString, stringObtained);
+					}
+					if (hk == 0) {
+						sprintf(variableFeedback,
+							"\n==> Invalid variable. Use only latin alphabet letters. <==\n\n");
+						var = 0;
+					}
+					puts(variableFeedback);
+					stringVariableController(variableString, stringObtained);
+				}
+				else {
+					puts("\nError: Please use four \"\\\" to separate the variables.\n");
+				}
+				arithTrig[0] = '\0';
+			}
+
+			else {
+				if (isContained("=replace(", arithTrig)) {
+					renamer(arithTrig);
+					sprintf(arithTrig, "%s", expressionF);
+					int i = strEnd, j = 0;
+					char to_find[DIM] = "", replacement[DIM] = "", value[DIM] = "", string[DIM] = "";
+					if (countOccurrences("\\", arithTrig) == 3) {
+						while (arithTrig[i] != '\\') {
+							to_find[j] = arithTrig[i];
+							j++; i++;
+						}
+						to_find[j] = '\0';
+						renamer(to_find);
+						sprintf(to_find, "%s", expressionF);
+						stringVariableToString(to_find);
+						sprintf(to_find, "%s", variableSTring);
+						i++;
+						j = 0;
+						while (arithTrig[i] != '\\') {
+							replacement[j] = arithTrig[i];
+							j++; i++;
+						}
+						replacement[j] = '\0';
+						renamer(replacement);
+						sprintf(replacement, "%s", expressionF);
+						stringVariableToString(replacement);
+						sprintf(replacement, "%s", variableSTring);
+						i++;
+						j = 0;
+						while (arithTrig[i] != '\\') {
+							string[j] = arithTrig[i];
+							j++; i++;
+						}
+						string[j] = '\0';
+						renamer(string);
+						sprintf(string, "%s", expressionF);
+						stringVariableToString(string);
+						sprintf(string, "%s", variableSTring);
+						i++;
+						j = 0;
+						while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+							value[j] = arithTrig[i];
+							j++; i++;
+						}
+						value[j] = '\0';
+						replaceTimes = (int)calcNow(value, 0, 0);
+						replace(to_find, replacement, string);
+						replaceTimes = 0;
+						char stringObtained[DIM] = "";
+						sprintf(stringObtained, "%s", expressionF);
+						char variableString[DIM] = "";
+						int p = 0;
+						i = 0;
+						while (arithTrig[i] != '=') {
+							variableString[p] = arithTrig[i];
+							p++; i++;
+						}
+						variableString[p] = '\0';
+						int hk = variableValidator(variableString);
+						char variableFeedback[DIM] = "";
+						if (hk == 1) {
+							processVariable(revariable);
+							sprintf(variableString, "%s", revariable);
+							stringVariableController(variableString, stringObtained);
+						}
+						if (hk == 2) {
+							sprintf(variableFeedback, "\n==> Your variable was renamed to \"%s\". <==\n\n",
+								revariable);
+							sprintf(variableString, "%s", revariable);
+							stringVariableController(variableString, stringObtained);
+						}
+						if (hk == 0) {
+							sprintf(variableFeedback,
+								"\n==> Invalid variable. Use only latin alphabet letters. <==\n\n");
+							var = 0;
+						}
+						stringVariableController(variableString, stringObtained);
+					}
+					else {
+						puts("\nError: Please use three \"\\\" to separate the variables.\n");
+					}
+					arithTrig[0] = '\0';
+				}
+			}
+		}
+	}
 	for (i = 0; arithTrig[i] != '\0'; i++) {
-		if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == ':'&&arithTrig[i + 1] == '\\') {
-			txt = 1;
+		if (arithTrig[i] == '='&&arithTrig[i + 1] == '"') {
+			str = 0;
+			int p = 0;
+			char variableString[DIM] = "";
+			i = 0;
+			while (arithTrig[i] != '=') {
+				variableString[p] = arithTrig[i];
+				p++; i++;
+			}
+			variableString[p] = '\0';
+			i++;
+			char string[DIM] = "";
+			p = 0;
+			while (arithTrig[i] != '\0') {
+				string[p] = arithTrig[i];
+				i++;
+				p++;
+			}
+			string[p] = '\0';
+			replaceTimes = 0;
+			replace("\"", "", string);
+			sprintf(string, "%s", expressionF);
+			string[strlen(string)] = '\0';
+			p = 0;
+			while (verifyLetter(variableString[p])) {
+				p++;
+			}
+			p++;
+			int hk = variableValidator(variableString);
+			char variableFeedback[DIM] = "";
+
+			if (p == strlen(variableString)) {
+				char toReplace[DIM] = "";
+				sprintf(toReplace, "%s=", variableString);
+				replace(toReplace, "", arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+				puts(" ");
+			}
+
+			if (hk == 1) {
+				processVariable(revariable);
+				sprintf(variableString, "%s", revariable);
+				stringVariableController(variableString, string);
+			}
+			if (hk == 2) {
+				sprintf(variableFeedback, "\n==> Your variable was renamed to \"%s\". <==\n\n",
+					revariable);
+				sprintf(variableString, "%s", revariable);
+				stringVariableController(variableString, string);
+			}
+			if (hk == 0) {
+				sprintf(variableFeedback,
+					"\n==> Invalid variable. Use only latin alphabet letters. <==\n\n");
+				var = 0;
+			}
+			puts(variableFeedback);
+			stringVariableController(variableString, string);
+		}
+	}
+	if (isContained("getposvalue(", arithTrig) && arithTrig[0] == 'g' && 0 == strStart) {
+		i = strEnd;
+		for (i; arithTrig[i] != '\0'; i++) {
+			if (arithTrig[i] == ')') {
+				valGet = 1;
+				break;
+			}
+		}
+		if (valGet == 1) {
+			h = 0;
+			i = strEnd;
+			while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
+				getVarName[h] = arithTrig[i];
+				h++; i++;
+			}
+			getVarName[h] = '\0';
+			strIndex = 0;
+			for (int ks = 0; getVarName[ks] != '\0'; ks++) {
+				if (verifyLetter(getVarName[ks])) {
+					strIndex++;
+				}
+			}
+			double value;
+			if (strIndex == strlen(getVarName)) {
+				value = getPosValue();
+			}
+			else {
+				puts("\nTo create variables only letters from latin alphabet can be used.");
+				command = 1;
+				arithTrig[0] = '\0';
+			}
+			sprintf(arithTrig, "%s=%G", getVarName, value);
+			if (isContained("-", arithTrig)) {
+				replaceTimes = 0;
+				replace("-", "_", arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+			}
+			command = 0;
+		}
+		else {
+			puts("\nError in syntax in get function.\n");
+			command = 1;
+			arithTrig[0] = '\0';
 		}
 	}
 
-
+	variable[0] = '\0';
+	if (!isContained("opentxt", arithTrig) && !isContained("open txt", arithTrig)) {
+		for (i = 0; arithTrig[i] != '\0'; i++) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == ':'&&arithTrig[i + 1] == '\\') {
+				txt = 1;
+			}
+		}
+	}
 	for (i = 0; arithTrig[i] != '\0'; i++) {
 		if (arithTrig[i] == '=') {
 			var = 1;
@@ -161,9 +492,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			arithTrig[0] = '\0';
 		}
 	}
-
-	if (str == 1) {
-		str = 0;
+	if (str == 1 && getString == 0) {
 		int p = 0;
 		char variableString[DIM] = "";
 		p = 0;
@@ -187,7 +516,41 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 					arithTrig[p - lenStr] = arithTrig[p];
 				}
 				arithTrig[p - lenStr] = '\0';
+
+
+
+
+				p = 0;
+				while (verifyLetter(variableString[p])) {
+					p++;
+				}
+				int hk = variableValidator(variableString);
+				char variableFeedback[DIM] = "";
+				if (p == strlen(variableString)) {
+					char toReplace[DIM] = "";
+					sprintf(toReplace, "%s=", variableString);
+					replace(toReplace, "", arithTrig);
+					sprintf(arithTrig, "%s", expressionF);
+					puts(" ");
+				}
+				if (hk == 1) {
+					processVariable(revariable);
+					sprintf(variableString, "%s", revariable);
+					stringVariableController(variableString, arithTrig);
+				}
+				if (hk == 2) {
+					sprintf(variableFeedback, "\n==> Your variable was renamed to \"%s\". <==\n\n",
+						revariable);
+					sprintf(variableString, "%s", revariable);
+					stringVariableController(variableString, arithTrig);
+				}
+				if (hk == 0) {
+					sprintf(variableFeedback,
+						"\n==> Invalid variable. Use only latin alphabet letters. <==\n\n");
+					var = 0;
+				}
 				stringVariableController(variableString, arithTrig);
+				puts(variableFeedback);
 				if (valGet == 0) {
 					puts(" ");
 				}
@@ -259,23 +622,24 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 							space = 0;
 						}
 					}
+
 				}
 			}
-			if (fout != NULL) {
-				fclose(fout);
-			}
-			fout = NULL;
-			while (fout == NULL) {
-				fout = fopen(path, "a+");
-			}
-			if (verify == 1) {
-				fprintf(fout, ">%s\n", savefTrig);
-			}
-			command = commands(arithTrig, path, result1, result2);
-			if (command == (boolean)false && continu&&strlen(arithTrig) > 0) {
-				main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
-				sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
-			}
+		}
+		if (fout != NULL) {
+			fclose(fout);
+		}
+		fout = NULL;
+		while (fout == NULL) {
+			fout = fopen(path, "a+");
+		}
+		if (verify == 1) {
+			fprintf(fout, ">%s\n", savefTrig);
+		}
+		command = commands(arithTrig, path, result1, result2);
+		if (command == (boolean)false && continu&&strlen(arithTrig) > 0) {
+			main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
+			sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 		}
 	}
 	return result1;

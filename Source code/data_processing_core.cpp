@@ -101,83 +101,43 @@ void variableController(char variable[DIM], double result) {
 		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 		fclose(open);
 		vari[i] = '\0';
-		if (vari[0] == '\n') {
-			for (i = 0; vari[i + 1] != '\0'; i++) {
-				vari[i] = vari[i + 1];
+		char toSearch_1[DIM] = "";
+		sprintf(toSearch_1, "\n%s ", variable);
+		char toSearch_2[DIM] = "";
+		sprintf(toSearch_2, "%s ", variable);
+		if (isContained(toSearch_1, vari)) {
+			int i = strStart + 1;
+			int h = 0;
+			char variableData[DIM] = "";
+			while (vari[i] != '\n'&&vari[i] != '\0') {
+				variableData[h] = vari[i];
+				h++;
+				i++;
 			}
-			vari[i] = '\0';
+			variableData[h] = '\n'; variableData[h + 1] = '\0';
+			replaceTimes = 1;
+			replace(variableData, "", vari);
+			replaceTimes = 0;
+			sprintf(vari, "%s", expressionF);
+			open = fopen(toOpen, "w");
+			fputs(vari, open);
+			fclose(open);
 		}
-		for (i = 0; vari[i] != '\0'; i++) {
-			g = 0;
-			h = i; k = h;
-			int j = i;
-			while (vari[j] != ' '&&vari[j] != '\0') {
-				j++;
-			}
-			j = j - i;
-			int p = 0;
-			if (vari[i] == variable[g] && (i == 0 || vari[i - 1] == '\n')) {
-				f = i;
-				while (vari[i] == variable[g]) {
-					if (vari[i] == variable[g]) {
-						va[g] = vari[i];
-					}g++; i++;
-				}
-				va[g] = '\0';
-				p = abs((int)strlen(variable));
-			}
-			g = 0;
-			for (y = 0; va[y] != '\0'; y++) {
-				if (va[y] == variable[y]) {
-					g++;
-				}
-			}
-			if (g == strlen(va) && strlen(variable) == g && g == j) {
-				h = f + p;
-				while (vari[h] != '\n') {
+		else {
+			if (isContained(toSearch_2, vari)) {
+				int i = strStart;
+				int h = 0;
+				char variableData[DIM] = "";
+				while (vari[i] != '\n'&&vari[i] != '\0') {
+					variableData[h] = vari[i];
 					h++;
-					p++;
+					i++;
 				}
-				p++;
-				for (f; vari[f + p] != '\0'; f++) {
-					vari[f] = vari[f + p];
-				}
-				vari[f] = '\0';
-				if (vari[0] == '\n') {
-					for (i = 0; vari[i + 1] != '\0'; i++) {
-						vari[i] = vari[i + 1];
-					}
-					vari[i] = '\0';
-				}
-				open = NULL;
-				while (open == NULL) {
-					open = fopen(toOpen, "w");
-				}
-				fprintf(open, "%s", vari);
-				fclose(open);
-				break;
-			}
-		}
-		open = NULL;
-		while (open == NULL) {
-			open = fopen(toOpen, "a+");
-		}
-		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
-		fclose(open);
-		isContained(variable, vari);
-		if ((vari[strStart - 1] == '\n' || strStart == 0) && isContained(variable, vari) && vari[strEnd] == ' ') {
-			int p = strStart;
-			char line[DIM] = "";
-			int s = 0;
-			while (vari[p] != '\0'&&vari[p] != '\n') {
-				line[s] = vari[p];
-				s++; p++;
-			}
-			line[s] = '\0';
-			replace(line, "", vari);
-			sprintf(vari, expressionF);
-			open = NULL;
-			while (open == NULL) {
+				variableData[h] = '\n'; variableData[h + 1] = '\0';
+				replaceTimes = 1;
+				replace(variableData, "", vari);
+				replaceTimes = 0;
+				sprintf(vari, "%s", expressionF);
 				open = fopen(toOpen, "w");
 				fputs(vari, open);
 				fclose(open);
@@ -665,6 +625,7 @@ void pathNameController(char pathName[DIM], char path[DIM]) {
 }
 
 void stringVariableToString(char stringVariable[DIM]) {
+	validVar = 1;
 	FILE *open = NULL;
 	int i = 0, j = 0, k = 0;
 	char data[DIM] = "";
@@ -674,6 +635,7 @@ void stringVariableToString(char stringVariable[DIM]) {
 	open = fopen(toOpen, "r");
 	if (open == NULL) {
 		puts("\n==> No string variable created! <==\n");
+		validVar = 0;
 	}
 	else {
 		for (i = 0; (data[i] = fgetc(open)) != EOF; i++);
@@ -687,64 +649,104 @@ void stringVariableToString(char stringVariable[DIM]) {
 					i++;
 				}
 				if (j == strlen(stringVariable)) {
+					validVar = 1;
 					char directory[MAX_PATH] = "";
 					sprintf(directory, "%s\\Strings\\%s.txt", atcPath, stringVariable);
 					open = fopen(directory, "a+");
-					for (k = 0; (variableSTring[k] = fgetc(open)) != EOF; k++);
-					variableSTring[k] = '\0';
-					fclose(open);
+					if (open != NULL) {
+						for (k = 0; (variableSTring[k] = fgetc(open)) != EOF; k++);
+						variableSTring[k] = '\0';
+						fclose(open);
+					}
 				}
 			}
 		}
-		if (strlen(variableSTring) == 0) {
+		if (!isContained(stringVariable, data)) {
 			puts("\n==> This string variable doesn't exist! <==\n");
+			validVar = 0;
 		}
 	}
 }
 
-void stringVariableController(char stringVariable[DIM], char string[DIM]) {
-	FILE *save = NULL;
+void stringVariableController(char variable[DIM], char string[DIM]) {
+	FILE *open = NULL;
+	char va[DIM] = "", vari[DIM] = "";
+	int i = 0, f = 0;
+	vari[0] = '\0';
+	int y = 0, h = 0, k = 0, g = 0;
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\stringVariable.txt", atcPath);
-	while (save == NULL) {
-		save = fopen(toOpen, "a+");
+	open = fopen(toOpen, "r");
+	if (open == NULL) {
+		open = fopen(toOpen, "w");
 	}
-	char data[DIM] = "", vaString[DIM] = "";
-	int i = 0, j = 0, k = 0, y = 0, w = 0, l = 0;
-	for (i = 0; (data[i] = fgetc(save)) != EOF; i++);
-	data[i] = '\0';
-	for (i = 0; data[i] != '\0'; i++) {
-		if (data[i] == stringVariable[j] && j == 0) {
-			y = i;
-			while (data[i] == stringVariable[j]) {
-				j++;
+	if (open != NULL) {
+		fclose(open);
+	}
+	open = NULL;
+	while (open == NULL && i < 100) {
+		open = fopen(toOpen, "a+");
+		i++;
+	}
+	if (i < 100) {
+		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+		fclose(open);
+		vari[i] = '\0';
+		char toSearch_1[DIM] = "";
+		sprintf(toSearch_1, "\n%s\n", variable);
+		char toSearch_2[DIM] = "";
+		sprintf(toSearch_2, "%s\n", variable);
+		if (isContained(toSearch_1, vari)) {
+			int i = strStart + 1;
+			int h = 0;
+			char variableData[DIM] = "";
+			while (vari[i] != '\n'&&vari[i] != '\0') {
+				variableData[h] = vari[i];
+				h++;
 				i++;
 			}
-			if (j == abs((int)strlen(stringVariable)) && data[i] == '\n') {
-				w = abs((int)strlen(stringVariable)) + 1;
-				for (l = y; data[l + w] != '\0'; l++) {
-					data[l] = data[l + w];
-				}
-				data[l] = '\0';
-				fclose(save);
-				save = fopen(toOpen, "w");
-				fputs(data, save);
-				fclose(save);
-			}
+			variableData[h] = '\n'; variableData[h + 1] = '\0';
+			replaceTimes = 1;
+			replace(variableData, "", vari);
+			replaceTimes = 0;
+			sprintf(vari, "%s", expressionF);
+			open = fopen(toOpen, "w");
+			fputs(vari, open);
+			fclose(open);
 		}
 		else {
-			j = 0;
+			if (isContained(toSearch_2, vari)) {
+				int i = strStart;
+				int h = 0;
+				char variableData[DIM] = "";
+				while (vari[i] != '\n'&&vari[i] != '\0') {
+					variableData[h] = vari[i];
+					h++;
+					i++;
+				}
+				variableData[h] = '\n'; variableData[h + 1] = '\0';
+				replaceTimes = 1;
+				replace(variableData, "", vari);
+				replaceTimes = 0;
+				sprintf(vari, "%s", expressionF);
+				open = fopen(toOpen, "w");
+				fputs(vari, open);
+				fclose(open);
+			}
 		}
-	}
-	save = fopen(toOpen, "a+");
-	fprintf(save, "%s\n", stringVariable);
-	fclose(save);
-	char directory[MAX_PATH] = "";
-	sprintf(directory, "%s\\Strings\\%s.txt", atcPath, stringVariable);
-	save = fopen(directory, "w");
-	if (save != NULL) {
-		fprintf(save, "%s", string);
-		fclose(save);
+		open = NULL;
+		while (open == NULL) {
+			open = fopen(toOpen, "a+");
+		}
+		fprintf(open, "%s\n", variable);
+		fclose(open);
+		char directory[MAX_PATH] = "";
+		sprintf(directory, "%s\\Strings\\%s.txt", atcPath, variable);
+		open = fopen(directory, "w");
+		if (open != NULL) {
+			fputs(string, open);
+			fclose(open);
+		}
 	}
 }
 
@@ -910,9 +912,9 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 								if (verify == 0) {
 									value[j - 1] = '+'; value[j] = '0'; value[j + 1] = '\0';
 								}
-								if (expression[i] != '+'&&expression[i] != '-'&&expression[i] != '*'&&expression[i] != '/'&&expression[i] != '^'&&expression[i] != '\0') {
+								if (expression[i] != '\\'&&expression[i] != '+'&&expression[i] != '-'&&expression[i] != '*'&&expression[i] != '/'&&expression[i] != '^'&&expression[i] != '\0') {
 									j--;
-									if (expression[i - 1] != '+'&&expression[i - 1] != '-'&&expression[i - 1] != '*'&&expression[i - 1] != '/'&&expression[i - 1] != '^') {
+									if (expression[i] != '\\'&&expression[i - 1] != '+'&&expression[i - 1] != '-'&&expression[i - 1] != '*'&&expression[i - 1] != '/'&&expression[i - 1] != '^') {
 										value[j] = '*';
 										value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
 										j++;
@@ -940,7 +942,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 										}
 										j++; i++;
 									}
-									if (expression[i] != '+'&&expression[i] != '-'&&expression[i] != '*'&&expression[i] != '/'&&expression[i] != '^'&&expression[i] != '\0') {
+									if (expression[i] != '\\'&&expression[i] != '+'&&expression[i] != '-'&&expression[i] != '*'&&expression[i] != '/'&&expression[i] != '^'&&expression[i] != '\0') {
 										value[j] = '*';
 										value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
 										j++;
@@ -978,7 +980,6 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 				}
 				if (validVar == 0) {
 					sprintf(value, saveValue);
-					i--;
 				}
 				if (verifyLetter(expression[i + 1])) {
 					char toReplace[10] = "", replacement[10] = "";
@@ -1093,7 +1094,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	int i = 0, j = 0, s = 0, f = 0;
 	toMultiply(arithTrig, result1, result2);
 	renamer(arithTrig);
-	sprintf(arithTrig, expressionF);
+	sprintf(arithTrig, "%s", expressionF);
 	for (i = 0; expressionF[i] != '\0'; i++) {
 		arithTrig[i] = expressionF[i];
 	}
@@ -1626,7 +1627,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			while (verifyLetter(paTrig[u])) {
 				u++;
 			}
-			if (paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != ')') {
+			if (paTrig[u] != '\\'&&paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != ')'&&paTrig[u] != ']') {
 				double check = 0;
 				if (verifyLetter(paTrig[u - 1])) {
 					int z = u - 1, v = 0;
@@ -1859,7 +1860,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	}
 	s = 0;
 	for (s; paTrig[s] != '\0'; s++) {
-		if ((paTrig[s + 1] == 'e'&&paTrig[s] != 'b' && (paTrig[s] == 'v'&&paTrig[s - 1] == 'l'&&paTrig[s - 2] == 'o'&&paTrig[s - 3] == 's'&&paTrig[s + 2] == 'r') == false || paTrig[s + 1] == 'p'&&paTrig[s + 2] == 'i'&&paTrig[s] != 'b' || paTrig[s + 1] == '1' || paTrig[s + 1] == '2' || paTrig[s + 1] == '3' || paTrig[s + 1] == '4' || paTrig[s + 1] == '5' || paTrig[s + 1] == '6' || paTrig[s + 1] == '7' || paTrig[s + 1] == '8' || paTrig[s + 1] == '9' || paTrig[s + 1] == '0' || paTrig[s + 1] == '.') && (paTrig[s] == 'q' || paTrig[s] == 'w' || paTrig[s] == 't' || paTrig[s] == 'y' || paTrig[s] == 'u' || paTrig[s] == 'o' || paTrig[s] == 'p' || paTrig[s] == 'a' || paTrig[s] == 'f' || paTrig[s] == 'h' || paTrig[s] == 'j' || paTrig[s] == 'k' || paTrig[s] == 'l' || paTrig[s] == 'z' || paTrig[s] == 'c' || paTrig[s] == 'v' || paTrig[s] == 'n' || paTrig[s] == 'm' || paTrig[s] == 'Q' || paTrig[s] == 'W' || paTrig[s] == 'R' || paTrig[s] == 'T' || paTrig[s] == 'Y' || paTrig[s] == 'U' || paTrig[s] == 'I' || paTrig[s] == 'S' || paTrig[s] == 'G' || paTrig[s] == 'J' || paTrig[s] == 'K' || paTrig[s] == 'L' || paTrig[s] == 'Z' || paTrig[s] == 'X' || paTrig[s] == 'V' || paTrig[s] == 'N' || paTrig[s] == 'M')) {
+		if ((paTrig[s + 1] == 'e'&&paTrig[s] != 'b'&&paTrig[s] != 'c' && (paTrig[s] == 'l'&&paTrig[s - 1] == 'r'&&paTrig[s - 2] == 't'&&paTrig[s - 3] == 's'&&paTrig[s + 2] == 'n') == false && (paTrig[s] == 'v'&&paTrig[s - 1] == 'l'&&paTrig[s - 2] == 'o'&&paTrig[s - 3] == 's'&&paTrig[s + 2] == 'r') == false || paTrig[s + 1] == 'p'&&paTrig[s + 2] == 'i'&&paTrig[s] != 'b' || paTrig[s + 1] == '1' || paTrig[s + 1] == '2' || paTrig[s + 1] == '3' || paTrig[s + 1] == '4' || paTrig[s + 1] == '5' || paTrig[s + 1] == '6' || paTrig[s + 1] == '7' || paTrig[s + 1] == '8' || paTrig[s + 1] == '9' || paTrig[s + 1] == '0' || paTrig[s + 1] == '.') && (paTrig[s] == 'q' || paTrig[s] == 'w' || paTrig[s] == 't' || paTrig[s] == 'y' || paTrig[s] == 'u' || paTrig[s] == 'o' || paTrig[s] == 'p' || paTrig[s] == 'a' || paTrig[s] == 'f' || paTrig[s] == 'h' || paTrig[s] == 'j' || paTrig[s] == 'k' || paTrig[s] == 'l' || paTrig[s] == 'z' || paTrig[s] == 'c' || paTrig[s] == 'v' || paTrig[s] == 'n' || paTrig[s] == 'm' || paTrig[s] == 'Q' || paTrig[s] == 'W' || paTrig[s] == 'R' || paTrig[s] == 'T' || paTrig[s] == 'Y' || paTrig[s] == 'U' || paTrig[s] == 'I' || paTrig[s] == 'S' || paTrig[s] == 'G' || paTrig[s] == 'J' || paTrig[s] == 'K' || paTrig[s] == 'L' || paTrig[s] == 'Z' || paTrig[s] == 'X' || paTrig[s] == 'V' || paTrig[s] == 'N' || paTrig[s] == 'M')) {
 			s++;
 			arithTrig[s] = '*';
 			for (s; paTrig[s] != '\0'; s++) {
@@ -1890,7 +1891,16 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	i = 0;
 	j = 0;
 
-
+	int h = 0;
+	while (h < abs((int)strlen(arithTrig))) {
+		if (arithTrig[h] == '[' || arithTrig[h] == '{') {
+			arithTrig[h] = '(';
+		}
+		if (arithTrig[h] == ']' || arithTrig[h] == '}') {
+			arithTrig[h] = ')';
+		}
+		h++;
+	}
 	char varCandidate[DIM] = "";
 	char finalReplacement[DIM] = "";
 	char readLetter[DIM] = "";
@@ -2481,7 +2491,7 @@ void getCharArray() {
 }
 
 double solve(char equation[DIM]) {
-	char colectCoeff[dim] = "";
+	char colectCoeff[DIM] = "";
 	int p = 0;
 	if (isContained("x", equation)) {
 		int i = strStart - 1;
@@ -2513,7 +2523,7 @@ double solve(char equation[DIM]) {
 			}
 		}
 		colectCoeff[p] = '\0';
-		char equationF[dim] = "";
+		char equationF[DIM] = "";
 		sprintf(equationF, "(%s)/(%s)", equation, colectCoeff);
 		double answer = solver(equationF);
 		return answer;
@@ -3253,26 +3263,39 @@ int variableValidator(char variable[DIM]) {
 	variable[abc] = '\0';
 	processVariable(variable);
 	if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0) {
-		processVariable(revariable);
-		if (valid == 0) {
-			i = 0;
-			FILE *var1 = NULL;
-			if (var1 != NULL) {
-				fclose(var1);
-			}
-			var1 = NULL;
-			char toOpen[DIM] = "";
-			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
-			while (var1 == NULL && i < 100) {
-				var1 = fopen(toOpen, "a+");
-				i++;
-			}
-			if (i < 100) {
-				fprintf(var1, "%s %s\n", variable, revariable);
-				fclose(var1);
-			}
-			i = 0;
+		i = 0;
+		FILE *var1 = NULL;
+		if (var1 != NULL) {
+			fclose(var1);
 		}
+		var1 = NULL;
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+		while (var1 == NULL && i < 100) {
+			var1 = fopen(toOpen, "a+");
+			i++;
+		}
+		char vari[DIM] = "";
+		i = 0;
+		for (i = 0; (vari[i] = fgetc(var1)) != EOF; i++);
+		vari[i] = '\0';
+		fclose(var1);
+		var1 = NULL;
+		i = 0;
+		while (var1 == NULL && i < 100) {
+			var1 = fopen(toOpen, "w");
+			i++;
+		}
+		if (i < 100) {
+			char line[DIM] = "";
+			sprintf(line, "%s %s\n", variable, revariable);
+			if (!(isContained(line, vari) && (strStart == 0 || vari[strStart - 1] == '\n'))) {
+				fputs(line, var1);
+			}
+			fputs(vari, var1);
+			fclose(var1);
+		}
+		i = 0;
 	}
 	else {
 		if (h == 1 && valid == 0 && (arith != 0 || func != 0 || prefix != 0)) {
@@ -3643,8 +3666,9 @@ int countOccurrences(char to_find[DIM], char expression[DIM]) {
 	char expressionR[DIM] = "";
 	char to_findR[DIM] = "";
 	int numberOccurrences = 0;
-	sprintf(expressionR, expression);
-	sprintf(to_findR, to_find);
+	replaceTimes = 0;
+	sprintf(expressionR, "%s", expression);
+	sprintf(to_findR, "%s", to_find);
 	if (isContained(to_findR, expressionR)) {
 		while (isContained(to_findR, expressionR)) {
 			numberOccurrences++;
@@ -3661,7 +3685,7 @@ int countOccurrences(char to_find[DIM], char expression[DIM]) {
 				j++; i++;
 			}
 			cuttedExpression[j] = '\0';
-			sprintf(expressionR, cuttedExpression);
+			sprintf(expressionR, "%s", cuttedExpression);
 		}
 	}
 	return numberOccurrences;
@@ -3670,11 +3694,11 @@ int countOccurrences(char to_find[DIM], char expression[DIM]) {
 int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x) {
 	char expressionR[DIM] = "";
 	char to_findR[DIM] = "";
-	int numberOccurrences = 0;
+	int numberOccurrences = 1;
 	sprintf(expressionR, expression);
 	sprintf(to_findR, to_find);
-	if (isContained(to_findR, expressionR)) {
-		while (isContained(to_findR, expressionR)) {
+	if (isContained(to_findR, expressionR) && countOccurrences(to_findR, expressionR) >= x) {
+		while (isContained(to_findR, expressionR) && numberOccurrences < x) {
 			numberOccurrences++;
 			char cuttedExpression[DIM] = "";
 			int i = 0;
@@ -3690,12 +3714,9 @@ int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x) {
 			}
 			cuttedExpression[j] = '\0';
 			sprintf(expressionR, cuttedExpression);
-			if (numberOccurrences == x) {
-				sprintf(expressionF, expressionR);
-				return x;
-			}
 		}
 	}
+	sprintf(expressionF, expressionR);
 	return numberOccurrences;
 }
 
@@ -3848,11 +3869,12 @@ boolean isContainedVariable(char to_find[DIM], char string[DIM]) {
 					j++;
 					i++;
 				}
-				int l = strStart;
-				k = 0;
-				while (letterVariables(string[l - 1])) {
+				int l = j - 1;
+				while (letterVariables(string[l])) {
 					l--;
 				}
+				l++;
+				k = 0;
 				while (letterVariables(string[l])) {
 					check_variable[k] = string[l];
 					l++; k++;
@@ -3862,7 +3884,7 @@ boolean isContainedVariable(char to_find[DIM], char string[DIM]) {
 					return false;
 				}
 				else {
-					if (isContained(to_find, check_variable) && strlen(to_find) != strlen(check_variable)) {
+					if (isContained(to_find, string) && strlen(to_find) != strlen(string)) {
 						return true;
 					}
 					else {
@@ -4027,8 +4049,6 @@ boolean isEqual(char to_find[DIM], char string[DIM]) {
 	}
 	return false;
 }
-
-
 
 int trackMouse() {
 	POINT p;

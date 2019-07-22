@@ -9,6 +9,7 @@ int replaceTimes = 0, processingOK = 1, executedSolver = 0, isFromMain = 0, solu
 clock_t start_processing, end_processing;
 
 void main(int argc, char *argv[]) {
+	isFromMain = 1;
 	char dataToSolve[DIM] = "";
 	FILE *fout = NULL;
 	int Colors = 1, tD = 0, i = 0;
@@ -25,11 +26,11 @@ void main(int argc, char *argv[]) {
 		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v2.0.3");
+		system("title Advanced Trigonometry Calculator v2.0.4");
 		continu = about();
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v2.0.3       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v2.0.4       ==) ATC is ready to process data. (==");
 		do {
 			resultR = 0; resultI = 0;
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
@@ -46,7 +47,7 @@ void main(int argc, char *argv[]) {
 				}
 				gets_s(trigData);
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v2.0.3       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v2.0.4       ==) Processing... (==");
 			}
 			else {
 				arG = 1;
@@ -98,6 +99,19 @@ void main(int argc, char *argv[]) {
 					}
 				}
 				arithTrig[i] = '\0';
+				if (isContained("open txt", arithTrig)) {
+					replaceTimes = 1;
+					replace(" ", "", arithTrig);
+					sprintf(arithTrig, "%s", expressionF);
+				}
+				if (isContained("opentxt", arithTrig)) {
+					if (isContained(" ", arithTrig)) {
+						replaceTimes = 0;
+						replace(" ", "RASF", arithTrig);
+						sprintf(arithTrig, "%s", expressionF);
+					}
+				}
+
 				resultR = sqrt(DBL_MAX);
 				variableController("INF", resultR);
 				processVariable("x");
@@ -197,7 +211,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v2.0.3       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v2.0.4       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -389,6 +403,18 @@ boolean processTxt(char path[DIM], int re) {
 								resultR = 0; resultI = 0;
 							}
 						}
+						if (isContained("open txt", arith)) {
+							replaceTimes = 1;
+							replace(" ", "", arith);
+							sprintf(arith, "%s", expressionF);
+						}
+						if (isContained("opentxt", arith)) {
+							if (isContained(" ", arith)) {
+								replaceTimes = 0;
+								replace(" ", "RASF", arith);
+								sprintf(arith, "%s", expressionF);
+							}
+						}
 						main_core(arith, arith, fin, path, result1, result2, 0);
 						if (verified == 1) {
 							result1 = resultR;
@@ -451,6 +477,16 @@ boolean processTxt(char path[DIM], int re) {
 }
 
 boolean dataVerifier(char data[DIM], double result1, double result2, int comment, int verify) {
+	int h = 0;
+	while (h < abs((int)strlen(data))) {
+		if (data[h] == '[' || data[h] == '{') {
+			data[h] = '(';
+		}
+		if (data[h] == ']' || data[h] == '}') {
+			data[h] = ')';
+		}
+		h++;
+	}
 	boolean decision = true;
 	if (abs((int)strlen(data)) > 0) {
 		int kg = 0, kc = 0, i = 0;
@@ -904,11 +940,53 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 								}
 							}
 							else {
-								decision = false;
-								if (comment == 1) {
-									printf("\nThe variable \"%s\" is not created yet.\n", saveVar);
+								char text[DIM] = "";
+								sprintf(text, "calc(%s)", saveVar);
+								if (isContained(text, data)) {
+									renamer(saveVar);
+									sprintf(saveVar, "%s", expressionF);
+									stringVariableToString(saveVar);
+									if (validVar == 0) {
+										if (comment == 1) {
+											printf("\nThe string variable \"%s\" is not created yet.\n", saveVar);
+										}
+										decision = false;
+									}
 								}
-								return decision;
+								else {
+									char text[DIM] = "";
+									sprintf(text, "strlen(%s)", saveVar);
+									if (isContained(text, data)) {
+										renamer(saveVar);
+										sprintf(saveVar, "%s", expressionF);
+										stringVariableToString(saveVar);
+										if (validVar == 0) {
+											if (comment == 1) {
+												printf("\nThe string variable \"%s\" is not created yet.\n", saveVar);
+											}
+											decision = false;
+										}
+									}
+									else {
+										char text[DIM] = "";
+										sprintf(text, "countoccurrences");
+										if (isContained(text, data)) {
+											if (!countOccurrences("\\", data) == 1) {
+												if (comment == 1) {
+													printf("\nThe string variable \"%s\" is not created yet.\n", saveVar);
+												}
+												decision = false;
+											}
+										}
+										else {
+											decision = false;
+											if (comment == 1) {
+												printf("\nThe variable \"%s\" is not created yet.\n", saveVar);
+											}
+											return decision;
+										}
+									}
+								}
 							}
 						}
 					}
@@ -1065,6 +1143,18 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				decision = true;
 				i = i + 3;
 			}
+			if (data[i] == 'a'&&data[i + 1] == 'b'&&data[i + 2] == 's') {
+				decision = true;
+				i = i + 2;
+			}
+			if (data[i] == 'c'&&data[i + 1] == 'a'&&data[i + 2] == 'l'&&data[i + 3] == 'c') {
+				decision = true;
+				i = i + 4;
+			}
+			if (data[i] == 's'&&data[i + 1] == 't'&&data[i + 2] == 'r'&&data[i + 3] == 'l'&&data[i + 4] == 'e'&&data[i + 5] == 'n') {
+				decision = true;
+				i = i + 5;
+			}
 			if (data[i] == 'a' || data[i] == 's'&&data[i - 1] != 'e'&&data[i - 2] != 'r' || data[i] == 'c' || data[i] == 't' || data[i] == 'g' || data[i] == 'd' || data[i] == 'l' || data[i] == 'q' || data[i] == 'r') {
 				decision = true;
 				j = 0;
@@ -1102,7 +1192,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 								return decision;
 							}
 						}
-						if (data[i] == 'b') {
+						if (data[i] == 'b'&&data[i - 1] != 'a'&&data[i + 1] != 's') {
 							k++;
 						}
 						if (k != 2) {
