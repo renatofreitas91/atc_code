@@ -67,7 +67,7 @@ void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		rootsToPolynomial(roots);
 	}
 	else {
-		sprintf(expressionF, "((%f+%fi)x+(%f+%fi))", 0.0, 0.0, lastDividerR, lastDividerI);
+		sprintf(expressionF, "((%f+%fi)x^1+(%f+%fi))", 0.0, 0.0, lastDividerR, lastDividerI);
 		if (isContained("+-", expressionF)) {
 			replaceTimes = 0;
 			replace("+-", "-", expressionF);
@@ -154,7 +154,7 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 				if (abs(LastDividerI) != 0 || abs(LastDividerR) != 0) {
 					multiplication(LastDividerR, LastDividerI, resultR, resultI);
 				}
-				sprintf(expressionF, "(%f+%fi)x+(%f+%fi)", LastDividerR, LastDividerI, resultR,
+				sprintf(expressionF, "(%f+%fi)x^1+(%f+%fi)", LastDividerR, LastDividerI, resultR,
 					resultI);
 				if (isContained("+-", expressionF)) {
 					replaceTimes = 0;
@@ -166,7 +166,7 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 				}
 			}
 			else {
-				sprintf(expressionF, "(%f+%fi)x+(%f+%fi)", 0.0, 0.0, lastDividerR, lastDividerI);
+				sprintf(expressionF, "(%f+%fi)x^1+(%f+%fi)", 0.0, 0.0, lastDividerR, lastDividerI);
 				if (isContained("+-", expressionF)) {
 					replaceTimes = 0;
 					replace("+-", "+_", expressionF);
@@ -202,7 +202,7 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 
 void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	isDivisible = true;
-	if ((!isEqual(polynomial_2, "((0+0i)x+(0+0i))") && isEqual(polynomial_1, "((0+0i)x+(0+0i))")) || (!isEqual(polynomial_2, "((0+0i))") && isEqual(polynomial_1, "((0+0i))"))) {
+	if ((!isEqual(polynomial_2, "((0+0i)x^1+(0+0i))") && isEqual(polynomial_1, "((0+0i)x^1+(0+0i))")) || (!isEqual(polynomial_2, "((0+0i))") && isEqual(polynomial_1, "((0+0i))"))) {
 		sprintf(expressionF, "(0+0i)");
 	}
 	else {

@@ -9,7 +9,6 @@ int replaceTimes = 0, processingOK = 1, executedSolver = 0, isFromMain = 0, solu
 clock_t start_processing, end_processing;
 
 void main(int argc, char *argv[]) {
-	isFromMain = 1;
 	char dataToSolve[DIM] = "";
 	FILE *fout = NULL;
 	int Colors = 1, tD = 0, i = 0;
@@ -122,7 +121,9 @@ void main(int argc, char *argv[]) {
 				processVariable("x");
 				variableController("x", 0);
 				sprintf(fTrig, "%s", arithTrig); verbose = 0;
+				isFromMain = 1;
 				main_core(arithTrig, fTrig, fout, path, result1, result2, 1);
+				isFromMain = 0;
 				sprintf(arithTrig, ""); sprintf(fTrig, "");
 				if (verified == 1) {
 					result1 = resultR;
@@ -487,6 +488,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 		}
 		h++;
 	}
+	replaceTimes = 0;
 	boolean decision = true;
 	if (abs((int)strlen(data)) > 0) {
 		int kg = 0, kc = 0, i = 0;
@@ -768,13 +770,21 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				decision = false;
 				return decision;
 			}
-			for (w = 0; data[w] != '\0'; w++) {
-				if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && (data[w + 1] == '+' || data[w + 1] == '-'&&data[w - 2] != '1'&&data[w - 1] != '0' || data[w + 1] == '*' || data[w + 1] == '/' || data[w + 1] == '^' || data[w + 1] == '!')) {
-					verify = 0;
-					if (comment == 1) {
-						puts("\nYour expression has consecutive arithmetic symbols.\n");
+			if (!isContained("nan*(1i*nd)+-nan*(1i*nd)*1i", data)) {
+				for (w = 0; data[w] != '\0'; w++) {
+					if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && (data[w + 1] == '+' || data[w + 1] == '-'&&data[w - 2] != '1'&&data[w - 1] != '0' || data[w + 1] == '*' || data[w + 1] == '/' || data[w + 1] == '^' || data[w + 1] == '!')) {
+						verify = 0;
+						if (comment == 1) {
+							puts("\nYour expression has consecutive arithmetic symbols.\n");
+						}
+						decision = false;
+						return decision;
 					}
-					decision = false;
+				}
+			}
+			else {
+				if (isEqual("nan*(1i*nd)+-nan*(1i*nd)*1i", data)) {
+					decision = true;
 					return decision;
 				}
 			}

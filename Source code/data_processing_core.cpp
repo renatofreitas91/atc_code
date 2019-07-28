@@ -958,6 +958,63 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 			}
 		}
 	}
+	if (expression[0] == '('&&expression[1] == '('&&isContained("))", expression) && !dataVerifier(expression, 0, 0, 0, 1)) {
+		int n = 0;
+		while (n < abs((int)strlen(expression))) {
+			expression[n] = expression[n + 1];
+			n++;
+		}
+		expression[n] = '\0';
+
+		if (expression[strlen(expression) - 1] == ')'&&expression[strlen(expression) - 2] == ')') {
+			expression[strlen(expression) - 1] = '\0';
+		}
+		else {
+			if (isContained("))", expression)) {
+				int n = strStart;
+				while (n < abs((int)strlen(expression))) {
+					expression[n] = expression[n + 1];
+					n++;
+				}
+				expression[n] = '\0';
+			}
+		}
+	}
+	replaceTimes = 1;
+	if (!dataVerifier(expression, 0, 0, 0, 1)) {
+		if (countOccurrences("(", expression) > countOccurrences(")", expression)) {
+			while (countOccurrences("(", expression) > countOccurrences(")", expression)) {
+				replaceTimes = 1;
+				if (isContained("((", expression)) {
+					replace("((", "(", expression);
+					sprintf(expression, "%s", expressionF);
+				}
+				else {
+					if (expression[0] == '(') {
+						replace("(", "", expression);
+						sprintf(expression, "%s", expressionF);
+					}
+				}
+
+			}
+		}
+	}
+	if (!dataVerifier(expression, 0, 0, 0, 1)) {
+		if (countOccurrences(")", expression) > countOccurrences("(", expression)) {
+			while (countOccurrences(")", expression) > countOccurrences("(", expression)) {
+				if (isContained("))", expression)) {
+					replace("))", ")", expression);
+					sprintf(expression, "%s", expressionF);
+				}
+				else {
+					if (expression[strlen(expression) - 1] == ')') {
+						expression[strlen(expression) - 1] = '\0';
+					}
+				}
+			}
+		}
+	}
+	replaceTimes = 0;
 	i = 0; j = 0;
 	sprintf(value, ""); sprintf(saveValue, "");
 	while (expression[i] != '\0') {
@@ -1627,7 +1684,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			while (verifyLetter(paTrig[u])) {
 				u++;
 			}
-			if (paTrig[u] != '\\'&&paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != ')'&&paTrig[u] != ']') {
+			if (paTrig[u] != '\\'&&paTrig[u] != '*'&&paTrig[u] != '+'&&paTrig[u] != '-'&&paTrig[u] != '/'&&paTrig[u] != '^'&&paTrig[u] != '!'&&paTrig[u] != ')') {
 				double check = 0;
 				if (verifyLetter(paTrig[u - 1])) {
 					int z = u - 1, v = 0;

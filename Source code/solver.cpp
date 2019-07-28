@@ -12,7 +12,6 @@ double solver(char expression[DIM]) {
 	char equation[DIM] = "", saveEquation[DIM] = "";
 	sprintf(saveEquation, "%s", expression);
 	sprintf(equation, "%s", expression);
-
 	if (isContained("\\", expression)) {
 		int d = 0, check_integral = 0;;
 		for (d = 0; expression[d] != '\0'; d++) {

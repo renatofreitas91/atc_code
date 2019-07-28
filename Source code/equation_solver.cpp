@@ -5,7 +5,7 @@
 
 #include "stdafx.h"
 
-boolean equationSolverRunning = false, polySimplifier = false, solveMultiPoly = false, simplifying = true;
+boolean equationSolverRunning = false, polySimplifier = false, solveMultiPoly = false, simplifying = true, progress = false;
 char charMaster[DIM] = "", roots[DIM] = "", answers[DIM] = "", polyNo[DIM] = "", stringHelper[DIM] = "";
 int parentPol[DIM];
 int rootIndex = 1, maxExponent = 0;
@@ -574,6 +574,7 @@ double equationSolver(char equation[DIM]) {
 				replace("X", "x", expressionF);
 				sprintf(equation, "%s", expressionF);
 			}
+			replaceTimes = 0;
 			if (isContained("[", equation)) {
 				replace("[", "(", equation);
 				sprintf(equation, "%s", expressionF);
@@ -582,7 +583,6 @@ double equationSolver(char equation[DIM]) {
 				replace("]", ")", equation);
 				sprintf(equation, "%s", expressionF);
 			}
-			replaceTimes = 0;
 			if (isContained("(((", equation)) {
 				replace("(((", "((", equation);
 				sprintf(equation, "%s", expressionF);
@@ -614,6 +614,17 @@ double equationSolver(char equation[DIM]) {
 					int u = countOccurrences(")", equation) - countOccurrences("(", equation);
 					if (u == 1) {
 						equation[strlen(equation) - 1] = '\0';
+					}
+				}
+				if (countOccurrences(")", equation) < countOccurrences("(", equation)) {
+					int u = countOccurrences("(", equation) - countOccurrences(")", equation);
+					if (u == 1) {
+						int b = 0;
+						while (b < abs((int)strlen(equation))) {
+							equation[b] = equation[b + 1];
+							b++;
+						}
+						equation[b] = '\0';
 					}
 				}
 			}
@@ -699,34 +710,46 @@ double equationSolver(char equation[DIM]) {
 			sprintf(toCalcX, "%s", expressionF);
 			sprintf(saveToCalcX, "%s", toCalcX);
 		}
+		char replacement[DIM] = "";
 		sprintf(toCalcX, "%s", saveToCalcX);
 		sprintf(saveToCalcX, "%s", toCalcX);
 		sprintf(toReplace, "(res)^%d", SaveMaxExponent - 1);
-		replace(toReplace, "(1)", toCalcX);
-		replace("res", "0", expressionF);
-		math_processor(expressionF);
+		sprintf(replacement, "(1)^%d", SaveMaxExponent - 1);
+		if (isContained(toReplace, toCalcX)) {
+			replace(toReplace, replacement, toCalcX);
+			replace("res", "0", expressionF);
+			math_processor(expressionF);
+		}
 		double firstElement = resultR - lastElement;
 		double firstElementI = resultI - lastElementI;
 		sprintf(toReplace, "(res)^%d", SaveMaxExponent - 2);
-		replace(toReplace, "(1)", toCalcX);
-		replace("res", "0", expressionF);
-		math_processor(expressionF);
+		sprintf(replacement, "(1)^%d", SaveMaxExponent - 2);
+		if (isContained(toReplace, toCalcX)) {
+			replace(toReplace, replacement, toCalcX);
+			replace("res", "0", expressionF);
+			math_processor(expressionF);
+		}
 		char toCalC[DIM] = "";
 		sprintf(toCalcX, "%s", saveToCalcX);
 		if (SaveMaxExponent != maxExponent) {
 			while (SaveMaxExponent > maxExponent) {
 				char toReplace[DIM] = "";
 				sprintf(toReplace, "(res)^%d", SaveMaxExponent);
-				replace(toReplace, "(0)", toCalcX);
-				sprintf(toCalcX, "%s", expressionF);
+				if (isContained(toReplace, toCalcX)) {
+					replace(toReplace, "(0)", toCalcX);
+					sprintf(toCalcX, "%s", expressionF);
+				}
 				SaveMaxExponent--;
 			}
 			sprintf(toReplace, "(res)^%d", SaveMaxExponent);
-			replace(toReplace, "(1)", toCalcX);
+			sprintf(replacement, "(1)^%d", SaveMaxExponent);
+			if (isContained(toReplace, toCalcX)) {
+				replace(toReplace, replacement, toCalcX);
+			}
 			if (isContained("res", expressionF)) {
 				replace("res", "0", expressionF);
+				math_processor(expressionF);
 			}
-			math_processor(expressionF);
 			resultR = resultR - lastElement;
 			resultI = resultI - lastElementI;
 			lastDividerR = resultR;
@@ -853,27 +876,38 @@ double equationSolver(char equation[DIM]) {
 				int x = 0;
 				resultR = 1;
 				resultI = 1;
+				if (progress) {
+					puts("");
+				}
 				int countSolutions = 0;
 				char value[DIM] = "";
 				int n = 0;
-				boolean notSolved = true;
-				while (notSolved&&n < 42) {
+				float local = 0;
+				boolean toSolve = true;
+				int step = 0;
+				if ((maxExponent * 10) < 100) {
+					step = 100 / (maxExponent * 10);
+				}
+				else {
+					step = (maxExponent * 10) / 100;
+				}
+				while (toSolve&&n < maxExponent * 10) {
 					g = 0;
 					countSolutions = 0;
 					replaceTimes = 0;
-					while (notSolved&&g < maxExponent) {
+					while (toSolve&&g < maxExponent) {
 						xValuesR = RootR[g];
 						xValuesI = RootI[g];
 						math_processor(toCalcX);
 						if (abs(resultR) < 1E-9&&abs(resultI) < 1E-9) {
 							countSolutions++;
 							if (countSolutions == maxExponent) {
-								notSolved = false;
+								toSolve = false;
 							}
 						}
 						double numR = resultR, numI = resultI, denR = 1, denI = 0;
 						int w = 0, h = 0;
-						while (notSolved&&w < maxExponent) {
+						while (toSolve&&w < maxExponent) {
 							if (w != g) {
 								subtraction(RootR[g], RootI[g], RootR[w], RootI[w]);
 								resultSubR[h] = resultR;
@@ -884,7 +918,7 @@ double equationSolver(char equation[DIM]) {
 						}
 						int k = h;
 						h = 1;
-						while (notSolved&&h < k) {
+						while (toSolve&&h < k) {
 							multiplication(resultSubR[0], resultSubI[0], resultSubR[h], resultSubI[h]);
 							resultSubR[0] = resultR;
 							resultSubI[0] = resultI;
@@ -899,6 +933,16 @@ double equationSolver(char equation[DIM]) {
 						g++;
 					}
 					n++;
+					if (progress == (boolean)true) {
+						float currentStep = (float)n*step;
+						while (toSolve&&local < currentStep) {
+							local = local + step;
+							printf("%c", 177);
+						}
+					}
+				}
+				if (progress) {
+					puts("\n");
 				}
 				g = 0;
 				while (g < maxExponent) {

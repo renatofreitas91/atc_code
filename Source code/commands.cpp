@@ -420,12 +420,16 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					sprintf(data, "%s+1-1", data);
 					simplifyExpression(data);
 					sprintf(data, "%s", expressionF);
+					progress = true;
 					equationSolver(data);
+					progress = false;
 					puts(answers);
 				}
 			}
 			else {
+				progress = true;
 				equationSolver(data);
+				progress = false;
 				puts("");
 				puts(expressionF);
 			}

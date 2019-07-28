@@ -4,8 +4,13 @@
 boolean studyFunction = false;
 
 void functionStudy(char function[DIM]) {
+	replaceTimes = 0;
+	if (isContained("(x)", function)) {
+		replace("(x)", "x", function);
+		sprintf(function, "%s", expressionF);
+	}
 	if (countOccurrences("/", function) > 1) {
-		puts("\nError: Simplify your fractions first. You only can insert a fraction (a numerator divided by a divider).\n");
+		puts("\nError: Simplify your fractions first. You only can insert a fraction (a numerator divided by a denominator).\n");
 	}
 	else {
 		studyFunction = true;
@@ -15,14 +20,6 @@ void functionStudy(char function[DIM]) {
 		sprintf(saveFunctionF, "%s", function);
 		char originalFunction[DIM] = "";
 		sprintf(originalFunction, "%s", function);
-		if (isContained("[", saveFunctionF)) {
-			replace("[", "(", saveFunctionF);
-			sprintf(saveFunctionF, "%s", expressionF);
-		}
-		if (isContained("]", saveFunctionF)) {
-			replace("]", ")", saveFunctionF);
-			sprintf(saveFunctionF, "%s", expressionF);
-		}
 		if (isContained("x", saveFunctionF)) {
 			replaceTimes = 1;
 			if (saveFunctionF[strEnd] != '^') {
@@ -52,51 +49,43 @@ void functionStudy(char function[DIM]) {
 				h++;
 			}
 			denominator[g] = '\0';
-			if (isContained("(((", numerator)) {
+			if (isContained("((", numerator) && !dataVerifier(numerator, 0, 0, 0, 1)) {
+				replace("((", "(", numerator);
+				sprintf(numerator, "%s", expressionF);
+			}
+			if (isContained("))", numerator) && !dataVerifier(numerator, 0, 0, 0, 1)) {
+				replace("))", ")", numerator);
+				sprintf(numerator, "%s", expressionF);
+			}
+			if (isContained("(((", numerator) && !dataVerifier(numerator, 0, 0, 0, 1)) {
 				replace("(((", "((", numerator);
 				sprintf(numerator, "%s", expressionF);
 			}
-			if (isContained(")))", numerator)) {
+			if (isContained(")))", numerator) && !dataVerifier(numerator, 0, 0, 0, 1)) {
 				replace(")))", "))", numerator);
 				sprintf(numerator, "%s", expressionF);
 			}
-			if (isContained("(((", denominator)) {
+			if (isContained("(((", denominator) && !dataVerifier(denominator, 0, 0, 0, 1)) {
 				replace("(((", "((", denominator);
 				sprintf(denominator, "%s", expressionF);
 			}
-			if (isContained(")))", denominator)) {
+			if (isContained(")))", denominator) && !dataVerifier(denominator, 0, 0, 0, 1)) {
 				replace(")))", "))", denominator);
 				sprintf(denominator, "%s", expressionF);
 			}
 			sprintf(saveFunctionF, "(%s)/(%s)", numerator, denominator);
-			if (isContained("((", saveFunctionF)) {
+			if (isContained("((", saveFunctionF) && !dataVerifier(saveFunctionF, 0, 0, 0, 1)) {
 				replace("((", "(", saveFunctionF);
 				sprintf(saveFunctionF, "%s", expressionF);
 			}
 			simplifyExpression(numerator);
-			sprintf(numerator, "(%s)*(0x^1+1)", expressionF);
+			sprintf(numerator, "%s*(0x^1+1)", expressionF);
 			simpleSimplifyPolynomial(numerator);
 			sprintf(numerator, "%s", expressionF);
-			if (isContained("[", numerator)) {
-				replace("[", "(", numerator);
-				sprintf(numerator, "%s", expressionF);
-			}
-			if (isContained("]", numerator)) {
-				replace("]", ")", numerator);
-				sprintf(numerator, "%s", expressionF);
-			}
 			simplifyExpression(denominator);
 			sprintf(denominator, "(%s)*(0x^1+1)", expressionF);
 			simpleSimplifyPolynomial(denominator);
 			sprintf(denominator, "%s", expressionF);
-			if (isContained("[", denominator)) {
-				replace("[", "(", denominator);
-				sprintf(denominator, "%s", expressionF);
-			}
-			if (isContained("]", denominator)) {
-				replace("]", ")", denominator);
-				sprintf(denominator, "%s", expressionF);
-			}
 		}
 		else {
 			simplifyExpression(saveFunctionF);
@@ -515,6 +504,8 @@ void functionStudy(char function[DIM]) {
 			}
 			removeTriplPars(numerator);
 			sprintf(numerator, "%s", expressionF);
+			removeDuplPars(numerator);
+			sprintf(numerator, "%s", expressionF);
 			printf("\nNumerator-> %s\n", numerator);
 			sprintf(expressionF, "(%s)*(0x^1+1)", numerator);
 			sprintf(numerator, "%s", expressionF);
@@ -871,14 +862,22 @@ void functionStudy(char function[DIM]) {
 			}
 			sprintf(new_numerator_1, "(%s)*%s", denominator, de_numerator);
 			sprintf(new_numerator_2, "%s*%s", numerator, de_denominator);
+			removeTriplPars(new_numerator_1);
+			sprintf(new_numerator_1, "%s", expressionF);
 			simpleSimplifyPolynomial(new_numerator_1);
 			sprintf(new_numerator_1, "%s", expressionF);
+			removeTriplPars(new_numerator_2);
+			sprintf(new_numerator_2, "%s", expressionF);
 			simpleSimplifyPolynomial(new_numerator_2);
 			sprintf(new_numerator_2, "%s", expressionF);
 			sprintf(new_numerator, "%s-%s", new_numerator_1, new_numerator_2);
+			removeTriplPars(new_numerator);
+			sprintf(new_numerator, "%s", expressionF);
 			simpleSimplifyPolynomial(new_numerator);
 			sprintf(new_numerator, "%s", expressionF);
 			sprintf(new_denominator, "(%s)*(%s)", denominator, denominator);
+			removeTriplPars(new_denominator);
+			sprintf(new_denominator, "%s", expressionF);
 			simpleSimplifyPolynomial(new_denominator);
 			sprintf(new_denominator, "%s", expressionF);
 			if (isContained("x^1)", new_numerator) && strlen(new_numerator) == strEnd) {
@@ -891,6 +890,8 @@ void functionStudy(char function[DIM]) {
 			printf("\nf'(x)=%s\n", new_derivate);
 			printf("\nx\t-inf\t");
 			replaceTimes = 0;
+			removeDuplPars(new_numerator);
+			sprintf(new_numerator, "%s", expressionF);
 			equationSolver(new_numerator);
 			int i = 0, j = 0, z = 0;
 			double zeroR[dim], zeroI[dim];
@@ -981,6 +982,10 @@ void functionStudy(char function[DIM]) {
 			printf("\nf'(x)\t");
 			resultR = sortZeroR[0] - 1000; resultI = 0;
 			variableController("x", 0);
+			removeDuplPars(new_numerator);
+			sprintf(new_numerator, "%s", expressionF);
+			removeDuplPars(new_denominator);
+			sprintf(new_denominator, "%s", expressionF);
 			resultR = math_processor(new_numerator) / math_processor(new_denominator);
 			if (resultR >= 0) {
 				printf("+\t");
