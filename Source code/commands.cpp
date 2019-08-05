@@ -403,7 +403,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			exprDev[tGet] = '\0';
 			polySimplifier = false;
 			char data[DIM] = "";
-			sprintf(data, "%s", exprDev);
+			sprintf(data, "%s+1-1", exprDev);
 			sprintf(saveExpressionF, "%s", data);
 			if (!isContained("\\", data)) {
 				synTest = 0;
@@ -417,7 +417,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					sprintf(saveSimplified, "");
 					sprintf(saveSimplification, "");
 					sprintf(expressionF, "");
-					sprintf(data, "%s+1-1", data);
+					sprintf(data, "%s", data);
 					simplifyExpression(data);
 					sprintf(data, "%s", expressionF);
 					progress = true;

@@ -943,6 +943,10 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 								}
 								else {
 									decision = false;
+									if (isEqual("nan", saveVar)) {
+										decision = true;
+										return decision;
+									}
 									if (comment == 1) {
 										printf("\nThe variable \"%s\" is not created yet.\n", saveVar);
 									}
@@ -990,6 +994,10 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 										}
 										else {
 											decision = false;
+											if (isEqual("nan", saveVar)) {
+												decision = true;
+												return decision;
+											}
 											if (comment == 1) {
 												printf("\nThe variable \"%s\" is not created yet.\n", saveVar);
 											}

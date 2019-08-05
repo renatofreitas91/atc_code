@@ -39,6 +39,7 @@ char* getDerivative(char expression[DIM]) {
 			}
 		}
 	}
+	replaceTimes = 1;
 	while (isContained("x^", saveExpression)) {
 		sprintf(value, "");
 		i = strStart - 2;
@@ -73,6 +74,10 @@ char* getDerivative(char expression[DIM]) {
 		sprintf(saveExpression, "%s", expressionF);
 		replace(to_replace, "", saveExpression);
 		sprintf(saveExpression, "%s", expressionF);
+		if (isContained("++", saveExpression)) {
+			replace("++", "0", saveExpression);
+			sprintf(saveExpression, "%s", expressionF);
+		}
 	}
 	i = 0;
 	sprintf(saveExpression, "");

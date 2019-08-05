@@ -58,7 +58,7 @@ double solver(char expression[DIM]) {
 
 	if (to_solve) {
 		if (poly) {
-			sprintf(saveEquation, "%s", expression);
+			sprintf(saveEquation, "%s+1-1", expression);
 			sprintf(equation, "%s", expression);
 			equation_solver = true;
 			resultR = 0; resultI = 0;
