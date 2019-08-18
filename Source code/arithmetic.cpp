@@ -47,7 +47,8 @@ double abs_complex(double real, double imaginary) {
 		return real;
 	}
 	else {
-		exponentiation(pot(real, 2.0, 1) + pot(imaginary, 2.0, 1), 0.0, 0.5, 0.0, 1);
+		resultR = pot(real, 2.0, 1) + pot(imaginary, 2.0, 1);
+		resultR = pot(resultR, 0.5, 1);
 		resultI = 0;
 		return resultR;
 	}

@@ -1141,7 +1141,7 @@ void functionStudy(char function[DIM]) {
 			char * d_numerator = getDerivative(new_numerator);
 			char de_numerator[DIM] = "";
 			sprintf(de_numerator, "%s", d_numerator);
-			sprintf(saveFunctionF, "(%s)/%s", new_numerator, new_denominator);
+			sprintf(saveFunctionF, "(%s)/(%s)", new_numerator, new_denominator);
 			printf("\nf'(x)=%s\n", saveFunctionF);
 			char * d_denominator = getDerivative(new_denominator);
 			char de_denominator[DIM] = "";

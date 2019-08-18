@@ -51,6 +51,7 @@ void getNumerationPol(char expression[DIM]);
 void simplifyPolynomial(char expression[DIM]);
 void split(char splitter[DIM], char data[DIM]);
 void simpleSimplifyPolynomial(char expression[DIM]);
+void decrementPoly(char toCalcX[DIM], char expression[DIM], double resR, double resI);
 void variableController(char variable[DIM], double result);
 void manageExpression(char arithTrig[DIM], double result1, double result2, int verify);
 void decimalToBinary(double decimal, char path[DIM], int bp);
