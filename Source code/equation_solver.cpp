@@ -416,14 +416,7 @@ void rootsToPolynomial(char rootsF[DIM]) {
 		}
 	}
 }
-//old
 
-
-
-
-
-
-//latest
 double equationSolver(char equation[DIM]) {
 	char saveToCalcX[DIM] = "";
 	char originalEquation[DIM] = "";

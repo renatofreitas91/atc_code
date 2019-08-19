@@ -121,9 +121,7 @@ void main(int argc, char *argv[]) {
 				processVariable("x");
 				variableController("x", 0);
 				sprintf(fTrig, "%s", arithTrig); verbose = 0;
-				isFromMain = 1;
 				main_core(arithTrig, fTrig, fout, path, result1, result2, 1);
-				isFromMain = 0;
 				sprintf(arithTrig, ""); sprintf(fTrig, "");
 				if (verified == 1) {
 					result1 = resultR;

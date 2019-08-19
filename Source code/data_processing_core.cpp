@@ -958,6 +958,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 			}
 		}
 	}
+
 	if (expression[0] == '('&&expression[1] == '('&&isContained("))", expression) && !dataVerifier(expression, 0, 0, 0, 1)) {
 		int n = 0;
 		while (n < abs((int)strlen(expression))) {
@@ -980,7 +981,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 			}
 		}
 	}
-	replaceTimes = 1;
+	replaceTimes = 0;
 	if (!dataVerifier(expression, 0, 0, 0, 1)) {
 		if (countOccurrences("(", expression) > countOccurrences(")", expression)) {
 			while (countOccurrences("(", expression) > countOccurrences(")", expression)) {
@@ -999,6 +1000,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 			}
 		}
 	}
+	replaceTimes = 0;
 	if (!dataVerifier(expression, 0, 0, 0, 1)) {
 		if (countOccurrences(")", expression) > countOccurrences("(", expression)) {
 			while (countOccurrences(")", expression) > countOccurrences("(", expression)) {
@@ -1009,6 +1011,11 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 				else {
 					if (expression[strlen(expression) - 1] == ')') {
 						expression[strlen(expression) - 1] = '\0';
+					}
+					else {
+						if (expression[strlen(expression) - 1] == '0'&&expression[strlen(expression) - 2] == '+'&&expression[strlen(expression) - 3] == ')'&&isContained(";", expression)) {
+							expression[strlen(expression) - 3] = '\0';
+						}
 					}
 				}
 			}
