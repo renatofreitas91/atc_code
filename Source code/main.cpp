@@ -44,6 +44,7 @@ void main(int argc, char *argv[]) {
 					executedSolver = 0;
 					cls();
 				}
+				getReady();
 				gets_s(trigData);
 				start_processing = clock();
 				system("title Advanced Trigonometry Calculator v2.0.4       ==) Processing... (==");

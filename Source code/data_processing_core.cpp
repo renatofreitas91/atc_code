@@ -4,7 +4,7 @@
 HANDLE hStdin;
 DWORD fdwSaveOldMode;
 int strStart = 0, strEnd = 0;
-
+using namespace std;
 void numSystemsController() {
 	FILE *open;
 	int state = -1;
@@ -1013,7 +1013,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 						expression[strlen(expression) - 1] = '\0';
 					}
 					else {
-						if (expression[strlen(expression) - 1] == '0'&&expression[strlen(expression) - 2] == '+'&&expression[strlen(expression) - 3] == ')'&&isContained(";", expression)) {
+						if (expression[strlen(expression) - 1] == '0'&&expression[strlen(expression) - 2] == '+'&&expression[strlen(expression) - 3] == ')') {
 							expression[strlen(expression) - 3] = '\0';
 						}
 					}
@@ -4121,6 +4121,60 @@ int trackMouse() {
 	leftClick();
 	MouseMove(p.x, p.y);
 	return 0;
+}
+
+void getReady() {
+	int x, y, maxX, maxY, saveX = 0, saveY = 0;
+	int pressed = 0;
+	POINT p;
+	char validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_;";
+	do {
+		GetWindowPos(&x, &y, &maxX, &maxY);
+		GetCursorPos(&p);
+		if (WindowFromPoint(p) == GetConsoleWindow()) {
+			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
+				leftClick();
+			}
+		}
+		for (int cha = 0; cha < abs((int)strlen(validChars)); cha++) {
+			if (GetKeyState(validChars[cha]) < 0) {
+				pressed = 1;
+			}
+		}
+		if (GetKeyState(VK_LBUTTON) < 0 && saveX != p.x&&saveY != p.y) {
+			while (GetKeyState(VK_LBUTTON) < 0) {
+				Sleep(100);
+			}
+			GetWindowPos(&x, &y, &maxX, &maxY);
+			GetCursorPos(&p);
+			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
+				GetActiveWindow();
+				leftClick();
+				GetWindowPos(&x, &y, &maxX, &maxY);
+				GetCursorPos(&p);
+				GetActiveWindow();
+				leftClick();
+				pressed = 1;
+				INPUT  Input = { 0 };
+				Input.type = INPUT_KEYBOARD;
+				Input.ki.wVk = VK_RETURN;
+				SendInput(1, &Input, sizeof(INPUT));
+			}
+		}
+		saveX = p.x;
+		saveY = p.y;
+		Sleep(100);
+	} while (pressed == 0);
+}
+
+void GetWindowPos(int *x, int *y, int *maxX, int *maxY) {
+	RECT rect = { NULL };
+	if (GetWindowRect(GetConsoleWindow(), &rect)) {
+		*x = rect.left;
+		*y = rect.top;
+		*maxX = rect.right;
+		*maxY = rect.bottom;
+	}
 }
 
 void MouseMove(int x, int y)
