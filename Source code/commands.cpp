@@ -423,6 +423,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					progress = true;
 					equationSolver(data);
 					progress = false;
+					puts("");
 					puts(answers);
 				}
 			}

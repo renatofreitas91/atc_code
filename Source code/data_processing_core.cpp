@@ -4124,7 +4124,7 @@ int trackMouse() {
 }
 
 void getReady() {
-	int x, y, maxX, maxY, saveX = 0, saveY = 0;
+	int x, y, maxX, maxY, saveX, saveY;
 	int pressed = 0;
 	POINT p;
 	char validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_;";
@@ -4141,17 +4141,13 @@ void getReady() {
 				pressed = 1;
 			}
 		}
-		if (GetKeyState(VK_LBUTTON) < 0 && saveX != p.x&&saveY != p.y) {
+		if (GetKeyState(VK_LBUTTON) < 0) {
 			while (GetKeyState(VK_LBUTTON) < 0) {
-				Sleep(100);
+				Sleep(50);
 			}
 			GetWindowPos(&x, &y, &maxX, &maxY);
 			GetCursorPos(&p);
-			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
-				GetActiveWindow();
-				leftClick();
-				GetWindowPos(&x, &y, &maxX, &maxY);
-				GetCursorPos(&p);
+			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50 && p.x != saveX && p.y != saveY) {
 				GetActiveWindow();
 				leftClick();
 				pressed = 1;
@@ -4161,9 +4157,21 @@ void getReady() {
 				SendInput(1, &Input, sizeof(INPUT));
 			}
 		}
+		if (GetKeyState(VK_RBUTTON) < 0) {
+			while (GetKeyState(VK_RBUTTON) < 0) {
+				Sleep(50);
+			}
+			GetWindowPos(&x, &y, &maxX, &maxY);
+			GetCursorPos(&p);
+			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
+				GetActiveWindow();
+				leftClick();
+				pressed = 1;
+			}
+		}
 		saveX = p.x;
 		saveY = p.y;
-		Sleep(100);
+		Sleep(50);
 	} while (pressed == 0);
 }
 

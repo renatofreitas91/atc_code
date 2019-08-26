@@ -4,13 +4,25 @@
 #include "calc.h"
 
 void sum(double numR, double numI, double denR, double denI) {
-	resultR = numR + denR;
-	resultI = numI + denI;
+	if (numI == 0 && denI == 0) {
+		resultR = numR + denR;
+		resultI = 0;
+	}
+	else {
+		resultR = numR + denR;
+		resultI = numI + denI;
+	}
 }
 
 void subtraction(double numR, double numI, double denR, double denI) {
-	resultR = numR - denR;
-	resultI = numI - denI;
+	if (numI == 0 && denI == 0) {
+		resultR = numR - denR;
+		resultI = 0;
+	}
+	else {
+		resultR = numR - denR;
+		resultI = numI - denI;
+	}
 }
 
 void multiplication(double numR, double numI, double denR, double denI) {
