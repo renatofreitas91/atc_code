@@ -4,10 +4,11 @@
 #include "atc_functions.h"
 
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
-char atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
+char lastCommand[DIM], atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
 int replaceTimes = 0, processingOK = 1, executedSolver = 0, isFromMain = 0, solutioned = 0, verify = 0, arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
 clock_t start_processing, end_processing;
-
+char validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_;";
+int toSendCommand = 0;
 void main(int argc, char *argv[]) {
 	char dataToSolve[DIM] = "";
 	FILE *fout = NULL;
@@ -25,11 +26,11 @@ void main(int argc, char *argv[]) {
 		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v2.0.4");
+		system("title Advanced Trigonometry Calculator v2.0.5");
 		continu = about();
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v2.0.4       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v2.0.5       ==) ATC is ready to process data. (==");
 		do {
 			resultR = 0; resultI = 0;
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
@@ -39,15 +40,23 @@ void main(int argc, char *argv[]) {
 			toSolve(rf);
 			if (argc < 2) {
 				sprintf(trigData, "");
-				printf(">");
+				Pressed = 0;
 				if (executedSolver == 1) {
 					executedSolver = 0;
 					cls();
 				}
+				printf(">");
 				getReady();
-				gets_s(trigData);
+				if (Pressed == 2) {
+					sprintf(trigData, "%s", expressionF);
+					printf("%s\n", trigData);
+				}
+				if (Pressed == 1) {
+					gets_s(trigData);
+				}
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v2.0.4       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v2.0.5       ==) Processing... (==");
+
 			}
 			else {
 				arG = 1;
@@ -211,7 +220,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v2.0.4       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v2.0.5       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -598,14 +607,12 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 		}
 		int j = 0, k = 0, l = 0, kr = 0, kl = 0, v = 0, cChars = 0, fr = 0, ra = 0, nDot = 0, g = 0, d = 0, w = 0, y = 0, t = 0, space = 0;
 		char function[DIM] = "", variable[DIM] = "", expression[DIM] = "", text[DIM] = "", value[DIM] = "", saveVar[DIM] = "";
-		char validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_;";
 		char numsysData[DIM] = "";
 		int u = 0, p = 0;
 		if (synTest == 0) {
 			int y = 0, r = 0;
 			char funcToCheck[DIM] = "";
 			if (isContained("logb", data)) {
-
 				y = strStart;
 				while ((data[y - 1] == 'b'&&data[y] == '(') == false && data[y] != '\0') {
 					y++;

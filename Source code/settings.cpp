@@ -6,19 +6,14 @@ boolean starting = true;
 
 void colors() {
 	FILE *open;
-	char bGround = ' ', cTxt = ' ', express[DIM] = "color 73", value[DIM] = "";
+	char bGround = ' ', cTxt = ' ', express[DIM] = "color 73";
 	printf("\n Symbol -> Color corresponding to\n\n 0 -> black\n 1 -> blue\n 2 -> green\n 3 -> aqua\n 4 -> red\n 5 -> purple\n 6 -> yellow\n 7 -> white\n 8 -> gray\n 9 -> light blue\n a -> light green\n b -> light aqua\n c -> light red\n d -> light purple\n e -> light yellow\n f -> bright white\n\n");
 	printf("Background color: ");
-	while (strlen(value) != 1) {
-		gets_s(value);
-	}
-	bGround = value[0];
-	value[0] = '\0';
+	bGround = _getch();
+	printf("%c\n", bGround);
 	printf("Text color: ");
-	while (strlen(value) != 1) {
-		gets_s(value);
-	}
-	cTxt = value[0];
+	cTxt = _getch();
+	printf("%c\n", cTxt);
 	express[6] = bGround;
 	express[7] = cTxt;
 	printf("\n");
@@ -99,7 +94,7 @@ void mode() {
 }
 
 void about2() {
-	system("title Advanced Trigonometry Calculator v2.0.4");
+	system("title Advanced Trigonometry Calculator v2.0.5");
 	system("MODE con cols=90 lines=15");
 	cls();
 	FILE *open = NULL;
@@ -116,7 +111,7 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v2.0.4                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v2.0.5                                                             ==) Enter data (==              ");
 }
 
 void graphSettings() {
@@ -377,7 +372,7 @@ int applySettings(int toDo) {
 
 boolean about() {
 	ShowConsoleCursor(FALSE);
-	system("title Advanced Trigonometry Calculator v2.0.4");
+	system("title Advanced Trigonometry Calculator v2.0.5");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
@@ -404,11 +399,11 @@ boolean about() {
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("                                  %c%c%c%c%c   %c%c%c%c%c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                                      %c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177);
+	printf("                                  %c%c%c%c%c   %c%c%c%c%c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                                      %c   %c   %c   %c   \n", 177, 177, 177, 177);
 	printf("                            %c   %c %c%c%c%c%c   %c   %c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("                             %c %c  %c       %c   %c       %c\n", 177, 177, 177, 177, 177, 177);
-	printf("                              %c   %c%c%c%c%c %c %c%c%c%c%c %c     %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                              %c   %c%c%c%c%c %c %c%c%c%c%c %c %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n                                    Made in Portugal\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
 	trackMouse();
@@ -429,6 +424,19 @@ boolean about() {
 		int Window = 3, Dimensions = 2;
 		applySettings(Window);
 		applySettings(Dimensions);
+		char commandF[400] = "";
+		using namespace std;
+		if (!IsPreviousToWindowsVista()) {
+			sprintf(commandF, "%s\\atc_commander.exe", atcPath);
+		}
+		else {
+			sprintf(commandF, "%s\\atc_commander_xp.exe", atcPath);
+		}
+		std::string S = string(commandF);
+		std::wstring STEMP = std::wstring(S.begin(), S.end());
+		LPCWSTR SW = STEMP.c_str();
+		ShellExecute(NULL, _T("open"), SW, NULL, NULL, SW_SHOW);
 	}
+
 	return continu;
 }

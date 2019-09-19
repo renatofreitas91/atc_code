@@ -418,8 +418,12 @@ void rootsToPolynomial(char rootsF[DIM]) {
 }
 
 
-
 double equationSolver(char equation[DIM]) {
+	replaceTimes = 0;
+	if (isContained("+)", equation)) {
+		replace("+)", "+0)", equation);
+		sprintf(equation, "%s", expressionF);
+	}
 	char saveToCalcX[DIM] = "";
 	char originalEquation[DIM] = "";
 	sprintf(originalEquation, "%s", equation);
@@ -2018,6 +2022,9 @@ void simplifyExpression(char data[DIM]) {
 								sprintf(num, "%s", expressionF);
 							}
 							replaceTimes = 1;
+							if (abs((int)strlen(num)) == 0) {
+								sprintf(num, "0");
+							}
 							sprintf(toReplace, "(0x+%s)*", num);
 							replaceTimes = 1;
 							replace(new_expression, toReplace, expression);
@@ -2146,12 +2153,18 @@ void simplifyExpression(char data[DIM]) {
 							char toReplace[DIM] = "";
 							math_processor(num);
 							sprintf(num, "%G+%Gi", resultR, resultI);
+							if (abs((int)strlen(num)) == 0) {
+								sprintf(num, "0");
+							}
 							replaceTimes = 0;
 							if (isContained("-", num)) {
 								replace("-", "_", num);
 								sprintf(num, "%s", expressionF);
 							}
 							replaceTimes = 1;
+							if (abs((int)strlen(num)) == 0) {
+								sprintf(num, "0");
+							}
 							if (expression[i] == '/') {
 								sprintf(toReplace, "%s*(0x+%s)/", extractText, num);
 							}
@@ -2485,9 +2498,12 @@ void simplifyExpression(char data[DIM]) {
 							v++; y++;
 						}
 						dataBeforeX[v] = '\0';
+						if (abs((int)strlen(dataBeforeX)) == 0) {
+							sprintf(dataBeforeX, "0");
+						}
 						char saveDataBeforeX[DIM] = "";
 						sprintf(saveDataBeforeX, "%s*x", dataBeforeX);
-						sprintf(expressionF, "(0x+%s)(x+0)", dataBeforeX);
+						sprintf(expressionF, "(0x+%s)*(x+0)", dataBeforeX);
 						simpleSimplifyPolynomial(expressionF);
 						removeTriplPars(expressionF);
 						replaceTimes = 0;

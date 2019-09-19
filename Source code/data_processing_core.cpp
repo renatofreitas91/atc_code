@@ -3,7 +3,7 @@
 #include "stdafx.h"
 HANDLE hStdin;
 DWORD fdwSaveOldMode;
-int strStart = 0, strEnd = 0;
+int strStart = 0, strEnd = 0, Pressed = 0;
 using namespace std;
 void numSystemsController() {
 	FILE *open;
@@ -4123,12 +4123,13 @@ int trackMouse() {
 	return 0;
 }
 
-void getReady() {
+int getReady() {
 	int x, y, maxX, maxY, saveX, saveY;
-	int pressed = 0;
-	POINT p;
-	char validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_;";
+	Pressed = 0;
 	do {
+		fflush(NULL);
+		FILE *open = NULL;
+		POINT p;
 		GetWindowPos(&x, &y, &maxX, &maxY);
 		GetCursorPos(&p);
 		if (WindowFromPoint(p) == GetConsoleWindow()) {
@@ -4138,41 +4139,76 @@ void getReady() {
 		}
 		for (int cha = 0; cha < abs((int)strlen(validChars)); cha++) {
 			if (GetKeyState(validChars[cha]) < 0) {
-				pressed = 1;
+				HKL KeyBoard = GetKeyboardLayout(0);
+				Pressed = 1;
+				INPUT input = { 0 };
+				input.type = INPUT_KEYBOARD;
+				input.ki.time = 0;
+				input.ki.dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP;
+				input.ki.wScan = 0;
+				input.ki.wVk = VkKeyScanEx(validChars[cha], KeyBoard);
+				input.ki.dwExtraInfo = 0;
+				SendInput(1, &input, sizeof(INPUT));
 			}
+
 		}
 		if (GetKeyState(VK_LBUTTON) < 0) {
 			while (GetKeyState(VK_LBUTTON) < 0) {
-				Sleep(50);
+				Sleep(100);
 			}
 			GetWindowPos(&x, &y, &maxX, &maxY);
 			GetCursorPos(&p);
 			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50 && p.x != saveX && p.y != saveY) {
 				GetActiveWindow();
 				leftClick();
-				pressed = 1;
-				INPUT  Input = { 0 };
-				Input.type = INPUT_KEYBOARD;
-				Input.ki.wVk = VK_RETURN;
-				SendInput(1, &Input, sizeof(INPUT));
+				Pressed = 1;
+				INPUT ip;
+				ip.type = INPUT_KEYBOARD;
+				ip.ki.time = 0;
+				ip.ki.dwFlags = KEYEVENTF_UNICODE;
+				ip.ki.wScan = VK_RETURN;
+				ip.ki.wVk = 0;
+				ip.ki.dwExtraInfo = 0;
+				SendInput(1, &ip, sizeof(INPUT));
 			}
 		}
 		if (GetKeyState(VK_RBUTTON) < 0) {
 			while (GetKeyState(VK_RBUTTON) < 0) {
-				Sleep(50);
+				Sleep(100);
 			}
 			GetWindowPos(&x, &y, &maxX, &maxY);
 			GetCursorPos(&p);
 			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
 				GetActiveWindow();
 				leftClick();
-				pressed = 1;
+				Pressed = 1;
+			}
+		}
+		char readCommand[DIM] = "";
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\sendCommand.txt", atcPath);
+		int i = 0;
+		open = NULL;
+		open = fopen(toOpen, "r");
+		if (open != NULL) {
+			for (i = 0; (readCommand[i] = fgetc(open)) != EOF; i++);
+			readCommand[i] = '\0';
+			fclose(open);
+			open = NULL;
+			while (open == NULL) {
+				open = fopen(toOpen, "w");
+			}
+			fclose(open);
+			if (abs((int)strlen(readCommand)) > 0) {
+				sprintf(expressionF, "%s", readCommand);
+				Pressed = 2;
 			}
 		}
 		saveX = p.x;
 		saveY = p.y;
-		Sleep(50);
-	} while (pressed == 0);
+		Sleep(100);
+	} while (Pressed == 0);
+	return 0;
 }
 
 void GetWindowPos(int *x, int *y, int *maxX, int *maxY) {
@@ -4232,4 +4268,40 @@ void split(char splitter[DIM], char data[DIM]) {
 		}
 		splitResult[y][x] = '\0';
 	}
+}
+
+void clearKeyboardBuffer()
+{
+	while (_kbhit())
+	{
+		_getche();
+	}
+}
+
+void ClearConsoleInputBuffer()
+{
+	PINPUT_RECORD ClearingVar1 = new INPUT_RECORD[256];
+	DWORD ClearingVar2;
+	ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE), ClearingVar1, 256, &ClearingVar2);
+	delete[] ClearingVar1;
+}
+
+void show(HWND hwnd)
+{
+	WINDOWPLACEMENT place = { sizeof(WINDOWPLACEMENT) };
+	GetWindowPlacement(hwnd, &place);
+	switch (place.showCmd)
+	{
+	case SW_SHOWMAXIMIZED:
+		ShowWindow(hwnd, SW_SHOWMAXIMIZED);
+		break;
+	case SW_SHOWMINIMIZED:
+		ShowWindow(hwnd, SW_RESTORE);
+		break;
+	default:
+		ShowWindow(hwnd, SW_NORMAL);
+		break;
+	}
+	SetWindowPos(0, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOMOVE);
+	SetForegroundWindow(hwnd);
 }

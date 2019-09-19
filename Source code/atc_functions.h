@@ -19,15 +19,18 @@ void wait(int seconds);
 void on_start();
 void addATCPath();
 void getATCPath();
+void ClearConsoleInputBuffer();
 void graphSettings();
 void getCharArray();
+void clearKeyboardBuffer();
 int toSolve(int re);
 void ShowConsoleCursor(BOOL bShow);
 void GetWindowPos(int *x, int *y, int *maxX, int *maxY);
 void verboseResolutionController();
 void complexNumber(double a, double b);
 void idColorToName(char color);
-void getReady();
+void show(HWND hwnd);
+int getReady();
 void microeconomicsCalculations();
 boolean letterVariables(char letter);
 boolean firstLetterVariable(char letter);
@@ -45,3 +48,4 @@ int datePreciser(double day, double month, double year, double dayS, double mont
 int applySettings(int toDo);
 double prefToNumber(char prefix);
 char character_to_prefDet(double n);
+
