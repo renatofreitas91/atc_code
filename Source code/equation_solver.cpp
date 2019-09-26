@@ -918,14 +918,19 @@ double equationSolver(char equation[DIM]) {
 				int step = 0;
 				int saveProgress = 0;
 				int Progress = 0;
-				while (n < 77 && countSolutions != maxExponent) {
+				double restR = 1;
+				while (n < 77 && countSolutions < maxExponent) {
 					g = 0;
 					replaceTimes = 0;
 					while (g < maxExponent) {
+						if (!isFirstDegree) {
+							re_complex(lastElement, lastElementI, RootR[g], RootI[g]);
+							restR = resultR;
+						}
 						xValuesR = RootR[g];
 						xValuesI = RootI[g];
 						math_processor(toCalcX);
-						if (resultR == 0 && resultI == 0 && solved[g] == 0) {
+						if ((resultR == 0 || restR == 0) && resultI == 0 && solved[g] == 0) {
 							solved[g] = 1;
 							countSolutions++;
 						}
@@ -1276,6 +1281,8 @@ double equationSolver(char equation[DIM]) {
 	solving = true;
 	return 0;
 }
+
+
 
 
 void simpleSimplifyPolynomial(char expression[DIM]) {

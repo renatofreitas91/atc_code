@@ -4137,20 +4137,21 @@ int getReady() {
 				leftClick();
 			}
 		}
-		for (int cha = 0; cha < abs((int)strlen(validChars)); cha++) {
-			if (GetKeyState(validChars[cha]) < 0) {
-				HKL KeyBoard = GetKeyboardLayout(0);
-				Pressed = 1;
-				INPUT input = { 0 };
-				input.type = INPUT_KEYBOARD;
-				input.ki.time = 0;
-				input.ki.dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP;
-				input.ki.wScan = 0;
-				input.ki.wVk = VkKeyScanEx(validChars[cha], KeyBoard);
-				input.ki.dwExtraInfo = 0;
-				SendInput(1, &input, sizeof(INPUT));
+		if (WindowFromPoint(p) == GetConsoleWindow()) {
+			for (int cha = 0; cha < abs((int)strlen(validChars)); cha++) {
+				if (GetKeyState(validChars[cha]) < 0) {
+					HKL KeyBoard = GetKeyboardLayout(0);
+					INPUT input = { 0 };
+					input.type = INPUT_KEYBOARD;
+					input.ki.time = 0;
+					input.ki.dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP;
+					input.ki.wScan = 0;
+					input.ki.wVk = VkKeyScanEx(validChars[cha], KeyBoard);
+					input.ki.dwExtraInfo = 0;
+					SendInput(1, &input, sizeof(INPUT));
+					Pressed = 1;
+				}
 			}
-
 		}
 		if (GetKeyState(VK_LBUTTON) < 0) {
 			while (GetKeyState(VK_LBUTTON) < 0) {
@@ -4161,7 +4162,6 @@ int getReady() {
 			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50 && p.x != saveX && p.y != saveY) {
 				GetActiveWindow();
 				leftClick();
-				Pressed = 1;
 				INPUT ip;
 				ip.type = INPUT_KEYBOARD;
 				ip.ki.time = 0;
@@ -4170,18 +4170,34 @@ int getReady() {
 				ip.ki.wVk = 0;
 				ip.ki.dwExtraInfo = 0;
 				SendInput(1, &ip, sizeof(INPUT));
+				Pressed = 1;
 			}
 		}
-		if (GetKeyState(VK_RBUTTON) < 0) {
-			while (GetKeyState(VK_RBUTTON) < 0) {
-				Sleep(100);
-			}
-			GetWindowPos(&x, &y, &maxX, &maxY);
-			GetCursorPos(&p);
-			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
-				GetActiveWindow();
-				leftClick();
-				Pressed = 1;
+		GetWindowPos(&x, &y, &maxX, &maxY);
+		GetCursorPos(&p);
+		if (WindowFromPoint(p) == GetConsoleWindow()) {
+			if (GetKeyState(VK_RBUTTON) < 0) {
+				while (GetKeyState(VK_RBUTTON) < 0) {
+					Sleep(100);
+				}
+				GetWindowPos(&x, &y, &maxX, &maxY);
+				GetCursorPos(&p);
+				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
+					GetActiveWindow();
+					leftClick();
+					while (GetKeyState(VK_LBUTTON) > 0) {
+						Sleep(100);
+					}
+					INPUT ip;
+					ip.type = INPUT_KEYBOARD;
+					ip.ki.time = 0;
+					ip.ki.dwFlags = KEYEVENTF_UNICODE;
+					ip.ki.wScan = VK_RETURN;
+					ip.ki.wVk = 0;
+					ip.ki.dwExtraInfo = 0;
+					SendInput(1, &ip, sizeof(INPUT));
+					Pressed = 1;
+				}
 			}
 		}
 		char readCommand[DIM] = "";

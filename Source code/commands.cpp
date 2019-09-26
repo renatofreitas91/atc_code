@@ -828,10 +828,12 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	if (isCommand(arithTrig, "exit")) {
 		continu = 0;
 		fprintf(fout, "\n");
-		char toOpen[DIM] = "";
-		sprintf(toOpen, "%s\\exit.txt", atcPath);
-		FILE *exit = fopen(toOpen, "w");
-		fclose(exit);
+		if (Pressed == 1) {
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "%s\\exit.txt", atcPath);
+			FILE *exit = fopen(toOpen, "w");
+			fclose(exit);
+		}
 		command = true;
 	}
 	if (isCommand(arithTrig, "clean")) {
