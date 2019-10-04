@@ -106,7 +106,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			exprDev[tGet] = '\0';
 			char data[DIM] = "", errorText[DIM] = "";
 			polySimplifier = false;
-			sprintf(data, "%s", exprDev);
+			sprintf(data, "%s+1-1", exprDev);
 			sprintf(saveExpressionF, "%s", data);
 			char solution[DIM] = "";
 			synTest = 0;
@@ -125,7 +125,12 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					lastDividerI = 0;
 					LastDividerI = 0;
 					manageExpression(data, 0, 0, 1);
-					sprintf(data, "%s+1-1", expressionF);
+					sprintf(data, "%s", expressionF);
+					replaceTimes = 0;
+					if (isContained("(x)", data)) {
+						replace("(x)", "x", data);
+						sprintf(data, "%s", expressionF);
+					}
 					simplifyExpression(data);
 					sprintf(data, "(%s)*(0x^1+1)", expressionF);
 					simplifyPolynomial(data);
@@ -421,7 +426,13 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					sprintf(saveSimplified, "");
 					sprintf(saveSimplification, "");
 					sprintf(expressionF, "");
-					sprintf(data, "%s", data);
+					manageExpression(data, 0, 0, 1);
+					sprintf(data, "%s", expressionF);
+					replaceTimes = 0;
+					if (isContained("(x)", data)) {
+						replace("(x)", "x", data);
+						sprintf(data, "%s", expressionF);
+					}
 					simplifyExpression(data);
 					sprintf(data, "%s", expressionF);
 					progress = true;

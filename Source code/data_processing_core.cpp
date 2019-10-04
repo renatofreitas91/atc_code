@@ -4151,6 +4151,9 @@ int getReady() {
 					SendInput(1, &input, sizeof(INPUT));
 					Pressed = 1;
 				}
+				if (GetKeyState(VK_RIGHT) < 0 || GetKeyState(VK_LEFT) < 0 || GetKeyState(VK_DOWN) < 0 || GetKeyState(VK_UP) < 0) {
+					Pressed = 1;
+				}
 			}
 		}
 		if (GetKeyState(VK_LBUTTON) < 0) {
@@ -4159,18 +4162,20 @@ int getReady() {
 			}
 			GetWindowPos(&x, &y, &maxX, &maxY);
 			GetCursorPos(&p);
-			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50 && p.x != saveX && p.y != saveY) {
-				GetActiveWindow();
-				leftClick();
-				INPUT ip;
-				ip.type = INPUT_KEYBOARD;
-				ip.ki.time = 0;
-				ip.ki.dwFlags = KEYEVENTF_UNICODE;
-				ip.ki.wScan = VK_RETURN;
-				ip.ki.wVk = 0;
-				ip.ki.dwExtraInfo = 0;
-				SendInput(1, &ip, sizeof(INPUT));
-				Pressed = 1;
+			if (WindowFromPoint(p) == GetConsoleWindow()) {
+				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50 && p.x != saveX && p.y != saveY) {
+					GetActiveWindow();
+					leftClick();
+					INPUT ip;
+					ip.type = INPUT_KEYBOARD;
+					ip.ki.time = 0;
+					ip.ki.dwFlags = KEYEVENTF_UNICODE;
+					ip.ki.wScan = VK_RETURN;
+					ip.ki.wVk = 0;
+					ip.ki.dwExtraInfo = 0;
+					SendInput(1, &ip, sizeof(INPUT));
+					Pressed = 1;
+				}
 			}
 		}
 		GetWindowPos(&x, &y, &maxX, &maxY);
@@ -4183,19 +4188,9 @@ int getReady() {
 				GetWindowPos(&x, &y, &maxX, &maxY);
 				GetCursorPos(&p);
 				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
-					GetActiveWindow();
-					leftClick();
-					while (GetKeyState(VK_LBUTTON) > 0) {
+				/*	while (GetKeyState(VK_LBUTTON) > 0) {
 						Sleep(100);
-					}
-					INPUT ip;
-					ip.type = INPUT_KEYBOARD;
-					ip.ki.time = 0;
-					ip.ki.dwFlags = KEYEVENTF_UNICODE;
-					ip.ki.wScan = VK_RETURN;
-					ip.ki.wVk = 0;
-					ip.ki.dwExtraInfo = 0;
-					SendInput(1, &ip, sizeof(INPUT));
+					}*/
 					Pressed = 1;
 				}
 			}

@@ -59,7 +59,7 @@ double solver(char expression[DIM]) {
 	if (to_solve) {
 		if (poly) {
 			sprintf(saveEquation, "%s+1-1", expression);
-			sprintf(equation, "%s", expression);
+			sprintf(equation, "%s", saveEquation);
 			equation_solver = true;
 			resultR = 0; resultI = 0;
 			lastDividerR = 1, lastDividerI = 0, natureValue = 1;
@@ -83,6 +83,11 @@ double solver(char expression[DIM]) {
 			}
 			manageExpression(data, 0, 0, 1);
 			sprintf(data, "%s", expressionF);
+			replaceTimes = 0;
+			if (isContained("(x)", data)) {
+				replace("(x)", "x", data);
+				sprintf(data, "%s", expressionF);
+			}
 			simplifyExpression(data);
 			sprintf(data, "%s", expressionF);
 			sprintf(saveSimplified, "%s", expressionF);
@@ -120,7 +125,7 @@ double solver(char expression[DIM]) {
 			solverRunning = true;
 			replaceTimes = 0;
 			if (isContained("x", equation)) {
-				replace("x", "(res)", equation);
+				replace("x", "res", equation);
 				sprintf(equation, "%s", expressionF);
 			}
 			math_processor(equation);
