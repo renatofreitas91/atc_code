@@ -7,7 +7,6 @@ boolean isDivisible = true;
 
 
 void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
-	//printf("\nsum-> %s | %s", polynomial_1, polynomial_2);
 	sprintf(roots, "");
 	if (isContained("((", polynomial_1) && isContained("))", polynomial_1)) {
 		replace("((", "(", polynomial_1);
@@ -105,7 +104,6 @@ void sub_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 }
 
 void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
-	//printf("\nmulti-> %s | %s", polynomial_1, polynomial_2);
 	sprintf(roots, "");
 	if (isEqual(polynomial_2, "(0+0i)") || isEqual(polynomial_1, "(0+0i)")) {
 		sprintf(expressionF, "(0+0i)");
@@ -203,8 +201,6 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 }
 
 void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
-	//printf("\npolynomial_1-> %s", polynomial_1);
-	//printf("\npolynomial_2-> %s", polynomial_2);
 	isDivisible = true;
 	if ((!isEqual(polynomial_2, "((0+0i)x^1+(0+0i))") && isEqual(polynomial_1, "((0+0i)x^1+(0+0i))")) || (!isEqual(polynomial_2, "((0+0i))") && isEqual(polynomial_1, "((0+0i))"))) {
 		sprintf(expressionF, "(0+0i)");
@@ -316,7 +312,6 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 			isDivisible = false;
 		}
 		if (isDivisible) {
-			//puts("ENTROU");
 			int k = 0;
 			sprintf(roots, "");
 			for (i = 0; i < s; i++) {
@@ -344,10 +339,6 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 				replace("-", "_", roots_2);
 				sprintf(roots_2, "%s", expressionF);
 			}
-			/*puts(roots);
-			puts("\n");
-			puts(roots_2);
-			puts("\n");*/
 			char expSimplified[DIM] = "";
 			char expSimplified_2[DIM] = "";
 			if (strlen(roots) > 0 || strlen(roots_2) > 0) {
@@ -387,7 +378,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		else {
 			sprintf(saveExpressionF, "(%s)/(%s)", polynomial_1, polynomial_2);
 		}
-		
+
 		sprintf(roots, "");
 		sprintf(roots_2, "");
 	}

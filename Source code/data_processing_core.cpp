@@ -4182,15 +4182,10 @@ int getReady() {
 		GetCursorPos(&p);
 		if (WindowFromPoint(p) == GetConsoleWindow()) {
 			if (GetKeyState(VK_RBUTTON) < 0) {
-				while (GetKeyState(VK_RBUTTON) < 0) {
-					Sleep(100);
-				}
+				leftClick();
 				GetWindowPos(&x, &y, &maxX, &maxY);
 				GetCursorPos(&p);
 				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
-				/*	while (GetKeyState(VK_LBUTTON) > 0) {
-						Sleep(100);
-					}*/
 					Pressed = 1;
 				}
 			}
