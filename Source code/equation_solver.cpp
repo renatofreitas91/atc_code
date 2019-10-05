@@ -1285,9 +1285,17 @@ double equationSolver(char equation[DIM]) {
 							toRemove[x] = answers[o];
 							x++; o++;
 						}
+						if (answers[o] == '\n') {
+							toRemove[x] = '\n';
+							x++;
+						}
 						toRemove[x] = '\0';
 						replace(toRemove, "", answers);
 						sprintf(answers, "%s", expressionF);
+						if (isContained("x2", answers)) {
+							replace("x2", "x1", answers);
+							sprintf(answers, "%s", expressionF);
+						}
 					}
 					replaceTimes = 0;
 				}
@@ -2470,6 +2478,10 @@ void simplifyExpression(char data[DIM]) {
 				sprintf(expression, "%s", expressionF);
 			}
 		}
+		if (isContained("!", expression)) {
+			replace("!", "/", expression);
+			sprintf(expression, "%s", expressionF);
+		}
 		replaceTimes = 1;
 		if (isContained("*x/", expression)) {
 			while (isContained("*x/", expression)) {
@@ -3006,7 +3018,6 @@ void simplifyExpression(char data[DIM]) {
 				sprintf(expression, "%s", expressionF);
 			}
 		}
-		replaceTimes = 0;
 		if (isContained("/", expression)) {
 			replaceTimes = 0;
 			char saveExpressionSS[DIM] = "";
