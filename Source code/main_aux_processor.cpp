@@ -689,9 +689,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 			}
 			if (hk == 0) {
 				if (isFromMain == 1) {
-					printf("\n==> Invalid variable. Use only latin alphabet letters. <==\n\n");
+					printf("\n==> Invalid variable. Use only latin alphabet letters and be careful to avoid the same name for variables and user functions. <==\n\n");
 				}
-				fprintf(fout, "\n==> Invalid variable. Use only latin alphabet letters. <==\n\n");
+				fprintf(fout, "\n==> Invalid variable. Use only latin alphabet letters and be careful to avoid the same name for variables and user functions. <==\n\n");
 				var = 0;
 			}
 			sprintf(arithTrig, "%s", saveArithTr);

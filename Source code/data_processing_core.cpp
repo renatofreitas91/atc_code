@@ -759,31 +759,36 @@ void variableToMultiply(char expression[DIM]) {
 			j = 0;
 			u = i;
 			validVar = 0;
-			while (verifyLetter(expression[i])) {
+			if (verifyLetter(expression[i])) {
+				j = 0;
 				variable[j] = expression[i];
 				variable[j + 1] = '\0';
-				for (d = 0; variable[d] != '\0'; d++) {
-					saveVariable[d] = variable[d];
-				}
-				saveVariable[d] = '\0';
-				processVariable(variable);
-				if (validVar == 0) {
-					variableRenamer(variable);
-					for (k = 0; varRename[k] != '\0'; k++) {
-						variable[k] = varRename[k];
+				while (isContained(variable, expression) && verifyLetter(expression[i])) {
+					variable[j] = expression[i];
+					variable[j + 1] = '\0';
+					for (d = 0; variable[d] != '\0'; d++) {
+						saveVariable[d] = variable[d];
 					}
-					variable[k] = '\0';
+					saveVariable[d] = '\0';
 					processVariable(variable);
+					if (validVar == 0) {
+						variableRenamer(variable);
+						for (k = 0; varRename[k] != '\0'; k++) {
+							variable[k] = varRename[k];
+						}
+						variable[k] = '\0';
+						processVariable(variable);
+					}
+					for (d = 0; saveVariable[d] != '\0'; d++) {
+						variable[d] = saveVariable[d];
+					}
+					variable[d] = '\0';
+					if (validVar == 1) {
+						l = abs((int)strlen(expression));
+						v = i;
+					}
+					j++; i++;
 				}
-				for (d = 0; saveVariable[d] != '\0'; d++) {
-					variable[d] = saveVariable[d];
-				}
-				variable[d] = '\0';
-				if (validVar == 1) {
-					l = abs((int)strlen(expression));
-					v = i;
-				}
-				j++; i++;
 			}
 			if (v > 0) {
 				k = l;
@@ -813,7 +818,37 @@ void variableToMultiply(char expression[DIM]) {
 }
 
 void toMultiply(char expression[DIM], double result1, double result2) {
+	char vari[DIM] = "";
+	FILE *open;
+	char variablesTxt[DIM] = "";
+	sprintf(variablesTxt, "%s\\variables.txt", atcPath);
+	open = fopen(variablesTxt, "a+");
+
 	int i = 0, verify = 0, verifys = 0, j = 0;
+	for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+	vari[i] = '\0';
+	fclose(open);
+	replaceTimes = 0;
+	countSplits = countOccurrences("\n", vari);
+	int saveCountSplits = countSplits;
+	split("\n", vari);
+	i = 0;
+	j = 0;
+	char saveLines[200][200];
+	while (i < countSplits) {
+		sprintf(saveLines[i], "%s", splitResult[i]);
+		i++;
+	}
+	countSplits = countOccurrences(" ", saveLines[i]);
+	split(" ", saveLines[i]);
+	char variables[DIM] = ",";
+	i = 0;
+	while (i < saveCountSplits) {
+		countSplits = countOccurrences(" ", saveLines[i]);
+		split(" ", saveLines[i]);
+		sprintf(variables, "%s%s,", variables, splitResult[0]);
+		i++;
+	}
 	char value[DIM] = "", saveValue[DIM] = "";
 	while (expression[i] != '\0') {
 		if (expression[i] == '+'&&expression[i + 1] == '0'&&expression[i + 2] == '\0') {
@@ -915,6 +950,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 								if (expression[i] != '\\'&&expression[i] != '+'&&expression[i] != '-'&&expression[i] != '*'&&expression[i] != '/'&&expression[i] != '^'&&expression[i] != '\0') {
 									j--;
 									if (expression[i] != '\\'&&expression[i - 1] != '+'&&expression[i - 1] != '-'&&expression[i - 1] != '*'&&expression[i - 1] != '/'&&expression[i - 1] != '^') {
+										"entrei";
 										value[j] = '*';
 										value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
 										j++;
@@ -1041,17 +1077,51 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 					value[j] = expression[i];
 					value[j + 1] = '\0';
 					processVariable(value);
-				}
-				if (validVar == 0) {
-					sprintf(value, saveValue);
-				}
-				if (verifyLetter(expression[i + 1])) {
-					char toReplace[10] = "", replacement[10] = "";
-					sprintf(toReplace, "%s%c", value, expression[i + 1]);
-					sprintf(replacement, "%s*%c", value, expression[i + 1]);
-					replace(toReplace, replacement, expression);
-					sprintf(expression, expressionF);
-					sprintf(value, "");
+					if (validVar == 0) {
+						sprintf(value, saveValue);
+					}
+					if (verifyLetter(expression[i + 1])) {
+						int count = 0;
+						count = countOccurrences(value, variables);
+						if (count == 1) {
+							char toReplace[10] = "", replacement[10] = "";
+							sprintf(toReplace, "%s%c", value, expression[i + 1]);
+							sprintf(replacement, "%s*%c", value, expression[i + 1]);
+							replace(toReplace, replacement, expression);
+							sprintf(expression, expressionF);
+							sprintf(value, "");
+						}
+						else {
+							validVar = 0;
+							sprintf(value, "");
+							while (verifyLetter(expression[i]) && validVar == 0) {
+								sprintf(value, "%s%c", value, expression[i]);
+								i++;
+								char verifyVariable[200] = "";
+								sprintf(verifyVariable, ",%s,", value);
+								count = countOccurrences(value, variables);
+								replaceTimes = 1;
+								if (isContained(verifyVariable, variables) && count == 1) {
+									isContained(value, expression);
+									if (verifyLetter(expression[strStart - 1])) {
+										char replacement[100] = "";
+										sprintf(replacement, "*%s", value);
+
+										replace(value, replacement, expression);
+										sprintf(expression, "%s", expressionF);
+									}
+									isContained(value, expression);
+									if (verifyLetter(expression[strEnd])) {
+										char replacement[100] = "";
+										sprintf(replacement, "%s*", value);
+										replace(value, replacement, expression);
+										sprintf(expression, "%s", expressionF);
+									}
+
+								}
+							}
+						}
+					}
 				}
 			}
 			j = 0;
@@ -1156,9 +1226,12 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	renamer(arithTrig);
 	sprintf(arithTrig, expressionF);
 	int i = 0, j = 0, s = 0, f = 0;
+	variableToMultiply(arithTrig);
 	toMultiply(arithTrig, result1, result2);
+	variableToMultiply(arithTrig);
 	renamer(arithTrig);
 	sprintf(arithTrig, "%s", expressionF);
+	variableToMultiply(arithTrig);
 	for (i = 0; expressionF[i] != '\0'; i++) {
 		arithTrig[i] = expressionF[i];
 	}
@@ -3185,17 +3258,27 @@ int variableValidator(char variable[DIM]) {
 			}
 		}
 	}
-	if (j != strlen(variable) || j == 0 && strlen(variable) == 0) {
+	FILE *user = NULL;
+	char path_user[DIM] = "";
+	sprintf(path_user, "%s\\User functions\\%s.txt", atcPath, variable);
+	user = fopen(path_user, "r");
+	if (j != strlen(variable) || j == 0 && strlen(variable) == 0 || user != NULL) {
+		if (user != NULL) {
+			fclose(user);
+		}
+		user = NULL;
 		h = 0;
 		return h;
 	}
 	revariable[0] = '\0';
 	FILE *var = NULL, *var1 = NULL;
 	i = 0;
+	boolean variable_inside_user_function_inside;
+	variable_inside_user_function_inside = isContainedInUserFunction(variable);
 	abc = abs((int)strlen(variable));
 	valid = 0;
 	for (i = 0; variable[i] != '\0'; i++) {
-		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
+		if ((i == 0 || (variable_inside_user_function_inside&&user == NULL)) && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
 			if (variable[i] == 's') {
 				revariable[i] = 'p';
 			}
@@ -4309,4 +4392,37 @@ void show(HWND hwnd)
 	}
 	SetWindowPos(0, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOMOVE);
 	SetForegroundWindow(hwnd);
+}
+
+boolean isContainedInUserFunction(char variable[DIM]) {
+	FILE *file = NULL;
+	char option[30] = "", directory[DIM] = "";
+	sprintf(directory, "%s\\To solve\\", atcPath);
+	int k = 0, numFiles = 0, i = 0, numFilesSolved = 0;
+	DIR *d;
+	int retry = 0;
+	struct dirent *dir;
+	d = opendir(directory);
+	char filename[DIM] = "";
+	char txtFiles[DIM] = "";
+	if (d)
+	{
+		while ((dir = readdir(d)) != NULL)
+		{
+			if (dir->d_type == DT_REG)
+			{
+				sprintf(filename, "%s", dir->d_name);
+				if (searchExtension(filename, ".txt")) {
+					int h = abs((int)strlen(filename)) - 1;
+					if (isContained(variable, filename) && variable[0] != filename[0]) {
+						puts(variable);
+						puts(filename);
+						return true;
+					}
+				}
+			}
+
+		}
+	}
+	return false;
 }
