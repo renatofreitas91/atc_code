@@ -950,7 +950,6 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 								if (expression[i] != '\\'&&expression[i] != '+'&&expression[i] != '-'&&expression[i] != '*'&&expression[i] != '/'&&expression[i] != '^'&&expression[i] != '\0') {
 									j--;
 									if (expression[i] != '\\'&&expression[i - 1] != '+'&&expression[i - 1] != '-'&&expression[i - 1] != '*'&&expression[i - 1] != '/'&&expression[i - 1] != '^') {
-										"entrei";
 										value[j] = '*';
 										value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
 										j++;
@@ -1831,18 +1830,26 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		}
 	}
 	needAst = 1;
+	replaceTimes = 1;
 	while (needAst == 1) {
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if ((verifyLetter(arithTrig[i - 1]) || verifyNumber(arithTrig[i - 1])) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D'&& arithTrig[i - 1] != 'b'&& arithTrig[i] == 'i'&&arithTrig[i - 1] != '1'&&arithTrig[i - 1] != '('&&verifyLetter(arithTrig[i + 1]) == 0) {
-				j = i;
-				i = abs((int)strlen(arithTrig)) + 1;
-				while (i > j) {
-					arithTrig[i] = arithTrig[i - 2];
-					i--;
+			if (isContained("_i", arithTrig)) {
+				replace("_i", "_1i", arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+				i = strEnd;
+			}
+			else {
+				if ((verifyLetter(arithTrig[i - 1]) || verifyNumber(arithTrig[i - 1])) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D'&& arithTrig[i - 1] != 'b'&& arithTrig[i] == 'i'&&arithTrig[i - 1] != '1'&&arithTrig[i - 1] != '('&&verifyLetter(arithTrig[i + 1]) == 0) {
+					j = i;
+					i = abs((int)strlen(arithTrig)) + 1;
+					while (i > j) {
+						arithTrig[i] = arithTrig[i - 2];
+						i--;
+					}
+					arithTrig[i] = '*'; arithTrig[i + 1] = '1';
+					i = abs((int)strlen(arithTrig));
 				}
-				arithTrig[i] = '*'; arithTrig[i + 1] = '1';
-				i = abs((int)strlen(arithTrig));
 			}
 		}
 		for (i = 0; arithTrig[i] != '\0'; i++) {
@@ -1851,6 +1858,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 		}
 	}
+	replaceTimes = 0;
 	needAst = 1;
 	while (needAst == 1) {
 		needAst = 0;
@@ -3262,7 +3270,9 @@ int variableValidator(char variable[DIM]) {
 	char path_user[DIM] = "";
 	sprintf(path_user, "%s\\User functions\\%s.txt", atcPath, variable);
 	user = fopen(path_user, "r");
-	if (j != strlen(variable) || j == 0 && strlen(variable) == 0 || user != NULL) {
+	boolean variable_inside_user_function;
+	variable_inside_user_function = isContainedInUserFunction(variable);
+	if (j != strlen(variable) || j == 0 && strlen(variable) == 0 || user != NULL || variable_inside_user_function) {
 		if (user != NULL) {
 			fclose(user);
 		}
@@ -3273,12 +3283,10 @@ int variableValidator(char variable[DIM]) {
 	revariable[0] = '\0';
 	FILE *var = NULL, *var1 = NULL;
 	i = 0;
-	boolean variable_inside_user_function_inside;
-	variable_inside_user_function_inside = isContainedInUserFunction(variable);
 	abc = abs((int)strlen(variable));
 	valid = 0;
 	for (i = 0; variable[i] != '\0'; i++) {
-		if ((i == 0 || (variable_inside_user_function_inside&&user == NULL)) && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
+		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
 			if (variable[i] == 's') {
 				revariable[i] = 'p';
 			}
@@ -4267,7 +4275,6 @@ int getReady() {
 			if (GetKeyState(VK_RBUTTON) < 0) {
 				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
 					GetActiveWindow();
-					leftClick();
 					Pressed = 1;
 				}
 			}
@@ -4397,7 +4404,7 @@ void show(HWND hwnd)
 boolean isContainedInUserFunction(char variable[DIM]) {
 	FILE *file = NULL;
 	char option[30] = "", directory[DIM] = "";
-	sprintf(directory, "%s\\To solve\\", atcPath);
+	sprintf(directory, "%s\\User functions\\", atcPath);
 	int k = 0, numFiles = 0, i = 0, numFilesSolved = 0;
 	DIR *d;
 	int retry = 0;
@@ -4414,10 +4421,11 @@ boolean isContainedInUserFunction(char variable[DIM]) {
 				sprintf(filename, "%s", dir->d_name);
 				if (searchExtension(filename, ".txt")) {
 					int h = abs((int)strlen(filename)) - 1;
-					if (isContained(variable, filename) && variable[0] != filename[0]) {
-						puts(variable);
-						puts(filename);
-						return true;
+					if (isContained(".txt", filename)) {
+						filename[strStart] = '\0';
+						if (isContained(variable, filename)) {
+							return true;
+						}
 					}
 				}
 			}
