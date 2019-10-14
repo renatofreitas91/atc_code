@@ -789,7 +789,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 	}
 	s = 0;
 	if (verify == 1) {
-		if ((equationSolverRunning == false && solverRunning == false) || !isEqual(saveArithTrig, arithTrig)) {
+		if ((equationSolverRunning == false && solverRunning == false) || !isEqual(saveArithTrig, arithTrig) && dataVerifier(arithTrig, 0, 0, isFromMain, 1)) {
 			sprintf(saveArithTrig, "%s", arithTrig);
 			manageExpression(arithTrig, 0, 0, 1);
 			sprintf(arithTrig, "%s", expressionF);

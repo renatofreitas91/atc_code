@@ -828,6 +828,16 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 	for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 	vari[i] = '\0';
 	fclose(open);
+	i = 0;
+	char saveSplitResult[200][200];
+	int initialCountSplits = 0;
+	if (countSplits > 0) {
+		initialCountSplits = countSplits;
+		while (i < countSplits) {
+			sprintf(saveSplitResult[i], "%s", splitResult[i]);
+			i++;
+		}
+	}
 	replaceTimes = 0;
 	countSplits = countOccurrences("\n", vari);
 	int saveCountSplits = countSplits;
@@ -849,6 +859,13 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 		sprintf(variables, "%s%s,", variables, splitResult[0]);
 		i++;
 	}
+	i = 0;
+	countSplits = initialCountSplits;
+	while (i < countSplits) {
+		sprintf(splitResult[i], "%s", saveSplitResult[i]);
+		i++;
+	}
+	i = 0;
 	char value[DIM] = "", saveValue[DIM] = "";
 	while (expression[i] != '\0') {
 		if (expression[i] == '+'&&expression[i + 1] == '0'&&expression[i + 2] == '\0') {

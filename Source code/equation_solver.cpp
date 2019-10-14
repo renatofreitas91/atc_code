@@ -486,10 +486,6 @@ void rootsToPolynomial(char rootsF[DIM]) {
 
 double equationSolver(char equation[DIM]) {
 	replaceTimes = 0;
-	if (isContained("+)", equation)) {
-		replace("+)", "+0)", equation);
-		sprintf(equation, "%s", expressionF);
-	}
 	char saveToCalcX[DIM] = "";
 	char originalEquation[DIM] = "";
 	sprintf(originalEquation, "%s", equation);
@@ -767,73 +763,13 @@ double equationSolver(char equation[DIM]) {
 		sprintf(saveToCalcX, "%s", toCalcX);
 		char maxExp[10] = "";
 		sprintf(maxExp, ")^%d", maxExponent);
-		SaveMaxExponent = maxExponent;
 		maxExponent = getCorrectExponent(saveToCalcX, maxExp, maxExponent);
-		int g = 0, k = 0;
-		int l = 1;
-		g = 0;
-		resultR = 0.1; resultI = 0.1;
-		sprintf(saveToCalcX, "");
-		sprintf(saveToCalcX, "%s", toCalcX);
-		resultR = 0;
-		resultI = 0;
-		replaceTimes = 0;
-		if (isContained("res", toCalcX)) {
-			replace("res", "0", toCalcX);
-			math_processor(expressionF);
-			lastElement = resultR;
-			lastElementI = resultI;
-		}
 		if (lastElement == 0 && lastElementI == 0) {
-			sprintf(expressionF, "(%s+0.00000000000000001)", saveToCalcX);
+			sprintf(expressionF, "(%s+0.00000000000000001)", toCalcX);
 			sprintf(toCalcX, "%s", expressionF);
 			sprintf(saveToCalcX, "%s", toCalcX);
 		}
-		char replacement[DIM] = "";
-		sprintf(toCalcX, "%s", saveToCalcX);
-		sprintf(saveToCalcX, "%s", toCalcX);
-		sprintf(toReplace, "(res)^%d", SaveMaxExponent - 1);
-		sprintf(replacement, "(1)^%d", SaveMaxExponent - 1);
-		if (isContained(toReplace, toCalcX)) {
-			replace(toReplace, replacement, toCalcX);
-			replace("res", "0", expressionF);
-			math_processor(expressionF);
-		}
-		double firstElement = resultR - lastElement;
-		double firstElementI = resultI - lastElementI;
-		sprintf(toReplace, "(res)^%d", SaveMaxExponent - 2);
-		sprintf(replacement, "(1)^%d", SaveMaxExponent - 2);
-		if (isContained(toReplace, toCalcX)) {
-			replace(toReplace, replacement, toCalcX);
-			replace("res", "0", expressionF);
-			math_processor(expressionF);
-		}
-		char toCalC[DIM] = "";
-		sprintf(toCalcX, "%s", saveToCalcX);
-		if (SaveMaxExponent != maxExponent) {
-			while (SaveMaxExponent > maxExponent) {
-				char toReplace[DIM] = "";
-				sprintf(toReplace, "(res)^%d", SaveMaxExponent);
-				if (isContained(toReplace, toCalcX)) {
-					replace(toReplace, "(0)", toCalcX);
-					sprintf(toCalcX, "%s", expressionF);
-				}
-				SaveMaxExponent--;
-			}
-			sprintf(toReplace, "(res)^%d", SaveMaxExponent);
-			sprintf(replacement, "(1)^%d", SaveMaxExponent);
-			if (isContained(toReplace, toCalcX)) {
-				replace(toReplace, replacement, toCalcX);
-			}
-			if (isContained("res", expressionF)) {
-				replace("res", "0", expressionF);
-				math_processor(expressionF);
-			}
-			resultR = resultR - lastElement;
-			resultI = resultI - lastElementI;
-			lastDividerR = resultR;
-			lastDividerI = resultI;
-		}
+		int g = 0, k = 0;
 		if (lastDividerR != 0 || lastDividerI != 0) {
 			int maxMaxExponent = maxExponent;
 			sprintf(divider, "(%f+%fi)", lastDividerR, lastDividerI);
@@ -847,7 +783,6 @@ double equationSolver(char equation[DIM]) {
 				replace(".000000", "", divider);
 				sprintf(divider, "%s", expressionF);
 			}
-
 			char newExpre[DIM] = "";
 			char toNoDivider[DIM] = "";
 			sprintf(toNoDivider, "%s", toCalcX);
@@ -941,7 +876,7 @@ double equationSolver(char equation[DIM]) {
 				if (maxExponent == 1) {
 					isFirstDegree = true;
 					maxExponent = 2;
-					sprintf(expressionF, "(%s)*(res-1.111000)", toCalcX);
+					sprintf(expressionF, "(res-1.111000)*(%s)", toCalcX);
 					sprintf(toCalcX, "%s", expressionF);
 					maxMaxExponent = 2;
 				}
@@ -1870,96 +1805,52 @@ int getCorrectExponent(char expression[DIM], char maxExp[10], int maxExponent) {
 	replaceTimes = 0;
 	char  saveToCalcX[DIM] = "";
 	sprintf(saveToCalcX, "%s", expression);
-	double dividerValueR = 0, dividerValueI = 0;
 	char divider[DIM] = "";
 	do {
-		while (isContained(maxExp, saveToCalcX)) {
-			int b = strStart;
-			while (saveToCalcX[b] != '(') {
-				b--;
-			}
-			if (saveToCalcX[b - 1] == '*') {
-				if (!(saveToCalcX[b - 2] == '1' && saveToCalcX[b - 3] == ')')) {
-					b = b - 2;
-					while (verifyValue(saveToCalcX[b])) {
-						b--;
-					}
-				}
-				else {
-					b = b - 4;
-					while (saveToCalcX[b] != '(') {
-						b--;
-					}
-					int f = 0;
-					divider[f] = '(';
-					f++;
-					b++;
-					while (saveToCalcX[b] != ')') {
-						divider[f] = saveToCalcX[b];
-						b++;
-						f++;
-					}
-					while (saveToCalcX[b] != '*') {
-						divider[f] = saveToCalcX[b];
-						b++;
-						f++;
-					}
-					divider[f] = '\0';
-				}
-				b++;
-				int t = 0;
-				int s = b - 1;
-				if (strlen(divider) == 0) {
-					if (saveToCalcX[b - 1] == '-' || saveToCalcX[b - 1] == '_') {
-						divider[t] = '_';
-						t++;
-					}
-					while (!(saveToCalcX[b + 1] == '(' && saveToCalcX[b + 2] == 'r' &&
-						saveToCalcX[b + 3] == 'e' && saveToCalcX[b + 4] == 's'&& saveToCalcX[b + 5] == ')')) {
-						divider[t] = saveToCalcX[b];
-						b++;
-						t++;
-					}
-					divider[t] = '\0';
-					if (isContained("_", divider) && saveToCalcX[s] == '-') {
-						replace("_", "-", divider);
-						sprintf(divider, "%s", expressionF);
-					}
-				}
-				math_processor(divider);
-				char toSimplify[100] = "";
-				sprintf(toSimplify, convertToString("%f+%fi"), resultR, resultI);
-				if (isContained("-", toSimplify)) {
-					replace("-", "_", toSimplify);
-					sprintf(toSimplify, "%s", expressionF);
-				}
-				math_processor(toSimplify);
-				dividerValueR = dividerValueR + resultR;
-				dividerValueI = dividerValueI + resultI;
-				char toReplace[DIM] = "";
-				sprintf(toReplace, "%s*(res%s", divider, maxExp);
-				isContained(toReplace, saveToCalcX);
-				int y = strStart;
-				while (y < strEnd) {
-					saveToCalcX[y] = ' ';
-					y++;
-				}
-				replace(" ", "", saveToCalcX);
-				sprintf(saveToCalcX, "%s", expressionF);
-				sprintf(divider, "");
+		sprintf(saveToCalcX, "%s", expression);
+		char to_replace[DIM] = "";
+		char replacement[DIM] = "";
+		sprintf(to_replace, "(res)^%d", maxExponent);
+		if (!isContained(to_replace, saveToCalcX)) {
+			while (!isContained(to_replace, saveToCalcX)) {
+				maxExponent--;
+				sprintf(to_replace, "(res)^%d", maxExponent);
 			}
 		}
-		if (dividerValueR == 0 && dividerValueI == 0 && maxExponent > 1) {
+		sprintf(replacement, "(aaaa)^%d", maxExponent);
+		if (isContained(to_replace, saveToCalcX)) {
+			replace(to_replace, replacement, saveToCalcX);
+			if (isContained("res", expressionF)) {
+				replace("res", "0", expressionF);
+				sprintf(saveToCalcX, "%s", expressionF);
+			}
+			else {
+				sprintf(saveToCalcX, "%s", expressionF);
+			}
+		}
+		char saveEquationF[DIM] = "";
+		sprintf(saveEquationF, "%s", saveToCalcX);
+		if (isContained("aaaa", saveToCalcX)) {
+			replace("aaaa", "0", saveToCalcX);
+			sprintf(saveToCalcX, "%s", expressionF);
+		}
+		math_processor(saveToCalcX);
+		sprintf(saveToCalcX, "%s", saveEquationF);
+		lastElement = resultR, lastElementI = resultI;
+		if (isContained("aaaa", saveToCalcX)) {
+			replace("aaaa", "1", saveToCalcX);
+			sprintf(saveToCalcX, "%s", expressionF);
+		}
+		math_processor(saveToCalcX);
+		subtraction(resultR, resultI, lastElement, lastElementI);
+		lastDividerR = resultR; lastDividerI = resultI;
+		if (lastDividerR == 0 && lastDividerI == 0 && maxExponent > 1) {
 			maxExponent--;
 		}
 		else {
-			lastDividerR = dividerValueR;
-			lastDividerI = dividerValueI;
 			return maxExponent;
 		}
-	} while (dividerValueR == 0 && dividerValueI == 0 && maxExponent >= 1);
-	lastDividerR = dividerValueR;
-	lastDividerI = dividerValueI;
+	} while (lastDividerR == 0 && lastDividerI == 0 && maxExponent >= 1);
 	return maxExponent;
 }
 
@@ -2478,6 +2369,7 @@ void simplifyExpression(char data[DIM]) {
 				sprintf(expression, "%s", expressionF);
 			}
 		}
+		replaceTimes = 0;
 		if (isContained("!", expression)) {
 			replace("!", "/", expression);
 			sprintf(expression, "%s", expressionF);
@@ -3018,8 +2910,8 @@ void simplifyExpression(char data[DIM]) {
 				sprintf(expression, "%s", expressionF);
 			}
 		}
+		replaceTimes = 0;
 		if (isContained("/", expression)) {
-			replaceTimes = 0;
 			char saveExpressionSS[DIM] = "";
 			sprintf(saveExpressionSS, "%s", expression);
 			sprintf(saveSimplification, "%s", expression);

@@ -122,6 +122,7 @@ void functionStudy(char function[DIM]) {
 					replace("-", "_", value);
 					sprintf(value, "%s", expressionF);
 				}
+				puts("\n24");
 				math_processor(value);
 				zeroR[z] = resultR; zeroI[z] = resultI;
 				poleZerosR[pl] = resultR; poleZerosI[pl] = resultI;
