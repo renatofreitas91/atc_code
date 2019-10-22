@@ -15,55 +15,29 @@ void sum(double numR, double numI, double denR, double denI) {
 }
 
 void subtraction(double numR, double numI, double denR, double denI) {
-	if (numI == 0 && denI == 0) {
-		resultR = numR - denR;
-		resultI = 0;
-	}
-	else {
-		resultR = numR - denR;
-		resultI = numI - denI;
-	}
+	resultR = numR - denR;
+	resultI = numI - denI;
 }
 
 void multiplication(double numR, double numI, double denR, double denI) {
-	if (numI == 0 && denI == 0) {
-		resultR = numR * denR;
-		resultI = 0;
-	}
-	else {
-		resultR = numR * denR + (numI*denI)*-1;
-		resultI = numR * denI + numI * denR;
-	}
+	resultR = numR * denR + (numI*denI)*-1;
+	resultI = numR * denI + numI * denR;
 }
 
 void division(double numR, double numI, double denR, double denI) {
-	if (numI == 0 && denI == 0) {
-		resultR = numR / denR;
-		resultI = 0;
-	}
-	else {
-		multiplication(numR, numI, denR, denI*-1);
-		double nuMR = resultR, nuMI = resultI;
-		multiplication(denR, denI, denR, denI*-1);
-		double deNR = resultR, deNI = resultI;
-		resultR = nuMR / deNR;
-		resultI = nuMI / deNR;
-	}
+	multiplication(numR, numI, denR, denI*-1);
+	double nuMR = resultR, nuMI = resultI;
+	multiplication(denR, denI, denR, denI*-1);
+	double deNR = resultR, deNI = resultI;
+	resultR = nuMR / deNR;
+	resultI = nuMI / deNR;
 }
 
 double abs_complex(double real, double imaginary) {
-	if (imaginary == 0) {
-		if (real < 0) {
-			real = real * -1;
-		}
-		return real;
-	}
-	else {
-		resultR = pot(real, 2.0, 1) + pot(imaginary, 2.0, 1);
-		resultR = pot(resultR, 0.5, 1);
-		resultI = 0;
-		return resultR;
-	}
+	resultR = pot(real, 2.0, 1) + pot(imaginary, 2.0, 1);
+	resultR = pot(resultR, 0.5, 1);
+	resultI = 0;
+	return resultR;
 }
 
 void qu_complex(double dividend, double dividendI, double divider, double dividerI) {

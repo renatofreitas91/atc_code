@@ -432,8 +432,7 @@ void rootsToPolynomial(char rootsF[DIM]) {
 							sprintf(Report, convertToString("%s(%G+%Gi)"), report, resultR,
 								resultI);
 							if (isContained("E", Report)) {
-								sprintf(Report, convertToString("%s(%f+%fi)x^%d+"), report, resultR, resultI,
-									exp);
+								sprintf(Report, convertToString("%s(%f+%fi)"), report, resultR, resultI);
 							}
 						}
 					}
@@ -695,7 +694,7 @@ double equationSolver(char equation[DIM]) {
 			solving = false;
 			equationSolverRunning = true;
 			sprintf(toCalcX, "%s", saveEquation);
-			maxExponent = 1;
+			maxExponent = 0;
 			char exponent[DIM] = "";
 			int g = 0, k = 0;
 			for (g = 0; equation[g] != '\0'; g++) {
@@ -763,14 +762,16 @@ double equationSolver(char equation[DIM]) {
 		sprintf(saveToCalcX, "%s", toCalcX);
 		char maxExp[10] = "";
 		sprintf(maxExp, ")^%d", maxExponent);
-		maxExponent = getCorrectExponent(saveToCalcX, maxExp, maxExponent);
+		if (maxExponent > 0) {
+			maxExponent = getCorrectExponent(saveToCalcX, maxExp, maxExponent);
+		}
 		if (lastElement == 0 && lastElementI == 0) {
 			sprintf(expressionF, "(%s+0.00000000000000001)", toCalcX);
 			sprintf(toCalcX, "%s", expressionF);
 			sprintf(saveToCalcX, "%s", toCalcX);
 		}
 		int g = 0, k = 0;
-		if (lastDividerR != 0 || lastDividerI != 0) {
+		if ((lastDividerR != 0 || lastDividerI != 0) && maxExponent > 0) {
 			int maxMaxExponent = maxExponent;
 			sprintf(divider, "(%f+%fi)", lastDividerR, lastDividerI);
 

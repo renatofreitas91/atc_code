@@ -4296,6 +4296,14 @@ int getReady() {
 				}
 			}
 		}
+		if (WindowFromPoint(p) == GetConsoleWindow()) {
+			if (GetKeyState(VK_LBUTTON) < 0) {
+				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
+					GetActiveWindow();
+					Pressed = 1;
+				}
+			}
+		}
 		char readCommand[DIM] = "";
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\sendCommand.txt", atcPath);
