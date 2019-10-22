@@ -4264,6 +4264,14 @@ int getReady() {
 				}
 			}
 		}
+		if (WindowFromPoint(p) == GetConsoleWindow()) {
+			if (GetKeyState(VK_LBUTTON) < 0) {
+				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
+					GetActiveWindow();
+					Pressed = 1;
+				}
+			}
+		}
 		if (GetKeyState(VK_LBUTTON) < 0) {
 			while (GetKeyState(VK_LBUTTON) < 0) {
 				Sleep(100);
@@ -4290,14 +4298,6 @@ int getReady() {
 		GetCursorPos(&p);
 		if (WindowFromPoint(p) == GetConsoleWindow()) {
 			if (GetKeyState(VK_RBUTTON) < 0) {
-				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
-					GetActiveWindow();
-					Pressed = 1;
-				}
-			}
-		}
-		if (WindowFromPoint(p) == GetConsoleWindow()) {
-			if (GetKeyState(VK_LBUTTON) < 0) {
 				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
 					GetActiveWindow();
 					Pressed = 1;

@@ -42,8 +42,6 @@ double calculateIntegral(double a, double b, char function[DIM]);
 double math_processor(char expression[DIM]);
 double solve(char equation[DIM]);
 double solver(char expression[DIM]);
-double getRealSolution(char toCalcX[DIM], char expression[DIM]);
-double getImaginarySolution(char toCalcX[DIM], char expression[DIM]);
 int variableValidator(char variable[DIM]);
 int matrixToValues(char matrix[DIM], double result);
 int atcProgramming(char script[DIM]);
@@ -84,7 +82,6 @@ void fmsum(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[
 void fmsubt(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]);
 void fmmulr(int lins, int cols, double v[dim][dim], double r[dim][dim], double re, double vI[dim][dim], double rI[dim][dim], double reI);
 void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]);
-void decrementPoly(char toCalcX[DIM], char expression[DIM], double resR, double resI);
 void saveToReport(char report[DIM]);
 double equationSolver(char equation[DIM]);
 void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2, int index);
