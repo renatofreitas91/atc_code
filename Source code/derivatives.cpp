@@ -72,10 +72,12 @@ char* getDerivative(char expression[DIM]) {
 		sprintf(toReplace, "x^%s", value);
 		replace(toReplace, "", saveExpression);
 		sprintf(saveExpression, "%s", expressionF);
+		replaceTimes = 1;
 		replace(to_replace, "", saveExpression);
 		sprintf(saveExpression, "%s", expressionF);
-		if (isContained("++", saveExpression)) {
-			replace("++", "0", saveExpression);
+		replaceTimes = 1;
+		if (isContained("+", saveExpression) && strStart == 0) {
+			replace("+", "", saveExpression);
 			sprintf(saveExpression, "%s", expressionF);
 		}
 	}
@@ -92,6 +94,7 @@ char* getDerivative(char expression[DIM]) {
 	else {
 		sprintf(expressionF, "%s", saveExpression);
 	}
+	replaceTimes = 0;
 	if (isContained("-", expressionF)) {
 		replace("-", "_", expressionF);
 	}

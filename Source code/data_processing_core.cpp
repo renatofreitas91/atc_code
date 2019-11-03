@@ -4241,6 +4241,22 @@ int getReady() {
 		GetWindowPos(&x, &y, &maxX, &maxY);
 		GetCursorPos(&p);
 		if (WindowFromPoint(p) == GetConsoleWindow()) {
+			if (GetKeyState(VK_RBUTTON) < 0) {
+				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
+					GetActiveWindow();
+					Pressed = 1;
+				}
+			}
+		}
+		if (WindowFromPoint(p) == GetConsoleWindow()) {
+			if (GetKeyState(VK_LBUTTON) < 0) {
+				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
+					GetActiveWindow();
+					Pressed = 1;
+				}
+			}
+		}
+		if (WindowFromPoint(p) == GetConsoleWindow()) {
 			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
 				leftClick();
 			}
@@ -4264,14 +4280,6 @@ int getReady() {
 				}
 			}
 		}
-		if (WindowFromPoint(p) == GetConsoleWindow()) {
-			if (GetKeyState(VK_LBUTTON) < 0) {
-				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
-					GetActiveWindow();
-					Pressed = 1;
-				}
-			}
-		}
 		if (GetKeyState(VK_LBUTTON) < 0) {
 			while (GetKeyState(VK_LBUTTON) < 0) {
 				Sleep(100);
@@ -4290,16 +4298,6 @@ int getReady() {
 					ip.ki.wVk = 0;
 					ip.ki.dwExtraInfo = 0;
 					SendInput(1, &ip, sizeof(INPUT));
-					Pressed = 1;
-				}
-			}
-		}
-		GetWindowPos(&x, &y, &maxX, &maxY);
-		GetCursorPos(&p);
-		if (WindowFromPoint(p) == GetConsoleWindow()) {
-			if (GetKeyState(VK_RBUTTON) < 0) {
-				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
-					GetActiveWindow();
 					Pressed = 1;
 				}
 			}
@@ -4379,14 +4377,10 @@ void split(char splitter[DIM], char data[DIM]) {
 				k++;
 			}
 			data[k] = '\0';
+			if (abs((int)strlen(data)) > 0 && !isContained(splitter, data)) {
+				sprintf(splitResult[y], "%s", data);
+			}
 		}
-		x = 0;
-		i = 0;
-		while (data[i] != '\0') {
-			splitResult[y][x] = data[i];
-			x++; i++;
-		}
-		splitResult[y][x] = '\0';
 	}
 }
 

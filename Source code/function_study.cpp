@@ -1121,18 +1121,39 @@ void functionStudy(char function[DIM]) {
 				printf("+inf[\n");
 			}
 			o = 0;
+			double max = 0;
+			int indexMax = 0;
+			double min = 0;
+			int indexMin = 0;
+			o = 0;
 			while (o < saveZ) {
 				resultR = sortZeroR[o];
 				resultI = sortZeroI[o];
 				variableController("x", 0);
 				resultR = math_processor(saveFunction);
-				if (resultR >= 0) {
-					printf("\nMax: (%.3f,%.3f)\n", sortZeroR[o], resultR);
-				}
-				else {
-					printf("\nMin: (%.3f,%.3f)\n", sortZeroR[o], resultR);
+				if (resultR > max) {
+					max = resultR;
+					indexMax = o;
 				}
 				o++;
+			}
+			o = 0;
+			while (o < saveZ) {
+				resultR = sortZeroR[o];
+				resultI = sortZeroI[o];
+				variableController("x", 0);
+				resultR = math_processor(saveFunction);
+				if (resultR < min) {
+					min = resultR;
+					indexMin = o;
+				}
+				o++;
+			}
+			if (max != 0) {
+				printf("\nMax: (%.3f,%.3f)\n", sortZeroR[indexMax], max);
+			}
+			if (min != 0) {
+				printf("\nMin: (%.3f,%.3f)\n", sortZeroR[indexMin], min);
 			}
 			puts("");
 		}
@@ -1519,19 +1540,41 @@ void functionStudy(char function[DIM]) {
 			}
 			saveZ = o;
 
+
+			o = 0;
+			double max = 0;
+			int indexMax = 0;
+			double min = 0;
+			int indexMin = 0;
 			o = 0;
 			while (o < saveZ) {
 				resultR = sortZeroR[o];
 				resultI = sortZeroI[o];
 				variableController("x", 0);
 				resultR = math_processor(originalFunction);
-				if (resultR >= 0) {
-					printf("\nMax: (%.3f,%.3f)\n", sortZeroR[o], resultR);
-				}
-				else {
-					printf("\nMin: (%.3f,%.3f)\n", sortZeroR[o], resultR);
+				if (resultR > max) {
+					max = resultR;
+					indexMax = o;
 				}
 				o++;
+			}
+			o = 0;
+			while (o < saveZ) {
+				resultR = sortZeroR[o];
+				resultI = sortZeroI[o];
+				variableController("x", 0);
+				resultR = math_processor(originalFunction);
+				if (resultR < min) {
+					min = resultR;
+					indexMin = o;
+				}
+				o++;
+			}
+			if (max != 0) {
+				printf("\nMax: (%.3f,%.3f)\n", sortZeroR[indexMax], max);
+			}
+			if (min != 0) {
+				printf("\nMin: (%.3f,%.3f)\n", sortZeroR[indexMin], min);
 			}
 			puts("");
 		}

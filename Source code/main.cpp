@@ -26,11 +26,11 @@ void main(int argc, char *argv[]) {
 		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v2.0.5");
+		system("title Advanced Trigonometry Calculator v2.0.6");
 		continu = about();
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v2.0.5       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v2.0.6       ==) ATC is ready to process data. (==");
 		do {
 			resultR = 0; resultI = 0;
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
@@ -55,7 +55,7 @@ void main(int argc, char *argv[]) {
 					gets_s(trigData);
 				}
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v2.0.5       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v2.0.6       ==) Processing... (==");
 
 			}
 			else {
@@ -220,7 +220,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v2.0.5       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v2.0.6       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
