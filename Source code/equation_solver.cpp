@@ -1951,6 +1951,10 @@ void simplifyExpression(char data[DIM]) {
 		replace(")-(", ")_(", expression);
 		sprintf(expression, "%s", expressionF);
 	}
+	if (isContained("(-", expression)) {
+		replace("(-", "(_", expression);
+		sprintf(expression, "%s", expressionF);
+	}
 	if (isContained("-", expression)) {
 		replace("-", "+_", expression);
 		sprintf(expression, "%s", expressionF);
@@ -3118,16 +3122,14 @@ void simplifyExpression(char data[DIM]) {
 					sprintf(denominator[m], "%s", expressionF);
 					processVariable("x");
 					double saveR = resultR, saveI = resultI;
-					resultR = M_PI * M_E; resultI = 0;
+					resultR = M_PI * M_E; resultI = M_PI * M_E;
 					variableController("x", 0);
 					removeDuplPars(denominator[m]);
 					sprintf(denominator[m], "%s", expressionF);
-					if (!(isContained("(0+0i)x^1+", denominator[m]) && strStart == 0)) {
-						math_processor(denominator[m]);
-						if (great < abs_complex(resultR, resultI)) {
-							sprintf(greatDenominator, "%s", denominator[m]);
-							great = abs_complex(resultR, resultI);
-						}
+					math_processor(denominator[m]);
+					if (great < abs_complex(resultR, resultI)) {
+						sprintf(greatDenominator, "%s", denominator[m]);
+						great = abs_complex(resultR, resultI);
 					}
 					resultR = saveR; resultI = saveI;
 					variableController("x", 0);
@@ -3260,7 +3262,13 @@ void simplifyExpression(char data[DIM]) {
 					sprintf(numerator[m], "%s", expressionF);
 					removeDuplPars(denominator[m]);
 					sprintf(denominator[m], "%s", expressionF);
-					div_polynomial(greatDenominator, denominator[m]);
+					sprintf(expressionF, "(%s)*(0x+1)", denominator[m]);
+					simpleSimplifyPolynomial(expressionF);
+					sprintf(denominator[m], "%s", expressionF);
+					removeDuplPars(denominator[m]);
+					sprintf(denominator[m], "%s", expressionF);
+					sprintf(expressionF, "(%s)/(%s)", greatDenominator, denominator[m]);
+					simpleSimplifyPolynomial(expressionF);
 					char firstFract[DIM] = "";
 					sprintf(firstFract, "%s", expressionF);
 					multi_polynomial(firstFract, numerator[m]);
