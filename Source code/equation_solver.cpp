@@ -838,51 +838,122 @@ double equationSolver(char equation[DIM]) {
 			sprintf(saveToCalcX, "%s", toCalcX);
 			char saveHelper[DIM] = "";
 			sprintf(saveHelper, "%s", helpExtract);
+			char toCalcLastEle[DIM] = "";
+			sprintf(toCalcLastEle, "%s", saveHelper);
+			if (isContained("res", toCalcLastEle)) {
+				replaceTimes = 0;
+				replace("res", "0", toCalcLastEle);
+				sprintf(toCalcLastEle, "%s", expressionF);
+				math_processor(toCalcLastEle);
+				lastElement = resultR; lastElementI = resultI;
+			}
+			double posLastElement = 0, posLastElementI = 0;
+			multiplication(-1.0, 0.0, lastElement, lastElementI);
+			posLastElement = resultR; posLastElementI = resultI;
+			/*if (maxExponent > 10) {
+				char LastEle[dim] = "";
+				sprintf(LastEle, "%f+%fi", lastElement, lastElementI);
+				replaceTimes = 0;
+				if (isContained("-", LastEle)) {
+					replace("-", "_", LastEle);
+					sprintf(LastEle, "%s", expressionF);
+				}
+				if (isContained(".000000", LastEle)) {
+					replace(".000000", "", LastEle);
+					sprintf(LastEle, "%s", expressionF);
+				}
+				if (isContained(LastEle, saveHelper)) {
+					replace(LastEle, "0+0i", saveHelper);
+					sprintf(saveHelper, "%s", expressionF);
+				}
+				else {*/
+			char posLastEle[dim] = "";
+			sprintf(posLastEle, "%f+%fi", posLastElement, posLastElementI);
+			replaceTimes = 0;
+			if (isContained("-", posLastEle)) {
+				replace("-", "_", posLastEle);
+				sprintf(posLastEle, "%s", expressionF);
+			}
+			if (isContained(".000000", posLastEle)) {
+				replace(".000000", "", posLastEle);
+				sprintf(posLastEle, "%s", expressionF);
+			}
+			int findToRemove = 0;
+			if (isContained(")x^1+(", equation)) {
+				replaceTimes = 0;
+				char LastEle[dim] = "";
+				sprintf(LastEle, "^1+(%f+%fi)", lastElement, lastElementI);
+				replaceTimes = 0;
+				if (isContained("-", LastEle)) {
+					replace("-", "_", LastEle);
+					sprintf(LastEle, "%s", expressionF);
+				}
+				if (isContained(".000000", LastEle)) {
+					replace(".000000", "", LastEle);
+					sprintf(LastEle, "%s", expressionF);
+				}
+				replaceTimes = 1;
+				if (isContained(LastEle, saveHelper)) {
+					replace(LastEle, "^1+(0+0i)", saveHelper);
+					sprintf(saveHelper, "%s", expressionF);
+					findToRemove = 1;
+				}
+			}
+			double expressionCoefR[dim], expressionCoefI[dim];
 			if (maxExponent > 0) {
 				sprintf(expression, "");
-				double resR = 0, resI = 0;
-				division(lastElement, lastElementI, lastDividerR, lastDividerI);
-				lastElement = resultR; lastElementI = resultI;
 				while (u < maxExponent) {
 					replaceTimes = 0;
 					resultR = 0; resultI = 0;
 					sprintf(helpExtract, "%s", saveHelper);
-					sprintf(toReplace, "1*(res)^%d", maxExponent - u);
+					sprintf(toReplace, "1*(res)^%d+", maxExponent - u);
 					if (isContained(toReplace, helpExtract)) {
-						replace(toReplace, "1*(1)", helpExtract);
+						replace(toReplace, "1*(1)+", helpExtract);
 						sprintf(helpExtract, "%s", expressionF);
 						if (isContained("res", helpExtract)) {
 							replace("res", "0", helpExtract);
 							sprintf(helpExtract, "%s", expressionF);
 						}
 						math_processor(helpExtract);
-						division(resultR, resultI, lastDividerR, lastDividerI);
-						resultR = resultR - lastElement;
-						resultI = resultI - lastElementI;
-						if (resultR == 0 && resultI == 0) {
-							isContained("(1)", helpExtract);
-							int y = strStart - 1;
-							while (helpExtract[y] != '(') {
-								y--;
-							}
-							char Value[dim] = "";
-							int w = 0;
-							while (helpExtract[y] != ')') {
-								Value[w] = helpExtract[y];
-								w++; y++;
-							}
-							Value[w] = ')'; Value[w + 1] = '\0';
-							math_processor(Value);
+						if (findToRemove == 0) {
+							sum(resultR, resultI, posLastElement, posLastElementI);
 						}
+						division(resultR, resultI, lastDividerR, lastDividerI);
 						sprintf(expression, "%s\\%f+%fi", expression, resultR, resultI);
+						expressionCoefR[u] = resultR; expressionCoefI[u] = resultI;
 					}
 					else {
+						replaceTimes = 0;
 						resultR = 0; resultI = 0;
-						sprintf(expression, "%s\\%f+%fi", expression, resultR, resultI);
+						sprintf(helpExtract, "%s", saveHelper);
+						sprintf(toReplace, "1*(res)^%d", maxExponent - u);
+						if (isContained(toReplace, helpExtract)) {
+							replace(toReplace, "1*(1)", helpExtract);
+							sprintf(helpExtract, "%s", expressionF);
+							if (isContained("res", helpExtract)) {
+								replace("res", "0", helpExtract);
+								sprintf(helpExtract, "%s", expressionF);
+							}
+							math_processor(helpExtract);
+							if (findToRemove == 0) {
+								sum(resultR, resultI, posLastElement, posLastElementI);
+							}
+							division(resultR, resultI, lastDividerR, lastDividerI);
+							sprintf(expression, "%s\\%f+%fi", expression, resultR, resultI);
+							expressionCoefR[u] = resultR; expressionCoefI[u] = resultI;
+						}
+						else {
+							resultR = 0; resultI = 0;
+							sprintf(expression, "%s\\%f+%fi", expression, resultR, resultI);
+							expressionCoefR[u] = resultR; expressionCoefI[u] = resultI;
+						}
 					}
 					u++;
 				}
+				division(lastElement, lastElementI, lastDividerR, lastDividerI);
+				lastElement = resultR; lastElementI = resultI;
 				sprintf(expression, "%s\\%f+%fi", expression, lastElement, lastElementI);
+				expressionCoefR[u] = lastElement; expressionCoefI[u] = lastElementI;
 				if (isContained("-", expression)) {
 					replace("-", "_", expression);
 					sprintf(expression, "%s", expressionF);
@@ -899,12 +970,20 @@ double equationSolver(char equation[DIM]) {
 					replace(".000000", "", expression);
 					sprintf(expression, "%s", expressionF);
 				}
+				replaceTimes = 0;
+
 				if (maxExponent == 1) {
 					isFirstDegree = true;
 					maxExponent = 2;
-					sprintf(expressionF, "(res-1.111000)*(%s)", toCalcX);
+					sprintf(expressionF, "(res-1.111)*(%s)", toCalcX);
 					sprintf(toCalcX, "%s", expressionF);
 					maxMaxExponent = 2;
+				}
+				int solved[200];
+				g = 0;
+				while (g < 200) {
+					solved[g] = 0;
+					g++;
 				}
 				g = 0;
 				RootR[g] = M_E / 2; RootI[g] = M_PI / 2;
@@ -918,6 +997,7 @@ double equationSolver(char equation[DIM]) {
 					to_numI[g] = resultR;
 					g++;
 				}
+
 				resultR = 0; resultI = 0;
 				int x = 0;
 				char value[DIM] = "";
@@ -929,7 +1009,6 @@ double equationSolver(char equation[DIM]) {
 				int Progress = 0;
 				double restR = 1;
 				char newFunction[DIM] = "";
-				double SolutionR[200], SolutionI[200];
 				int solveIndex = 0;
 				char savingPoly[DIM] = "";
 				char divisionFactor[DIM] = "";
@@ -937,110 +1016,69 @@ double equationSolver(char equation[DIM]) {
 				sprintf(savingPoly, "%s", toCalcX);
 				int count = 0;
 				int saveG = -1;
+				char *pointer;
 				g = 0;
-				double saveResultR = 1E300;
 				replaceTimes = 0;
-				while (n < 127 && countSolutions < maxMaxExponent&&maxExponent>1) {
+				countSolutions = 0;
+				while (n < 77 && countSolutions < maxExponent) {
 					g = 0;
 					while (g < maxExponent) {
-						if (!isFirstDegree) {
-							re_complex(lastElement, lastElementI, RootR[g], RootI[g]);
-							restR = resultR;
-						}
-						xValuesR = RootR[g];
-						xValuesI = RootI[g];
-						math_processor(savingPoly);
-						if (abs(resultI) < 1E-2 && (saveG == g || saveG == -1)) {
-							if (abs(resultR) < abs(saveResultR)) {
-								saveG = g;
-								saveResultR = abs(resultR);
-								n = 0;
+						if (solved[g] == 0 || isFirstDegree) {
+							xValuesR = RootR[g];
+							xValuesI = RootI[g];
+							if (!isFirstDegree) {
+								int rf = 0;
+								double SummatoryR = 0, SummatoryI = 0;
+								while (rf < maxExponent) {
+									exponentiation(xValuesR, xValuesI, (double)maxExponent - rf, 0.0, 1);
+									multiplication(expressionCoefR[rf], expressionCoefI[rf], resultR, resultI);
+									SummatoryR = SummatoryR + resultR;
+									SummatoryI = SummatoryI + resultI;
+									rf++;
+								}
+								sum(SummatoryR, SummatoryI, expressionCoefR[rf], expressionCoefI[rf]);
 							}
 							else {
-								n = 0;
-								saveG = -1;
-								saveResultR = 1E300;
-								qu_complex(lastElement, lastElementI, RootR[g], RootI[g]);
-								lastElement = resultR; lastElementI = resultI;
 								math_processor(savingPoly);
-								countSolutions++;
-								if (!isFirstDegree) {
-									SolutionR[solveIndex] = xValuesR;
-									SolutionI[solveIndex] = xValuesI;
-									solveIndex++;
-									sprintf(newDivider, "%s(res+_(%f+%fi))", newDivider, RootR[g], RootI[g]);
-									int p = 0;
-									for (p = 0; p < abs((int)strlen(newDivider)); p++) {
-										if (newDivider[p] == '-') {
-											newDivider[p] = '_';
-										}
-									}
-									if (countSolutions != saveCountSolutions) {
-
-										saveCountSolutions = countSolutions;
-
-										if (countSolutions == 1) {
-											sprintf(savingPoly, "(%s)/%s", toCalcX, newDivider);
-										}
-										else {
-											sprintf(savingPoly, "(%s)/(%s)", toCalcX, newDivider);
-										}
-										maxExponent = maxMaxExponent - countSolutions;
-										int y = 0;
-										int u = 0;
-										while (y < maxExponent + 1) {
-											if (y != g) {
-												RootI[u] = RootI[y];
-												RootR[u] = RootR[y];
-												u++;
-											}
-											y++;
-										}
-									}
-								}
 							}
-						}
-						double numR = resultR, numI = resultI, denR = 1, denI = 0;
-						int w = 0, h = 0;
-						while (w < maxExponent) {
-							if (w != g) {
-								subtraction(RootR[g], RootI[g], RootR[w], RootI[w]);
-								resultSubR[h] = resultR;
-								resultSubI[h] = resultI;
+							if (resultI == 0 && resultR == 0) {
+								sprintf(value, "%G", xValuesR);
+								RootR[g] = strtod(value, &pointer);
+								sprintf(value, "%G", xValuesI);
+								RootI[g] = strtod(value, &pointer);
+								solved[g] = 1;
+								countSolutions++;
+								n = 0;
+							}
+							double numR = resultR, numI = resultI, denR = 1, denI = 0;
+							int w = 0, h = 0;
+							while (w < maxExponent) {
+								if (w != g) {
+									subtraction(RootR[g], RootI[g], RootR[w], RootI[w]);
+									resultSubR[h] = resultR;
+									resultSubI[h] = resultI;
+									h++;
+								}
+								w++;
+							}
+							int k = h;
+							h = 1;
+							while (h < k) {
+								multiplication(resultSubR[0], resultSubI[0], resultSubR[h], resultSubI[h]);
+								resultSubR[0] = resultR;
+								resultSubI[0] = resultI;
 								h++;
 							}
-							w++;
+							denR = resultSubR[0];
+							denI = resultSubI[0];
+							division(numR, numI, denR, denI);
+							subtraction(RootR[g], RootI[g], resultR, resultI);
+							RootR[g] = resultR;
+							RootI[g] = resultI;
 						}
-						int k = h;
-						h = 1;
-						while (h < k) {
-							multiplication(resultSubR[0], resultSubI[0], resultSubR[h], resultSubI[h]);
-							resultSubR[0] = resultR;
-							resultSubI[0] = resultI;
-							h++;
-						}
-						denR = resultSubR[0];
-						denI = resultSubI[0];
-						division(numR, numI, denR, denI);
-						subtraction(RootR[g], RootI[g], resultR, resultI);
-						RootR[g] = resultR;
-						RootI[g] = resultI;
 						g++;
 					}
 					n++;
-				}
-				int y = 0;
-				while (y < maxExponent) {
-					SolutionR[solveIndex] = RootR[y];
-					SolutionI[solveIndex] = RootI[y];
-					solveIndex++;
-					y++;
-				}
-				y = 0;
-				while (y < maxMaxExponent) {
-					RootR[y] = SolutionR[y];
-					RootI[y] = SolutionI[y];
-					y++;
 				}
 				maxExponent = maxMaxExponent;
 				g = 0;
@@ -1599,6 +1637,14 @@ void simpleSimplifyPolynomial(char expression[DIM]) {
 }
 
 void simplifyPolynomial(char expression[DIM]) {
+	replaceTimes = 0;
+	int parL = countOccurrences("(", expression);
+	int parR = countOccurrences(")", expression);
+	if (parL == 1 && parR == 1 && !isContained("[", expression)) {
+		replace("(", "", expression);
+		replace(")", "", expressionF);
+		sprintf(expression, "%s", expressionF);
+	}
 	isDivisible = true;
 	sprintf(roots, "");
 	char expressionS[DIM] = "";
@@ -2075,7 +2121,7 @@ void simplifyExpression(char data[DIM]) {
 							sprintf(new_expression, "%s", num);
 							char toReplace[DIM] = "";
 							math_processor(num);
-							sprintf(num, "%G+%Gi", resultR, resultI);
+							sprintf(num, "%f+%fi", resultR, resultI);
 							replaceTimes = 0;
 							if (isContained("-", num)) {
 								replace("-", "_", num);
@@ -2220,7 +2266,7 @@ void simplifyExpression(char data[DIM]) {
 							char simplified[DIM] = "";
 							char toReplace[DIM] = "";
 							math_processor(num);
-							sprintf(num, "%G+%Gi", resultR, resultI);
+							sprintf(num, "%f+%fi", resultR, resultI);
 							if (abs((int)strlen(num)) == 0) {
 								sprintf(num, "0");
 							}
@@ -2825,7 +2871,7 @@ void simplifyExpression(char data[DIM]) {
 					num[p] = '\0';
 					math_processor(num);
 					sprintf(num, "%sx", num);
-					sprintf(expressionF, "((%.12fS%fi)X^1S(0S0i))", resultR, resultI);
+					sprintf(expressionF, "((%fS%fi)X^1S(0S0i))", resultR, resultI);
 					replaceTimes = 0;
 					if (isContained("-", expressionF)) {
 						replace("-", "_", expressionF);
@@ -2996,8 +3042,6 @@ void simplifyExpression(char data[DIM]) {
 			}
 		}
 		replaceTimes = 0;
-		char save_Expression[DIM] = "";
-		sprintf(save_Expression, "%s", expression);
 		char greatDenominator[DIM] = "";
 		double great = 0;
 		if (isContained("/", expression)) {
@@ -3035,144 +3079,6 @@ void simplifyExpression(char data[DIM]) {
 					sprintf(saveExpressionSS, "%s", expressionF);
 				}
 				sprintf(expression, "%s", saveExpressionSS);
-
-				v++;
-			}
-			replaceTimes = 0;
-			removeTriplPars(expression);
-			sprintf(expression, "%s", expressionF);
-			int u = 0;
-			countSplits = countOccurrences("+", expression);
-			split("+", expression);
-			char saveCharResult[200][200];
-			while (u <= countSplits) {
-				sprintf(saveCharResult[u], "%s", splitResult[u]);
-				u++;
-			}
-			u = 0;
-			char numerator[200][200], denominator[200][200];
-			while (u <= countSplits) {
-				split("/", saveCharResult[u]);
-				if (!isContained("x", splitResult[0])) {
-					sprintf(numerator[u], "(0xS%s)", splitResult[0]);
-				}
-				else {
-					sprintf(numerator[u], "(%s)", splitResult[0]);
-				}
-				if (!isContained("x", splitResult[1])) {
-					sprintf(denominator[u], "(0xS%s)", splitResult[1]);
-				}
-				else {
-					sprintf(denominator[u], "(%s)", splitResult[1]);
-				}
-				u++;
-			}
-			replaceTimes = 0;
-			int m = 0;
-			int c = 0;
-			int equalNum = 0;
-			replaceTimes = 0;
-			char intermediate[DIM] = "";
-			sprintf(expression, "");
-			while (c <= countSplits) {
-				replaceTimes = 0;
-				equalNum = 0;
-				if (isContained("S", numerator[c])) {
-					replace("S", "+", numerator[c]);
-					sprintf(numerator[c], "%s", expressionF);
-				}
-				if (isContained("(((", numerator[c])) {
-					replace("(((", "((", numerator[c]);
-					sprintf(numerator[c], "%s", expressionF);
-				}
-				if (isContained(")))", numerator[c])) {
-					replace(")))", "))", numerator[c]);
-					sprintf(numerator[c], "%s", expressionF);
-				}
-				sprintf(expressionF, "(%s)*(0x^1+1)", numerator[c]);
-				removeTriplPars(expressionF);
-				simpleSimplifyPolynomial(expressionF);
-				sprintf(roots, "");
-				sprintf(numerator[c], "%s", expressionF);
-				if (isContained("(((", numerator[c]) && isContained(")))", numerator[c])) {
-					replace("(((", "((", numerator[c]);
-					sprintf(numerator[c], "%s", expressionF);
-					replace(")))", "))", numerator[c]);
-					sprintf(numerator[c], "%s", expressionF);
-				}
-				sprintf(intermediate, "%s", numerator[c]);
-				m = 0;
-				while (m <= countSplits) {
-					if (isContained("S", denominator[m])) {
-						replace("S", "+", denominator[m]);
-						sprintf(denominator[m], "%s", expressionF);
-					}
-					if (isContained("(((", denominator[m])) {
-						replace("(((", "((", denominator[m]);
-						sprintf(denominator[m], "%s", expressionF);
-					}
-					if (isContained(")))", denominator[m])) {
-						replace(")))", "))", denominator[m]);
-						sprintf(denominator[m], "%s", expressionF);
-					}
-					sprintf(expressionF, "(%s)*(0x^1+1)", denominator[m]);
-					removeTriplPars(expressionF);
-					simpleSimplifyPolynomial(expressionF);
-					sprintf(roots, "");
-					sprintf(denominator[m], "%s", expressionF);
-					processVariable("x");
-					double saveR = resultR, saveI = resultI;
-					resultR = M_PI * M_E; resultI = M_PI * M_E;
-					variableController("x", 0);
-					removeDuplPars(denominator[m]);
-					sprintf(denominator[m], "%s", expressionF);
-					math_processor(denominator[m]);
-					if (great < abs_complex(resultR, resultI)) {
-						sprintf(greatDenominator, "%s", denominator[m]);
-						great = abs_complex(resultR, resultI);
-					}
-					resultR = saveR; resultI = saveI;
-					variableController("x", 0);
-					m++;
-				}
-				c++;
-			}
-		}
-		sprintf(expression, "%s", save_Expression);
-		if (isContained("/", expression)) {
-			char saveExpressionSS[DIM] = "";
-			sprintf(saveExpressionSS, "%s", expression);
-			sprintf(saveSimplification, "%s", expression);
-			countSplits = countOccurrences("+", expression);
-			split("+", expression);
-			char expressionToSimplify[DIM] = "";
-			char expressionSimplified[DIM] = "";
-			int v = 0;
-			while (v < countSplits) {
-				sprintf(expressionToSimplify, "%s", splitResult[v]);
-				sprintf(expressionSimplified, "%s", splitResult[v]);
-				replaceTimes = 0;
-				replace("S", "+", expressionSimplified);
-				sprintf(expressionSimplified, "%s", expressionF);
-				if (countOccurrences("0x", expressionSimplified) < 2) {
-					sprintf(expressionF, "%s", expressionSimplified);
-					sprintf(expressionSimplified, "%s", expressionF);
-					simpleSimplifyPolynomial(expressionSimplified);
-					if (isDivisible) {
-						sprintf(expressionSimplified, "%s", expressionF);
-						if (!isContained("/", expressionSimplified)) {
-							sprintf(expressionSimplified, "%s/(0x+1)", expressionSimplified);
-						}
-					}
-					replaceTimes = 0;
-					replace("+", "S", expressionSimplified);
-					sprintf(expressionSimplified, "%s", expressionF);
-					sprintf(expression, "%s", saveExpressionSS);
-					replaceTimes = 1;
-					replace(expressionToSimplify, expressionSimplified, saveExpressionSS);
-					sprintf(saveExpressionSS, "%s", expressionF);
-				}
-				sprintf(expression, "%s", saveExpressionSS);
 				v++;
 			}
 			replaceTimes = 0;
@@ -3212,80 +3118,71 @@ void simplifyExpression(char data[DIM]) {
 			replaceTimes = 0;
 			char intermediate[DIM] = "";
 			sprintf(expression, "");
-			while (c <= countSplits) {
-				replaceTimes = 0;
-				equalNum = 0;
-				if (isContained("S", numerator[c])) {
-					replace("S", "+", numerator[c]);
-					sprintf(numerator[c], "%s", expressionF);
+			m = 0;
+			while (m <= countSplits) {
+				if (isContained("S", denominator[m])) {
+					replace("S", "+", denominator[m]);
+					sprintf(denominator[m], "%s", expressionF);
 				}
-				if (isContained("(((", numerator[c])) {
-					replace("(((", "((", numerator[c]);
-					sprintf(numerator[c], "%s", expressionF);
+				if (isContained("(((", denominator[m])) {
+					replace("(((", "((", denominator[m]);
+					sprintf(denominator[m], "%s", expressionF);
 				}
-				if (isContained(")))", numerator[c])) {
-					replace(")))", "))", numerator[c]);
-					sprintf(numerator[c], "%s", expressionF);
+				if (isContained(")))", denominator[m])) {
+					replace(")))", "))", denominator[m]);
+					sprintf(denominator[m], "%s", expressionF);
 				}
-				sprintf(expressionF, "(%s)*(0x^1+1)", numerator[c]);
+				sprintf(expressionF, "(%s)*(0x^1+1)", denominator[m]);
 				removeTriplPars(expressionF);
 				simpleSimplifyPolynomial(expressionF);
 				sprintf(roots, "");
-				sprintf(numerator[c], "%s", expressionF);
-				if (isContained("(((", numerator[c]) && isContained(")))", numerator[c])) {
-					replace("(((", "((", numerator[c]);
-					sprintf(numerator[c], "%s", expressionF);
-					replace(")))", "))", numerator[c]);
-					sprintf(numerator[c], "%s", expressionF);
+				processVariable("x");
+				double saveR = resultR, saveI = resultI;
+				resultR = M_PI * M_E; resultI = M_PI * M_E;
+				variableController("x", 0);
+				removeDuplPars(denominator[m]);
+				sprintf(denominator[m], "%s", expressionF);
+				math_processor(denominator[m]);
+				if (great < abs_complex(resultR, resultI)) {
+					sprintf(greatDenominator, "%s", denominator[m]);
+					great = abs_complex(resultR, resultI);
 				}
-				sprintf(intermediate, "%s", numerator[c]);
-				m = 0;
-				while (m <= countSplits) {
-					if (isContained("S", denominator[m])) {
-						replace("S", "+", denominator[m]);
-						sprintf(denominator[m], "%s", expressionF);
-					}
-					if (isContained("(((", denominator[m])) {
-						replace("(((", "((", denominator[m]);
-						sprintf(denominator[m], "%s", expressionF);
-					}
-					if (isContained(")))", denominator[m])) {
-						replace(")))", "))", denominator[m]);
-						sprintf(denominator[m], "%s", expressionF);
-					}
-					sprintf(roots, "");
-					if (isContained("S", numerator[m])) {
-						replace("S", "+", numerator[m]);
-						sprintf(numerator[m], "%s", expressionF);
-					}
-					removeDuplPars(numerator[m]);
+				resultR = saveR; resultI = saveI;
+				variableController("x", 0);
+				m++;
+			}
+			m = 0;
+			while (m <= countSplits) {
+				if (isContained("S", numerator[m])) {
+					replace("S", "+", numerator[m]);
 					sprintf(numerator[m], "%s", expressionF);
-					removeDuplPars(denominator[m]);
-					sprintf(denominator[m], "%s", expressionF);
-					sprintf(expressionF, "(%s)*(0x+1)", denominator[m]);
-					simpleSimplifyPolynomial(expressionF);
-					sprintf(denominator[m], "%s", expressionF);
-					removeDuplPars(denominator[m]);
-					sprintf(denominator[m], "%s", expressionF);
-					sprintf(expressionF, "(%s)/(%s)", greatDenominator, denominator[m]);
-					simpleSimplifyPolynomial(expressionF);
-					char firstFract[DIM] = "";
-					sprintf(firstFract, "%s", expressionF);
-					multi_polynomial(firstFract, numerator[m]);
-					char secondFract[DIM] = "";
-					sprintf(secondFract, "%s", expressionF);
-					sprintf(intermediate, "%s", expressionF);
-					if (m == 0) {
-						sprintf(expression, "%s", intermediate);
-					}
-					else {
-						if (m <= countSplits) {
-							sprintf(expression, "%s+%s", expression, intermediate);
-						}
-					}
-					m++;
 				}
-				c++;
+				removeDuplPars(numerator[m]);
+				sprintf(numerator[m], "%s", expressionF);
+				removeDuplPars(denominator[m]);
+				sprintf(denominator[m], "%s", expressionF);
+				sprintf(expressionF, "(%s)*(0x+1)", denominator[m]);
+				simpleSimplifyPolynomial(expressionF);
+				sprintf(denominator[m], "%s", expressionF);
+				removeDuplPars(denominator[m]);
+				sprintf(denominator[m], "%s", expressionF);
+				sprintf(expressionF, "(%s)/(%s)", greatDenominator, denominator[m]);
+				simpleSimplifyPolynomial(expressionF);
+				char firstFract[DIM] = "";
+				sprintf(firstFract, "%s", expressionF);
+				multi_polynomial(firstFract, numerator[m]);
+				char secondFract[DIM] = "";
+				sprintf(secondFract, "%s", expressionF);
+				sprintf(intermediate, "%s", expressionF);
+				if (m == 0) {
+					sprintf(expression, "%s", intermediate);
+				}
+				else {
+					if (m <= countSplits) {
+						sprintf(expression, "%s+%s", expression, intermediate);
+					}
+				}
+				m++;
 			}
 			replaceTimes = 0;
 			if (isContained("S", expression)) {
@@ -3543,4 +3440,88 @@ char* convertToString(char* string) {
 	return stringHelper;
 }
 
+void convertToPoly(char expressionToConvert[DIM]) {
+	char originalEquation[DIM] = "";
+	char expression[DIM] = "";
+	char saveEquation[DIM] = "";
+	char toCalcX[DIM] = "";
+	double valuesEqR[200], valuesEqI[200];
+	int i = 0, saveMaxExponent = 0;
+	sprintf(originalEquation, "%s", expressionToConvert);
+	sprintf(saveEquation, "%s", originalEquation);
+	maxExponent = 0;
+	sprintf(expression, "%s", originalEquation);
+	equationSolverRunning = true;
+	solving = false;
+	for (i = 0; originalEquation[i] != '\0'; i++) {
+		if (originalEquation[i] == '\\') {
+			maxExponent++;
+		}
+	}
+	int members = maxExponent;
+	i = 0;
+	char toValue[DIM] = "";
+	while (members >= 0) {
+		int b = 0;
+		while (originalEquation[i] != '\\' && originalEquation[i] != '\0') {
+			toValue[b] = originalEquation[i];
+			b++;
+			i++;
+		}
+		toValue[b] = '\0';
+		math_processor(toValue);
+		valuesEqR[members] = resultR;
+		valuesEqI[members] = resultI;
+		members--;
+		sprintf(toValue, "");
+		i++;
+	}
+	i = maxExponent;
+	double maxValueR = valuesEqR[maxExponent], maxValueI = valuesEqI[maxExponent];
+	for (i = maxExponent; i >= 0; i--) {
+		division(valuesEqR[i], valuesEqI[i], maxValueR, maxValueI);
+		valuesEqR[i] = resultR;
+		valuesEqI[i] = resultI;
+	}
+	saveMaxExponent = maxExponent;
+	for (i = maxExponent; i > 0; i--) {
+		char ValueR[DIM] = "";
+		sprintf(ValueR, "%f", valuesEqR[i]);
+		for (int v = 0; v < abs((int)(strlen(ValueR))); v++) {
+			if (ValueR[v] == '-')
+				ValueR[v] = '_';
+		}
+		char ValueI[DIM] = "";
+		sprintf(ValueI, "%f", valuesEqI[i]);
+		for (int v = 0; v < abs((int)strlen(ValueI)); v++) {
+			if (ValueI[v] == '-')
+				ValueI[v] = '_';
+		}
+
+		sprintf(toCalcX, "%s(%s+%si)1*(res)^%d+", toCalcX, ValueR, ValueI, i);
+	}
+	lastDividerR = valuesEqR[0];
+	lastDividerI = valuesEqI[0];
+
+	char ValueR[DIM] = "";
+	sprintf(ValueR, "%f", valuesEqR[i]);
+	for (int v = 0; v < abs((int)strlen(ValueR)); v++) {
+		if (ValueR[v] == '-')
+			ValueR[v] = '_';
+	}
+	char ValueI[DIM] = "";
+	sprintf(ValueI, "%f", valuesEqI[i]);
+	for (int v = 0; v < abs((int)strlen(ValueI)); v++) {
+		if (ValueI[v] == '-')
+			ValueI[v] = '_';
+	}
+	sprintf(toCalcX, "%s(%s+%si)", toCalcX, ValueR, ValueI);
+	if (isContained(".000000", toCalcX)) {
+		replace(".000000", "", toCalcX);
+		sprintf(toCalcX, "%s", expressionF);
+	}
+	sprintf(toCalcX, "%s", expressionF);
+	puts(toCalcX);
+	system("pause");
+}
 

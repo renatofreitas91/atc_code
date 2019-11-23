@@ -150,6 +150,15 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					LastDividerR = 0;
 					lastDividerI = 0;
 					LastDividerI = 0;
+					replaceTimes = 0;
+					int parL = countOccurrences("(", data);
+					int parR = countOccurrences(")", data);
+					replaceTimes = 0;
+					if (parL == 1 && parR == 1) {
+						replace("(", "", data);
+						replace(")", "", expressionF);
+						sprintf(data, "%s", expressionF);
+					}
 					manageExpression(data, 0, 0, 1);
 					sprintf(data, "%s", expressionF);
 					replaceTimes = 0;
@@ -452,6 +461,15 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					sprintf(saveSimplified, "");
 					sprintf(saveSimplification, "");
 					sprintf(expressionF, "");
+					replaceTimes = 0;
+					int parL = countOccurrences("(", data);
+					int parR = countOccurrences(")", data);
+					replaceTimes = 0;
+					if (parL == 1 && parR == 1) {
+						replace("(", "", data);
+						replace(")", "", expressionF);
+						sprintf(data, "%s", expressionF);
+					}
 					manageExpression(data, 0, 0, 1);
 					sprintf(data, "%s", expressionF);
 					replaceTimes = 0;

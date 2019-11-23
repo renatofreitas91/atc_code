@@ -120,6 +120,7 @@ boolean isContainedByIndex(char to_find[DIM], char string[DIM], int index);
 boolean verifyOperator(char operatorF);
 boolean verifyNumerator(char number);
 boolean isContainedInUserFunction(char variable[DIM]);
+boolean verifyCoefficient(char number);
 char * getDerivative(char expression[DIM]);
 char* convertToString(char* string);
 char* convertToSpaces(char* data);

@@ -516,12 +516,14 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				decision = false;
 				if (comment == 1) {
 					printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
+					puts(data);
 				}
 				return decision;
 			}
 			decision = false;
 			if (comment == 1) {
 				printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
+				puts(data);
 			}
 			return decision;
 		}
@@ -585,6 +587,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			}
 			int klp = s, savePar = 0;
 			data[s] = '\0';
+			s = 0;
 			for (s = 0; data[s] != '\0'; s++) {
 				if (parent[s + 1] == parent[s] + 1 && parent[s] != 0) {
 					savePar = s;
@@ -596,6 +599,12 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 						decision = false;
 						if (comment == 1) {
 							printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
+							puts(data);
+							printf("\n");
+							for (s = 0; data[s] != '\0'; s++) {
+								printf("%d", data[s]);
+							}
+							printf("\n");
 						}
 						return decision;
 					}

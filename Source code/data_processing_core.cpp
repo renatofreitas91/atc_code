@@ -3914,6 +3914,17 @@ boolean verifyNumerator(char number) {
 	return false;
 }
 
+boolean verifyCoefficient(char number) {
+	char numbers[DIM] = "_.0123456789*Epie";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (number == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
 boolean verifyNumerical(char number) {
 	char numbers[DIM] = "_-.0123456789ABCDEF";
 	int i = 0;
