@@ -1153,46 +1153,46 @@ void customFuncRenamer(char variable[DIM]) {
 	for (i = 0; variable[i] != '\0'; i++) {
 		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
 			if (variable[i] == 's') {
-				revariable[i] = 'p';
+				revariable[i] = 'S';
 			}
 			if (variable[i] == 'c') {
-				revariable[i] = 'h';
+				revariable[i] = 'W';
 			}
 			if (variable[i] == 't') {
-				revariable[i] = 'j';
+				revariable[i] = 'J';
 			}
 			if (variable[i] == 'a') {
 				revariable[i] = 'k';
 			}
 			if (variable[i] == 'l') {
-				revariable[i] = 'z';
+				revariable[i] = 'L';
 			}
 			if (variable[i] == 'r') {
-				revariable[i] = 'v';
+				revariable[i] = 'R';
 			}
 			if (variable[i] == 'q') {
-				revariable[i] = 'n';
+				revariable[i] = 'Q';
 			}
 			if (variable[i] == 'g') {
-				revariable[i] = 'm';
+				revariable[i] = 'G';
 			}
 			if (variable[i] == 'd') {
-				revariable[i] = 'G';
+				revariable[i] = 'K';
 			}
 		}
 		else {
-			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'b' || variable[i] == 'D') {
+			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'D' || variable[i] == 'b') {
 				if (variable[i] == 'i') {
-					revariable[i] = 'o';
+					revariable[i] = 'Z';
 				}
 				if (variable[i] == 'e') {
 					revariable[i] = 'w';
 				}
-				if (variable[i] == 'b') {
-					revariable[i] = 'u';
-				}
 				if (variable[i] == 'D') {
 					revariable[i] = 'T';
+				}
+				if (variable[i] == 'b') {
+					revariable[i] = 'u';
 				}
 			}
 			else {
@@ -1211,21 +1211,24 @@ void customFuncRenamer(char variable[DIM]) {
 					}
 				}
 				else {
-					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'P') {
+					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'P' || (variable[i - 2] == 'I'&&variable[i - 1] == 'N') == false && variable[i] == 'F') {
 						if (variable[i] == 'A') {
-							revariable[i] = 'Q';
+							revariable[i] = 'X';
 						}
 						if (variable[i] == 'B') {
-							revariable[i] = 'W';
+							revariable[i] = 'N';
 						}
 						if (variable[i] == 'C') {
-							revariable[i] = 'R';
+							revariable[i] = 'v';
 						}
 						if (variable[i] == 'E') {
 							revariable[i] = 'Y';
 						}
+						if (variable[i] == 'F') {
+							revariable[i] = 'U';
+						}
 						if (variable[i] == 'P') {
-							revariable[i] = 'S';
+							revariable[i] = 'I';
 						}
 					}
 					else {
@@ -3305,48 +3308,45 @@ int variableValidator(char variable[DIM]) {
 	for (i = 0; variable[i] != '\0'; i++) {
 		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
 			if (variable[i] == 's') {
-				revariable[i] = 'p';
+				revariable[i] = 'S';
 			}
 			if (variable[i] == 'c') {
-				revariable[i] = 'h';
+				revariable[i] = 'W';
 			}
 			if (variable[i] == 't') {
-				revariable[i] = 'j';
+				revariable[i] = 'J';
 			}
 			if (variable[i] == 'a') {
 				revariable[i] = 'k';
 			}
 			if (variable[i] == 'l') {
-				revariable[i] = 'z';
+				revariable[i] = 'L';
 			}
 			if (variable[i] == 'r') {
-				revariable[i] = 'v';
+				revariable[i] = 'R';
 			}
 			if (variable[i] == 'q') {
-				revariable[i] = 'n';
+				revariable[i] = 'Q';
 			}
 			if (variable[i] == 'g') {
-				revariable[i] = 'm';
-			}
-			if (variable[i] == 'd') {
 				revariable[i] = 'G';
 			}
 			if (variable[i] == 'd') {
-				revariable[i] = 'G';
+				revariable[i] = 'K';
 			}
 			h = 1;
 		}
 		else {
 			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'D' || variable[i] == 'b') {
 				if (variable[i] == 'i') {
-					revariable[i] = 'o';
+					revariable[i] = 'Z';
 				}
 				if (variable[i] == 'e') {
 					revariable[i] = 'w';
 				}
 				if (variable[i] == 'D') {
 					revariable[i] = 'T';
-					if (isEqual("b", variable)) {
+					if (isEqual("D", variable)) {
 						return 2;
 					}
 				}
@@ -3377,13 +3377,13 @@ int variableValidator(char variable[DIM]) {
 				else {
 					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'P' || (variable[i - 2] == 'I'&&variable[i - 1] == 'N') == false && variable[i] == 'F') {
 						if (variable[i] == 'A') {
-							revariable[i] = 'Q';
+							revariable[i] = 'X';
 						}
 						if (variable[i] == 'B') {
-							revariable[i] = 'W';
+							revariable[i] = 'N';
 						}
 						if (variable[i] == 'C') {
-							revariable[i] = 'R';
+							revariable[i] = 'v';
 						}
 						if (variable[i] == 'E') {
 							revariable[i] = 'Y';
@@ -3392,7 +3392,7 @@ int variableValidator(char variable[DIM]) {
 							revariable[i] = 'U';
 						}
 						if (variable[i] == 'P') {
-							revariable[i] = 'S';
+							revariable[i] = 'I';
 						}
 						h = 1;
 					}
@@ -3822,6 +3822,16 @@ boolean verifyOperator(char operatorF) {
 	}
 	return false;
 }
+boolean verifyOperators(char operatorF) {
+	char numbers[DIM] = "+-*/^";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (operatorF == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
 
 boolean verifyNumberExpression(char number) {
 	char numbers[DIM] = "_0.123456789Epiex(^)S";
@@ -3905,6 +3915,37 @@ boolean verifyValue(char number) {
 
 boolean verifyNumerator(char number) {
 	char numbers[DIM] = "_.0123456789*^Epie";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (number == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+boolean verifyFraction(char number) {
+	char numbers[DIM] = "_.0123456789Epie/";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (number == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+boolean verifyMultiplication(char number) {
+	char numbers[DIM] = "_.0123456789Epie*";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (number == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+boolean verifyForNumber(char number) {
+	char numbers[DIM] = "_.0123456789Epie";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(numbers)); i++) {
 		if (number == numbers[i]) {

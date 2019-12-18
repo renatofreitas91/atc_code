@@ -516,14 +516,12 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				decision = false;
 				if (comment == 1) {
 					printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
-					puts(data);
 				}
 				return decision;
 			}
 			decision = false;
 			if (comment == 1) {
 				printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
-				puts(data);
 			}
 			return decision;
 		}
@@ -599,7 +597,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 						decision = false;
 						if (comment == 1) {
 							printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
-							puts(data);
 							printf("\n");
 							for (s = 0; data[s] != '\0'; s++) {
 								printf("%d", data[s]);
@@ -791,6 +788,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 						verify = 0;
 						if (comment == 1) {
 							puts("\nYour expression has consecutive arithmetic symbols.\n");
+							puts(data);
 						}
 						decision = false;
 						return decision;

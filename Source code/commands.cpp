@@ -132,7 +132,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			exprDev[tGet] = '\0';
 			char data[DIM] = "", errorText[DIM] = "";
 			polySimplifier = false;
-			sprintf(data, "%s+0", exprDev);
+			sprintf(data, "%s", exprDev);
 			sprintf(saveExpressionF, "%s", data);
 			char solution[DIM] = "";
 			synTest = 0;
@@ -155,9 +155,15 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					int parR = countOccurrences(")", data);
 					replaceTimes = 0;
 					if (parL == 1 && parR == 1) {
-						replace("(", "", data);
-						replace(")", "", expressionF);
-						sprintf(data, "%s", expressionF);
+						isContained("(", data);
+						if (strStart == 0) {
+							isContained(")", data);
+							if (strEnd == strlen(data)) {
+								replace("(", "", data);
+								replace(")", "", expressionF);
+								sprintf(data, "%s", expressionF);
+							}
+						}
 					}
 					manageExpression(data, 0, 0, 1);
 					sprintf(data, "%s", expressionF);
@@ -447,7 +453,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			exprDev[tGet] = '\0';
 			polySimplifier = false;
 			char data[DIM] = "";
-			sprintf(data, "%s+0", exprDev);
+			sprintf(data, "%s", exprDev);
 			sprintf(saveExpressionF, "%s", data);
 			if (!isContained("\\", data)) {
 				synTest = 0;
@@ -466,9 +472,15 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					int parR = countOccurrences(")", data);
 					replaceTimes = 0;
 					if (parL == 1 && parR == 1) {
-						replace("(", "", data);
-						replace(")", "", expressionF);
-						sprintf(data, "%s", expressionF);
+						isContained("(", data);
+						if (strStart == 0) {
+							isContained(")", data);
+							if (strEnd == strlen(data)) {
+								replace("(", "", data);
+								replace(")", "", expressionF);
+								sprintf(data, "%s", expressionF);
+							}
+						}
 					}
 					manageExpression(data, 0, 0, 1);
 					sprintf(data, "%s", expressionF);

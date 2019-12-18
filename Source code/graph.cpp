@@ -1,13 +1,50 @@
 #include "stdafx.h"
 
 void designGraph(char functionF[DIM]) {
+	FILE * open;
+	int numberCols = 0;
+	char toOpen[DIM] = "";
+	char setting[500] = "";
+	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+	if (fopen(toOpen, "r") == NULL) {
+		system("MODE con cols=167 lines=5000");
+		numberCols = 167;
+	}
+	else {
+		open = fopen(toOpen, "r");
+		fgets(setting, 40, open);
+		fclose(open);
+		if (isContained("MODE con cols=", setting)) {
+			int k = strEnd, l = 0;
+			char number[5] = "";
+			while (verifyNumber(setting[k])) {
+				number[l] = setting[k];
+				k++; l++;
+			}
+			number[l] = '\0';
+			numberCols = atoi(number);
+		}
+	}
 	char function[DIM] = "";
 	if (isContained("x", functionF)) {
 		replace("x", "res", functionF);
 		sprintf(function, expressionF);
 	}
+	int t = 0, w = 0, p = 0;
+	char functions[20][200];
+	for (t = 0; functionF[t] != '\0'; t++) {
+		if (functionF[t] != '\\') {
+			functions[w][p] = functionF[t];
+			p++;
+		}
+		else {
+			functions[w][p] = '\0';
+			p = 0;
+			w++;
+		}
+	}
+
 	FILE *graph = NULL;
-	char toOpen[DIM] = "";
 	double Xmin, Xmax, Xscale, Ymin, Ymax, Yscale, auto_y_axis;
 	sprintf(toOpen, "%s\\graph.txt", atcPath);
 	graph = fopen(toOpen, "r");
@@ -94,7 +131,7 @@ void designGraph(char functionF[DIM]) {
 	solverRunning = true;
 	solving = false;
 	int i = 0, j = 0;
-	int y = (int)abs(Ymax);
+	int	 y = (int)abs(Ymax);
 	y = (int)(y / ((double)yDim / 60));
 	int x = (int)abs(Xmin);
 	x = (int)(x / ((double)xDim / 120));
@@ -271,7 +308,12 @@ void designGraph(char functionF[DIM]) {
 			replace("res", "x", specFunction);
 			sprintf(specFunction, expressionF);
 		}
-		sprintf(info, "%s\n%s -> %c", info, specFunction, symbols[count]);
+		if (count < commas) {
+			sprintf(info, "%s%s -> %c %c", info, specFunction, symbols[count], 179);
+		}
+		else {
+			sprintf(info, "%s%s -> %c", info, specFunction, symbols[count]);
+		}
 		count++;
 		commas--;
 	} while (commas > 0);
@@ -293,13 +335,75 @@ void designGraph(char functionF[DIM]) {
 	}
 	printf("%c", 179);
 	printf("\n");
-	puts("\nCurrent settings:\n");
-	printf("%c Xmin: %G %c Xmax: %G %c Xscale: %G %c Ymin: %G %c Ymax: %G %c Yscale: %G %c\n", 179, Xmin, 179, Xmax, 179, Xscale, 179, Ymin, 179, Ymax, 179, Yscale, 179);
-	puts("\nLegend:");
-	puts(info);
+	printf(" Current settings: %c Xmin: %G %c Xmax: %G %c Xscale: %G %c Ymin: %G %c Ymax: %G %c Yscale: %G %c\n", 179, Xmin, 179, Xmax, 179, Xscale, 179, Ymin, 179, Ymax, 179, Yscale, 179);
 	solverRunning = false;
 	solving = true;
 	int option = -1;
+	option = 1;
+	char keys[dim] = "";
+	printf(" You can navigate with the  \"Left\" and \"Right\" arrows. To exit press the \"Escape\" key.");
+	int index = 0;
+	int rf = 0;
+	while (option == 1) {
+		if (GetKeyState(VK_LEFT) < 0) {
+			printf("\r ");
+			if (index > 0) {
+				index--;
+			}
+			t = 0;
+			char data[DIM] = "";
+			sprintf(data, "x = %f: ", Xmin + index * (double)xDim / 120);
+			for (t = 0; t <= w; t++) {
+				sprintf(data, "%s%s [%c]: %f  ", data, functions[t], symbols[t], yValuesAll[t][index]);
+			}
+			rf = 0;
+			while (rf < index&&rf < numberCols - abs((int)strlen(data)) - 2) {
+				printf("%c", 178);
+				rf++;
+			}
+			while (rf < numberCols - abs((int)strlen(data)) - 2 && rf < 120) {
+				printf("%c", 177);
+				rf++;
+			}
+			printf("%s", data);
+		}
+		if (GetKeyState(VK_RIGHT) < 0) {
+			printf("\r ");
+			if (index < 120) {
+				index++;
+			}
+			t = 0;
+			char data[DIM] = "";
+			sprintf(data, "x = %f: ", Xmin + index * (double)xDim / 120);
+			for (t = 0; t <= w; t++) {
+				sprintf(data, "%s%s [%c]: %f  ", data, functions[t], symbols[t], yValuesAll[t][index]);
+			}
+			rf = 0;
+			while (rf < index&&rf < numberCols - abs((int)strlen(data)) - 2) {
+				printf("%c", 178);
+				rf++;
+			}
+			while (rf < numberCols - abs((int)strlen(data)) - 2 && rf < 120) {
+				printf("%c", 177);
+				rf++;
+			}
+			printf("%s", data);
+		}
+		if (GetKeyState(VK_ESCAPE) < 0) {
+			INPUT ip;
+			ip.type = INPUT_KEYBOARD;
+			ip.ki.time = 0;
+			ip.ki.dwFlags = KEYEVENTF_UNICODE;
+			ip.ki.wScan = VK_RETURN;
+			ip.ki.wVk = 0;
+			ip.ki.dwExtraInfo = 0;
+			SendInput(1, &ip, sizeof(INPUT));
+			gets_s(keys);
+			option = 0;
+		}
+		Sleep(100);
+	}
+	option = -1;
 	while (option != 1 && option != 0) {
 		I_O = true;
 		puts("\nDo you want to see the graph data in table form? (Yes -> 1 \\ No -> 0)");

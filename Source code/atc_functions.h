@@ -44,6 +44,7 @@ boolean verifyNumerical(char number);
 boolean isSolved();
 boolean verifyValue(char number);
 boolean IsPreviousToWindowsVista();
+boolean verifyOperators(char operatorF);
 int datePreciser(double day, double month, double year, double dayS, double monthS, double yearS);
 int applySettings(int toDo);
 double prefToNumber(char prefix);
