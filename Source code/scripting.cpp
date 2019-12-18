@@ -689,16 +689,22 @@ double solveNow(char toSolveNow[DIM], double result1, double result2) {
 }
 
 double atcProg(char exprDev[DIM]) {
-	fflush(NULL);
-	FILE *atcDev = NULL;
-	char path[DIM] = "";
-	sprintf(path, "%s\\temp.txt", atcPath);
-	while (atcDev == NULL) {
-		atcDev = fopen(path, "w");
-	}
-	fputs(exprDev, atcDev);
-	fclose(atcDev);
-	processTxt(path, rf);
+	//char auxiliarCommands[DIM] = ",else,while,for,break,return,switch,case,cls,";
+	//if (!isContained(exprDev, auxiliarCommands)) {
+		fflush(NULL);
+		FILE *atcDev = NULL;
+		char path[DIM] = "";
+		sprintf(path, "%s\\temp.txt", atcPath);
+		while (atcDev == NULL) {
+			atcDev = fopen(path, "w");
+		}
+		fputs(exprDev, atcDev);
+		fclose(atcDev);
+		processTxt(path, rf);
+	//}
+	/*else {
+		resultR = 0;
+	}*/
 	return resultR;
 }
 
@@ -733,8 +739,8 @@ int atcProgramming(char script[DIM]) {
 	int atcP = 0, saveI = 0;
 	boolean ifStatus = true;
 	isContained("script", script);
-	if (script[strEnd] == '\0') {
-		puts("\nError: Your script is empty!");
+	if (script[strEnd] == '\n'&&script[strEnd + 1] == '\0') {
+		puts("\nError: Your script is empty.");
 	}
 	else {
 		if (script[strEnd] == '\n') {

@@ -17,20 +17,35 @@ void main(int argc, char *argv[]) {
 	double result1 = 0, result2 = 0;
 	getATCPath();
 	if (argc < 2) {
-		char commandF[400] = "";
-		sprintf(commandF, "%s\\atc_launcher.exe", atcPath);
-		using namespace std;
-		std::string s = string(commandF);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
+		HANDLE ProcSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+		boolean foundATClauncher = false;
+		PROCESSENTRY32W pe = { 0 };
+		pe.dwSize = sizeof(pe);
+		char currentProcess[200] = "";
+		if (Process32FirstW(ProcSnap, &pe)) {
+			do {
+				if (!wcscmp(pe.szExeFile, L"atc_launcher.exe")) {
+					foundATClauncher = true;
+					break;
+				}
+			} while (Process32NextW(ProcSnap, &pe));
+		}
+		if (!foundATClauncher) {
+			char commandF[400] = "";
+			sprintf(commandF, "%s\\atc_launcher.exe", atcPath);
+			using namespace std;
+			std::string s = string(commandF);
+			std::wstring stemp = std::wstring(s.begin(), s.end());
+			LPCWSTR sw = stemp.c_str();
+			ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
+		}
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v2.0.6");
+		system("title Advanced Trigonometry Calculator v2.0.7");
 		continu = about();
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v2.0.6       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v2.0.7       ==) ATC is ready to process data. (==");
 		do {
 			resultR = 0; resultI = 0;
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
@@ -55,7 +70,7 @@ void main(int argc, char *argv[]) {
 					gets_s(trigData);
 				}
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v2.0.6       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v2.0.7       ==) Processing... (==");
 
 			}
 			else {
@@ -220,7 +235,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v2.0.6       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v2.0.7       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -486,6 +501,14 @@ boolean processTxt(char path[DIM], int re) {
 }
 
 boolean dataVerifier(char data[DIM], double result1, double result2, int comment, int verify) {
+	boolean decision = true;
+	if (isContained("()", data)) {
+		decision = false;
+		if (comment == 1) {
+			printf("\nError in parentheses. \n ==> ATC has detected an empty open and close parantheses, i.e. \"()\".\n");
+		}
+		return decision;
+	}
 	int h = 0;
 	while (h < abs((int)strlen(data))) {
 		if (data[h] == '[' || data[h] == '{') {
@@ -497,7 +520,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 		h++;
 	}
 	replaceTimes = 0;
-	boolean decision = true;
 	if (abs((int)strlen(data)) > 0) {
 		int kg = 0, kc = 0, i = 0;
 		for (i = 0; data[i] != '\0'; i++) {
@@ -773,31 +795,24 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					}
 				}
 			}
-			w = abs((int)strlen(data)) - 4;
-			if ((data[w - 1] == '+' || data[w - 1] == '-' || data[w - 1] == '*' || data[w - 1] == '/' || data[w - 1] == '^') && data[w] == '+'&&data[w + 1] == '0'&&data[w + 2] == '+'&&data[w + 3] == '0'&&data[w + 4] == '\0') {
+			w = abs((int)strlen(data)) - 1;
+			if (data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') {
 				verify = 0;
 				if (comment == 1) {
 					puts("\nYour expression is terminating with an arithmetic symbol.\n");
 				}
+				sprintf(data, "%s+0", data);
+				puts(data);
 				decision = false;
 				return decision;
 			}
-			if (!isContained("nan*(1i*nd)+-nan*(1i*nd)*1i", data)) {
-				for (w = 0; data[w] != '\0'; w++) {
-					if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && (data[w + 1] == '+' || data[w + 1] == '-'&&data[w - 2] != '1'&&data[w - 1] != '0' || data[w + 1] == '*' || data[w + 1] == '/' || data[w + 1] == '^' || data[w + 1] == '!')) {
-						verify = 0;
-						if (comment == 1) {
-							puts("\nYour expression has consecutive arithmetic symbols.\n");
-							puts(data);
-						}
-						decision = false;
-						return decision;
+			for (w = 0; data[w] != '\0'; w++) {
+				if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && (data[w + 1] == '+' || data[w + 1] == '-'&&data[w - 2] != '1'&&data[w - 1] != '0' || data[w + 1] == '*' || data[w + 1] == '/' || data[w + 1] == '^' || data[w + 1] == '!')) {
+					verify = 0;
+					if (comment == 1) {
+						puts("\nYour expression has consecutive arithmetic symbols.\n");
 					}
-				}
-			}
-			else {
-				if (isEqual("nan*(1i*nd)+-nan*(1i*nd)*1i", data)) {
-					decision = true;
+					decision = false;
 					return decision;
 				}
 			}
@@ -1421,7 +1436,7 @@ boolean atcFunctions(char functionName[DIM]) {
 				funcIndex++;
 			}
 		}
-		printf("\nThis is the function number %d in the list of atc functions!\n", funcIndex);
+		printf("\nThis is the function number %d in the list of atc functions.\n", funcIndex);
 	}
 	for (j = 0; saveFunction[j] != '\0'; j++) {
 		functionName[j] = saveFunction[j];

@@ -49,9 +49,14 @@ double initialProcessor(char arithTrig[DIM], double result) {
 			}
 			s--;
 			if (arithTrig[s] != 'H') {
-				arithTrig[r] = '0';
+				int k = r;
+				while (arithTrig[k + 1] != '\0') {
+					arithTrig[k] = arithTrig[k + 1];
+					k++;
+				}
+				arithTrig[k] = '\0';
 			}
-			s = r + 1;
+			s = r;
 		}
 	}
 	char paTrig[DIM] = "";
@@ -1076,7 +1081,7 @@ double arithSolver(char trigon1[DIM], double result) {
 			number2[df] = '\0';
 		}
 		double var = 0;
-		if (number2[0] == 'f' || number2[0] == 'h' || number2[0] == 'j' || number2[0] == 'k' || number2[0] == 'm' || number2[0] == 'n' || number2[0] == 'o' || number2[0] == 'p' || number2[0] == 'u' || number2[0] == 'w' || number2[0] == 'v' || number2[0] == 'y' || number2[0] == 'z' || number2[0] == 'G' || number2[0] == 'I' || number2[0] == 'J' || number2[0] == 'K' || number2[0] == 'L' || number2[0] == 'M' || number2[0] == 'N' || number2[0] == 'Q' || number2[0] == 'R' || number2[0] == 'S' || number2[0] == 'T' || number2[0] == 'U' || number2[0] == 'V' || number2[0] == 'X' || number2[0] == 'Y' || number2[0] == 'Z' || number2[0] == 'x') {
+		if (firstLetterVariable(number2[0])) {
 			for (j = 0; number2[j] != '\0'; j++) {
 				if (number2[j] == '.') {
 					number2[j] = '\0';

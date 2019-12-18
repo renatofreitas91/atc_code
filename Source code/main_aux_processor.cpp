@@ -14,8 +14,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 	resultR = 0; resultI;
 	int txt = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0, StringManual = 0;
 	char variable[DIM] = "", getVarName[DIM] = "", getVar[DIM] = "", savefTrig[DIM] = "";
-	boolean command = 0,
-		cleanhistory = 0;
+	boolean command = 0,cleanhistory = 0;
 	txt = 0;
 	valid = 1;
 	validVar = 1;
@@ -58,6 +57,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			}
 			if (strIndex == strlen(getVarName)) {
 				gets_s(getVar);
+				arithTrig[0] = '\0';
 			}
 			else {
 				puts("\nTo create string variables only letters from latin alphabet and digits 0-9 can be used.\nTo create numerical variables only letters from latin alphabet can be used.");
@@ -73,8 +73,8 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 		else {
 			puts("\nError in syntax in get function.\n");
 			command = 1;
-			arithTrig[0] = '\0';
 		}
+
 	}
 	if (isContained("opentxt", withoutSpaces) == false && isContained(":\\", withoutSpaces) == false && (isContained("=\"", withoutSpaces) || isContained("=replace(", withoutSpaces) || isContained("=replacebyindex(", withoutSpaces) || isContained("=deletexoccurrences(", withoutSpaces))) {
 		StringManual = 1;
@@ -347,9 +347,10 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			}
 			string[p] = '\0';
 			replaceTimes = 0;
-			replace("\"", "", string);
-			sprintf(string, "%s", expressionF);
-			string[strlen(string)] = '\0';
+			if (isContained("\"", string)) {
+				replace("\"", "", string);
+				sprintf(string, "%s", expressionF);
+			}
 			p = 0;
 			while (verifyLetter(variableString[p])) {
 				p++;
@@ -492,7 +493,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			arithTrig[0] = '\0';
 		}
 	}
-	if (str == 1 && getString == 0) {
+	if (str == 1 || getString == 1) {
 		int p = 0;
 		char variableString[DIM] = "";
 		p = 0;
@@ -516,23 +517,12 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 					arithTrig[p - lenStr] = arithTrig[p];
 				}
 				arithTrig[p - lenStr] = '\0';
-
-
-
-
 				p = 0;
 				while (verifyLetter(variableString[p])) {
 					p++;
 				}
 				int hk = variableValidator(variableString);
 				char variableFeedback[DIM] = "";
-				if (p == strlen(variableString)) {
-					char toReplace[DIM] = "";
-					sprintf(toReplace, "%s=", variableString);
-					replace(toReplace, "", arithTrig);
-					sprintf(arithTrig, "%s", expressionF);
-					puts(" ");
-				}
 				if (hk == 1) {
 					processVariable(revariable);
 					sprintf(variableString, "%s", revariable);
@@ -638,6 +628,10 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 		}
 		command = commands(arithTrig, path, result1, result2);
 		if (command == (boolean)false && continu&&strlen(arithTrig) > 0) {
+			/*if (isContained("+0", arithTrig) && arithTrig[strEnd] == '\0') {
+				replace("+0", "", arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+			}*/
 			main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
 			sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 		}
@@ -803,6 +797,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				verify = 1;
 			}
 		}
+	}
+	if (verify == 1) {
+		verified = 1;
 	}
 	fclose(fout);
 	if (arithTrig[0] != '\0'&&isFromMain == 1 && feedbackValidation == 0) {

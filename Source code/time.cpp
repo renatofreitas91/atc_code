@@ -825,3 +825,890 @@ int datePreciser(double day, double month, double year, double dayS, double mont
 	}
 	return count;
 }
+
+void timeDifferenceCalculations() {
+	int toContinue = 1;
+	int option;
+	do {
+		option = 0;
+		while (option < 1 || option>3) {
+			printf("\n\nTime difference between:");
+			printf("\n\t\t\t o present time and past time-> 1");
+			printf("\n\t\t\t o future time and present time-> 2");
+			printf("\n\t\t\t o two different times-> 3\n");
+			I_O = true;
+			option = (int)getValue();
+		}
+		int bDay, bMonth, bYear, bHour, bMinutes, bSeconds;
+		int countLeapYears = 0;
+		int aHour = 0, aMinutes = 0, aSeconds = 0, aDay = 0, aMonth = 0, aYear = 0;
+		if (option == 1) {
+			printf("Enter the older time data:");
+			bYear = 0;
+			while (bYear < 1582) {
+				printf("\nYear? (1582 minimum)\n");
+				scanf("%d", &bYear);
+				if (bYear < 1582) {
+					printf("\nError: You have entered a year previous to the indroduce of Gregorian calendar.\n");
+				}
+			}
+			bMonth = 0;
+			while ((bMonth < 1 || bMonth>12) || (bYear == 1582 && bMonth < 10)) {
+				printf("\nMonth? (1-12)\n");
+				scanf("%d", &bMonth);
+				if ((bYear == 1582 && bMonth < 10)) {
+					printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+				}
+				if (bMonth < 0 || bMonth>12) {
+					printf("\nError: You have entered an invalid month.\n");
+				}
+			}
+			bDay = 0;
+			if (bMonth == 1 || bMonth == 3 || bMonth == 5 || bMonth == 7 || bMonth == 8 || bMonth == 10 || bMonth == 12) {
+				while ((bDay < 1 || bDay>31) || (bMonth == 10 && bYear == 1582 && bDay < 15)) {
+					printf("\nDay? (1-31)\n");
+					scanf("%d", &bDay);
+					if (bDay < 1 || bDay>31) {
+						printf("\nError: You have entered an invalid day for months with 31 duration days.\n");
+					}
+					if (bMonth == 10 && bYear == 1582 && bDay < 15) {
+						printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+					}
+				}
+			}
+			else {
+				if (bMonth == 4 || bMonth == 6 || bMonth == 9 || bMonth == 11) {
+					while ((bDay < 1 || bDay>30) || (bMonth < 10 && bYear == 1582)) {
+						printf("\nDay? (1-30)\n");
+						scanf("%d", &bDay);
+						if (bDay < 1 || bDay>30) {
+							printf("\nError: You have entered an invalid day for months with 30 duration days.\n");
+						}
+						if (bMonth < 10 && bYear == 1582) {
+							printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+						}
+					}
+				}
+				else {
+					if (bMonth == 2 && isLeapYear(bYear)) {
+						while (bDay < 1 || bDay>29) {
+							printf("\nDay? (1-29)\n");
+							scanf("%d", &bDay);
+							if (bDay < 1 || bDay>29) {
+								printf("\nError: You have entered a leap year, so February has 29 duration days.\n");
+							}
+						}
+					}
+					else {
+						if (bMonth == 2 && !isLeapYear(bYear)) {
+							while (bDay < 1 || bDay>28) {
+								printf("\nDay? (1-28)\n");
+								scanf("%d", &bDay);
+								if (bDay < 1 || bDay>28) {
+									printf("\nError: You have entered a common year, so February has 28 duration days.\n");
+								}
+							}
+						}
+					}
+				}
+			}
+			bHour = -1;
+			while (bHour < 0 || bHour>23) {
+				printf("\nHour? (0-23, i.e. Please consider the 24-hour clock.)\n");
+				scanf("%d", &bHour);
+				if (bHour < 0 || bHour>23) {
+					printf("\nError: The hour must be between 0 and 23, inclusively.\n");
+				}
+			}
+			bMinutes = -1;
+			while (bMinutes < 0 || bMinutes>59) {
+				printf("\nMinute? (0-59)\n");
+				scanf("%d", &bMinutes);
+				if (bMinutes < 0 || bMinutes>59) {
+					printf("\nError: The minute must be between 0 and 59, inclusively.\n");
+				}
+			}
+			bSeconds = -1;
+			while (bSeconds < 0 || bSeconds>59) {
+				printf("\nSecond? (0-59)\n");
+				scanf("%d", &bSeconds);
+				if (bSeconds < 0 || bSeconds>59) {
+					printf("\nError: The second must be between 0 and 59, inclusively.\n");
+				}
+			}
+			time_t hour;
+			time(&hour);
+			char *tim;
+			tim = ctime(&hour);
+			tim[24] = '\0';
+			char sec[3] = { tim[17], tim[18], '\0' };
+			aSeconds = atoi(sec);
+			char min[3] = { tim[14], tim[15], '\0' };
+			aMinutes = atoi(min);
+			char hou[3] = { tim[11], tim[12], '\0' };
+			aHour = atoi(hou);
+			char yea[5] = { tim[20], tim[21], tim[22], tim[23], '\0' };
+			aYear = atoi(yea);
+			char da[3] = { tim[8], tim[9], '\0' };
+			aDay = atoi(da);
+			if (tim[4] == 'J'&&tim[5] == 'a'&&tim[6] == 'n') {
+				aMonth = 1;
+			}
+			if (tim[4] == 'F'&&tim[5] == 'e'&&tim[6] == 'b') {
+				aMonth = 2;
+			}
+			if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'r') {
+				aMonth = 3;
+			}
+			if (tim[4] == 'A'&&tim[5] == 'p'&&tim[6] == 'r') {
+				aMonth = 4;
+			}
+			if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'y') {
+				aMonth = 5;
+			}
+			if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'n') {
+				aMonth = 6;
+			}
+			if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'l') {
+				aMonth = 7;
+			}
+			if (tim[4] == 'A'&&tim[5] == 'u'&&tim[6] == 'g') {
+				aMonth = 8;
+			}
+			if (tim[4] == 'S'&&tim[5] == 'e'&&tim[6] == 'p') {
+				aMonth = 9;
+			}
+			if (tim[4] == 'O'&&tim[5] == 'c'&&tim[6] == 't') {
+				aMonth = 10;
+			}
+			if (tim[4] == 'N'&&tim[5] == 'o'&&tim[6] == 'v') {
+				aMonth = 11;
+			}
+			if (tim[4] == 'D'&&tim[5] == 'e'&&tim[6] == 'c') {
+				aMonth = 12;
+			}
+		}
+		if (option == 2) {
+			printf("Enter the latter time data:");
+			aYear = 0;
+			while (aYear < 1582) {
+				printf("\nYear? (1582 minimum)\n");
+				scanf("%d", &aYear);
+				if (aYear < 1582) {
+					printf("\nError: You have entered a year previous to the indroduce of Gregorian calendar.\n");
+				}
+			}
+			aMonth = 0;
+			while ((aMonth < 1 || aMonth>12) || (aYear == 1582 && aMonth < 10)) {
+				printf("\nMonth? (1-12)\n");
+				scanf("%d", &aMonth);
+				if ((aYear == 1582 && aMonth < 10)) {
+					printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+				}
+				if (aMonth < 0 || aMonth>12) {
+					printf("\nError: You have entered an invalid month.\n");
+				}
+			}
+			aDay = 0;
+			if (aMonth == 1 || aMonth == 3 || aMonth == 5 || aMonth == 7 || aMonth == 8 || aMonth == 10 || aMonth == 12) {
+				while ((aDay < 1 || aDay>31) || (aMonth == 10 && aYear == 1582 && aDay < 15)) {
+					printf("\nDay? (1-31)\n");
+					scanf("%d", &aDay);
+					if (aDay < 1 || aDay>31) {
+						printf("\nError: You have entered an invalid day for months with 31 duration days.\n");
+					}
+					if (aMonth == 10 && aYear == 1582 && aDay < 15) {
+						printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+					}
+				}
+			}
+			else {
+				if (aMonth == 4 || aMonth == 6 || aMonth == 9 || aMonth == 11) {
+					while ((aDay < 1 || aDay>30) || (aMonth < 10 && aYear == 1582)) {
+						printf("\nDay? (1-30)\n");
+						scanf("%d", &aDay);
+						if (aDay < 1 || aDay>30) {
+							printf("\nError: You have entered an invalid day for months with 30 duration days.\n");
+						}
+						if (aMonth < 10 && aYear == 1582) {
+							printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+						}
+					}
+				}
+				else {
+					if (aMonth == 2 && isLeapYear(aYear)) {
+						while (aDay < 1 || aDay>29) {
+							printf("\nDay? (1-29)\n");
+							scanf("%d", &aDay);
+							if (aDay < 1 || aDay>29) {
+								printf("\nError: You have entered a leap year, so Fearuary has 29 duration days.\n");
+							}
+						}
+					}
+					else {
+						if (aMonth == 2 && !isLeapYear(aYear)) {
+							while (aDay < 1 || aDay>28) {
+								printf("\nDay? (1-28)\n");
+								scanf("%d", &aDay);
+								if (aDay < 1 || aDay>28) {
+									printf("\nError: You have entered a common year, so February has 28 duration days.\n");
+								}
+							}
+						}
+					}
+				}
+			}
+			aHour = -1;
+			while (aHour < 0 || aHour>23) {
+				printf("\nHour? (0-23, i.e. Please consider the 24-hour clock.)\n");
+				scanf("%d", &aHour);
+				if (aHour < 0 || aHour>23) {
+					printf("\nError: The hour must be between 0 and 23, inclusively.\n");
+				}
+			}
+			aMinutes = -1;
+			while (aMinutes < 0 || aMinutes>59) {
+				printf("\nMinute? (0-59)\n");
+				scanf("%d", &aMinutes);
+				if (aMinutes < 0 || aMinutes>59) {
+					printf("\nError: The minute must be between 0 and 59, inclusively.\n");
+				}
+			}
+			aSeconds = -1;
+			while (aSeconds < 0 || aSeconds>59) {
+				printf("\nSecond? (0-59)\n");
+				scanf("%d", &aSeconds);
+				if (aSeconds < 0 || aSeconds>59) {
+					printf("\nError: The second must be between 0 and 59, inclusively.\n");
+				}
+			}
+			time_t hour;
+			time(&hour);
+			char *tim;
+			tim = ctime(&hour);
+			tim[24] = '\0';
+			char sec[3] = { tim[17], tim[18], '\0' };
+			bSeconds = atoi(sec);
+			char min[3] = { tim[14], tim[15], '\0' };
+			bMinutes = atoi(min);
+			char hou[3] = { tim[11], tim[12], '\0' };
+			bHour = atoi(hou);
+			char yea[5] = { tim[20], tim[21], tim[22], tim[23], '\0' };
+			bYear = atoi(yea);
+			char da[3] = { tim[8], tim[9], '\0' };
+			bDay = atoi(da);
+			if (tim[4] == 'J'&&tim[5] == 'a'&&tim[6] == 'n') {
+				bMonth = 1;
+			}
+			if (tim[4] == 'F'&&tim[5] == 'e'&&tim[6] == 'b') {
+				bMonth = 2;
+			}
+			if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'r') {
+				bMonth = 3;
+			}
+			if (tim[4] == 'A'&&tim[5] == 'p'&&tim[6] == 'r') {
+				bMonth = 4;
+			}
+			if (tim[4] == 'M'&&tim[5] == 'a'&&tim[6] == 'y') {
+				bMonth = 5;
+			}
+			if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'n') {
+				bMonth = 6;
+			}
+			if (tim[4] == 'J'&&tim[5] == 'u'&&tim[6] == 'l') {
+				bMonth = 7;
+			}
+			if (tim[4] == 'A'&&tim[5] == 'u'&&tim[6] == 'g') {
+				bMonth = 8;
+			}
+			if (tim[4] == 'S'&&tim[5] == 'e'&&tim[6] == 'p') {
+				bMonth = 9;
+			}
+			if (tim[4] == 'O'&&tim[5] == 'c'&&tim[6] == 't') {
+				bMonth = 10;
+			}
+			if (tim[4] == 'N'&&tim[5] == 'o'&&tim[6] == 'v') {
+				bMonth = 11;
+			}
+			if (tim[4] == 'D'&&tim[5] == 'e'&&tim[6] == 'c') {
+				bMonth = 12;
+			}
+		}
+		if (option == 3) {
+			printf("Enter the older time data:");
+			bYear = 0;
+			while (bYear < 1582) {
+				printf("\nYear? (1582 minimum)\n");
+				scanf("%d", &bYear);
+				if (bYear < 1582) {
+					printf("\nError: You have entered a year previous to the indroduce of Gregorian calendar.\n");
+				}
+			}
+			bMonth = 0;
+			while ((bMonth < 1 || bMonth>12) || (bYear == 1582 && bMonth < 10)) {
+				printf("\nMonth? (1-12)\n");
+				scanf("%d", &bMonth);
+				if ((bYear == 1582 && bMonth < 10)) {
+					printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+				}
+				if (bMonth < 0 || bMonth>12) {
+					printf("\nError: You have entered an invalid month.\n");
+				}
+			}
+			bDay = 0;
+			if (bMonth == 1 || bMonth == 3 || bMonth == 5 || bMonth == 7 || bMonth == 8 || bMonth == 10 || bMonth == 12) {
+				while ((bDay < 1 || bDay>31) || (bMonth == 10 && bYear == 1582 && bDay < 15)) {
+					printf("\nDay? (1-31)\n");
+					scanf("%d", &bDay);
+					if (bDay < 1 || bDay>31) {
+						printf("\nError: You have entered an invalid day for months with 31 duration days.\n");
+					}
+					if (bMonth == 10 && bYear == 1582 && bDay < 15) {
+						printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+					}
+				}
+			}
+			else {
+				if (bMonth == 4 || bMonth == 6 || bMonth == 9 || bMonth == 11) {
+					while ((bDay < 1 || bDay>30) || (bMonth < 10 && bYear == 1582)) {
+						printf("\nDay? (1-30)\n");
+						scanf("%d", &bDay);
+						if (bDay < 1 || bDay>30) {
+							printf("\nError: You have entered an invalid day for months with 30 duration days.\n");
+						}
+						if (bMonth < 10 && bYear == 1582) {
+							printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+						}
+					}
+				}
+				else {
+					if (bMonth == 2 && isLeapYear(bYear)) {
+						while (bDay < 1 || bDay>29) {
+							printf("\nDay? (1-29)\n");
+							scanf("%d", &bDay);
+							if (bDay < 1 || bDay>29) {
+								printf("\nError: You have entered a leap year, so February has 29 duration days.\n");
+							}
+						}
+					}
+					else {
+						if (bMonth == 2 && !isLeapYear(bYear)) {
+							while (bDay < 1 || bDay>28) {
+								printf("\nDay? (1-28)\n");
+								scanf("%d", &bDay);
+								if (bDay < 1 || bDay>28) {
+									printf("\nError: You have entered a common year, so February has 28 duration days.\n");
+								}
+							}
+						}
+					}
+				}
+			}
+			bHour = -1;
+			while (bHour < 0 || bHour>23) {
+				printf("\nHour? (0-23, i.e. Please consider the 24-hour clock.)\n");
+				scanf("%d", &bHour);
+				if (bHour < 0 || bHour>23) {
+					printf("\nError: The hour must be between 0 and 23, inclusively.\n");
+				}
+			}
+			bMinutes = -1;
+			while (bMinutes < 0 || bMinutes>59) {
+				printf("\nMinute? (0-59)\n");
+				scanf("%d", &bMinutes);
+				if (bMinutes < 0 || bMinutes>59) {
+					printf("\nError: The minute must be between 0 and 59, inclusively.\n");
+				}
+			}
+			bSeconds = -1;
+			while (bSeconds < 0 || bSeconds>59) {
+				printf("\nSecond? (0-59)\n");
+				scanf("%d", &bSeconds);
+				if (bSeconds < 0 || bSeconds>59) {
+					printf("\nError: The second must be between 0 and 59, inclusively.\n");
+				}
+			}
+			printf("Enter the latter time data:");
+			aYear = 0;
+			while (aYear < 1582) {
+				printf("\nYear? (1582 minimum)\n");
+				scanf("%d", &aYear);
+				if (aYear < 1582) {
+					printf("\nError: You have entered a year previous to the indroduce of Gregorian calendar.\n");
+				}
+			}
+			aMonth = 0;
+			while ((aMonth < 1 || aMonth>12) || (aYear == 1582 && aMonth < 10)) {
+				printf("\nMonth? (1-12)\n");
+				scanf("%d", &aMonth);
+				if ((aYear == 1582 && aMonth < 10)) {
+					printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+				}
+				if (aMonth < 0 || aMonth>12) {
+					printf("\nError: You have entered an invalid month.\n");
+				}
+			}
+			aDay = 0;
+			if (aMonth == 1 || aMonth == 3 || aMonth == 5 || aMonth == 7 || aMonth == 8 || aMonth == 10 || aMonth == 12) {
+				while ((aDay < 1 || aDay>31) || (aMonth == 10 && aYear == 1582 && aDay < 15)) {
+					printf("\nDay? (1-31)\n");
+					scanf("%d", &aDay);
+					if (aDay < 1 || aDay>31) {
+						printf("\nError: You have entered an invalid day for months with 31 duration days.\n");
+					}
+					if (aMonth == 10 && aYear == 1582 && aDay < 15) {
+						printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+					}
+				}
+			}
+			else {
+				if (aMonth == 4 || aMonth == 6 || aMonth == 9 || aMonth == 11) {
+					while ((aDay < 1 || aDay>30) || (aMonth < 10 && aYear == 1582)) {
+						printf("\nDay? (1-30)\n");
+						scanf("%d", &aDay);
+						if (aDay < 1 || aDay>30) {
+							printf("\nError: You have entered an invalid day for months with 30 duration days.\n");
+						}
+						if (aMonth < 10 && aYear == 1582) {
+							printf("\nError: You have entered time data previous to the indroduce of Gregorian calendar.\n");
+						}
+					}
+				}
+				else {
+					if (aMonth == 2 && isLeapYear(aYear)) {
+						while (aDay < 1 || aDay>29) {
+							printf("\nDay? (1-29)\n");
+							scanf("%d", &aDay);
+							if (aDay < 1 || aDay>29) {
+								printf("\nError: You have entered a leap year, so Fearuary has 29 duration days.\n");
+							}
+						}
+					}
+					else {
+						if (aMonth == 2 && !isLeapYear(aYear)) {
+							while (aDay < 1 || aDay>28) {
+								printf("\nDay? (1-28)\n");
+								scanf("%d", &aDay);
+								if (aDay < 1 || aDay>28) {
+									printf("\nError: You have entered a common year, so February has 28 duration days.\n");
+								}
+							}
+						}
+					}
+				}
+			}
+			aHour = -1;
+			while (aHour < 0 || aHour>23) {
+				printf("\nHour? (0-23, i.e. Please consider the 24-hour clock.)\n");
+				scanf("%d", &aHour);
+				if (aHour < 0 || aHour>23) {
+					printf("\nError: The hour must be between 0 and 23, inclusively.\n");
+				}
+			}
+			aMinutes = -1;
+			while (aMinutes < 0 || aMinutes>59) {
+				printf("\nMinute? (0-59)\n");
+				scanf("%d", &aMinutes);
+				if (aMinutes < 0 || aMinutes>59) {
+					printf("\nError: The minute must be between 0 and 59, inclusively.\n");
+				}
+			}
+			aSeconds = -1;
+			while (aSeconds < 0 || aSeconds>59) {
+				printf("\nSecond? (0-59)\n");
+				scanf("%d", &aSeconds);
+				if (aSeconds < 0 || aSeconds>59) {
+					printf("\nError: The second must be between 0 and 59, inclusively.\n");
+				}
+			}
+		}
+		int diffSeconds = 0, diffMinutes = 0, diffHours = 0, diffMonths = 0, diffYears = 0;
+		int days = 0;
+		int diffMinusDays = 0, diffPlusDays = 0;
+		if (!(aYear == bYear && aMonth == bMonth && aDay == bDay)) {
+			if (bSeconds != 0) {
+				diffSeconds = 60 - bSeconds;
+			}
+			if (bMinutes != 0) {
+				if (bSeconds != 0) {
+					diffMinutes = 60 - bMinutes - 1;
+				}
+				else {
+					diffMinutes = 60 - bMinutes;
+				}
+			}
+			if (bHour != 0) {
+				if (bSeconds != 0 || bMinutes != 0) {
+					diffHours = 24 - bHour - 1;
+				}
+				else {
+					diffHours = 24 - bHour;
+				}
+			}
+		}
+		int k = bMonth;
+		for (k = bMonth; k <= 12; k++) {
+			if (k == bMonth) {
+				if (bMonth == 1) {
+					days = days + (31 - bDay);
+				}
+				if (bMonth == 2 && isLeapYear(bYear) == 1) {
+					days = days + (29 - bDay);
+				}
+				if (bMonth == 2 && isLeapYear(bYear) == 0) {
+					days = days + (28 - bDay);
+				}
+				if (bMonth == 3) {
+					days = days + (31 - bDay);
+				}
+				if (bMonth == 4) {
+					days = days + (30 - bDay);
+				}
+				if (bMonth == 5) {
+					days = days + (31 - bDay);
+				}
+				if (bMonth == 6) {
+					days = days + (30 - bDay);
+				}
+				if (bMonth == 7) {
+					days = days + (31 - bDay);
+				}
+				if (bMonth == 8) {
+					days = days + (31 - bDay);
+				}
+				if (bMonth == 9) {
+					days = days + (30 - bDay);
+				}
+				if (bMonth == 10) {
+					days = days + (31 - bDay);
+				}
+				if (bMonth == 11) {
+					days = days + (30 - bDay);
+				}
+				if (bMonth == 12) {
+					days = days + (31 - bDay);
+				}
+			}
+		}
+		diffMinusDays = days;
+		for (k = bMonth + 1; (k <= 12 && aYear != bYear) || (k < aMonth && aYear == bYear); k++) {
+			diffMonths++;
+			if (k == 1) {
+				days = days + 31;
+			}
+			if (k == 2 && isLeapYear(bYear) == 1) {
+				countLeapYears++;
+				days = days + 29;
+			}
+			if (k == 2 && isLeapYear(bYear) == 0) {
+				days = days + 28;
+			}
+			if (k == 3) {
+				days = days + 31;
+			}
+			if (k == 4) {
+				days = days + 30;
+			}
+			if (k == 5) {
+				days = days + 31;
+			}
+			if (k == 6) {
+				days = days + 30;
+			}
+			if (k == 7) {
+				days = days + 31;
+			}
+			if (k == 8) {
+				days = days + 31;
+			}
+			if (k == 9) {
+				days = days + 30;
+			}
+			if (k == 10) {
+				days = days + 31;
+			}
+			if (k == 11) {
+				days = days + 30;
+			}
+			if (k == 12) {
+				days = days + 31;
+			}
+		}
+		if (aYear != bYear) {
+			int i = bYear + 1;
+			while (i < aYear) {
+				diffYears++;
+				if (isLeapYear(i) == 1) {
+					days = days + 366;
+					countLeapYears++;
+				}
+				else {
+					days = days + 365;
+				}
+				i++;
+			}
+			for (k = 1; k < aMonth; k++) {
+				diffMonths++;
+				if (k == 1) {
+					days = days + 31;
+				}
+				if (k == 2 && isLeapYear(aYear) == 1) {
+					days = days + 29;
+					countLeapYears++;
+				}
+				if (k == 2 && isLeapYear(aYear) == 0) {
+					days = days + 28;
+				}
+				if (k == 3) {
+					days = days + 31;
+				}
+				if (k == 4) {
+					days = days + 30;
+				}
+				if (k == 5) {
+					days = days + 31;
+				}
+				if (k == 6) {
+					days = days + 30;
+				}
+				if (k == 7) {
+					days = days + 31;
+				}
+				if (k == 8) {
+					days = days + 31;
+				}
+				if (k == 9) {
+					days = days + 30;
+				}
+				if (k == 10) {
+					days = days + 31;
+				}
+				if (k == 11) {
+					days = days + 30;
+				}
+				if (k == 12) {
+					days = days + 31;
+				}
+			}
+			k = aMonth;
+			for (k = 1; k <= 12; k++) {
+				if (k == aMonth) {
+					if (aMonth == 1) {
+						diffPlusDays = 31 - aDay;
+					}
+					if (aMonth == 2 && isLeapYear(aYear) == 1) {
+						diffPlusDays = 29 - aDay;
+					}
+					if (aMonth == 2 && isLeapYear(aYear) == 0) {
+						diffPlusDays = 28 - aDay;
+					}
+					if (aMonth == 3) {
+						diffPlusDays = 31 - aDay;
+					}
+					if (aMonth == 4) {
+						diffPlusDays = 30 - aDay;
+					}
+					if (aMonth == 5) {
+						diffPlusDays = 31 - aDay;
+					}
+					if (aMonth == 6) {
+						diffPlusDays = 30 - aDay;
+					}
+					if (aMonth == 7) {
+						diffPlusDays = 31 - aDay;
+					}
+					if (aMonth == 8) {
+						diffPlusDays = 31 - aDay;
+					}
+					if (aMonth == 9) {
+						diffPlusDays = 30 - aDay;
+					}
+					if (aMonth == 10) {
+						diffPlusDays = 31 - aDay;
+					}
+					if (aMonth == 11) {
+						diffPlusDays = 30 - aDay;
+					}
+					if (aMonth == 12) {
+						diffPlusDays = 31 - aDay;
+					}
+				}
+			}
+			days = days + aDay;
+			diffMonths++;
+		}
+		if (bYear == aYear) {
+			if (aMonth == bMonth) {
+				days = aDay - bDay;
+			}
+			else {
+				days = days + aDay;
+				diffMonths++;
+			}
+		}
+		diffYears = diffYears + diffMonths / 12;
+		diffMonths = diffMonths % 12;
+		diffHours = diffHours + aHour;
+		diffMinutes = diffMinutes + aMinutes;
+		diffSeconds = diffSeconds + aSeconds;
+		diffMinutes = diffMinutes + diffSeconds / 60;
+		diffSeconds = diffSeconds % 60;
+		diffHours = diffHours + diffMinutes / 60;
+		diffMinutes = diffMinutes % 60;
+		days = days + diffHours / 24;
+		int diffDays = days;
+		diffHours = diffHours % 24;
+		int restDays = 0;
+		if (bMonth < aMonth) {
+			if (bDay < aDay) {
+				diffDays = aDay - bDay;
+			}
+			else {
+				diffMonths--;
+				if (diffMonths == 1) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 2 && isLeapYear(aYear) == 1) {
+					diffDays = (29 - bDay);
+				}
+				if (diffMonths == 2 && isLeapYear(aYear) == 0) {
+					diffDays = (28 - bDay);
+				}
+				if (diffMonths == 3) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 4) {
+					diffDays = (30 - bDay);
+				}
+				if (diffMonths == 5) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 6) {
+					diffDays = (30 - bDay);
+				}
+				if (diffMonths == 7) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 8) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 9) {
+					diffDays = (30 - bDay);
+				}
+				if (diffMonths == 10) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 11) {
+					diffDays = (30 - bDay);
+				}
+				if (diffMonths == 12) {
+					diffDays = (31 - bDay);
+				}
+			}
+		}
+		else {
+			if (bMonth > aMonth) {
+				diffMonths--;
+				if (diffMonths == 1) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 2 && isLeapYear(aYear) == 1) {
+					diffDays = (29 - bDay);
+				}
+				if (diffMonths == 2 && isLeapYear(aYear) == 0) {
+					diffDays = (28 - bDay);
+				}
+				if (diffMonths == 3) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 4) {
+					diffDays = (30 - bDay);
+				}
+				if (diffMonths == 5) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 6) {
+					diffDays = (30 - bDay);
+				}
+				if (diffMonths == 7) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 8) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 9) {
+					diffDays = (30 - bDay);
+				}
+				if (diffMonths == 10) {
+					diffDays = (31 - bDay);
+				}
+				if (diffMonths == 11) {
+					diffDays = (30 - bDay);
+				}
+				if (diffMonths == 12) {
+					diffDays = (31 - bDay);
+				}
+				diffDays = diffDays + aDay;
+			}
+			else {
+				if (bDay > aDay) {
+					diffDays = abs(diffMinusDays + diffPlusDays);
+				}
+			}
+		}
+		if (days < diffDays) {
+			diffDays = days;
+		}
+		if (aMonth == bMonth && aDay == bDay) {
+			diffDays = days - 365 * (diffYears - countLeapYears) - 366 * countLeapYears;
+		}
+		char report[DIM] = "";
+		sprintf(report, "%s\nTime difference: %d years, %d months, %d days, %d hours, %d minutes and %d seconds\n", report, diffYears, diffMonths, diffDays, diffHours, diffMinutes, diffSeconds);
+		sprintf(report, "%s\nTime difference: %d months, %d days, %d hours, %d minutes and %d seconds\n", report, diffYears * 12 + diffMonths, diffDays, diffHours, diffMinutes, diffSeconds);
+		sprintf(report, "%s\nTime difference: %d days , %d hours, %d minutes and %d seconds\n", report, days, diffHours, diffMinutes, diffSeconds);
+		sprintf(report, "%s\nTime difference: %d hours, %d minutes and %d seconds\n", report, diffHours + 24 * days, diffMinutes, diffSeconds);
+		sprintf(report, "%s\nTime difference: %d minutes and %d seconds\n", report, diffHours * 60 + 1440 * days + diffMinutes, diffSeconds);
+		char toCalc[1000] = "";
+		sprintf(toCalc, "(%d*60+1440*%d+%d)*60+%d", diffHours, days, diffMinutes, diffSeconds);
+		math_processor(toCalc);
+		sprintf(report, "%s\nTime difference: %.0f seconds\n", report, resultR);
+		sprintf(report, "%s\nTime difference: %d weeks and %d days, %d hours, %d minutes and %d seconds\n", report, days / 7, days % 7, diffHours, diffMinutes, diffSeconds);
+		if (bYear != aYear) {
+			sprintf(report, "%s\nTime difference: %.2f%% of a common year (365 days)", report, ((float)days / (float)365) *(float)100);
+		}
+		else {
+			sprintf(report, "%s\nTime difference: %.2f%% of %d", report, ((float)days / (float)365) *(float)100, aYear);
+		}
+		puts(report);
+		int optionF = -1;
+		while (optionF != 0 && optionF != 1) {
+			I_O = true;
+			puts("\nExport result? (Yes -> 1 \\ No -> 0)");
+			optionF = (int)getValue();
+		}
+		if (optionF == 1) {
+			saveToReport(report);
+		}
+		toContinue = -1;
+		while (toContinue != 0 && toContinue != 1) {
+			I_O = true;
+			printf("\nContinue? (Yes -> 1 / No -> 0)\n");
+			toContinue = (int)getValue();
+		}
+	} while (toContinue == 1);
+}
+
+boolean isLeapYear(int year) {
+	if (year % 400 == 0) {
+		return true;
+	}
+	else {
+		if (year % 4 == 0 && year % 100 != 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	return false;
+}

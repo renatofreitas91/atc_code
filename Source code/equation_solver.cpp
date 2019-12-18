@@ -2073,9 +2073,6 @@ void simplifyExpression(char data[DIM]) {
 		replace("M", "*", expression);
 		sprintf(expression, "%s", expressionF);
 	}
-	if (toSimplify) {
-		sprintf(expression, "%s+0", expression);
-	}
 	if (toSimplify == false) {
 		sprintf(expressionF, "%s", expression);
 		simplifyPolynomial(expressionF);

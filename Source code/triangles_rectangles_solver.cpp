@@ -156,7 +156,7 @@ void trianglesRectanglesSolver() {
 					}
 				}
 				else {
-					printf("Error: It is impossible to calculate all the unknowns without at least the value of the adjacent or the hypotenuse or the opposite!\n\n");
+					printf("Error: It is impossible to calculate all the unknowns without at least the value of the adjacent or the hypotenuse or the opposite.\n\n");
 				}
 			}
 		}

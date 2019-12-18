@@ -584,7 +584,7 @@ void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], doub
 	char report[DIM] = "";
 	double prod, prodI;
 	if (lins2 != cols1)
-		printf("\nError: The number of columns of first Matrix differs from the numbers of rows of second Matrix!\n");
+		printf("\nError: The number of columns of first Matrix differs from the numbers of rows of second Matrix.\n");
 	else {
 		for (i = 0; i < lins1; i++) {
 			for (k = 0; k < cols2; k++) {
@@ -921,7 +921,7 @@ void fmpowerm(double v[dim][dim], double vI[dim][dim], int power, int lins, int 
 		}
 	}
 	if (lins != cols)
-		printf("\nError: The number of columns and lines are not equal!\n");
+		printf("\nError: The number of columns and lines are not equal.\n");
 	else {
 		printf("\nMatrix Power:\n");
 		while (power > 1) {

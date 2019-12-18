@@ -6,6 +6,17 @@ boolean returned = false, equation_solver = false;
 char saveExpressionF[DIM] = "";
 
 boolean commands(char expression[DIM], char path[DIM], double result1, double result2) {
+	if (isContained("\\\\", expression)) {
+		printf("\nError inside argument of command. \n\n ==> ATC has detected \"\\\" followed by  \"\\\", i.e. \"\\\\\".\n\n");
+		return true;
+	}
+	replaceTimes = 0;
+	int parenthesesL = countOccurrences("(", expression);
+	int parenthesesR = countOccurrences(")", expression);
+	if (parenthesesL != parenthesesR) {
+		printf("\nError in parentheses. \n ==> The number of left and right parentheses entered must be equal.\n ==> The expression that you have entered has %d left parenthesis and %d right parenthesis.\n\n", parenthesesL, parenthesesR);
+		return true;
+	}
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\sendCommand.txt", atcPath);
 	FILE* fp = fopen(toOpen, "w");
@@ -43,7 +54,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			manageExpression(data, 0, 0, 1);
 			sprintf(data, "%s", expressionF);
 			sprintf(expressionF, "%s", data);
-			if (dataVerifier(data, 0, 0, 0, 1)) {
+			if (dataVerifier(data, 0, 0, 1, 1)) {
 				sprintf(OutputText, "");
 				replaceTimes = 0;
 				resultR = 0;
@@ -136,7 +147,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			sprintf(saveExpressionF, "%s", data);
 			char solution[DIM] = "";
 			synTest = 0;
-			if (dataVerifier(data, 0, 0, 0, 1)) {
+			if (dataVerifier(data, 0, 0, 1, 1)) {
 				sprintf(OutputText, "");
 				replaceTimes = 0;
 				resultR = 0;
@@ -182,18 +193,18 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 						sprintf(solution, "Error: Impossible simplify that polynomial.");
 					}
 				}
-			}
-			char report[DIM] = "";
-			sprintf(report, "\n%s\n", expressionF);
-			puts(report);
-			int option = -1;
-			while (option != 0 && option != 1) {
-				I_O = true;
-				puts("\nExport result? (Yes -> 1 \\ No -> 0)");
-				option = (int)getValue();
-			}
-			if (option == 1) {
-				saveToReport(report);
+				char report[DIM] = "";
+				sprintf(report, "\n%s\n", expressionF);
+				puts(report);
+				int option = -1;
+				while (option != 0 && option != 1) {
+					I_O = true;
+					puts("\nExport result? (Yes -> 1 \\ No -> 0)");
+					option = (int)getValue();
+				}
+				if (option == 1) {
+					saveToReport(report);
+				}
 			}
 		}
 		puts("");
@@ -457,7 +468,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			sprintf(saveExpressionF, "%s", data);
 			if (!isContained("\\", data)) {
 				synTest = 0;
-				if (dataVerifier(data, 0, 0, 0, 1)) {
+				if (dataVerifier(data, 0, 0, 1, 1)) {
 					sprintf(OutputText, "");
 					replaceTimes = 0;
 					lastDividerR = 0;
@@ -494,16 +505,36 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					progress = true;
 					equationSolver(data);
 					progress = false;
-					puts("");
-					puts(answers);
+					char report[DIM] = "";
+					sprintf(report, "\n%s\n", answers);
+					puts(report);
+					int option = -1;
+					while (option != 0 && option != 1) {
+						I_O = true;
+						puts("\nExport result? (Yes -> 1 \\ No -> 0)");
+						option = (int)getValue();
+					}
+					if (option == 1) {
+						saveToReport(report);
+					}
 				}
 			}
 			else {
 				progress = true;
 				equationSolver(data);
 				progress = false;
-				puts("");
-				puts(expressionF);
+				char report[DIM] = "";
+				sprintf(report, "\n%s\n", answers);
+				puts(report);
+				int option = -1;
+				while (option != 0 && option != 1) {
+					I_O = true;
+					puts("\nExport result? (Yes -> 1 \\ No -> 0)");
+					option = (int)getValue();
+				}
+				if (option == 1) {
+					saveToReport(report);
+				}
 			}
 		}
 		sprintf(arithTrig, "");
@@ -1177,7 +1208,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			command = true;
 			fclose(open);
 			fclose(open);
-			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"rmdir /Q /S Strings&mkdir Strings\""), NULL, SW_SHOW);
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"rmdir /Q /S Strings\""), NULL, SW_SHOW);
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"mkdir Strings\""), NULL, SW_SHOW);
 			printf("\n==> The strings were eliminated sucessfully. <==\n\n");
 			fprintf(fout, "\n==> The strings were eliminated sucessfully. <==\n\n");
 			arithTrig[0] = '\0';
@@ -1622,7 +1654,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.6  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.7  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(thours, tminutes, tseconds);
 									}
@@ -1820,7 +1852,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.6  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.7  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(thours, tminutes, tseconds);
 									}
@@ -2033,7 +2065,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.6 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.7 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n  %02d:%02d:%02d\n", thours, tminutes, tseconds);
@@ -2240,7 +2272,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.6 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.7 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(Hours, Minutes, Seconds);
 										printf("\n\n    %02d:%02d:%02d\n\n", thours, tminutes, tseconds);
@@ -2292,6 +2324,15 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		fprintf(fout, "\n");
 		printf("\n");
 	}
+
+	if (isCommand(arithTrig, "timedifferencecalculations")) {
+		arithTrig[0] = '\0'; command = true;
+		timeDifferenceCalculations();
+		fprintf(fout, "\n");
+		printf("\n");
+	}
+
+
 	if (isCommand(arithTrig, "dayofweek") && arithTrig[i + 9] == '(') {
 		arithTrig[0] = '\0'; command = true;
 		char Day[DIM] = "", Month[DIM] = "", Year[DIM] = "";

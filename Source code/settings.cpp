@@ -94,7 +94,7 @@ void mode() {
 }
 
 void about2() {
-	system("title Advanced Trigonometry Calculator v2.0.6");
+	system("title Advanced Trigonometry Calculator v2.0.7");
 	system("MODE con cols=90 lines=15");
 	cls();
 	FILE *open = NULL;
@@ -111,7 +111,7 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v2.0.6                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v2.0.7                                                             ==) Enter data (==              ");
 }
 
 void graphSettings() {
@@ -372,11 +372,11 @@ int applySettings(int toDo) {
 
 boolean about() {
 	ShowConsoleCursor(FALSE);
-	system("title Advanced Trigonometry Calculator v2.0.6");
+	system("title Advanced Trigonometry Calculator v2.0.7");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
-	system("MODE con cols=84 lines=40");
+	system("MODE con cols=84 lines=41");
 	_flushall();
 	char exit[DIM] = "";
 	boolean continu = true;
@@ -400,14 +400,49 @@ boolean about() {
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
 	printf("                                  %c%c%c%c%c   %c%c%c%c%c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                                      %c   %c   %c   %c   \n", 177, 177, 177, 177);
-	printf("                            %c   %c %c%c%c%c%c   %c   %c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                             %c %c  %c       %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177);
-	printf("                              %c   %c%c%c%c%c %c %c%c%c%c%c %c %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                                      %c   %c   %c       %c\n", 177, 177, 177, 177);
+	printf("                            %c   %c %c%c%c%c%c   %c   %c       %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                             %c %c  %c       %c   %c       %c\n", 177, 177, 177, 177, 177, 177);
+	printf("                              %c   %c%c%c%c%c %c %c%c%c%c%c %c     %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n                                    Made in Portugal\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
 	trackMouse();
-	system("pause");
+	clock_t start, end;
+	start = clock();
+	end = clock();
+	puts("Press \"Enter\" to continue or wait 10 seconds . . .\n");
+	int saveSecond = 0, second = 0, i = 0;
+	char getEnter[20] = "";
+	printf("\r");
+	while (i < 84 - 4) {
+		printf("%c", 177);
+		i++;
+	}
+	printf("%02ds", 10);
+	while (second < 10) {
+		second = (end - start) / CLOCKS_PER_SEC;
+		Sleep(100);
+		end = clock();
+		if (GetKeyState(VK_RETURN) < 0) {
+			gets_s(getEnter);
+			break;
+		}
+		if (saveSecond != second) {
+			printf("\r");
+			i = 0;
+			while (i < second * 8) {
+				printf("%c", 178);
+				i++;
+			}
+			while (i < 84 - 4) {
+				printf("%c", 177);
+				i++;
+			}
+			printf("%02ds", 10 - second);
+		}
+		saveSecond = second;
+	}
+	Sleep(333);
 	ShowConsoleCursor(TRUE);
 	if (isEqual(exit, "user guide")) {
 		puts(" ");
@@ -426,16 +461,31 @@ boolean about() {
 		applySettings(Dimensions);
 		char commandF[400] = "";
 		using namespace std;
-		if (!IsPreviousToWindowsVista()) {
-			sprintf(commandF, "%s\\atc_commander.exe", atcPath);
+		HANDLE ProcSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+		boolean foundATCcommander = false;
+		PROCESSENTRY32W pe = { 0 };
+		pe.dwSize = sizeof(pe);
+		char currentProcess[200] = "";
+		if (Process32FirstW(ProcSnap, &pe)) {
+			do {
+				if (!wcscmp(pe.szExeFile, L"atc_commander.exe") || !wcscmp(pe.szExeFile, L"atc_commander_xp.exe")) {
+					foundATCcommander = true;
+					break;
+				}
+			} while (Process32NextW(ProcSnap, &pe));
 		}
-		else {
-			sprintf(commandF, "%s\\atc_commander_xp.exe", atcPath);
+		if (!foundATCcommander) {
+			if (!IsPreviousToWindowsVista()) {
+				sprintf(commandF, "%s\\atc_commander.exe", atcPath);
+			}
+			else {
+				sprintf(commandF, "%s\\atc_commander_xp.exe", atcPath);
+			}
+			std::string S = string(commandF);
+			std::wstring STEMP = std::wstring(S.begin(), S.end());
+			LPCWSTR SW = STEMP.c_str();
+			ShellExecute(NULL, _T("open"), SW, NULL, NULL, SW_SHOW);
 		}
-		std::string S = string(commandF);
-		std::wstring STEMP = std::wstring(S.begin(), S.end());
-		LPCWSTR SW = STEMP.c_str();
-		ShellExecute(NULL, _T("open"), SW, NULL, NULL, SW_SHOW);
 	}
 
 	return continu;
