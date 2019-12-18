@@ -1325,70 +1325,68 @@ void timeDifferenceCalculations() {
 		int diffSeconds = 0, diffMinutes = 0, diffHours = 0, diffMonths = 0, diffYears = 0;
 		int days = 0;
 		int diffMinusDays = 0, diffPlusDays = 0;
-		if (!(aYear == bYear && aMonth == bMonth && aDay == bDay)) {
+		if (bSeconds != 0) {
+			diffSeconds = 60 - bSeconds;
+		}
+		if (bMinutes != 0) {
 			if (bSeconds != 0) {
-				diffSeconds = 60 - bSeconds;
+				diffMinutes = 60 - bMinutes - 1;
 			}
-			if (bMinutes != 0) {
-				if (bSeconds != 0) {
-					diffMinutes = 60 - bMinutes - 1;
-				}
-				else {
-					diffMinutes = 60 - bMinutes;
-				}
-			}
-			if (bHour != 0) {
-				if (bSeconds != 0 || bMinutes != 0) {
-					diffHours = 24 - bHour - 1;
-				}
-				else {
-					diffHours = 24 - bHour;
-				}
+			else {
+				diffMinutes = 60 - bMinutes;
 			}
 		}
-		int k = bMonth;
-		for (k = bMonth; k <= 12; k++) {
-			if (k == bMonth) {
-				if (bMonth == 1) {
-					days = days + (31 - bDay);
-				}
-				if (bMonth == 2 && isLeapYear(bYear) == 1) {
-					days = days + (29 - bDay);
-				}
-				if (bMonth == 2 && isLeapYear(bYear) == 0) {
-					days = days + (28 - bDay);
-				}
-				if (bMonth == 3) {
-					days = days + (31 - bDay);
-				}
-				if (bMonth == 4) {
-					days = days + (30 - bDay);
-				}
-				if (bMonth == 5) {
-					days = days + (31 - bDay);
-				}
-				if (bMonth == 6) {
-					days = days + (30 - bDay);
-				}
-				if (bMonth == 7) {
-					days = days + (31 - bDay);
-				}
-				if (bMonth == 8) {
-					days = days + (31 - bDay);
-				}
-				if (bMonth == 9) {
-					days = days + (30 - bDay);
-				}
-				if (bMonth == 10) {
-					days = days + (31 - bDay);
-				}
-				if (bMonth == 11) {
-					days = days + (30 - bDay);
-				}
-				if (bMonth == 12) {
-					days = days + (31 - bDay);
-				}
+		if (bHour != 0) {
+			if (bSeconds != 0 || bMinutes != 0) {
+				diffHours = 24 - bHour - 1;
 			}
+			else {
+				diffHours = 24 - bHour;
+			}
+		}
+		int haveTime = 0;
+		if (diffHours != 0 || diffSeconds != 0 || diffMinutes != 0) {
+			haveTime = 1;
+		}
+		int k = bMonth;
+		if (bMonth == 1) {
+			days = days + (31 - bDay);
+		}
+		if (bMonth == 2 && isLeapYear(bYear) == 1) {
+			days = days + (29 - bDay);
+		}
+		if (bMonth == 2 && isLeapYear(bYear) == 0) {
+			days = days + (28 - bDay);
+		}
+		if (bMonth == 3) {
+			days = days + (31 - bDay);
+		}
+		if (bMonth == 4) {
+			days = days + (30 - bDay);
+		}
+		if (bMonth == 5) {
+			days = days + (31 - bDay);
+		}
+		if (bMonth == 6) {
+			days = days + (30 - bDay);
+		}
+		if (bMonth == 7) {
+			days = days + (31 - bDay);
+		}
+		if (bMonth == 8) {
+			days = days + (31 - bDay);
+		}
+		if (bMonth == 9) {
+			days = days + (30 - bDay);
+		}
+		if (bMonth == 10) {
+			days = days + (31 - bDay);
+		}
+		if (bMonth == 11) {
+			days = days + (30 - bDay);
+		}
+		if (bMonth == 12) {
+			days = days + (31 - bDay);
 		}
 		diffMinusDays = days;
 		for (k = bMonth + 1; (k <= 12 && aYear != bYear) || (k < aMonth && aYear == bYear); k++) {
@@ -1556,6 +1554,9 @@ void timeDifferenceCalculations() {
 		diffHours = diffHours + diffMinutes / 60;
 		diffMinutes = diffMinutes % 60;
 		days = days + diffHours / 24;
+		if (haveTime == 1) {
+			days--;
+		}
 		int diffDays = days;
 		diffHours = diffHours % 24;
 		int restDays = 0;
@@ -1662,6 +1663,7 @@ void timeDifferenceCalculations() {
 		if (aMonth == bMonth && aDay == bDay) {
 			diffDays = days - 365 * (diffYears - countLeapYears) - 366 * countLeapYears;
 		}
+
 		char report[DIM] = "";
 		sprintf(report, "%s\nTime difference: %d years, %d months, %d days, %d hours, %d minutes and %d seconds\n", report, diffYears, diffMonths, diffDays, diffHours, diffMinutes, diffSeconds);
 		sprintf(report, "%s\nTime difference: %d months, %d days, %d hours, %d minutes and %d seconds\n", report, diffYears * 12 + diffMonths, diffDays, diffHours, diffMinutes, diffSeconds);

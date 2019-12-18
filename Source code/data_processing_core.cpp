@@ -1786,7 +1786,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 				u++;
 			}
 		}
-		if (firstLetterVariable(paTrig[u - 1]) && paTrig[u] != 'i'&&paTrig[u] != '\0') {
+		if (firstLetterVariable(paTrig[u]) && firstLetterVariable(paTrig[u - 1]) == 0 && paTrig[u + 1] != 'i') {
 			u++;
 			while (verifyLetter(paTrig[u])) {
 				u++;
@@ -3284,7 +3284,7 @@ char character_to_prefDet(double n) {
 
 int variableValidator(char variable[DIM]) {
 	int validate = 0, i = 0, h = -1, abc = 0, j = 0, k = 0, sD = 0;
-	char variableT[DIM], varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm", saveVariable[DIM] = "";;
+	char variableT[DIM], varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
 	double arith = 0, func = 0;
 	for (k = 0; variable[k] != '\0'; k++) {
 		for (i = 0; varLetters[i] != '\0'; i++) {
@@ -3294,90 +3294,110 @@ int variableValidator(char variable[DIM]) {
 			}
 		}
 	}
-	if (j == strlen(variable)) {
-		sprintf(saveVariable, "%s", variable);
-		FILE *user = NULL;
-		char path_user[DIM] = "";
-		sprintf(path_user, "%s\\User functions\\%s.txt", atcPath, saveVariable);
-		user = fopen(path_user, "r");
-		boolean variable_inside_user_function;
-		variable_inside_user_function = isContainedInUserFunction(saveVariable);
-		if (user != NULL || variable_inside_user_function) {
-			if (user != NULL) {
-				fclose(user);
-			}
-			user = NULL;
-			h = 0;
-			return h;
+	FILE *user = NULL;
+	char path_user[DIM] = "";
+	sprintf(path_user, "%s\\User functions\\%s.txt", atcPath, variable);
+	user = fopen(path_user, "r");
+	boolean variable_inside_user_function;
+	variable_inside_user_function = isContainedInUserFunction(variable);
+	if (j != strlen(variable) || j == 0 && strlen(variable) == 0 || user != NULL || variable_inside_user_function) {
+		if (user != NULL) {
+			fclose(user);
 		}
-		revariable[0] = '\0';
-		FILE *var = NULL, *var1 = NULL;
-		i = 0;
-		abc = abs((int)strlen(variable));
-		valid = 0;
-		for (i = 0; variable[i] != '\0'; i++) {
-			if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
-				if (variable[i] == 's') {
-					revariable[i] = 'S';
+		user = NULL;
+		h = 0;
+		return h;
+	}
+	revariable[0] = '\0';
+	FILE *var = NULL, *var1 = NULL;
+	i = 0;
+	abc = abs((int)strlen(variable));
+	valid = 0;
+	for (i = 0; variable[i] != '\0'; i++) {
+		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
+			if (variable[i] == 's') {
+				revariable[i] = 'S';
+			}
+			if (variable[i] == 'c') {
+				revariable[i] = 'W';
+			}
+			if (variable[i] == 't') {
+				revariable[i] = 'J';
+			}
+			if (variable[i] == 'a') {
+				revariable[i] = 'k';
+			}
+			if (variable[i] == 'l') {
+				revariable[i] = 'L';
+			}
+			if (variable[i] == 'r') {
+				revariable[i] = 'R';
+			}
+			if (variable[i] == 'q') {
+				revariable[i] = 'Q';
+			}
+			if (variable[i] == 'g') {
+				revariable[i] = 'G';
+			}
+			if (variable[i] == 'd') {
+				revariable[i] = 'K';
+			}
+			h = 1;
+		}
+		else {
+			if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'D' || variable[i] == 'b') {
+				if (variable[i] == 'i') {
+					revariable[i] = 'Z';
 				}
-				if (variable[i] == 'c') {
-					revariable[i] = 'W';
+				if (variable[i] == 'e') {
+					revariable[i] = 'w';
 				}
-				if (variable[i] == 't') {
-					revariable[i] = 'J';
+				if (variable[i] == 'D') {
+					revariable[i] = 'T';
+					if (isEqual("D", variable)) {
+						return 2;
+					}
 				}
-				if (variable[i] == 'a') {
-					revariable[i] = 'k';
-				}
-				if (variable[i] == 'l') {
-					revariable[i] = 'L';
-				}
-				if (variable[i] == 'r') {
-					revariable[i] = 'R';
-				}
-				if (variable[i] == 'q') {
-					revariable[i] = 'Q';
-				}
-				if (variable[i] == 'g') {
-					revariable[i] = 'G';
-				}
-				if (variable[i] == 'd') {
-					revariable[i] = 'K';
+				if (variable[i] == 'b') {
+					revariable[i] = 'u';
+					if (isEqual("b", variable)) {
+						return 2;
+					}
 				}
 				h = 1;
 			}
 			else {
-				if (variable[i] == 'i' || variable[i] == 'e' || variable[i] == 'D' || variable[i] == 'b') {
-					if (variable[i] == 'i') {
-						revariable[i] = 'Z';
+				if (i == 0 && (variable[i] == 'B' || variable[i] == 'O' || variable[i] == 'H' || variable[i] == 'P')) {
+					if (variable[i] == 'B') {
+						revariable[i] = 'N';
 					}
-					if (variable[i] == 'e') {
-						revariable[i] = 'w';
+					if (variable[i] == 'O') {
+						revariable[i] = 'M';
 					}
-					if (variable[i] == 'D') {
-						revariable[i] = 'T';
-						if (isEqual("D", variable)) {
-							return 2;
-						}
+					if (variable[i] == 'H') {
+						revariable[i] = 'V';
 					}
-					if (variable[i] == 'b') {
-						revariable[i] = 'u';
-						if (isEqual("b", variable)) {
-							return 2;
-						}
+					if (variable[i] == 'P') {
+						revariable[i] = 'I';
 					}
 					h = 1;
 				}
 				else {
-					if (i == 0 && (variable[i] == 'B' || variable[i] == 'O' || variable[i] == 'H' || variable[i] == 'P')) {
+					if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'P' || (variable[i - 2] == 'I'&&variable[i - 1] == 'N') == false && variable[i] == 'F') {
+						if (variable[i] == 'A') {
+							revariable[i] = 'X';
+						}
 						if (variable[i] == 'B') {
 							revariable[i] = 'N';
 						}
-						if (variable[i] == 'O') {
-							revariable[i] = 'M';
+						if (variable[i] == 'C') {
+							revariable[i] = 'v';
 						}
-						if (variable[i] == 'H') {
-							revariable[i] = 'V';
+						if (variable[i] == 'E') {
+							revariable[i] = 'Y';
+						}
+						if (variable[i] == 'F') {
+							revariable[i] = 'U';
 						}
 						if (variable[i] == 'P') {
 							revariable[i] = 'I';
@@ -3385,104 +3405,81 @@ int variableValidator(char variable[DIM]) {
 						h = 1;
 					}
 					else {
-						if (variable[i] == 'A' || variable[i] == 'B' || variable[i] == 'C' || variable[i] == 'E' || variable[i] == 'P' || (variable[i - 2] == 'I'&&variable[i - 1] == 'N') == false && variable[i] == 'F') {
-							if (variable[i] == 'A') {
-								revariable[i] = 'X';
-							}
-							if (variable[i] == 'B') {
-								revariable[i] = 'N';
-							}
-							if (variable[i] == 'C') {
-								revariable[i] = 'v';
-							}
-							if (variable[i] == 'E') {
-								revariable[i] = 'Y';
-							}
-							if (variable[i] == 'F') {
-								revariable[i] = 'U';
-							}
-							if (variable[i] == 'P') {
-								revariable[i] = 'I';
-							}
-							h = 1;
-						}
-						else {
-							revariable[i] = variable[i];
-						}
+						revariable[i] = variable[i];
 					}
 				}
 			}
 		}
-		revariable[i] = '\0';
-		i = 0;
-		variable[abc] = '\0';
-		processVariable(variable);
-		variable[abc] = '\0';
-		arith = arithSolver(variable, 0);
-		if ((variable[0] == 'E' || variable[0] == 'B' || variable[0] == 'O' || variable[0] == 'H' || variable[0] == 'P') && variable[1] == '=') {
-			arith = 10;
-		}
-		variable[abc] = '\0';
-		for (i = 0; variable[i] != '\0'; i++) {
-			variableT[i] = variable[i];
-		}
-		variableT[i] = '?'; variableT[i + 1] = '\0';
-		char testPrefix[DIM] = "";
-		for (i = 0; variable[i] != '\0'; i++) {
-			testPrefix[i] = variable[i];
+	}
+	revariable[i] = '\0';
+	i = 0;
+	variable[abc] = '\0';
+	processVariable(variable);
+	variable[abc] = '\0';
+	arith = arithSolver(variable, 0);
+	if ((variable[0] == 'E' || variable[0] == 'B' || variable[0] == 'O' || variable[0] == 'H' || variable[0] == 'P') && variable[1] == '=') {
+		arith = 10;
+	}
+	variable[abc] = '\0';
+	for (i = 0; variable[i] != '\0'; i++) {
+		variableT[i] = variable[i];
+	}
+	variableT[i] = '?'; variableT[i + 1] = '\0';
+	char testPrefix[DIM] = "";
+	for (i = 0; variable[i] != '\0'; i++) {
+		testPrefix[i] = variable[i];
+	}
+	testPrefix[i] = '\0';
+	double prefix = 0;
+	if (testPrefix[0] == 'P') {
+		testPrefix[0] = '1';
+		for (i = 1; testPrefix[i] != '\0'; i++) {
+			testPrefix[i] = testPrefix[i - 1];
 		}
 		testPrefix[i] = '\0';
-		double prefix = 0;
-		if (testPrefix[0] == 'P') {
-			testPrefix[0] = '1';
-			for (i = 1; testPrefix[i] != '\0'; i++) {
-				testPrefix[i] = testPrefix[i - 1];
-			}
-			testPrefix[i] = '\0';
-			prefix = arithSolver(testPrefix, 0);
-		}
-		func = functionProcessor(variableT, 0.3, 1.0, 0);
-		variable[abc] = '\0';
-		processVariable(variable);
-		if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0) {
-			i = 0;
-			FILE *var1 = NULL;
-			if (var1 != NULL) {
-				fclose(var1);
-			}
-			var1 = NULL;
-			char toOpen[DIM] = "";
-			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
-			while (var1 == NULL && i < 100) {
-				var1 = fopen(toOpen, "a+");
-				i++;
-			}
-			char vari[DIM] = "";
-			i = 0;
-			for (i = 0; (vari[i] = fgetc(var1)) != EOF; i++);
-			vari[i] = '\0';
+		prefix = arithSolver(testPrefix, 0);
+	}
+	func = functionProcessor(variableT, 0.3, 1.0, 0);
+	variable[abc] = '\0';
+	processVariable(variable);
+	if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0) {
+		i = 0;
+		FILE *var1 = NULL;
+		if (var1 != NULL) {
 			fclose(var1);
-			var1 = NULL;
-			i = 0;
-			while (var1 == NULL && i < 100) {
-				var1 = fopen(toOpen, "w");
-				i++;
-			}
-			if (i < 100) {
-				char line[DIM] = "";
-				sprintf(line, "%s %s\n", variable, revariable);
-				if (!(isContained(line, vari) && (strStart == 0 || vari[strStart - 1] == '\n'))) {
-					fputs(line, var1);
-				}
-				fputs(vari, var1);
-				fclose(var1);
-			}
-			i = 0;
 		}
-		else {
-			if (h == 1 && valid == 0 && (arith != 0 || func != 0 || prefix != 0)) {
-				h = 2;
+		var1 = NULL;
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+		while (var1 == NULL && i < 100) {
+			var1 = fopen(toOpen, "a+");
+			i++;
+		}
+		char vari[DIM] = "";
+		i = 0;
+		for (i = 0; (vari[i] = fgetc(var1)) != EOF; i++);
+		vari[i] = '\0';
+		fclose(var1);
+		var1 = NULL;
+		i = 0;
+		while (var1 == NULL && i < 100) {
+			var1 = fopen(toOpen, "w");
+			i++;
+		}
+		if (i < 100) {
+			char line[DIM] = "";
+			sprintf(line, "%s %s\n", variable, revariable);
+			if (!(isContained(line, vari) && (strStart == 0 || vari[strStart - 1] == '\n'))) {
+				fputs(line, var1);
 			}
+			fputs(vari, var1);
+			fclose(var1);
+		}
+		i = 0;
+	}
+	else {
+		if (h == 1 && valid == 0 && (arith != 0 || func != 0 || prefix != 0)) {
+			h = 2;
 		}
 	}
 	return h;

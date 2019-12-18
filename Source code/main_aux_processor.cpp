@@ -14,7 +14,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 	resultR = 0; resultI;
 	int txt = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0, StringManual = 0;
 	char variable[DIM] = "", getVarName[DIM] = "", getVar[DIM] = "", savefTrig[DIM] = "";
-	boolean command = 0,cleanhistory = 0;
+	boolean command = 0, cleanhistory = 0;
 	txt = 0;
 	valid = 1;
 	validVar = 1;
@@ -628,10 +628,6 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 		}
 		command = commands(arithTrig, path, result1, result2);
 		if (command == (boolean)false && continu&&strlen(arithTrig) > 0) {
-			/*if (isContained("+0", arithTrig) && arithTrig[strEnd] == '\0') {
-				replace("+0", "", arithTrig);
-				sprintf(arithTrig, "%s", expressionF);
-			}*/
 			main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
 			sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 		}
@@ -783,7 +779,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 	}
 	s = 0;
 	if (verify == 1) {
-		if ((equationSolverRunning == false && solverRunning == false) || !isEqual(saveArithTrig, arithTrig) && dataVerifier(arithTrig, 0, 0, isFromMain, 1)) {
+		if ((equationSolverRunning == false && solverRunning == false) || !isEqual(saveArithTrig, arithTrig)) {
 			sprintf(saveArithTrig, "%s", arithTrig);
 			manageExpression(arithTrig, 0, 0, 1);
 			sprintf(arithTrig, "%s", expressionF);

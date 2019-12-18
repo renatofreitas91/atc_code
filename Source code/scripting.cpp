@@ -689,22 +689,16 @@ double solveNow(char toSolveNow[DIM], double result1, double result2) {
 }
 
 double atcProg(char exprDev[DIM]) {
-	//char auxiliarCommands[DIM] = ",else,while,for,break,return,switch,case,cls,";
-	//if (!isContained(exprDev, auxiliarCommands)) {
-		fflush(NULL);
-		FILE *atcDev = NULL;
-		char path[DIM] = "";
-		sprintf(path, "%s\\temp.txt", atcPath);
-		while (atcDev == NULL) {
-			atcDev = fopen(path, "w");
-		}
-		fputs(exprDev, atcDev);
-		fclose(atcDev);
-		processTxt(path, rf);
-	//}
-	/*else {
-		resultR = 0;
-	}*/
+	fflush(NULL);
+	FILE *atcDev = NULL;
+	char path[DIM] = "";
+	sprintf(path, "%s\\temp.txt", atcPath);
+	while (atcDev == NULL) {
+		atcDev = fopen(path, "w");
+	}
+	fputs(exprDev, atcDev);
+	fclose(atcDev);
+	processTxt(path, rf);
 	return resultR;
 }
 

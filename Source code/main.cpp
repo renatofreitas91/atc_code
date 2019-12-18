@@ -802,7 +802,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					puts("\nYour expression is terminating with an arithmetic symbol.\n");
 				}
 				sprintf(data, "%s+0", data);
-				puts(data);
 				decision = false;
 				return decision;
 			}
