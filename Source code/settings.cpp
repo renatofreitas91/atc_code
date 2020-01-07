@@ -3,6 +3,8 @@
 #include "stdafx.h"
 #include "atc_functions.h"
 boolean starting = true;
+int x, y, maxX, maxY, saveX, saveY;
+int xATC, yATC, colsATC, linesATC, widthATC, heightATC;
 
 void colors() {
 	FILE *open;
@@ -291,13 +293,38 @@ int applySettings(int toDo) {
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\dimensions.txt", atcPath);
 		if (fopen(toOpen, "r") == NULL) {
-			system("MODE con cols=167 lines=5000");
+			system("MODE con cols=160 lines=300");
 		}
 		else {
-			open = fopen(toOpen, "r");
-			fgets(setting, 40, open);
-			fclose(open);
-			system(setting);
+			open = NULL;
+			while (open == NULL) {
+				open = fopen(toOpen, "r");
+				Sleep(10);
+			}
+			if (open != NULL) {
+				int i = 0;
+				for (i = 0; (setting[i] = fgetc(open)) != EOF; i++);
+				setting[i] = '\0';
+				fclose(open);
+				system(setting);
+				sprintf(dimensionsTxt, "%s", setting);
+				getDimensions();
+				HWND hwnd = GetConsoleWindow();
+				RECT rect;
+				if (GetWindowRect(hwnd, &rect))
+				{
+					widthATC = rect.right - rect.left;
+					heightATC = rect.bottom - rect.top;
+					sprintf(toOpen, "%s\\window.txt", atcPath);
+					open = NULL;
+					while (open == NULL) {
+						open = fopen(toOpen, "w");
+						Sleep(10);
+					}
+					fprintf(open, "%d\n%d\n%d\n%d\n", xATC, yATC, widthATC, heightATC);
+					fclose(open);
+				}
+			}
 		}
 		return 0;
 	}
@@ -308,41 +335,85 @@ int applySettings(int toDo) {
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\window.txt", atcPath);
 		if (fopen(toOpen, "r") == NULL) {
-			HWND a;
-			a = GetConsoleWindow();
-			MoveWindow(a, 0, 0, 1000, 1000, FALSE);
+			HWND b;
+			b = GetConsoleWindow();
+			MoveWindow(b, 0, 0, 100, 100, TRUE);
+			system("MODE con cols=4000 lines=4000");
+			int width, height;
+			HWND hwnd = GetConsoleWindow();
+			RECT rect;
+			if (GetWindowRect(hwnd, &rect))
+			{
+				width = rect.right - rect.left;
+				height = rect.bottom - rect.top;
+			}
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "%s\\window.txt", atcPath);
+			open = NULL;
+			while (open == NULL) {
+				open = fopen(toOpen, "w");
+				Sleep(10);
+			}
+			fprintf(open, "%d\n%d\n%d\n%d\n", 0, 0, width, height);
+			fclose(open);
+			sprintf(windowTxt, "%d\n%d\n%d\n%d\n", 0, 0, width, height);
+			CONSOLE_SCREEN_BUFFER_INFO csbi;
+			int columns, rows;
+			GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+			columns = csbi.srWindow.Right - csbi.srWindow.Left - 2;
+			rows = 5000;
+			sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+			char setting[300] = "";
+			open = NULL;
+			while (open == NULL) {
+				open = fopen(toOpen, "w");
+				Sleep(10);
+			}
+			sprintf(setting, "MODE con cols=%d lines=%d", columns, rows);
+			system(setting);
+			sprintf(dimensionsTxt, "%s", setting);
+			fputs(setting, open);
+			fclose(open);
 		}
 		else {
-			open = fopen(toOpen, "r");
-			for (i = 0; (setting[i] = fgetc(open)) != EOF; i++) {
-				value[e] = setting[i];
-				if (setting[i] != '\n') {
-					e++;
-				}
-				if (value[e] == '\n'&&a == 1) {
-					value[e] = '\0';
-					x = atoi(value);
-					a = 2; e = 0;
-				}
-				if (value[e] == '\n'&&a == 2) {
-					value[e] = '\0';
-					y = atoi(value);
-					a = 3; e = 0;
-				}
-				if (value[e] == '\n'&&a == 3) {
-					value[e] = '\0';
-					width = atoi(value);
-					a = 4; e = 0;
-				}
-				if (value[e] == '\n'&&a == 4) {
-					value[e] = '\0';
-					height = atoi(value);
-					a = 5; e = 0;
-				}
+			open = NULL;
+			while (open == NULL) {
+				open = fopen(toOpen, "r");
+				Sleep(10);
 			}
-			HWND w;
-			w = GetConsoleWindow();
-			MoveWindow(w, (int)x, (int)y, (int)width, (int)height, FALSE);
+			if (open != NULL) {
+				for (i = 0; (setting[i] = fgetc(open)) != EOF; i++) {
+					value[e] = setting[i];
+					if (setting[i] != '\n') {
+						e++;
+					}
+					if (value[e] == '\n'&&a == 1) {
+						value[e] = '\0';
+						x = atoi(value);
+						a = 2; e = 0;
+					}
+					if (value[e] == '\n'&&a == 2) {
+						value[e] = '\0';
+						y = atoi(value);
+						a = 3; e = 0;
+					}
+					if (value[e] == '\n'&&a == 3) {
+						value[e] = '\0';
+						width = atoi(value);
+						a = 4; e = 0;
+					}
+					if (value[e] == '\n'&&a == 4) {
+						value[e] = '\0';
+						height = atoi(value);
+						a = 5; e = 0;
+					}
+				}
+				setting[i] = '\0';
+				HWND w;
+				w = GetConsoleWindow();
+				MoveWindow(w, (int)x, (int)y, (int)width, (int)height, FALSE);
+				sprintf(windowTxt, "%s", setting);
+			}
 		}
 		return 0;
 	}
@@ -459,6 +530,7 @@ boolean about() {
 		int Window = 3, Dimensions = 2;
 		applySettings(Window);
 		applySettings(Dimensions);
+
 		char commandF[400] = "";
 		using namespace std;
 		HANDLE ProcSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -489,4 +561,87 @@ boolean about() {
 	}
 
 	return continu;
+}
+
+void getDimensions() {
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+	char setting[200] = "";
+	FILE * open = NULL;
+	if (fopen(toOpen, "r") == NULL) {
+		system("MODE con cols=160 lines=300");
+	}
+	else {
+		open = NULL;
+		while (open == NULL) {
+			open = fopen(toOpen, "r");
+			Sleep(10);
+		}
+		if (open != NULL) {
+			int i = 0;
+			for (i = 0; (setting[i] = fgetc(open)) != EOF; i++);
+			setting[i] = '\0';
+			fclose(open);
+			char value[10] = "";
+			int l = 0, m = strEnd;
+			if (isContained("MODE con cols=", setting)) {
+				l = 0; m = strEnd;
+				while (verifyNumber(setting[m])) {
+					value[l] = setting[m];
+					m++; l++;
+				}
+				value[l] = '\0';
+				colsATC = atoi(value);
+			}
+			if (isContained("lines=", setting)) {
+				l = 0; m = strEnd;
+				while (verifyNumber(setting[m])) {
+					value[l] = setting[m];
+					m++; l++;
+				}
+				value[l] = '\0';
+				linesATC = atoi(value);
+			}
+		}
+		fclose(open);
+	}
+	int i = 0, e = 0;
+	int a = 1;
+	char value[DIM];
+	sprintf(toOpen, "%s\\window.txt", atcPath);
+	open = NULL;
+	while (open == NULL) {
+		open = fopen(toOpen, "r");
+		Sleep(10);
+	}
+	if (open != NULL) {
+		for (i = 0; (setting[i] = fgetc(open)) != EOF; i++) {
+			value[e] = setting[i];
+			if (setting[i] != '\n') {
+				e++;
+			}
+			if (value[e] == '\n'&&a == 1) {
+				value[e] = '\0';
+				xATC = atoi(value);
+				a = 2; e = 0;
+			}
+			if (value[e] == '\n'&&a == 2) {
+				value[e] = '\0';
+				yATC = atoi(value);
+				a = 3; e = 0;
+			}
+			if (value[e] == '\n'&&a == 3) {
+				value[e] = '\0';
+				widthATC = atoi(value);
+				a = 4; e = 0;
+			}
+			if (value[e] == '\n'&&a == 4) {
+				value[e] = '\0';
+				heightATC = atoi(value);
+				a = 5; e = 0;
+			}
+		}
+		setting[i] = '\0';
+		fclose(open);
+	}
 }

@@ -61,7 +61,12 @@ void main(int argc, char *argv[]) {
 					cls();
 				}
 				printf(">");
-				getReady();
+				if (!(_kbhit() != 0)) {
+					getReady();
+				}
+				else {
+					Pressed = 1;
+				}
 				if (Pressed == 2) {
 					sprintf(trigData, "%s", expressionF);
 					printf("%s\n", trigData);

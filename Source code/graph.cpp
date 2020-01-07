@@ -7,8 +7,8 @@ void designGraph(char functionF[DIM]) {
 	char setting[500] = "";
 	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
 	if (fopen(toOpen, "r") == NULL) {
-		system("MODE con cols=167 lines=5000");
-		numberCols = 167;
+		system("MODE con cols=160 lines=300");
+		numberCols = 160;
 	}
 	else {
 		open = fopen(toOpen, "r");

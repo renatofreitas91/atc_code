@@ -28,8 +28,7 @@ void division(double numR, double numI, double denR, double denI) {
 }
 
 double abs_complex(double real, double imaginary) {
-	resultR = pot(real, 2.0, 1) + pot(imaginary, 2.0, 1);
-	resultR = pot(resultR, 0.5, 1);
+	resultR = pot(real*real + imaginary * imaginary, 0.5, 1);
 	resultI = 0;
 	return resultR;
 }
@@ -72,7 +71,7 @@ void round_complex() {
 			numeriSys = atoi(numSys);
 			fclose(open);
 		}
-		double norm = sqrt(pow(resultR, 2.0) + pow(resultI, 2.0));
+		double norm = sqrt(pot(resultR, 2.0, 1) + pot(resultI, 2.0, 1));
 		char response[DIM] = "";
 		char *ty;
 		if (numeriSys == 1) {
@@ -225,7 +224,7 @@ double rt(double radicand, double degree, int sig) {
 				j = 1;
 			}
 			while (precision >= 1E-309) {
-				while (radicand > pot(result + precision, degree, 1) && i < 10) {
+				while (radicand > pow(result + precision, degree) && i < 10) {
 					result = result + precision;
 					i++;
 				}

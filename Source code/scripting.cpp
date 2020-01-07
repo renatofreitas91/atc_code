@@ -708,7 +708,9 @@ double getValue() {
 		char value[3] = "";
 		sprintf(value, "%c", decision);
 		puts(value);
-		math_processor(value);
+		solving = false;
+		calcNow(value, 0, 0);
+		solving = true;
 		I_O = false;
 		return resultR;
 	}

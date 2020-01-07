@@ -4,6 +4,7 @@
 HANDLE hStdin;
 DWORD fdwSaveOldMode;
 int strStart = 0, strEnd = 0, Pressed = 0;
+char dimensionsTxt[300] = "", windowTxt[300] = "";
 using namespace std;
 void numSystemsController() {
 	FILE *open;
@@ -4292,7 +4293,7 @@ int trackMouse() {
 }
 
 int getReady() {
-	int x, y, maxX, maxY, saveX, saveY;
+	int x = 0, y = 0, maxX = 0, maxY = 0, saveX, saveY = 0, minX = -1, minY = -1, columns = 0, rows = 0, saveColumns = -1, saveRows = -1;
 	Pressed = 0;
 	do {
 		fflush(NULL);
@@ -4300,6 +4301,9 @@ int getReady() {
 		POINT p;
 		GetWindowPos(&x, &y, &maxX, &maxY);
 		GetCursorPos(&p);
+		if (x != minX || y != minY) {
+			setWindow(x, y);
+		}
 		if (WindowFromPoint(p) == GetConsoleWindow()) {
 			if (GetKeyState(VK_RBUTTON) < 0) {
 				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
@@ -4314,11 +4318,6 @@ int getReady() {
 					GetActiveWindow();
 					Pressed = 1;
 				}
-			}
-		}
-		if (WindowFromPoint(p) == GetConsoleWindow()) {
-			if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50) {
-				leftClick();
 			}
 		}
 		if (WindowFromPoint(p) == GetConsoleWindow()) {
@@ -4377,16 +4376,51 @@ int getReady() {
 				open = fopen(toOpen, "w");
 			}
 			fclose(open);
-			if (abs((int)strlen(readCommand)) > 0) {
+			if (!isEqual(readCommand, "dimensions") && !isEqual(readCommand, "window") && abs((int)strlen(readCommand)) > 0) {
 				sprintf(expressionF, "%s", readCommand);
 				Pressed = 2;
+			}
+			else {
+				if (isEqual(readCommand, "dimensions")) {
+					int Window = 3, Dimensions = 2;
+					applySettings(Dimensions);
+					printf(">");
+				}
+				else {
+					if (isEqual(readCommand, "window")) {
+						int Window = 3, Dimensions = 2;
+						applySettings(Window);
+					}
+				}
 			}
 		}
 		saveX = p.x;
 		saveY = p.y;
-		Sleep(100);
+		Sleep(77);
 	} while (Pressed == 0);
 	return 0;
+}
+
+void setWindow(int x, int y) {
+	FILE *open;
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\window.txt", atcPath);
+	open = fopen(toOpen, "w");
+	fprintf(open, "%d\n%d\n%d\n%d\n", x, y, widthATC, heightATC);
+	fclose(open);
+	xATC = x;
+	yATC = y;
+}
+
+void setDimensions(int cols, int lines) {
+	FILE *open = NULL;
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+	open = fopen(toOpen, "w");
+	fprintf(open, "MODE con cols=%d lines=%d", cols, lines);
+	colsATC = cols;
+	linesATC = lines;
+	fclose(open);
 }
 
 void GetWindowPos(int *x, int *y, int *maxX, int *maxY) {

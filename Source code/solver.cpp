@@ -142,7 +142,7 @@ double solver(char expression[DIM]) {
 		poly = false;
 		if (isContained("x", expression)) {
 			replace("x", "res", expression);
-			sprintf(expression, "%s", expressionF);
+			sprintf(expression, "%s+1-1", expressionF);
 		}
 		solverRunning = true;
 		solving = false;
