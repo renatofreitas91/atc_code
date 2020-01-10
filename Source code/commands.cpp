@@ -508,7 +508,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					char report[DIM] = "";
 					sprintf(report, "\n%s\n", answers);
 					puts(report);
-					/*int option = -1;
+					int option = -1;
 					while (option != 0 && option != 1) {
 						I_O = true;
 						puts("\nExport result? (Yes -> 1 \\ No -> 0)");
@@ -516,7 +516,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					}
 					if (option == 1) {
 						saveToReport(report);
-					}*/
+					}
 				}
 			}
 			else {

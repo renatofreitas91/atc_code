@@ -28,7 +28,7 @@ void division(double numR, double numI, double denR, double denI) {
 }
 
 double abs_complex(double real, double imaginary) {
-	resultR = pot(real*real + imaginary * imaginary, 0.5, 1);
+	resultR = pow(real*real + imaginary * imaginary, 0.5);
 	resultI = 0;
 	return resultR;
 }
@@ -71,7 +71,7 @@ void round_complex() {
 			numeriSys = atoi(numSys);
 			fclose(open);
 		}
-		double norm = sqrt(pot(resultR, 2.0, 1) + pot(resultI, 2.0, 1));
+		double norm = sqrt(resultR*resultR + resultI * resultI);
 		char response[DIM] = "";
 		char *ty;
 		if (numeriSys == 1) {

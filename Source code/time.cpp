@@ -1437,7 +1437,6 @@ void timeDifferenceCalculations() {
 				diffYears++;
 				if (isLeapYear(i) == 1) {
 					days = days + 366;
-					countLeapYears++;
 				}
 				else {
 					days = days + 365;
@@ -1450,6 +1449,7 @@ void timeDifferenceCalculations() {
 				}
 				if (k == 2 && isLeapYear(aYear) == 1) {
 					days = days + 29;
+					countLeapYears++;
 				}
 				if (k == 2 && isLeapYear(aYear) == 0) {
 					days = days + 28;
@@ -1486,36 +1486,83 @@ void timeDifferenceCalculations() {
 				}
 			}
 		}
-		if ((bYear == aYear && bMonth < aMonth) || bYear != aYear) {
+		if (days != 0) {
 			days = days + aDay;
-			diffHours = diffHours % 24;
-			if (aDay > bDay) {
-				diffDays = aDay - bDay;
+		}
+		diffYears = abs(aYear - bYear);
+		if (aMonth >= bMonth) {
+			diffMonths = aMonth - bMonth;
+		}
+		else {
+			if (aMonth < bMonth) {
+				diffMonths = aMonth + 12 - bMonth;
 			}
-			else {
-				if (aDay < bDay) {
-					diffDays = diffMinusDays + aDay;
-				}
-				else {
-					diffDays = 0;
-				}
+		}
+		if (aMonth < bMonth) {
+			diffYears--;
+		}
+		else {
+			if (aMonth == bMonth && aDay < bDay) {
+				diffYears--;
 			}
+		}
+		if (aMonth == bMonth) {
+			if (aDay < bDay) {
+				diffMonths--;
+			}
+		}
+		else {
 			if (aMonth > bMonth) {
-				diffMonths = aMonth - bMonth;
+				if (aDay < bDay) {
+					diffMonths--;
+				}
 			}
 			else {
 				if (aMonth < bMonth) {
-					diffMonths = bMonth - aMonth;
-				}
-				else {
-					diffMonths = 0;
+					if (aDay < bDay) {
+						diffMonths--;
+					}
 				}
 			}
+		}
+		if (aMonth == bMonth) {
+			if (aDay < bDay) {
+				diffDays = diffMinusDays + aDay - countLeapYears;
+			}
+			else {
+				diffDays = aDay - bDay - countLeapYears;
+			}
+		}
+		else {
+			if (aMonth > bMonth) {
+				if (aDay < bDay) {
+					diffDays = diffMinusDays + aDay - countLeapYears;
+				}
+				else {
+					diffDays = aDay - bDay - countLeapYears;
+				}
+			}
+			else {
+				if (bMonth > aMonth) {
+					if (aDay < bDay) {
+						diffDays = diffMinusDays + aDay - countLeapYears;
+					}
+					else {
+						diffDays = aDay - bDay - countLeapYears;
+					}
+				}
+			}
+		}
+		if (days == 0) {
+			days = diffDays;
 		}
 		int diffTime = diffHours * 3600 + diffMinutes * 60 + diffSeconds;
 		int  aTime = aHour * 3600 + aMinutes * 60 + aSeconds;
 		diffSeconds = diffTime + aTime;
-		diffDays = diffDays - diffSeconds / 86400;
+		if (diffDays > 0) {
+			diffDays = diffDays - diffSeconds / 86400;
+		}
+		int saveDays = days;
 		days = days - diffSeconds / 86400;
 		diffHours = (diffSeconds / 3600) % 24;
 		diffSeconds = diffSeconds % 3600;
@@ -1523,55 +1570,38 @@ void timeDifferenceCalculations() {
 		diffSeconds = diffSeconds % 60;
 		diffYears = diffYears + diffMonths / 12;
 		diffMonths = diffMonths % 12;
-		if (aDay == bDay && aMonth == bMonth && aYear != bYear) {
-			diffYears = aYear - bYear;
-		}
-		if (bYear <= aYear) {
-			if ((bYear == aYear && bMonth <= aMonth) || bYear < aYear) {
-				if ((bYear == aYear && bMonth <= aMonth && bDay <= aDay) || bYear < aYear) {
-					char report[DIM] = "";
-					sprintf(report, "%s\nTime difference: %d years, %d months, %d days, %d hours, %d minutes and %d seconds\n", report, diffYears, diffMonths, diffDays, diffHours, diffMinutes, diffSeconds);
-					sprintf(report, "%s\nTime difference: %d months, %d days, %d hours, %d minutes and %d seconds\n", report, diffYears * 12 + diffMonths, diffDays, diffHours, diffMinutes, diffSeconds);
-					sprintf(report, "%s\nTime difference: %d days , %d hours, %d minutes and %d seconds\n", report, days, diffHours, diffMinutes, diffSeconds);
-					sprintf(report, "%s\nTime difference: %d hours, %d minutes and %d seconds\n", report, diffHours + 24 * days, diffMinutes, diffSeconds);
-					sprintf(report, "%s\nTime difference: %d minutes and %d seconds\n", report, diffHours * 60 + 1440 * days + diffMinutes, diffSeconds);
-					char toCalc[1000] = "";
-					sprintf(toCalc, "(%d*60+1440*%d+%d)*60+%d", diffHours, days, diffMinutes, diffSeconds);
-					math_processor(toCalc);
-					sprintf(report, "%s\nTime difference: %.0f seconds\n", report, resultR);
-					sprintf(report, "%s\nTime difference: %d weeks and %d days, %d hours, %d minutes and %d seconds\n", report, days / 7, days % 7, diffHours, diffMinutes, diffSeconds);
-					if (bYear != aYear) {
-						sprintf(report, "%s\nTime difference: %.2f%% of a common year (365 days)", report, ((float)days / (float)365) *(float)100);
-					}
-					else {
-						if (isLeapYear(aYear) == 1) {
-							sprintf(report, "%s\nTime difference: %.2f%% of %d", report, ((float)days / (float)366) *(float)100, aYear);
-						}
-						else {
-							sprintf(report, "%s\nTime difference: %.2f%% of %d", report, ((float)days / (float)365) *(float)100, aYear);
-						}
-					}
-					puts(report);
-					int optionF = -1;
-					while (optionF != 0 && optionF != 1) {
-						I_O = true;
-						puts("\nExport result? (Yes -> 1 \\ No -> 0)");
-						optionF = (int)getValue();
-					}
-					if (optionF == 1) {
-						saveToReport(report);
-					}
-				}
-				else {
-					printf("\nError: You have entered as older date the latter date. Latter year and older year are the same, the same for the months, but the latter day is previous to the older day.\n");
-				}
-			}
-			else {
-				printf("\nError: You have entered as older date the latter date. Latter year and older year are the same but latter month is previous to the older month\n");
-			}
+		days = saveDays;
+		char report[DIM] = "";
+		sprintf(report, "%s\nTime difference: %d years, %d months, %d days, %d hours, %d minutes and %d seconds\n", report, diffYears, diffMonths, diffDays, diffHours, diffMinutes, diffSeconds);
+		sprintf(report, "%s\nTime difference: %d months, %d days, %d hours, %d minutes and %d seconds\n", report, diffYears * 12 + diffMonths, diffDays, diffHours, diffMinutes, diffSeconds);
+		sprintf(report, "%s\nTime difference: %d days , %d hours, %d minutes and %d seconds\n", report, days, diffHours, diffMinutes, diffSeconds);
+		sprintf(report, "%s\nTime difference: %d hours, %d minutes and %d seconds\n", report, diffHours + 24 * days, diffMinutes, diffSeconds);
+		sprintf(report, "%s\nTime difference: %d minutes and %d seconds\n", report, diffHours * 60 + 1440 * days + diffMinutes, diffSeconds);
+		char toCalc[1000] = "";
+		sprintf(toCalc, "(%d*60+1440*%d+%d)*60+%d", diffHours, days, diffMinutes, diffSeconds);
+		math_processor(toCalc);
+		sprintf(report, "%s\nTime difference: %.0f seconds\n", report, resultR);
+		sprintf(report, "%s\nTime difference: %d weeks and %d days, %d hours, %d minutes and %d seconds\n", report, days / 7, days % 7, diffHours, diffMinutes, diffSeconds);
+		if (bYear != aYear) {
+			sprintf(report, "%s\nTime difference: %.2f%% of a common year (365 days)", report, ((float)days / (float)365) *(float)100);
 		}
 		else {
-			printf("\nError: You have entered as older date the latter date. Latter year is inferior to the older year.\n");
+			if (isLeapYear(aYear) == 1) {
+				sprintf(report, "%s\nTime difference: %.2f%% of %d", report, ((float)days / (float)366) *(float)100, aYear);
+			}
+			else {
+				sprintf(report, "%s\nTime difference: %.2f%% of %d", report, ((float)days / (float)365) *(float)100, aYear);
+			}
+		}
+		puts(report);
+		int optionF = -1;
+		while (optionF != 0 && optionF != 1) {
+			I_O = true;
+			puts("\nExport result? (Yes -> 1 \\ No -> 0)");
+			optionF = (int)getValue();
+		}
+		if (optionF == 1) {
+			saveToReport(report);
 		}
 		toContinue = -1;
 		while (toContinue != 0 && toContinue != 1) {
