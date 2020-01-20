@@ -485,6 +485,8 @@ void rootsToPolynomial(char rootsF[DIM]) {
 
 
 double equationSolver(char equation[DIM]) {
+	boolean hasFloatNum = false;
+
 	replaceTimes = 0;
 	char saveToCalcX[DIM] = "";
 	char originalEquation[DIM] = "";
@@ -791,6 +793,9 @@ double equationSolver(char equation[DIM]) {
 				}
 			}
 		}
+		if (isContained(".", toCalcX)) {
+			hasFloatNum = true;
+		}
 		if (lastElement == 0 && lastElementI == 0) {
 			sprintf(expressionF, "(%s+0.00000000000000001)", toCalcX);
 			sprintf(toCalcX, "%s", expressionF);
@@ -1001,8 +1006,8 @@ double equationSolver(char equation[DIM]) {
 					replaceTimes = 0;
 					countSolutions = 0;
 					char precision[10] = "%G";
-					int precisionN = 6;
-					if (!hasImaginary) {
+					int precisionN = 8;
+					if (!hasImaginary && !hasFloatNum) {
 						g = 0;
 						RootR[g] = M_E / 2; RootI[g] = 0;
 						g++;
@@ -1105,7 +1110,7 @@ double equationSolver(char equation[DIM]) {
 							n++;
 						}
 					}
-					precisionN = 6;
+					precisionN = 8;
 					if (maxExponent > 2 || maxExponent == maxMaxExponent) {
 						char precision[10] = "%G";
 						g = 0;
@@ -1249,10 +1254,10 @@ double equationSolver(char equation[DIM]) {
 					if (isContained("\\", saveEquation) || isContained("x^", saveEquation) ||
 						(equation_solver == (boolean)true && isContained("x", saveEquation) &&
 							isContained("x^", equation) == (boolean)false)) {
-						if (abs(rootR) < 1E-6) {
+						if (abs(rootR) < 1E-4) {
 							rootR = 0;
 						}
-						if (abs(rootI) < 1E-6) {
+						if (abs(rootI) < 1E-4) {
 							rootI = 0;
 						}
 						if (rootR > 0 && rootI > 0) {
@@ -3099,8 +3104,8 @@ void simplifyExpression(char data[DIM]) {
 					if (isContained("-", expressionF)) {
 						replace("-", "_", expressionF);
 					}
-					if (isContained(".0000000000000", expressionF)) {
-						replace(".0000000000000", "", expressionF);
+					if (isContained(".000000", expressionF)) {
+						replace(".000000", "", expressionF);
 					}
 					replaceTimes = 1;
 					replace(num, expressionF, expression);

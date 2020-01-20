@@ -1450,6 +1450,8 @@ double arithSolver(char trigon1[DIM], double result) {
 }
 
 double functionProcessor(char trigon[DIM], double result, double amplitude, int res) {
+	char saveArgument[DIM] = "";
+	sprintf(saveArgument, "%s", expressionF);
 	if (verbose == 1 && solving) {
 		printf("\n\n==> functionProcessor <==\n\nFunction: %s", trigon);
 	}
@@ -1489,6 +1491,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 		funcU[hi] = '\0';
 		FILE *open = NULL;
 		char directory[MAX_PATH] = "";
+		char savePath[300] = "";
 		char comm[300] = "";
 		sprintf(userFunc, "%s\\User functions\\%s.txt", atcPath, atcFunc);
 		if (open != NULL) {
@@ -2050,11 +2053,11 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 		}
 		resultR = v[1];
 		resultI = vI[1];
-		int inputs = countOccurrences("\\", expressionF);
+		int inputs = countOccurrences("\\", saveArgument);
 		char letters[30] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", value[DIM] = "";
 		int y = 0, x = 0, entered = 0;
 		char toEnter[DIM] = "";
-		sprintf(toEnter, expressionF);
+		sprintf(toEnter, "%s", saveArgument);
 		while (entered <= inputs) {
 			y = 0;
 			while (toEnter[x] != '\\'&&toEnter[x] != '='&&toEnter[x] != '\0') {

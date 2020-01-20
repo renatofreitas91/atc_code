@@ -3601,6 +3601,7 @@ double numericalSystems(char numSystem[DIM]) {
 	return result;
 }
 
+
 double processVariable(char variable[DIM]) {
 	validVar = 0;
 	FILE *open = NULL;
