@@ -614,20 +614,17 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			data[s] = '\0';
 			s = 0;
 			for (s = 0; data[s] != '\0'; s++) {
-				if (parent[s + 1] == parent[s] + 1 && parent[s] != 0) {
+				if (parent[s] != 0 && parent[s + 1] == parent[s] + 1) {
 					savePar = s;
 					s++;
 					while (parent[s] != parent[savePar] && s < abs((int)strlen(data))) {
 						s++;
 					}
-					if (parent[s - 1] == parent[s] + 1 && parent[s - 1] != 0) {
+					s--;
+					if (parent[s] == parent[s + 1] + 1) {
 						decision = false;
 						if (comment == 1) {
-							printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n", kg, kc);
-							printf("\n");
-							for (s = 0; data[s] != '\0'; s++) {
-								printf("%d", data[s]);
-							}
+							printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n ==> You should use just the required number of parenthesis. <== ", kg, kc);
 							printf("\n");
 						}
 						return decision;
@@ -800,8 +797,8 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					}
 				}
 			}
-			w = abs((int)strlen(data)) - 1;
-			if (data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') {
+			w = abs((int)strlen(data)) - 3;
+			if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && isContainedByIndex("+0", data, w - 1)) {
 				verify = 0;
 				if (comment == 1) {
 					puts("\nYour expression is terminating with an arithmetic symbol.\n");
