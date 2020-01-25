@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-int rasf = 0, maxLength = 0, numericalVal = 0;
+int rasf = 0, maxLength = 0;
 boolean solving = true;
 char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "", renamedVariable[DIM] = "";
 
