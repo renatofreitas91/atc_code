@@ -1011,6 +1011,7 @@ double equationSolver(char equation[DIM]) {
 						g = 0;
 						double saveExpressionCoefR_1 = 0, saveExpressionCoefR_Max = 0;
 						if (abs(expressionCoefI[1]) > 1E-10) {
+							g = 0;
 							saveExpressionCoefR_1 = 0; saveExpressionCoefR_Max = 0;
 							if (abs(expressionCoefR[maxExponent]) > 1E-10) {
 								saveExpressionCoefR_Max = expressionCoefR[maxExponent];
@@ -1058,6 +1059,56 @@ double equationSolver(char equation[DIM]) {
 									g++;
 								}
 							}
+							else {
+								saveExpressionCoefR_1 = 0; saveExpressionCoefR_Max = 0;
+								if (abs(expressionCoefR[maxExponent]) > 1E-10) {
+									saveExpressionCoefR_Max = expressionCoefR[maxExponent];
+								}
+								else {
+									saveExpressionCoefR_Max = expressionCoefI[maxExponent];
+								}
+								saveExpressionCoefR_1 = expressionCoefI[1];
+								z = 0;
+								g = 0;
+								while (g < maxExponent && saveExpressionCoefR_1 != 0 && z < 500) {
+									if (z < 250) {
+										h = 2;
+									}
+									else {
+										h = 1;
+									}
+									for (h; g < maxExponent && z < 500; h++) {
+										if (h <= saveExpressionCoefR_1 * -1) {
+											if (re(abs(saveExpressionCoefR_Max), h) == 0) {
+												RootR[g] = 0; RootI[g] = h;
+												saveExpressionCoefR_Max = abs(saveExpressionCoefR_Max) / h;
+												saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
+												g++;
+											}
+										}
+										h = h * -1;
+										if (h <= saveExpressionCoefR_1) {
+											if (re(abs(saveExpressionCoefR_Max), h) == 0) {
+												RootR[g] = 0; RootI[g] = h;
+												saveExpressionCoefR_Max = abs(saveExpressionCoefR_Max) / h;
+												saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
+												g++;
+											}
+										}
+										h = h * -1;
+										z++;
+									}
+								}
+								if (saveExpressionCoefR_1 == 0) {
+									g = 0;
+									while (g < maxExponent) {
+										SolutionR[solvedIndex] = 0;
+										SolutionI[solvedIndex] = RootI[g];
+										solvedIndex++;
+										g++;
+									}
+								}
+							}
 						}
 						if (abs(expressionCoefR[1]) > 1E-10) {
 							solvedIndex = 0;
@@ -1065,13 +1116,9 @@ double equationSolver(char equation[DIM]) {
 							saveExpressionCoefR_Max = expressionCoefR[maxExponent];
 							saveExpressionCoefR_1 = expressionCoefR[1];
 							z = 0;
+							g = 0;
 							while (g < maxExponent && saveExpressionCoefR_1 != 0 && z < 500) {
-								if (z < 250) {
-									h = 2;
-								}
-								else {
-									h = 1;
-								}
+								h = 1;
 								for (h; g < maxExponent && z < 500; h++) {
 									if (h <= saveExpressionCoefR_1 * -1) {
 										if (re(abs(saveExpressionCoefR_Max), h) == 0) {
@@ -1103,7 +1150,59 @@ double equationSolver(char equation[DIM]) {
 									g++;
 								}
 							}
+							else {
+								g = 0;
+								solvedIndex = 0;
+								saveExpressionCoefR_1 = 0, saveExpressionCoefR_Max = 0;
+								saveExpressionCoefR_Max = expressionCoefR[maxExponent];
+								saveExpressionCoefR_1 = expressionCoefR[1];
+								z = 0;
+								while (g < maxExponent && saveExpressionCoefR_1 != 0 && z < 500) {
+									h = 2;
+									for (h; g < maxExponent && z < 500; h++) {
+										if (h <= saveExpressionCoefR_1 * -1) {
+											if (re(abs(saveExpressionCoefR_Max), h) == 0) {
+												RootR[g] = h; RootI[g] = 0;
+												saveExpressionCoefR_Max = abs(saveExpressionCoefR_Max) / h;
+												saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
+												g++;
+											}
+										}
+										h = h * -1;
+										if (h <= saveExpressionCoefR_1) {
+											if (re(abs(saveExpressionCoefR_Max), h) == 0) {
+												RootR[g] = h; RootI[g] = 0;
+												saveExpressionCoefR_Max = abs(saveExpressionCoefR_Max) / h;
+												saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
+												g++;
+											}
+										}
+										h = h * -1;
+										z++;
+									}
+								}
+								if (saveExpressionCoefR_1 == 0) {
+									g = 0;
+									while (g < maxExponent) {
+										SolutionR[solvedIndex] = RootR[g];
+										SolutionI[solvedIndex] = 0;
+										solvedIndex++;
+										g++;
+									}
+								}
+							}
 						}
+
+
+
+
+
+
+
+
+
+
+
 
 						if (solvedIndex != maxExponent && !hasImaginary) {
 							g = 0;

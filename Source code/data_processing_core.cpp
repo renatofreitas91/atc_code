@@ -503,8 +503,6 @@ void renamer(char expression[DIM]) {
 	expressionF[i] = '\0';
 }
 
-
-
 void variableRenamer(char variable[DIM]) {
 	valRenamedVar = 0;
 	sprintf(varRename, "");
@@ -542,7 +540,40 @@ void variableRenamer(char variable[DIM]) {
 			}
 		}
 	}
+	if (valRenamedVar == 0) {
+		sprintf(toOpen, "%s\\renamedVar.txt", saveATCPath);
+		open = NULL;
+		i = 0;
+		while (open == NULL && i < 50) {
+			open = fopen(toOpen, "a+");
+			i++;
+		}
+		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+		vari[i] = '\0';
+		fclose(open);
+		for (i = 0; vari[i] != '\0'; i++) {
+			j = 0;
+			if (variable[j] == vari[i] && (i == 0 || vari[i - 1] == '\n')) {
+				while (variable[j] == vari[i] && vari[i] != '\0') {
+					j++; i++;
+				}
+				if (strlen(variable) == j) {
+					if (variable[j] == '\0'&&vari[i] == ' ') {
+						valRenamedVar = 1;
+						i++;
+						j = 0;
+						while (vari[i] != '\n'&&vari[i] != '\0') {
+							varRename[j] = vari[i];
+							j++; i++;
+						}
+						varRename[j] = '\0';
+					}
+				}
+			}
+		}
+	}
 }
+
 
 void pathNameToPath(char pathName[DIM]) {
 	FILE *open = NULL;
@@ -675,7 +706,46 @@ void stringVariableToString(char stringVariable[DIM]) {
 			validVar = 0;
 		}
 	}
+	if (validVar != 1) {
+		sprintf(toOpen, "%s\\stringVariable.txt", saveATCPath);
+		open = fopen(toOpen, "r");
+		if (open == NULL) {
+			puts("\n==> No string variable created! <==\n");
+			validVar = 0;
+		}
+		else {
+			for (i = 0; (data[i] = fgetc(open)) != EOF; i++);
+			data[i] = '\0';
+			fclose(open);
+			for (i = 0; data[i] != '\0'; i++) {
+				j = 0;
+				if (data[i] == stringVariable[j] && j == 0) {
+					while (data[i] == stringVariable[j]) {
+						j++;
+						i++;
+					}
+					if (j == strlen(stringVariable)) {
+						validVar = 1;
+						char directory[MAX_PATH] = "";
+						sprintf(directory, "%s\\Strings\\%s.txt", atcPath, stringVariable);
+						open = fopen(directory, "a+");
+						if (open != NULL) {
+							for (k = 0; (variableSTring[k] = fgetc(open)) != EOF; k++);
+							variableSTring[k] = '\0';
+							fclose(open);
+						}
+					}
+				}
+			}
+
+			if (!isContained(stringVariable, data)) {
+				puts("\n==> This string variable doesn't exist! <==\n");
+				validVar = 0;
+			}
+		}
+	}
 }
+
 
 void stringVariableController(char variable[DIM], char string[DIM]) {
 	FILE *open = NULL;
@@ -2623,6 +2693,7 @@ void getATCPath() {
 		GetCurrentDirectory(MAX_PATH, NPath);
 		wcstombs(atcPath, NPath, wcslen(NPath) + 1);
 		fprintf(aPath, "%s", atcPath);
+		sprintf(saveATCPath, "%s", atcPath);
 		fclose(aPath);
 	}
 	else {
@@ -2631,6 +2702,7 @@ void getATCPath() {
 		if (atcPath[strlen(atcPath) - 2] == ' ') {
 			atcPath[strlen(atcPath) - 2] = '\0';
 		}
+		sprintf(saveATCPath, "%s", atcPath);
 		FILE *test = NULL;
 		char testPath[DIM] = "";
 		sprintf(testPath, "%s\\License.txt", atcPath);
@@ -2641,6 +2713,7 @@ void getATCPath() {
 			GetCurrentDirectory(MAX_PATH, NPath);
 			wcstombs(atcPath, NPath, wcslen(NPath) + 1);
 			fprintf(test, "%s", atcPath);
+			sprintf(saveATCPath, "%s", atcPath);
 			fclose(test);
 		}
 	}
@@ -3601,7 +3674,6 @@ double numericalSystems(char numSystem[DIM]) {
 	return result;
 }
 
-
 double processVariable(char variable[DIM]) {
 	validVar = 0;
 	FILE *open = NULL;
@@ -3694,6 +3766,94 @@ double processVariable(char variable[DIM]) {
 					varValue = resultR;
 				}
 				break;
+			}
+		}
+	}
+	if (validVar != 1) {
+		sprintf(toOpen, "%s\\variables.txt", saveATCPath);
+		open = fopen(toOpen, "a+");
+		while (open == NULL && cou < 10) {
+			open = fopen(toOpen, "a+");
+			cou++;
+		}
+		if (cou < 10) {
+			i = 0;
+			for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+			vari[i] = '\0';
+			lth = abs((int)strlen(vari));
+			fclose(open);
+			i = 0;
+			for (i = 0; vari[i] != '\0'; i++) {
+				g = 0;
+				int j = i;
+				while (vari[j] != ' '&&vari[j] != '\0') {
+					j++;
+				}
+				j = j - i;
+				if (vari[i] == variable[g] && (i == 0 || vari[i - 1] == '\n')) {
+					while (vari[i] == variable[g]) {
+						if (vari[i] == variable[g]) {
+							va[g] = vari[i];
+						}i++; g++;
+					}
+					if (vari[i] != ' ') {
+						while (vari[i] != ' ') {
+							va[g] = vari[i];
+							g++; i++;
+						}
+					}
+					va[g] = '\0';
+				}
+				l = i;
+				g = 0;
+				for (y = 0; va[y] != '\0'; y++) {
+					if (va[y] == variable[y]) {
+						g++;
+					}
+				}
+				vari[lth] = '\0';
+				if (g == strlen(va) && strlen(variable) == g && j == g && g != 0) {
+					int space = 0;
+					valid = 1; validVar = 1;
+					int gh = l;
+					while (vari[gh] != '\n') {
+						gh++;
+					}
+					h = gh;
+					gh = l + 1;
+					y = 0;
+					for (gh; gh < h; gh++) {
+						value[y] = vari[gh];
+						if (value[y] == ' ') {
+							space = 1;
+						}
+						y++;
+					}
+					value[y] = '\0';
+					if (space == 0) {
+						resultR = strtod(value, &pointer);
+					}
+					else {
+						char real[DIM] = "", imag[DIM] = "";
+						y = 0;
+						while (value[y] != ' ') {
+							real[y] = value[y];
+							y++;
+						}
+						real[y] = '\0';
+						y++;
+						gh = 0;
+						while (value[y] != '\0') {
+							imag[gh] = value[y];
+							y++; gh++;
+						}
+						imag[gh] = '\0';
+						resultR = strtod(real, &pointer);
+						resultI = strtod(imag, &pointer);
+						varValue = resultR;
+					}
+					break;
+				}
 			}
 		}
 	}

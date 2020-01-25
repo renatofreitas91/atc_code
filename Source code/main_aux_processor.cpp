@@ -2,9 +2,9 @@
 
 #include "stdafx.h"
 
-int rasf = 0, maxLength = 0;
+int rasf = 0, maxLength = 0, numericalVal = 0;
 boolean solving = true;
-char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "";
+char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "", renamedVariable[DIM] = "";
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);
@@ -558,7 +558,6 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 	}
 
 	else {
-
 		if (strlen(arithTrig) > 0) {
 			arithTrig[i] = '+'; arithTrig[i + 1] = '0'; arithTrig[i + 2] = '\0';
 		}
@@ -668,6 +667,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 			sprintf(arithTrig, "");
 			i = 0;
 			int hk = variableValidator(variable);
+			if (isContained("atc_", saveArithTr)) {
+				sprintf(renamedVariable, "%s", revariable);
+			}
 			if (hk == 1 || v == 1) {
 				processVariable(revariable);
 			}
@@ -868,6 +870,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					variableController(revariable, result1);
 				}
 				if (valGet == 0 && feedbackValidation == 0) {
+					if (strlen(renamedVariable) > 0 && isContained("atc_", arithTrig) && abs((int)strlen(variable)) > 0) {
+						variableController(renamedVariable, result1);
+					}
 					if (dp == -1) {
 						if (isFromMain == 1) {
 							if (result1 > 0 && result2 > 0) {

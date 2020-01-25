@@ -4,10 +4,10 @@
 #include "atc_functions.h"
 
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
-char lastCommand[DIM], atcPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
+char lastCommand[DIM], atcPath[DIM] = "", customFolderPath[DIM] = "", saveATCPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
 int replaceTimes = 0, processingOK = 1, executedSolver = 0, isFromMain = 0, solutioned = 0, verify = 0, arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
 clock_t start_processing, end_processing;
-char validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_;";
+char savePathF[DIM], validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_;";
 int toSendCommand = 0;
 void main(int argc, char *argv[]) {
 	char dataToSolve[DIM] = "";
@@ -47,6 +47,9 @@ void main(int argc, char *argv[]) {
 	if (continu == 1) {
 		system("title Advanced Trigonometry Calculator v2.0.7       ==) ATC is ready to process data. (==");
 		do {
+			sprintf(savePathF, "");
+			sprintf(atcPath, "%s", saveATCPath);
+			sprintf(renamedVariable, "");
 			resultR = 0; resultI = 0;
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
@@ -248,6 +251,43 @@ void main(int argc, char *argv[]) {
 }
 
 boolean processTxt(char path[DIM], int re) {
+	char folder[DIM] = "";
+	if (!isContained("User functions", path)) {
+		sprintf(folder, "%s", path);
+		if (isContained(".txt", folder) && !isContained("\\temp\\", path)) {
+			FILE *check = NULL;
+			replace(".txt", "", folder);
+			sprintf(folder, "%s", expressionF);
+			if (isContained("\"", folder)) {
+				replace("\"", "", folder);
+				sprintf(folder, "%s", expressionF);
+			}
+			sprintf(atcPath, "%s", folder);
+			if (strlen(savePathF) == 0) {
+				sprintf(savePathF, "%s", atcPath);
+			}
+			sprintf(customFolderPath, "%s", folder);
+			char hasFolder[DIM] = "";
+			sprintf(hasFolder, "%s\\hasFolder.txt", folder);
+
+			check = fopen(hasFolder, "r");
+			if (check == NULL) {
+				char toOpen[DIM] = "";
+				sprintf(toOpen, "/C mkdir \"%s\"&mkdir \"%s\\Strings\"", folder, folder);
+				using namespace std;
+				std::string s = string(toOpen);
+				std::wstring stemp = std::wstring(s.begin(), s.end());
+				LPCWSTR sw = stemp.c_str();
+				ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+				Sleep(333);
+				check = fopen(hasFolder, "w");
+				fclose(check);
+			}
+			else {
+				fclose(check);
+			}
+		}
+	}
 	double result1 = 0, result2 = 0, anstxt[DIM], anstxtI[DIM];
 	FILE *fin = NULL, *fout = NULL, *open = NULL, *read = NULL;
 	char addBar[DIM] = "", savePath[DIM] = "", arith[DIM] = "", sendFunc[DIM] = "", resp[30] = "_answers.txt", varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
@@ -443,6 +483,12 @@ boolean processTxt(char path[DIM], int re) {
 								replace(" ", "RASF", arith);
 								sprintf(arith, "%s", expressionF);
 							}
+						}
+						if (isContained("atc", arith)) {
+							sprintf(atcPath, "%s", saveATCPath);
+						}
+						if (!isContained("atc", arith) && (!isContained("User functions", path))) {
+							sprintf(atcPath, "%s", savePathF);
 						}
 						main_core(arith, arith, fin, path, result1, result2, 0);
 						if (verified == 1) {
