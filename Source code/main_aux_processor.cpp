@@ -7,6 +7,9 @@ boolean solving = true;
 char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "", renamedVariable[DIM] = "";
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
+	if (isEqual(roots, "")) {
+		rtIndex = 0;
+	}
 	fflush(NULL);
 	verbose = 0;
 	verified = 0;

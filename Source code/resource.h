@@ -452,7 +452,7 @@
 #define AFX_IDP_E_CANTSAVEFILETOTEMP    0xFEC5
 #define AFX_IDP_E_SEARCHTEXTNOTFOUND    0xFEC6
 #define AFX_IDP_E_REPLACEMENTSTOOLONG   0xFEC7
-#define IDC_STATIC                      -1
+//#define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 

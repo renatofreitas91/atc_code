@@ -24,7 +24,6 @@ void sinc(double x, double y) {
 }
 
 void fft(char values[DIM]) {
-	puts(values);
 	double xR[dim], xI[dim];
 	int initialCountSplits = 0;
 	char saveSplitResult[200][200];

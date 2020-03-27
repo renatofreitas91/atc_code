@@ -115,6 +115,33 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			fft(exprDev);
 		}
 	}
+	if (isCommand(arithTrig, "ascendingorder")) {
+		command = true;
+		if (arithTrig[14] == '(') {
+			int tDev = 15, tGet = 0;
+			char exprDev[DIM] = "";
+			while ((arithTrig[tDev] == ')'&&arithTrig[tDev + 1] == '+'&&arithTrig[tDev + 2] == '0'&&arithTrig[tDev + 3] == '\0') == false && arithTrig[tDev] != '\0') {
+				exprDev[tGet] = arithTrig[tDev];
+				tGet++; tDev++;
+			}
+			exprDev[tGet] = '\0';
+			ascendingOrder(exprDev);
+		}
+	}
+	if (isCommand(arithTrig, "descendingorder")) {
+		command = true;
+		if (arithTrig[15] == '(') {
+			int tDev = 16, tGet = 0;
+			char exprDev[DIM] = "";
+			while ((arithTrig[tDev] == ')'&&arithTrig[tDev + 1] == '+'&&arithTrig[tDev + 2] == '0'&&arithTrig[tDev + 3] == '\0') == false && arithTrig[tDev] != '\0') {
+				exprDev[tGet] = arithTrig[tDev];
+				tGet++; tDev++;
+			}
+			exprDev[tGet] = '\0';
+			descendingOrder(exprDev);
+		}
+	}
+
 	if (isCommand(arithTrig, "ifft")) {
 		command = true;
 		if (arithTrig[4] == '(') {
@@ -452,6 +479,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		resultR = 0; resultI = 0;
 		lastDividerR = 1, lastDividerI = 0, natureValue = 1;
 		sprintf(roots, ""), sprintf(answers, "");
+		rtIndex = 0;
 		isDivisible = true;
 		lastDividerR = 1, lastDividerI = 0;
 		if (arithTrig[13] == '(') {
@@ -501,7 +529,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 						sprintf(data, "%s", expressionF);
 					}
 					simplifyExpression(data);
-					sprintf(data, "%s", expressionF);
+					sprintf(data, "(%s)", expressionF);
 					progress = true;
 					equationSolver(data);
 					progress = false;

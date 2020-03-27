@@ -313,8 +313,11 @@ int applySettings(int toDo) {
 				RECT rect;
 				if (GetWindowRect(hwnd, &rect))
 				{
-					widthATC = rect.right - rect.left;
-					heightATC = rect.bottom - rect.top;
+					widthATC = (rect.right - rect.left);
+					xATC = (int)(widthATC - 0.99*widthATC);
+					widthATC = (int)(widthATC * 0.9);
+					heightATC = (rect.bottom - rect.top);
+					heightATC = (int)(heightATC*0.9);
 					sprintf(toOpen, "%s\\window.txt", atcPath);
 					open = NULL;
 					while (open == NULL) {
@@ -360,7 +363,7 @@ int applySettings(int toDo) {
 			CONSOLE_SCREEN_BUFFER_INFO csbi;
 			int columns, rows;
 			GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-			columns = csbi.srWindow.Right - csbi.srWindow.Left - 2;
+			columns = (int)((csbi.srWindow.Right - csbi.srWindow.Left)*0.97);
 			rows = 5000;
 			sprintf(toOpen, "%s\\dimensions.txt", atcPath);
 			char setting[300] = "";

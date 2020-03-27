@@ -4462,8 +4462,10 @@ int getReady() {
 		POINT p;
 		GetWindowPos(&x, &y, &maxX, &maxY);
 		GetCursorPos(&p);
-		if (x != minX || y != minY) {
-			setWindow(x, y);
+		if (WindowFromPoint(p) == GetConsoleWindow()) {
+			if (x != minX || y != minY) {
+				setWindow(x, y);
+			}
 		}
 		if (WindowFromPoint(p) == GetConsoleWindow()) {
 			if (GetKeyState(VK_RBUTTON) < 0) {
@@ -4509,7 +4511,6 @@ int getReady() {
 			if (WindowFromPoint(p) == GetConsoleWindow()) {
 				if (x + 50 < p.x&& y + 50 < p.y&&p.x < maxX - 50 && p.y < maxY - 50 && p.x != saveX && p.y != saveY) {
 					GetActiveWindow();
-					leftClick();
 					INPUT ip;
 					ip.type = INPUT_KEYBOARD;
 					ip.ki.time = 0;
@@ -4707,3 +4708,4 @@ boolean isContainedInUserFunction(char variable[DIM]) {
 	}
 	return false;
 }
+

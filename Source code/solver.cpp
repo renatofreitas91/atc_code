@@ -63,6 +63,7 @@ double solver(char expression[DIM]) {
 			equation_solver = true;
 			resultR = 0; resultI = 0;
 			lastDividerR = 1, lastDividerI = 0, natureValue = 1;
+			rtIndex = 0;
 			sprintf(roots, ""), sprintf(answers, "");
 			isDivisible = true;
 			lastDividerR = 1, lastDividerI = 0;
@@ -89,7 +90,7 @@ double solver(char expression[DIM]) {
 				sprintf(data, "%s", expressionF);
 			}
 			simplifyExpression(data);
-			sprintf(data, "%s", expressionF);
+			sprintf(data, "(%s)", expressionF);
 			sprintf(saveSimplified, "%s", expressionF);
 			equationSolver(data);
 			int i = 0, j = 0, z = 0;
@@ -384,6 +385,8 @@ double solver(char expression[DIM]) {
 	solving = true;
 	return NULL;
 }
+
+
 
 boolean isSolved() {
 	if (resultR == 0 && resultI == 0) {

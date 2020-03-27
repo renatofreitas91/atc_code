@@ -1,7 +1,8 @@
 
 
-#include "calc.h"
 #include "stdafx.h"
+#include "calc.h"
+
 
 double INF = DBL_MAX;
 double mINF = INF * -1;

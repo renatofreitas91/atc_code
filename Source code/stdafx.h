@@ -12,7 +12,6 @@
 #include "calc.h"
 #include <conio.h>
 #include "atc_functions.h"
-#define dIm 10000
 #define DIM 5900
 #define dim 1000
 #define _USE_MATH_DEFINES
@@ -21,10 +20,12 @@
 #include <tchar.h>
 #include <Shellapi.h>
 #include <tlhelp32.h>
-extern double expressionCoefR[dim], expressionCoefI[dim], X_k_R[dim], X_k_I[dim], lastElement, lastElementI, LastDividerR, LastDividerI, natureValue, lastDividerR, lastDividerI, returnedR, returnedI, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
-extern int xATC, yATC, colsATC, linesATC, widthATC, heightATC, Pressed, toSendCommand, countSplits, maxExponent, numSysNum, parentPol[DIM], replaceTimes, countEnters, countReturn, countBreak, Break, countUseReturn, countUseBreak, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
+
+
+extern double rootsR[dim], rootsI[dim], expressionCoefR[dim], expressionCoefI[dim], X_k_R[dim], X_k_I[dim], lastElement, lastElementI, LastDividerR, LastDividerI, natureValue, lastDividerR, lastDividerI, returnedR, returnedI, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
+extern int rtIndex, xATC, yATC, colsATC, linesATC, widthATC, heightATC, Pressed, toSendCommand, countSplits, maxExponent, numSysNum, parentPol[DIM], replaceTimes, countEnters, countReturn, countBreak, Break, countUseReturn, countUseBreak, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
 extern char customFolderPath[DIM], saveATCPath[DIM], renamedVariable[DIM], dimensionsTxt[300], windowTxt[300], validChars[DIM], lastCommand[DIM], saveSimplified[DIM], saveSimplification[DIM], splitResult[200][200], answers[DIM], saveExpressionFF[DIM], saveArithTrig[DIM], saveExpressionF[DIM], OutputText[DIM], roots[DIM], charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
-extern boolean fromEquationSolver, progress, starting, studyFunction, I_O, isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver, poly;
+extern boolean product, fromEquationSolver, progress, starting, studyFunction, I_O, isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver, poly;
 double functionProcessor(char trigon[DIM], double result, double amplitude, int res);
 double initialProcessor(char arithTrig[DIM], double result);
 double arithSolver(char trigon1[DIM], double result);
@@ -54,6 +55,8 @@ void getNumerationPol(char expression[DIM]);
 void simplifyPolynomial(char expression[DIM]);
 void split(char splitter[DIM], char data[DIM]);
 void getDimensions();
+void ascendingOrder(char values[DIM]);
+void descendingOrder(char values[DIM]);
 void decrementPoly(int maxExponent, double resR, double resI);
 void simpleSimplifyPolynomial(char expression[DIM]);
 void variableController(char variable[DIM], double result);
