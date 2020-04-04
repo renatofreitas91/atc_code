@@ -48,7 +48,6 @@ void main(int argc, char *argv[]) {
 	}
 	if (continu == 1) {
 		system("title Advanced Trigonometry Calculator v2.0.8       ==) ATC is ready to process data. (==");
-		//startUI();
 		do {
 			sprintf(savePathF, "");
 			sprintf(atcPath, "%s", saveATCPath);

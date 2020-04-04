@@ -658,6 +658,18 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		puts(" ");
 		arithTrig[0] = '\0'; command = true;
 	}
+	if (isCommand(arithTrig, "asciiorder")) {
+		arithTrig[0] = '\0'; command = true;
+		asciiOrder();
+		fprintf(fout, "\n");
+		printf("\n");
+	}
+	if (isCommand(arithTrig, "inverseasciiorder")) {
+		arithTrig[0] = '\0'; command = true;
+		inverseAsciiOrder();
+		fprintf(fout, "\n");
+		printf("\n");
+	}
 	if (isCommand(arithTrig, "print") && arithTrig[i + 5] == '(') {
 		if (isContained("\",", arithTrig)) {
 			char arguments[DIM] = "";
@@ -704,6 +716,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		}
 		arithTrig[0] = '\0'; command = true;
 	}
+
+
 	if (isCommand(arithTrig, "logoff")) {
 		continu = 0;
 		command = true;

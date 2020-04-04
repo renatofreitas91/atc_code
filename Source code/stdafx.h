@@ -54,6 +54,8 @@ int getCorrectExponent(char expression[DIM], char maxExp[10], int maxExponent);
 void getNumerationPol(char expression[DIM]);
 void simplifyPolynomial(char expression[DIM]);
 void split(char splitter[DIM], char data[DIM]);
+void asciiOrder();
+void inverseAsciiOrder();
 void getDimensions();
 void ascendingOrder(char values[DIM]);
 void descendingOrder(char values[DIM]);
