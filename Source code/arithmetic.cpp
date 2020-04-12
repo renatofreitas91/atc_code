@@ -382,3 +382,12 @@ double returnDeciPart(double number) {
 	qu = strtod(quo, &pointer);
 	return qu;
 }
+
+int summatorial(int integer) {
+	int result = 0, i = integer;
+	while (i > 0) {
+		result = result + i;
+		i--;
+	}
+	return result;
+}

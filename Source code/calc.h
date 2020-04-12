@@ -1,4 +1,5 @@
 
+int summatorial(int integer);
 double ln(double z);
 double pot(double base, double exponent, int sig);
 double re(double dividend, double divider);
