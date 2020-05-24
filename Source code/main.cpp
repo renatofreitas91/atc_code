@@ -55,7 +55,6 @@ void main(int argc, char *argv[]) {
 			resultR = 0; resultI = 0;
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
-			rtIndex = 0;
 			fflush(NULL);
 			tD = 0;
 			toSolve(rf);
@@ -848,7 +847,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				}
 			}
 			w = abs((int)strlen(data)) - 3;
-			if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && isContainedByIndex("+0", data, w - 1)) {
+			if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && isContainedByIndex("+0", data, w - 1) && !isContainedByIndex("+0)", data, w - 1)) {
 				verify = 0;
 				if (comment == 1) {
 					puts("\nYour expression is terminating with an arithmetic symbol.\n");

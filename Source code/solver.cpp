@@ -63,7 +63,6 @@ double solver(char expression[DIM]) {
 			equation_solver = true;
 			resultR = 0; resultI = 0;
 			lastDividerR = 1, lastDividerI = 0, natureValue = 1;
-			rtIndex = 0;
 			sprintf(roots, ""), sprintf(answers, "");
 			isDivisible = true;
 			lastDividerR = 1, lastDividerI = 0;

@@ -556,10 +556,8 @@ double initialProcessor(char arithTrig[DIM], double result) {
 						retrySolver = false; retrySolver_2 = false; retrySolver_3 = false; equation_solver = true;
 						poly = true;
 						replaceTimes = 0;
-						rtIndex = 0;
 						sprintf(roots, ""), sprintf(answers, "");
 						triArith[b] = solver(pas);
-						rtIndex = 0;
 						sprintf(roots, ""), sprintf(answers, "");
 						equation_solver = false;
 						triArithI[b] = resultI;

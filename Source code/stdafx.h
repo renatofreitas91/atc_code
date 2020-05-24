@@ -22,8 +22,8 @@
 #include <tlhelp32.h>
 
 
-extern double rootsR[dim], rootsI[dim], expressionCoefR[dim], expressionCoefI[dim], X_k_R[dim], X_k_I[dim], lastElement, lastElementI, LastDividerR, LastDividerI, natureValue, lastDividerR, lastDividerI, returnedR, returnedI, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
-extern int rtIndex, xATC, yATC, colsATC, linesATC, widthATC, heightATC, Pressed, toSendCommand, countSplits, maxExponent, numSysNum, parentPol[DIM], replaceTimes, countEnters, countReturn, countBreak, Break, countUseReturn, countUseBreak, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
+extern double realRoots[dim], rootsR[dim], rootsI[dim], expressionCoefR[dim], expressionCoefI[dim], X_k_R[dim], X_k_I[dim], lastElement, lastElementI, LastDividerR, LastDividerI, natureValue, lastDividerR, lastDividerI, returnedR, returnedI, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
+extern int  nrRoots, xATC, yATC, colsATC, linesATC, widthATC, heightATC, Pressed, toSendCommand, countSplits, maxExponent, numSysNum, parentPol[DIM], replaceTimes, countEnters, countReturn, countBreak, Break, countUseReturn, countUseBreak, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
 extern char customFolderPath[DIM], saveATCPath[DIM], renamedVariable[DIM], dimensionsTxt[300], windowTxt[300], validChars[DIM], lastCommand[DIM], saveSimplified[DIM], saveSimplification[DIM], splitResult[200][200], answers[DIM], saveExpressionFF[DIM], saveArithTrig[DIM], saveExpressionF[DIM], OutputText[DIM], roots[DIM], charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM];
 extern boolean product, fromEquationSolver, progress, starting, studyFunction, I_O, isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver, poly;
 double functionProcessor(char trigon[DIM], double result, double amplitude, int res);
@@ -137,3 +137,6 @@ boolean verifyMultiplication(char number);
 char * getDerivative(char expression[DIM]);
 char* convertToString(char* string);
 char* convertToSpaces(char* data);
+void GoToXY(int column, int line);
+COORD GetConsoleCursorPosition(HANDLE hConsoleOutput);
+void getRealRoot(double real[dim], double  imaginary[dim], int maxExponent, double guess);

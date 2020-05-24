@@ -479,7 +479,6 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		resultR = 0; resultI = 0;
 		lastDividerR = 1, lastDividerI = 0, natureValue = 1;
 		sprintf(roots, ""), sprintf(answers, "");
-		rtIndex = 0;
 		isDivisible = true;
 		lastDividerR = 1, lastDividerI = 0;
 		if (arithTrig[13] == '(') {
@@ -529,6 +528,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 						sprintf(data, "%s", expressionF);
 					}
 					simplifyExpression(data);
+					sprintf(roots, "");
 					sprintf(data, "(%s)", expressionF);
 					progress = true;
 					equationSolver(data);
@@ -1545,6 +1545,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			puts("");
 		}
 		else {
+			cls();
 			ShowConsoleCursor(FALSE);
 			if (arithTrig[i + 5] == '(') {
 				i = i + 6;
@@ -1743,6 +1744,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			puts("");
 		}
 		else {
+			cls();
 			ShowConsoleCursor(FALSE);
 			if (arithTrig[i + 8] == '(') {
 				i = i + 9;
@@ -1941,6 +1943,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			puts("");
 		}
 		else {
+			cls();
 			ShowConsoleCursor(FALSE);
 			if (arithTrig[i + 7] == '(') {
 				i = i + 8;
@@ -2110,7 +2113,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.9 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
-										printf("\n  %02d:%02d:%02d\n", thours, tminutes, tseconds);
+										printf("\n  %02d:%02d:%02d                   \n", thours, tminutes, tseconds);
 									}
 								}
 							}
@@ -2148,6 +2151,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			puts("");
 		}
 		else {
+			cls();
 			ShowConsoleCursor(FALSE);
 			if (arithTrig[i + 8] == '(') {
 				i = i + 9;
@@ -2317,7 +2321,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.9 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(Hours, Minutes, Seconds);
-										printf("\n\n    %02d:%02d:%02d\n\n", thours, tminutes, tseconds);
+										printf("\n\n    %02d:%02d:%02d                   \n\n", thours, tminutes, tseconds);
 									}
 								}
 							}

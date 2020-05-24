@@ -3,13 +3,11 @@
 #include "calc.h"
 
 double LastDividerR = 0, LastDividerI = 0;
-
 boolean isDivisible = true;
 
 
 void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	sprintf(roots, "");
-	rtIndex = 0;
 	if (isContained("((", polynomial_1) && isContained("))", polynomial_1)) {
 		replace("((", "(", polynomial_1);
 		sprintf(polynomial_1, "%s", expressionF);
@@ -28,20 +26,17 @@ void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_1, "%s", expressionF);
 	sprintf(roots, "");
-	rtIndex = 0;
 	removeDuplPars(polynomial_2);
 	sprintf(polynomial_2, "%s", expressionF);
 	sprintf(expressionF, "(%s)*(0x^1+1)", polynomial_2);
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_2, "%s", expressionF);
 	sprintf(roots, "");
-	rtIndex = 0;
 	lastDividerR = 1;
 	lastDividerI = 0;
 	LastDividerR = 1;
 	LastDividerI = 0;
 	sprintf(roots, "");
-	rtIndex = 0;
 	char polynomial_sum[DIM] = "";
 	if (isContained("((", polynomial_1)) {
 		replace("((", "(", polynomial_1);
@@ -66,7 +61,6 @@ void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		polynomial_2[strlen(polynomial_2) - 1] = '\0';
 	}
 	sprintf(roots, "");
-	rtIndex = 0;
 	sprintf(polynomial_sum, "%s+%s", polynomial_1, polynomial_2);
 	equationSolver(polynomial_sum);
 	if (isContained("\\", roots) || strlen(roots) > 0) {
@@ -85,44 +79,37 @@ void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	}
 	replaceTimes = 0;
 	sprintf(roots, "");
-	rtIndex = 0;
 }
 
 void sub_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	sprintf(roots, "");
-	rtIndex = 0;
 	removeDuplPars(polynomial_1);
 	sprintf(polynomial_1, "%s", expressionF);
 	sprintf(expressionF, "(%s)*(0x^1+1)", polynomial_1);
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_1, "%s", expressionF);
 	sprintf(roots, "");
-	rtIndex = 0;
 	removeDuplPars(polynomial_2);
 	sprintf(polynomial_2, "%s", expressionF);
 	sprintf(expressionF, "(%s)*(0x^1+1)", polynomial_2);
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_2, "%s", expressionF);
 	sprintf(roots, "");
-	rtIndex = 0;
 	sprintf(expressionF, "(%s)*(0x^1-1)", polynomial_2);
 	simpleSimplifyPolynomial(expressionF);
 	sprintf(polynomial_2, "%s", expressionF);
 	sprintf(roots, "");
-	rtIndex = 0;
 	sum_polynomial(polynomial_1, polynomial_2);
 	replaceTimes = 0;
 }
 
 void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	sprintf(roots, "");
-	rtIndex = 0;
 	if (isEqual(polynomial_2, "(0+0i)") || isEqual(polynomial_1, "(0+0i)")) {
 		sprintf(expressionF, "(0+0i)");
 	}
 	else {
 		sprintf(roots, "");
-		rtIndex = 0;
 		if (isContained("((", polynomial_1)) {
 			replace("((", "(", polynomial_1);
 			sprintf(polynomial_1, "%s", expressionF);
@@ -142,7 +129,6 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 
 		replaceTimes = 0;
 		sprintf(roots, "");
-		rtIndex = 0;
 		equationSolver(polynomial_1);
 		if (abs(lastDividerR) != 0 || abs(lastDividerI) != 0) {
 			LastDividerR = lastDividerR;
@@ -211,7 +197,6 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		}
 		replaceTimes = 0;
 		sprintf(roots, "");
-		rtIndex = 0;
 	}
 }
 
@@ -222,7 +207,6 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 	}
 	else {
 		sprintf(roots, "");
-		rtIndex = 0;
 		if (!dataVerifier(polynomial_1, 0, 0, 0, 1)) {
 			if (isContained("((", polynomial_1)) {
 				replace("((", "(", polynomial_1);
@@ -246,7 +230,6 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		replaceTimes = 0;
 		char rootsPoly1[DIM] = "", rootsPoly2[DIM] = "";
 		sprintf(roots, "");
-		rtIndex = 0;
 		equationSolver(polynomial_1);
 		LastDividerR = lastDividerR;
 		LastDividerI = lastDividerI;
@@ -293,7 +276,6 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 			}
 		}
 		if (strlen(rootsPoly2) == 0 && strlen(rootsPoly1) > 0) {
-			rtIndex = countOccurrences("\\", rootsPoly1) + 1;
 			rootsToPolynomial(rootsPoly1);
 		}
 		else {
@@ -372,13 +354,9 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 					if (isDivisible) {
 						int k = 0;
 						sprintf(roots, "");
-						rtIndex = 0;
 						for (i = 0; i < s; i++) {
 							if (rootR1[i] != -7777) {
 								sprintf(roots, "%s%f+%fi\\", roots, rootR1[i], rootI1[i]);
-								rootsR[rtIndex] = rootR1[i];
-								rootsI[rtIndex] = rootI1[i];
-								rtIndex++;
 							}
 						}
 						if (strlen(roots) >= 1) {
@@ -446,7 +424,6 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 							}
 						}
 						replaceTimes = 0;
-						rtIndex = 0;
 						sprintf(roots, "");
 						sprintf(roots_2, "");
 					}
@@ -454,7 +431,6 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 						sprintf(saveExpressionF, "(%s)/(%s)", polynomial_1, polynomial_2);
 					}
 					sprintf(roots, "");
-					rtIndex = 0;
 					sprintf(roots_2, "");
 				}
 			}

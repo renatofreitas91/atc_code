@@ -366,7 +366,7 @@ void DayofWeek(int d, int m, int y, char calendar[DIM]) {
 }
 
 void printTimer(int hours, int minutes, int seconds) {
-	cls();
+	GoToXY(0, 0);
 	char tiIn[DIM] = "";
 	char text[100] = "";
 	char display[755] = "";
@@ -551,7 +551,7 @@ void printTimer(int hours, int minutes, int seconds) {
 }
 
 void printBigTimer(int hours, int minutes, int seconds) {
-	cls();
+	GoToXY(0, 0);
 	char tiIn[DIM] = "";
 	char text[300] = "";
 	char display[DIM] = "";

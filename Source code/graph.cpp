@@ -165,10 +165,10 @@ void designGraph(char functionF[DIM]) {
 				calcNow(specFunction, 0, 0);
 				yValues[f] = resultR;
 				yValuesAll[count][f] = resultR;
-				if (yValues[f] < newYmin) {
+				if (yValues[f] < newYmin&&yValues[f]>-1E3) {
 					newYmin = yValues[f];
 				}
-				if (yValues[f] > newYmax) {
+				if (yValues[f] > newYmax&&yValues[f] < 1E3) {
 					newYmax = yValues[f];
 				}
 				resultR = 0; resultI = 0;
@@ -248,15 +248,11 @@ void designGraph(char functionF[DIM]) {
 		double start = Xmin;
 		int f = 0;
 		double yValues[121] = { 0,0 };
-		while (f < 120) {
-			if (auto_y_axis == 1) {
-				yValues[f] = yValuesAll[count][f];
-			}
-			else {
-				xValuesR = start; xValuesI = 0;
-				calcNow(specFunction, 0, 0);
-				yValues[f] = resultR;
-			}
+		while (f < 121) {
+			xValuesR = start; xValuesI = 0;
+			calcNow(specFunction, 0, 0);
+			yValues[f] = resultR;
+			yValuesAll[count][f] = resultR;
 			resultR = 0; resultI = 0;
 			start = start + (double)xDim / 120;
 			f++;
@@ -317,6 +313,10 @@ void designGraph(char functionF[DIM]) {
 		count++;
 		commas--;
 	} while (commas > 0);
+	puts("Info: You can navigate with the  \"Left\" and \"Right\" arrows. To exit press the \"Escape\" key; Action: Press \"Enter\" to view the graph.");
+	char pause[DIM] = "";
+	gets_s(pause);
+
 	for (j = 0; j < 121; j++) {
 		printf("_");
 	}
@@ -335,61 +335,115 @@ void designGraph(char functionF[DIM]) {
 	}
 	printf("%c", 179);
 	printf("\n");
-	printf(" Current settings: %c Xmin: %G %c Xmax: %G %c Xscale: %G %c Ymin: %G %c Ymax: %G %c Yscale: %G %c\n", 179, Xmin, 179, Xmax, 179, Xscale, 179, Ymin, 179, Ymax, 179, Yscale, 179);
+	printf(" Current settings: %c Xmin: %G %c Xmax: %G %c Xscale: %G %c Ymin: %G %c Ymax: %G %c Yscale: %G %c", 179, Xmin, 179, Xmax, 179, Xscale, 179, Ymin, 179, Ymax, 179, Yscale, 179);
 	solverRunning = false;
 	solving = true;
 	int option = -1;
 	option = 1;
 	char keys[dim] = "";
-	printf(" You can navigate with the  \"Left\" and \"Right\" arrows. To exit press the \"Escape\" key.");
+
 	int index = 0;
 	int rf = 0;
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPosition = GetConsoleCursorPosition(hConsole);
+	GoToXY(1, cursorPosition.Y - 1);
+	ShowConsoleCursor(FALSE);
+	int BarsLenght = 0, DataLength = 0, saveBarsLenght = 0, saveDataLength = 0;
 	while (option == 1) {
 		if (GetKeyState(VK_LEFT) < 0) {
-			printf("\r ");
 			if (index > 0) {
 				index--;
 			}
 			t = 0;
 			char data[DIM] = "";
-			sprintf(data, "x = %f: ", Xmin + index * (double)xDim / 120);
 			for (t = 0; t <= w; t++) {
 				sprintf(data, "%s%s [%c]: %f  ", data, functions[t], symbols[t], yValuesAll[t][index]);
 			}
+			DataLength = abs((int)strlen(data));
+			char bars[DIM] = "";
 			rf = 0;
-			while (rf < index&&rf < numberCols - abs((int)strlen(data)) - 2) {
-				printf("%c", 178);
+			while (rf < index&&rf < numberCols - 2) {
+				sprintf(bars, "%s%c", bars, 178);
 				rf++;
 			}
-			while (rf < numberCols - abs((int)strlen(data)) - 2 && rf < 120) {
-				printf("%c", 177);
+			sprintf(bars, "%sx = %f ", bars, Xmin + index * (double)xDim / 120);
+			rf = abs((int)strlen(bars));
+			while (rf < numberCols  && rf < 120) {
+				sprintf(bars, "%s%c", bars, 177);
 				rf++;
 			}
+			BarsLenght = abs((int)strlen(bars));
+			if (BarsLenght < saveBarsLenght) {
+				GoToXY(BarsLenght + 1, cursorPosition.Y - 29);
+				rf = BarsLenght;
+				while (rf < saveBarsLenght) {
+					printf(" ");
+					rf++;
+				}
+			}
+			GoToXY(1, cursorPosition.Y - 29);
+			printf("%s", bars);
+			if (DataLength < saveDataLength) {
+				GoToXY(DataLength + 1, cursorPosition.Y - 28);
+				rf = DataLength;
+				while (rf < saveDataLength) {
+					printf(" ");
+					rf++;
+				}
+			}
+			GoToXY(1, cursorPosition.Y - 28);
 			printf("%s", data);
+			saveBarsLenght = abs((int)strlen(bars));
+			saveDataLength = abs((int)strlen(data));
 		}
 		if (GetKeyState(VK_RIGHT) < 0) {
-			printf("\r ");
 			if (index < 120) {
 				index++;
 			}
 			t = 0;
 			char data[DIM] = "";
-			sprintf(data, "x = %f: ", Xmin + index * (double)xDim / 120);
 			for (t = 0; t <= w; t++) {
 				sprintf(data, "%s%s [%c]: %f  ", data, functions[t], symbols[t], yValuesAll[t][index]);
 			}
+			char bars[DIM] = "";
 			rf = 0;
-			while (rf < index&&rf < numberCols - abs((int)strlen(data)) - 2) {
-				printf("%c", 178);
+			while (rf < index&&rf < numberCols - 2) {
+				sprintf(bars, "%s%c", bars, 178);
 				rf++;
 			}
-			while (rf < numberCols - abs((int)strlen(data)) - 2 && rf < 120) {
-				printf("%c", 177);
+			sprintf(bars, "%sx = %f ", bars, Xmin + index * (double)xDim / 120);
+			rf = abs((int)strlen(bars));
+			while (rf < numberCols  && rf < 120) {
+				sprintf(bars, "%s%c", bars, 177);
 				rf++;
 			}
+			BarsLenght = abs((int)strlen(bars));
+			if (BarsLenght < saveBarsLenght) {
+				GoToXY(BarsLenght + 1, cursorPosition.Y - 29);
+				rf = BarsLenght;
+				while (rf < saveBarsLenght) {
+					printf(" ");
+					rf++;
+				}
+			}
+			GoToXY(1, cursorPosition.Y - 29);
+			printf("%s", bars);
+			if (DataLength < saveDataLength) {
+				GoToXY(DataLength + 1, cursorPosition.Y - 28);
+				rf = DataLength;
+				while (rf < saveDataLength) {
+					printf(" ");
+					rf++;
+				}
+			}
+			GoToXY(1, cursorPosition.Y - 28);
 			printf("%s", data);
+			saveBarsLenght = abs((int)strlen(bars));
+			saveDataLength = abs((int)strlen(data));
 		}
 		if (GetKeyState(VK_ESCAPE) < 0) {
+			ShowConsoleCursor(TRUE);
+			GoToXY(cursorPosition.X, cursorPosition.Y);
 			INPUT ip;
 			ip.type = INPUT_KEYBOARD;
 			ip.ki.time = 0;
@@ -454,5 +508,32 @@ void designGraph(char functionF[DIM]) {
 			start = start + (double)xDim / 120;
 			l++;
 		}
+	}
+}
+
+
+
+void GoToXY(int column, int line)
+{
+	COORD coord;
+	coord.X = column;
+	coord.Y = line;
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hConsole, coord);
+
+}
+
+COORD GetConsoleCursorPosition(HANDLE hConsoleOutput)
+{
+	CONSOLE_SCREEN_BUFFER_INFO cbsi;
+	if (GetConsoleScreenBufferInfo(hConsoleOutput, &cbsi))
+	{
+		return cbsi.dwCursorPosition;
+	}
+	else
+	{
+		// The function failed. Call GetLastError() for details.
+		COORD invalid = { 0, 0 };
+		return invalid;
 	}
 }
