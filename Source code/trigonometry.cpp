@@ -12,7 +12,6 @@ void cotan(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_tan(x, y);
 		division(1.0, 0.0, resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -28,7 +27,6 @@ void sec(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_cos(x, y);
 		division(1.0, 0.0, resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -44,7 +42,6 @@ void cosec(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_sin(x, y);
 		division(1.0, 0.0, resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -60,7 +57,6 @@ void arcosec(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		complex_asin(resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -76,7 +72,6 @@ void arcsec(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		complex_acos(resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -92,7 +87,6 @@ void arcotg(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		complex_atan(resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -113,7 +107,6 @@ void complex_cos(double x, double y) {
 		sum(napR, napI, nap2R, nap2I);
 		double sumR = resultR, sumI = resultI;
 		division(sumR, sumI, 2.0, 0.0);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -134,7 +127,6 @@ void complex_sin(double x, double y) {
 		subtraction(napR, napI, nap2R, nap2I);
 		double sumR = resultR, sumI = resultI;
 		division(sumR, sumI, 0.0, 2.0);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -154,7 +146,6 @@ void complex_tan(double x, double y) {
 		double denR = resultR, denI = resultI;
 		division(numR, numI, denR, denI);
 		char response[DIM] = "";
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -176,7 +167,6 @@ void complex_asin(double x, double y) {
 		double logFR = resultR, logFI = resultI;
 		complex_log(logFR, logFI);
 		multiplication(resultR, resultI, 0.0, -1);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -199,7 +189,6 @@ void complex_acos(double x, double y) {
 		double logFR = resultR, logFI = resultI;
 		complex_log(logFR, logFI);
 		multiplication(resultR, resultI, 0.0, 1);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -218,7 +207,6 @@ void complex_atan(double x, double y) {
 		division(numR, numI, denR, denI);
 		complex_log(resultR, resultI);
 		multiplication(0.0, 1 / 2.0, resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {

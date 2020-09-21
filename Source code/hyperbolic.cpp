@@ -13,7 +13,6 @@ void complex_cosh(double x, double y) {
 		sum(napR, napI, nap2R, nap2I);
 		double sumR = resultR, sumI = resultI;
 		division(sumR, sumI, 2.0, 0.0);
-		round_complex();
 	}
 	else {
 		if (rasf > 0 && physics == (boolean)false) {
@@ -34,7 +33,6 @@ void complex_sinh(double x, double y) {
 		subtraction(napR, napI, nap2R, nap2I);
 		double sumR = resultR, sumI = resultI;
 		division(sumR, sumI, 2.0, 0.0);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -53,7 +51,6 @@ void complex_tanh(double x, double y) {
 		complex_cosh(x, y);
 		double denR = resultR, denI = resultI;
 		division(numR, numI, denR, denI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0 && physics == (boolean)false) {
@@ -68,7 +65,6 @@ void cotanh(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_tanh(x, y);
 		division(1.0, 0.0, resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -84,7 +80,6 @@ void sech(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_cosh(x, y);
 		division(1.0, 0.0, resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -100,7 +95,6 @@ void cosech(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_sinh(x, y);
 		division(1.0, 0.0, resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -119,7 +113,6 @@ void arsinh(double x, double y) {
 		exponentiation(radicandR, radicandI, 1 / 2.0, 0.0, 1);
 		sum(x, y, resultR, resultI);
 		complex_log(resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -138,7 +131,6 @@ void arcosh(double x, double y) {
 		exponentiation(radicandR, radicandI, 1 / 2.0, 0.0, 1);
 		sum(x, y, resultR, resultI);
 		complex_log(resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -157,7 +149,6 @@ void artanh(double x, double y) {
 		division(numR, numI, denR, denI);
 		complex_log(resultR, resultI);
 		multiplication(1 / 2.0, 0.0, resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -173,7 +164,6 @@ void arcoth(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		artanh(resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -189,7 +179,6 @@ void arsech(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		arcosh(resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {
@@ -205,7 +194,6 @@ void arcsch(double x, double y) {
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		division(1.0, 0.0, x, y);
 		arsinh(resultR, resultI);
-		round_complex();
 	}
 	else {
 		if (rasf > 0) {

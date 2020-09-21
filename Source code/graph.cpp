@@ -165,10 +165,10 @@ void designGraph(char functionF[DIM]) {
 				calcNow(specFunction, 0, 0);
 				yValues[f] = resultR;
 				yValuesAll[count][f] = resultR;
-				if (yValues[f] < newYmin&&yValues[f]>-1E3) {
+				if (yValues[f] < newYmin&&yValues[f]>-1E14) {
 					newYmin = yValues[f];
 				}
-				if (yValues[f] > newYmax&&yValues[f] < 1E3) {
+				if (yValues[f] > newYmax&&yValues[f] < 1E14) {
 					newYmax = yValues[f];
 				}
 				resultR = 0; resultI = 0;
@@ -532,7 +532,6 @@ COORD GetConsoleCursorPosition(HANDLE hConsoleOutput)
 	}
 	else
 	{
-		// The function failed. Call GetLastError() for details.
 		COORD invalid = { 0, 0 };
 		return invalid;
 	}

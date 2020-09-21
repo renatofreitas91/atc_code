@@ -2,13 +2,11 @@
 
 #include "stdafx.h"
 
-int rasf = 0, maxLength = 0;
+int rasf = 0, maxLength = 0, vectorType = 0, check4Vector = 0, numVectorLines = 0, numVectorCols = 0, matrixMode = 0, previousAnsType = 0;
 boolean solving = true;
-char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "", renamedVariable[DIM] = "";
+char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "", renamedVariable[DIM] = "", vectorString[DIM] = "", saveMatrixAns[DIM];
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
-	if (isEqual(roots, "")) {
-	}
 	fflush(NULL);
 	verbose = 0;
 	verified = 0;
@@ -241,7 +239,6 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				}
 				arithTrig[0] = '\0';
 			}
-
 			else {
 				if (isContained("=replace(", arithTrig)) {
 					renamer(arithTrig);
@@ -637,6 +634,8 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 }
 
 double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM], int txt, char variable[DIM], int v, int j, double result1, double result2, int isFromMain, int var, int valGet, int command) {
+	int vectorType = 0;
+	char vectorString[DIM] = "";
 	FILE *open = NULL;
 	if (isContained("solver", arithTrig)) {
 		if (isContainedByIndex("-x", arithTrig, 1)) {
@@ -689,6 +688,169 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				var = 0;
 			}
 			sprintf(arithTrig, "%s", saveArithTr);
+			if (isContained("\\", arithTrig) && isContained(";", arithTrig)) {
+				matrixMode = 2;
+				vectorType = 2;
+				int initialCountSplits = 0;
+				char saveSplitResult[200][200];
+				int i = 0;
+				if (countSplits > 0) {
+					initialCountSplits = countSplits;
+					while (i < countSplits) {
+						sprintf(saveSplitResult[i], "%s", splitResult[i]);
+						sprintf(splitResult[i], "");
+						i++;
+					}
+				}
+
+				countSplits = countOccurrences(";", arithTrig);
+				int N = countSplits + 1;
+				split(";", arithTrig);
+				i = 0;
+				char value[DIM][DIM], lines[DIM][DIM];
+				while (i <= countSplits) {
+					sprintf(lines[i], "%s", splitResult[i]);
+					sprintf(splitResult[i], "");
+					i++;
+				}
+				int l = 0;
+				int countLines = countSplits;
+				double vectorR[100], vectorI[100];
+				while (l <= countLines) {
+					int initialCountSplits = 0;
+					int i = 0;
+					if (countSplits > 0) {
+						initialCountSplits = countSplits;
+						while (i < countSplits) {
+							sprintf(saveSplitResult[i], "%s", splitResult[i]);
+							sprintf(splitResult[i], "");
+							i++;
+						}
+					}
+					countSplits = countOccurrences("\\", lines[l]);
+					int N = countSplits + 1;
+					split("\\", lines[l]);
+					i = 0;
+
+					while (i <= countSplits) {
+						sprintf(value[i], "%s", splitResult[i]);
+						i++;
+					}
+					i = 0;
+					while (i <= countSplits) {
+						calcNow(value[i], 0, 0);
+						vectorR[i] = resultR; vectorI[i] = resultI;
+						if (i < countSplits) {
+							sprintf(vectorString, "%s%G+%Gi\\", vectorString, vectorR[i], vectorI[i]);
+						}
+						else {
+							sprintf(vectorString, "%s%G+%Gi", vectorString, vectorR[i], vectorI[i]);
+						}
+						i++;
+					}
+					if (l < countLines) {
+						sprintf(vectorString, "%s;", vectorString);
+					}
+					l++;
+				}
+				if (hk != 0) {
+					sprintf(expressionF, "%s", vectorString);
+					sprintf(matrixResult, "%s", vectorString);
+					variableController(revariable, 0);
+					sprintf(expressionF, "");
+				}
+			}
+			else {
+				if (isContained("\\", arithTrig) && !isContained(";", arithTrig)) {
+					matrixMode = 2;
+					vectorType = 1;
+					double vectorR[100], vectorI[100];
+					int initialCountSplits = 0;
+					char saveSplitResult[200][200];
+					int i = 0;
+					if (countSplits > 0) {
+						initialCountSplits = countSplits;
+						while (i < countSplits) {
+							sprintf(saveSplitResult[i], "%s", splitResult[i]);
+							sprintf(splitResult[i], "");
+							i++;
+						}
+					}
+					countSplits = countOccurrences("\\", arithTrig);
+					int N = countSplits + 1;
+					split("\\", arithTrig);
+					i = 0;
+					char value[DIM][DIM];
+					while (i <= countSplits) {
+						sprintf(value[i], "%s", splitResult[i]);
+						i++;
+					}
+					i = 0;
+					while (i <= countSplits) {
+						calcNow(value[i], 0, 0);
+						vectorR[i] = resultR; vectorI[i] = resultI;
+						if (i < countSplits) {
+							sprintf(vectorString, "%s%G+%Gi\\", vectorString, vectorR[i], vectorI[i]);
+						}
+						else {
+							sprintf(vectorString, "%s%G+%Gi", vectorString, vectorR[i], vectorI[i]);
+						}
+						i++;
+					}
+					if (hk != 0) {
+						sprintf(expressionF, "%s", vectorString);
+						sprintf(matrixResult, "%s", vectorString);
+						variableController(revariable, 0);
+						sprintf(expressionF, "");
+					}
+				}
+				else {
+					if (!isContained("\\", arithTrig) && isContained(";", arithTrig)) {
+						matrixMode = 2;
+						vectorType = 1;
+						double vectorR[100], vectorI[100];
+						int initialCountSplits = 0;
+						char saveSplitResult[200][200];
+						int i = 0;
+						if (countSplits > 0) {
+							initialCountSplits = countSplits;
+							while (i < countSplits) {
+								sprintf(saveSplitResult[i], "%s", splitResult[i]);
+								sprintf(splitResult[i], "");
+								i++;
+							}
+						}
+						countSplits = countOccurrences(";", arithTrig);
+						int N = countSplits + 1;
+						split(";", arithTrig);
+						i = 0;
+						char value[DIM][DIM];
+						while (i <= countSplits) {
+							sprintf(value[i], "%s", splitResult[i]);
+							i++;
+						}
+						i = 0;
+						while (i <= countSplits) {
+							calcNow(value[i], 0, 0);
+							vectorR[i] = resultR; vectorI[i] = resultI;
+							if (i < countSplits) {
+								sprintf(vectorString, "%s%G+%Gi;", vectorString, vectorR[i], vectorI[i]);
+							}
+							else {
+								sprintf(vectorString, "%s%G+%Gi", vectorString, vectorR[i], vectorI[i]);
+							}
+							i++;
+						}
+						if (hk != 0) {
+							sprintf(expressionF, "%s", vectorString);
+							sprintf(matrixResult, "%s", vectorString);
+							variableController(revariable, 0);
+							sprintf(expressionF, "");
+						}
+					}
+				}
+
+			}
 		}
 	}
 	char dP[DIM] = "", bP[DIM] = "", oP[DIM] = "", hP[DIM] = "";
@@ -782,7 +944,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		}
 	}
 	s = 0;
-	if (verify == 1) {
+	if (verify == 1 && !isContained("\\", arithTrig)) {
 		if ((equationSolverRunning == false && solverRunning == false) || !isEqual(saveArithTrig, arithTrig)) {
 			sprintf(saveArithTrig, "%s", arithTrig);
 			manageExpression(arithTrig, 0, 0, 1);
@@ -805,11 +967,11 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 	if (arithTrig[0] != '\0'&&isFromMain == 1 && feedbackValidation == 0) {
 		Clock(0);
 	}
+	char toOpen[DIM] = "";
 	if (continu == 1) {
 		_flushall();
 		if (cleanhistory == 0) {
 			if (arithTrig[0] != '\0'&&verify == 1) {
-				char toOpen[DIM] = "";
 				sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
 				open = fopen(toOpen, "r");
 				char verboseRes[DIM] = "";
@@ -842,23 +1004,179 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		}
 		if (arithTrig[0] != '\0'&&txt != 1 && processingOK == 1) {
 			if (verify == 1) {
-				if (res == '+') {
-					sum(result1, result2, resultR, resultI);
+				if (previousAnsType == 0 && strlen(matrixResult) == 0) {
+					if (res == '+') {
+						sum(result1, result2, resultR, resultI);
+					}
+					if (res == '-') {
+						subtraction(result1, result2, resultR, resultI);
+					}
+					if (res == '/') {
+						division(result1, result2, resultR, resultI);
+					}
+					if (res == '*') {
+						multiplication(result1, result2, resultR, resultI);
+					}
+					if (res == '^') {
+						exponentiation(result1, result2, resultR, resultI, 1);
+					}
 				}
-				if (res == '-') {
-					subtraction(result1, result2, resultR, resultI);
-				}
-				if (res == '/') {
-					division(result1, result2, resultR, resultI);
-				}
-				if (res == '*') {
-					multiplication(result1, result2, resultR, resultI);
-				}
-				if (res == '^') {
-					exponentiation(result1, result2, resultR, resultI, 1);
+				else {
+					double resultRM = resultR, resultIM = resultI;
+					double res_vectorR[dim][200], res_vectorI[dim][200], vector1_R[dim][dim], vector1_I[dim][dim];
+					int numVectorCols1 = 0, numVectorLines1 = 0;
+					double resRank = 0;
+					if (res == '^') {
+						if (strlen(matrixResult) == 0 && strlen(saveMatrixAns) > 0) {
+							matrixMode = 1;
+							convert2Vector(saveMatrixAns);
+							if ((int)resultRM == -7654321) {
+								fmtranspose(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
+							}
+							if ((int)resultRM == -1) {
+								fminverse(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
+							}
+							if (((int)resultRM >= 0 || (int)resultRM < -1) && ((int)resultRM) != -7654321 && ((int)resultRM) != -1234567) {
+								fmpowerm(vectorR, vectorI, res_vectorR, res_vectorI, (int)resultRM, numVectorLines, numVectorCols);
+							}
+							if ((int)resultRM == -1234567) {
+								convert2Vector(saveMatrixAns);
+								int n = 0;
+								int m = 0;
+								for (n = 0; n < numVectorLines; n++) {
+									for (m = 0; m < numVectorCols; m++) {
+										vector1_R[n][m] = vectorR[n][m];
+										vector1_I[n][m] = vectorI[n][m];
+									}
+								}
+								numVectorCols1 = numVectorCols;
+								numVectorLines1 = numVectorLines;
+								resultR = (double)fmrank(numVectorLines1, numVectorCols1, vector1_R, vector1_I);
+								resultI = 0;
+							}
+							else {
+								sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
+							}
+						}
+					}
+					if (res == '*') {
+						if (strlen(matrixResult) > 0 && strlen(saveMatrixAns) > 0) {
+							convert2Vector(saveMatrixAns);
+							int n = 0;
+							int m = 0;
+							for (n = 0; n < numVectorLines; n++) {
+								for (m = 0; m < numVectorCols; m++) {
+									vector1_R[n][m] = vectorR[n][m];
+									vector1_I[n][m] = vectorI[n][m];
+								}
+							}
+							numVectorCols1 = numVectorCols;
+							numVectorLines1 = numVectorLines;
+							convert2Vector(matrixResult);
+							fmmulm(numVectorLines, numVectorCols1, numVectorLines1, numVectorCols, vector1_R, vectorR, res_vectorR, vector1_I, vectorI, res_vectorI);
+							sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+
+						}
+						else {
+							if (strlen(matrixResult) > 0 && strlen(saveMatrixAns) == 0) {
+
+								convert2Vector(matrixResult);
+								fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, result1, vectorI, res_vectorI, result2);
+
+								sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+							}
+							else {
+								if (strlen(matrixResult) == 0 && strlen(saveMatrixAns) > 0) {
+									convert2Vector(saveMatrixAns);
+									fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, resultRM, vectorI, res_vectorI, resultIM);
+									sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+								}
+							}
+						}
+					}
+					if (res == '/') {
+						if (strlen(matrixResult) == 0 && strlen(saveMatrixAns) > 0) {
+							convert2Vector(saveMatrixAns);
+							division(1.0, 0.0, resultRM, resultIM);
+							fmmulr(numVectorLines, numVectorCols, vector1_R, res_vectorR, resultR, vector1_I, res_vectorI, resultI);
+							sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+						}
+						else {
+							if (strlen(matrixResult) > 0 && strlen(saveMatrixAns) > 0) {
+								convert2Vector(saveMatrixAns);
+								int n = 0;
+								int m = 0;
+								for (n = 0; n < numVectorLines; n++) {
+									for (m = 0; m < numVectorCols; m++) {
+										vector1_R[n][m] = vectorR[n][m];
+										vector1_I[n][m] = vectorI[n][m];
+									}
+								}
+								numVectorCols1 = numVectorCols;
+								numVectorLines1 = numVectorLines;
+								convert2Vector(matrixResult);
+								if (fmdivm(numVectorLines, numVectorCols1, numVectorLines1, numVectorCols, vector1_R, vectorR, vector1_I, vectorI)) {
+									result1 = resultR;
+									result2 = resultI;
+								}
+								else {
+									printf("\nError: The quotient of matrices is not consistent over all matrices members.");
+								}
+							}
+
+						}
+					}
+					if (res == '-') {
+						if (strlen(matrixResult) > 0 && strlen(saveMatrixAns) > 0) {
+							convert2Vector(saveMatrixAns);
+							int n = 0;
+							int m = 0;
+							for (n = 0; n < numVectorLines; n++) {
+								for (m = 0; m < numVectorCols; m++) {
+									vector1_R[n][m] = vectorR[n][m];
+									vector1_I[n][m] = vectorI[n][m];
+								}
+							}
+							numVectorCols1 = numVectorCols;
+							numVectorLines1 = numVectorLines;
+							convert2Vector(matrixResult);
+							fmsubt(numVectorLines, numVectorCols, vector1_R, vectorR, res_vectorR, vector1_I, vectorI, res_vectorI);
+							sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+
+						}
+					}
+					if (res == '+') {
+						if (strlen(matrixResult) > 0 && strlen(saveMatrixAns) > 0) {
+							convert2Vector(saveMatrixAns);
+							int n = 0;
+							int m = 0;
+							for (n = 0; n < numVectorLines; n++) {
+								for (m = 0; m < numVectorCols; m++) {
+									vector1_R[n][m] = vectorR[n][m];
+									vector1_I[n][m] = vectorI[n][m];
+								}
+							}
+							numVectorCols1 = numVectorCols;
+							numVectorLines1 = numVectorLines;
+							convert2Vector(matrixResult);
+							fmsum(numVectorLines, numVectorCols, vector1_R, vectorR, res_vectorR, vector1_I, vectorI, res_vectorI);
+							sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+						}
+						if (strlen(matrixResult) > 0 && strlen(saveMatrixAns) == 0) {
+							convert2Vector(matrixResult);
+							sprintf(matrixResult, "%s", convertVector2String(vectorR, vectorI, numVectorLines, numVectorCols));
+						}
+						else {
+							if (strlen(matrixResult) == 0 && strlen(saveMatrixAns) > 0) {
+								convert2Vector(saveMatrixAns);
+								sprintf(matrixResult, "%s", convertVector2String(vectorR, vectorI, numVectorLines, numVectorCols));
+							}
+
+						}
+
+					}
 				}
 				verified = 1;
-				round_complex();
 				result1 = resultR;
 				result2 = resultI;
 				resultFI = result2;
@@ -867,52 +1185,70 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					ansI[rf] = result2;
 					ansRV = result1;
 					ansIV = result2;
+					if (strlen(matrixResult) > 0) {
+						previousAnsType = 1;
+						sprintf(saveMatrixAns, "%s", matrixResult);
+						sprintf(ansMatrices[rf], "%s", matrixResult);
+					}
+					else {
+						previousAnsType = 0;
+						sprintf(saveMatrixAns, "");
+						sprintf(ansMatrices[rf], "");
+					}
 				}
 				if (var == 1) {
-					variableController(revariable, result1);
+
+					char saveMatrixResult[DIM] = "";
+					if (matrixMode == 1) {
+						sprintf(saveMatrixResult, "%s", matrixResult);
+					}
+					if (matrixMode == 1 && isFromMain == 1) {
+
+						convert2Vector(matrixResult);
+						char report[DIM] = "";
+						for (i = 0; i < numVectorLines; i++) {
+							for (int k = 0; k < numVectorCols; k++) {
+								sprintf(report, "%s%G+%Gi ", report, vectorR[i][k], vectorI[i][k]);
+							}
+							sprintf(report, "%s\n", report);
+						}
+						puts(report);
+					}
+					if (matrixMode == 1) {
+						sprintf(matrixResult, "%s", saveMatrixResult);
+					}
+					if (strlen(matrixResult) > 0) {
+						replaceTimes = 0;
+						if (isContained("*", matrixResult)) {
+							replace("*", ";", matrixResult);
+							sprintf(matrixResult, "%s", expressionF);
+						}
+						if (isContained(":", matrixResult)) {
+							replace(":", "\\", matrixResult);
+							sprintf(matrixResult, "%s", expressionF);
+						}
+						sprintf(expressionF, "%s", matrixResult);
+					}
+					if (matrixMode == 0 || matrixMode == 2 || strlen(matrixResult) > 0) {
+						variableController(revariable, result1);
+					}
 				}
 				if (valGet == 0 && feedbackValidation == 0) {
 					if (strlen(renamedVariable) > 0 && isContained("atc_", arithTrig) && abs((int)strlen(variable)) > 0) {
 						variableController(renamedVariable, result1);
 					}
-					if (dp == -1) {
+					if (matrixMode == 1) {
+						convert2Vector(matrixResult);
+						char report[DIM] = "";
+						for (i = 0; i < numVectorLines; i++) {
+							for (int k = 0; k < numVectorCols; k++) {
+								sprintf(report, "%s%G+%Gi ", report, vectorR[i][k], vectorI[i][k]);
+							}
+							sprintf(report, "%s\n", report);
+						}
 						if (isFromMain == 1) {
-							if (result1 > 0 && result2 > 0) {
-								printf("#%d=%G+%Gi\n", rf, result1, result2);
-							}
-							else {
-								if (result1 > 0 && result2 < 0) {
-									printf("#%d=%G%Gi\n", rf, result1, result2);
-								}
-								else {
-									if (result1 < 0 && result2 > 0) {
-										printf("#%d=%G+%Gi\n", rf, result1, result2);
-									}
-									else {
-										if (result1 < 0 && result2 < 0) {
-											printf("#%d=%G%Gi\n", rf, result1, result2);
-										}
-										else {
-											if (result1 == 0 && result2 == 0) {
-												printf("#%d=%G\n", rf, result1);
-											}
-											else {
-												if (result1 == 0 && result2 != 0) {
-													printf("#%d=%Gi\n", rf, result2);
-												}
-												else {
-													if (result1 != 0 && result2 == 0) {
-														printf("#%d=%G\n", rf, result1);
-													}
-													else {
-														printf("#%d=%G+%Gi\n", rf, result1, result2);
-													}
-												}
-											}
-										}
-									}
-								}
-							}
+							printf("#%d=\n", rf);
+							puts(report);
 						}
 						if (fout != NULL) {
 							fclose(fout);
@@ -921,106 +1257,172 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						while (fout == NULL) {
 							fout = fopen(path, "a+");
 						}
-						if (result1 > 0 && result2 > 0) {
-							fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
+						if (fout != NULL) {
+							fprintf(fout, "#%d=\n%s", rf, report);
+							fclose(fout);
 						}
-						else {
-							if (result1 > 0 && result2 < 0) {
-								fprintf(fout, "#%d=%G%Gi\n", rf, result1, result2);
-							}
-							else {
-								if (result1 < 0 && result2 > 0) {
-									fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
-								}
-								else {
-									if (result1 < 0 && result2 < 0) {
-										fprintf(fout, "#%d=%G%Gi\n", rf, result1, result2);
-									}
-									else {
-										if (result1 == 0 && result2 == 0) {
-											fprintf(fout, "#%d=%G\n", rf, result1);
-										}
-										else {
-											if (result1 == 0 && result2 != 0) {
-												fprintf(fout, "#%d=%Gi\n", rf, result2);
-											}
-											else {
-												if (result1 != 0 && result2 == 0) {
-													fprintf(fout, "#%d=%G\n", rf, result1);
-												}
-												else {
-													fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-						fclose(fout);
+
 						if (isFromSolveNow == 0) {
 							rf++;
 						}
 					}
-					if (dp > -1) {
-						if (result1 > 0 && result2 > 0) {
-							sprintf(dP, "#%d=%%.%df+%%.%dfi\n", rf, dp, dp);
+					if (matrixMode == 0 || (matrixMode == 2 && var != 1)) {
+						if (dp == -1) {
 							if (isFromMain == 1) {
-								printf(dP, result1, result2);
+								if (result1 > 0 && result2 > 0) {
+									printf("#%d=%G+%Gi\n", rf, result1, result2);
+								}
+								else {
+									if (result1 > 0 && result2 < 0) {
+										printf("#%d=%G%Gi\n", rf, result1, result2);
+									}
+									else {
+										if (result1 < 0 && result2 > 0) {
+											printf("#%d=%G+%Gi\n", rf, result1, result2);
+										}
+										else {
+											if (result1 < 0 && result2 < 0) {
+												printf("#%d=%G%Gi\n", rf, result1, result2);
+											}
+											else {
+												if (result1 == 0 && result2 == 0) {
+													printf("#%d=%G\n", rf, result1);
+												}
+												else {
+													if (result1 == 0 && result2 != 0) {
+														printf("#%d=%Gi\n", rf, result2);
+													}
+													else {
+														if (result1 != 0 && result2 == 0) {
+															printf("#%d=%G\n", rf, result1);
+														}
+														else {
+															printf("#%d=%G+%Gi\n", rf, result1, result2);
+														}
+													}
+												}
+											}
+										}
+									}
+								}
 							}
-						}
-						if (result1 > 0 && result2 < 0) {
-							sprintf(dP, "#%d=%%.%df%%.%dfi\n", rf, dp, dp);
-							if (isFromMain == 1) {
-								printf(dP, result1, result2);
+							if (fout != NULL) {
+								fclose(fout);
 							}
-						}
-						if (result1 < 0 && result2 > 0) {
-							sprintf(dP, "#%d = %%.%df+%%.%dfi\n", rf, dp, dp);
-							if (isFromMain == 1) {
-								printf(dP, result1, result2);
+							fout = NULL;
+							while (fout == NULL) {
+								fout = fopen(path, "a+");
 							}
-						}
-						if (result1 < 0 && result2 < 0) {
-							sprintf(dP, "#%d=%%.%df%%.%dfi\n", rf, dp, dp);
-							if (isFromMain == 1) {
-								printf(dP, result1, result2);
+							if (result1 > 0 && result2 > 0) {
+								fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
 							}
-						}
-						if (result1 == 0 && result2 == 0) {
-							sprintf(dP, "#%d=%%.%df\n", rf, dp);
-							if (isFromMain == 1) {
-								printf(dP, result1);
+							else {
+								if (result1 > 0 && result2 < 0) {
+									fprintf(fout, "#%d=%G%Gi\n", rf, result1, result2);
+								}
+								else {
+									if (result1 < 0 && result2 > 0) {
+										fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
+									}
+									else {
+										if (result1 < 0 && result2 < 0) {
+											fprintf(fout, "#%d=%G%Gi\n", rf, result1, result2);
+										}
+										else {
+											if (result1 == 0 && result2 == 0) {
+												fprintf(fout, "#%d=%G\n", rf, result1);
+											}
+											else {
+												if (result1 == 0 && result2 != 0) {
+													fprintf(fout, "#%d=%Gi\n", rf, result2);
+												}
+												else {
+													if (result1 != 0 && result2 == 0) {
+														fprintf(fout, "#%d=%G\n", rf, result1);
+													}
+													else {
+														fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
+													}
+												}
+											}
+										}
+									}
+								}
 							}
+
+
 						}
-						if (result1 == 0 && result2 != 0) {
-							sprintf(dP, "#%d=%%.%dfi\n", rf, dp);
-							if (isFromMain == 1) {
-								printf(dP, result2);
+						if (dp > -1) {
+							if (result1 > 0 && result2 > 0) {
+								sprintf(dP, "#%d=%%.%df+%%.%dfi\n", rf, dp, dp);
+								if (isFromMain == 1) {
+									printf(dP, result1, result2);
+								}
 							}
-						}
-						if (result1 != 0 && result2 == 0) {
-							sprintf(dP, "#%d=%%.%df\n", rf, dp);
-							if (isFromMain == 1) {
-								printf(dP, result1);
+							if (result1 > 0 && result2 < 0) {
+								sprintf(dP, "#%d=%%.%df%%.%dfi\n", rf, dp, dp);
+								if (isFromMain == 1) {
+									printf(dP, result1, result2);
+								}
 							}
-						}
-						if (fout != NULL) {
+							if (result1 < 0 && result2 > 0) {
+								sprintf(dP, "#%d = %%.%df+%%.%dfi\n", rf, dp, dp);
+								if (isFromMain == 1) {
+									printf(dP, result1, result2);
+								}
+							}
+							if (result1 < 0 && result2 < 0) {
+								sprintf(dP, "#%d=%%.%df%%.%dfi\n", rf, dp, dp);
+								if (isFromMain == 1) {
+									printf(dP, result1, result2);
+								}
+							}
+							if (result1 == 0 && result2 == 0) {
+								sprintf(dP, "#%d=%%.%df\n", rf, dp);
+								if (isFromMain == 1) {
+									printf(dP, result1);
+								}
+							}
+							if (result1 == 0 && result2 != 0) {
+								sprintf(dP, "#%d=%%.%dfi\n", rf, dp);
+								if (isFromMain == 1) {
+									printf(dP, result2);
+								}
+							}
+							if (result1 != 0 && result2 == 0) {
+								sprintf(dP, "#%d=%%.%df\n", rf, dp);
+								if (isFromMain == 1) {
+									printf(dP, result1);
+								}
+							}
+							if (fout != NULL) {
+								fclose(fout);
+							}
+							fout = NULL;
+							while (fout == NULL) {
+								fout = fopen(path, "a+");
+							}
+							fprintf(fout, dP, result1);
 							fclose(fout);
+							if (isFromSolveNow == 0) {
+								rf++;
+							}
 						}
-						fout = NULL;
-						while (fout == NULL) {
-							fout = fopen(path, "a+");
-						}
-						fprintf(fout, dP, result1);
-						fclose(fout);
-						if (isFromSolveNow == 0) {
-							rf++;
-						}
+					}
+					int numLines = 0, numCols = 0;
+					if (strlen(matrixResult) == 0) {
+						numLines = 1; numCols = 1;
+						vectorR[0][0] = result1; vectorI[0][0] = result2;
+					}
+					else {
+						convert2Vector(matrixResult);
+						numLines = numVectorLines;
+						numCols = numVectorCols;
 					}
 					char toOpen[DIM] = "";
 					sprintf(toOpen, "%s\\numSystems.txt", atcPath);
 					open = fopen(toOpen, "r");
+
 					char numSys[DIM] = "";
 					int numeriSys = 0;
 					if (open != NULL || bp != -1 || op != -1 || hp != -1) {
@@ -1030,96 +1432,110 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							fclose(open);
 						}
 						if (numeriSys == 1 || bp != -1 || op != -1 || hp != -1) {
-							char syst[DIM] = "";
-							sprintf(syst, "%G", result1);
-							if (isEqual(syst, "-NAN(IND)")) {
-								if (isFromMain == 1) {
-									puts("");
-									puts("In binary=-NAN(IND)");
-									puts("In octal=-NAN(IND)");
-									puts("In hexadecimal=-NAN(IND)");
-								}
-								open = fopen(path, "a+");
-								fputs("", open);
-								fputs("In binary=-NAN(IND)\n", open);
-								fputs("In octal=-NAN(IND)\n", open);
-								fputs("In hexadecimal=-NAN(IND)\n", open);
-								fclose(open);
-							}
-							else {
-								if (syst[0] == 'I'&&syst[1] == 'N'&&syst[2] == 'F') {
-									if (isFromMain == 1) {
-										puts("");
-										puts("In binary=INF");
-										puts("In octal=INF");
-										puts("In hexadecimal=INF");
+							int w = 0, y = 0;
+							for (w = 0; w < numLines; w++) {
+								for (y = 0; y < numCols; y++) {
+									if (numLines > 1 || numCols > 1) {
+										printf("\nm(%d,%d)=\n", w, y);
+										open = fopen(path, "a+");
+										fputs("", open);
+										fprintf(open, "\nm(%d,%d)=\n", w, y);
+										fclose(open);
 									}
-									open = fopen(path, "a+");
-									fputs("", open);
-									fputs("In binary=INF\n", open);
-									fputs("In octal=INF\n", open);
-									fputs("In hexadecimal=INF\n", open);
-									fclose(open);
-								}
-								else {
-									if (syst[0] == '-'&&syst[1] == 'I'&&syst[2] == 'N'&&syst[3] == 'F') {
+									result1 = vectorR[w][y];
+									result2 = vectorI[w][y];
+									char syst[DIM] = "";
+									sprintf(syst, "%G", result1);
+									if (isEqual(syst, "-NAN(IND)")) {
 										if (isFromMain == 1) {
 											puts("");
-											puts("In binary=-INF");
-											puts("In octal=-INF");
-											puts("In hexadecimal=-INF");
+											puts("In binary=-NAN(IND)");
+											puts("In octal=-NAN(IND)");
+											puts("In hexadecimal=-NAN(IND)");
 										}
 										open = fopen(path, "a+");
 										fputs("", open);
-										fputs("In binary=-INF\n", open);
-										fputs("In octal=-INF\n", open);
-										fputs("In hexadecimal=-INF\n", open);
+										fputs("In binary=-NAN(IND)\n", open);
+										fputs("In octal=-NAN(IND)\n", open);
+										fputs("In hexadecimal=-NAN(IND)\n", open);
 										fclose(open);
 									}
 									else {
-										if (result1 != 0 && result2 == 0 || result1 == 0 && result2 == 0) {
-											open = fopen(path, "a+");
-											fputs("\nReal part:\n", open);
+										if (syst[0] == 'I'&&syst[1] == 'N'&&syst[2] == 'F') {
 											if (isFromMain == 1) {
-												puts("\nReal part:\n");
+												puts("");
+												puts("In binary=INF");
+												puts("In octal=INF");
+												puts("In hexadecimal=INF");
 											}
+											open = fopen(path, "a+");
+											fputs("", open);
+											fputs("In binary=INF\n", open);
+											fputs("In octal=INF\n", open);
+											fputs("In hexadecimal=INF\n", open);
 											fclose(open);
-											decimalToBinary(result1, path, bp);
-											decimalToOctal(result1, path, op);
-											decimalToHexadecimal(result1, path, hp);
 										}
 										else {
-											if (result1 != 0 && result2 != 0) {
-												open = fopen(path, "a+");
-												fputs("\nReal part:\n", open);
+											if (syst[0] == '-'&&syst[1] == 'I'&&syst[2] == 'N'&&syst[3] == 'F') {
 												if (isFromMain == 1) {
-													puts("\nReal part:\n");
+													puts("");
+													puts("In binary=-INF");
+													puts("In octal=-INF");
+													puts("In hexadecimal=-INF");
 												}
-												fclose(open);
-												decimalToBinary(result1, path, bp);
-												decimalToOctal(result1, path, op);
-												decimalToHexadecimal(result1, path, hp);
 												open = fopen(path, "a+");
-												fputs("\nImaginary part:\n", open);
-												if (isFromMain == 1) {
-													puts("\nImaginary part:\n");
-												}
+												fputs("", open);
+												fputs("In binary=-INF\n", open);
+												fputs("In octal=-INF\n", open);
+												fputs("In hexadecimal=-INF\n", open);
 												fclose(open);
-												decimalToBinary(result2, path, bp);
-												decimalToOctal(result2, path, op);
-												decimalToHexadecimal(result2, path, hp);
 											}
 											else {
-												if (result2 != 0) {
+												if (result1 != 0 && result2 == 0 || result1 == 0 && result2 == 0) {
 													open = fopen(path, "a+");
-													fputs("\nImaginary part:\n", open);
+													fputs("\nReal part:\n", open);
 													if (isFromMain == 1) {
-														puts("\nImaginary part:\n");
+														puts("\nReal part:\n");
 													}
 													fclose(open);
-													decimalToBinary(result2, path, bp);
-													decimalToOctal(result2, path, op);
-													decimalToHexadecimal(result2, path, hp);
+													decimalToBinary(result1, path, bp);
+													decimalToOctal(result1, path, op);
+													decimalToHexadecimal(result1, path, hp);
+												}
+												else {
+													if (result1 != 0 && result2 != 0) {
+														open = fopen(path, "a+");
+														fputs("\nReal part:\n", open);
+														if (isFromMain == 1) {
+															puts("\nReal part:\n");
+														}
+														fclose(open);
+														decimalToBinary(result1, path, bp);
+														decimalToOctal(result1, path, op);
+														decimalToHexadecimal(result1, path, hp);
+														open = fopen(path, "a+");
+														fputs("\nImaginary part:\n", open);
+														if (isFromMain == 1) {
+															puts("\nImaginary part:\n");
+														}
+														fclose(open);
+														decimalToBinary(result2, path, bp);
+														decimalToOctal(result2, path, op);
+														decimalToHexadecimal(result2, path, hp);
+													}
+													else {
+														if (result2 != 0) {
+															open = fopen(path, "a+");
+															fputs("\nImaginary part:\n", open);
+															if (isFromMain == 1) {
+																puts("\nImaginary part:\n");
+															}
+															fclose(open);
+															decimalToBinary(result2, path, bp);
+															decimalToOctal(result2, path, op);
+															decimalToHexadecimal(result2, path, hp);
+														}
+													}
 												}
 											}
 										}
@@ -1127,6 +1543,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 								}
 							}
 						}
+
 					}
 					toOpen[0] = '\0';
 					sprintf(toOpen, "%s\\siPrefixes.txt", atcPath);
@@ -1138,93 +1555,111 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						fclose(open);
 						niPrefix = atoi(siPref);
 						if (niPrefix == 1) {
-							char pref[DIM] = "";
-							sprintf(pref, "%G", result1);
-							char Value[DIM] = "";
-							if (result1 != 0 || result1 == 0 && result2 == 0) {
-								open = fopen(path, "a+");
-								fputs("\nReal part:\n", open);
-								if (isFromMain == 1) {
-									puts("\nReal part:\n");
-								}
-								fclose(open);
-								char pref[DIM] = "";
-								sprintf(pref, "%G", result1);
-								if (isEqual(pref, "-NAN(IND)")) {
-									if (isFromMain == 1) {
-										puts("=-NAN(IND)");
-									}
-									open = fopen(path, "a+");
-									fputs("=-NAN(IND)\n", open);
-									fclose(open);
-								}
-								else {
-									if (pref[0] == 'I'&&pref[1] == 'N'&&pref[2] == 'F') {
-										if (isFromMain == 1) {
-											puts("=INF");
-										}
+							int w = 0, y = 0;
+							for (w = 0; w < numLines; w++) {
+								for (y = 0; y < numCols; y++) {
+									if (numLines > 1 || numCols > 1) {
+										printf("\nm(%d,%d)=\n", w, y);
 										open = fopen(path, "a+");
-										fputs("=INF\n", open);
+										fputs("", open);
+										fprintf(open, "\nm(%d,%d)=\n", w, y);
 										fclose(open);
 									}
-									else {
-										if (pref[0] == '-'&&pref[1] == 'I'&&pref[2] == 'N'&&pref[3] == 'F') {
+									result1 = vectorR[w][y];
+									result2 = vectorI[w][y];
+									char pref[DIM] = "";
+									sprintf(pref, "%G", result1);
+									char Value[DIM] = "";
+									if (result1 != 0 || result1 == 0 && result2 == 0) {
+										open = fopen(path, "a+");
+										fputs("\nReal part:\n", open);
+										if (isFromMain == 1) {
+											puts("\nReal part:\n");
+										}
+										fclose(open);
+										char pref[DIM] = "";
+										sprintf(pref, "%G", result1);
+										if (isEqual(pref, "-NAN(IND)")) {
 											if (isFromMain == 1) {
-												puts("=-INF");
+												puts("=-NAN(IND)");
 											}
 											open = fopen(path, "a+");
-											fputs("=-INF\n", open);
+											fputs("=-NAN(IND)\n", open);
 											fclose(open);
 										}
 										else {
-											prefixDeterminator(result1, path);
+											if (pref[0] == 'I'&&pref[1] == 'N'&&pref[2] == 'F') {
+												if (isFromMain == 1) {
+													puts("=INF");
+												}
+												open = fopen(path, "a+");
+												fputs("=INF\n", open);
+												fclose(open);
+											}
+											else {
+												if (pref[0] == '-'&&pref[1] == 'I'&&pref[2] == 'N'&&pref[3] == 'F') {
+													if (isFromMain == 1) {
+														puts("=-INF");
+													}
+													open = fopen(path, "a+");
+													fputs("=-INF\n", open);
+													fclose(open);
+												}
+												else {
+													prefixDeterminator(result1, path);
+												}
+											}
 										}
 									}
-								}
-							}
-							if (result2 != 0) {
-								open = fopen(path, "a+");
-								fputs("\nImaginary part:\n", open);
-								if (isFromMain == 1) {
-									puts("\nImaginary part:\n");
-								}
-								fclose(open);
-								char pref[DIM] = "";
-								sprintf(pref, "%G", result2);
-								if (isEqual(pref, "-NAN(IND)")) {
-									if (isFromMain == 1) {
-										puts("=-NAN(IND)");
-									}
-									open = fopen(path, "a+");
-									fputs("=-NAN(IND)\n", open);
-									fclose(open);
-								}
-								else {
-									if (pref[0] == 'I'&&pref[1] == 'N'&&pref[2] == 'F') {
-										if (isFromMain == 1) {
-											puts("=INF");
-										}
+									if (result2 != 0) {
 										open = fopen(path, "a+");
-										fputs("=INF\n", open);
+										fputs("\nImaginary part:\n", open);
+										if (isFromMain == 1) {
+											puts("\nImaginary part:\n");
+										}
 										fclose(open);
-									}
-									else {
-										if (pref[0] == '-'&&pref[1] == 'I'&&pref[2] == 'N'&&pref[3] == 'F') {
+										char pref[DIM] = "";
+										sprintf(pref, "%G", result2);
+										if (isEqual(pref, "-NAN(IND)")) {
 											if (isFromMain == 1) {
-												puts("=-INF");
+												puts("=-NAN(IND)");
 											}
 											open = fopen(path, "a+");
-											fputs("=-INF\n", open);
+											fputs("=-NAN(IND)\n", open);
 											fclose(open);
 										}
 										else {
-											prefixDeterminator(result2, path);
+											if (pref[0] == 'I'&&pref[1] == 'N'&&pref[2] == 'F') {
+												if (isFromMain == 1) {
+													puts("=INF");
+												}
+												open = fopen(path, "a+");
+												fputs("=INF\n", open);
+												fclose(open);
+											}
+											else {
+												if (pref[0] == '-'&&pref[1] == 'I'&&pref[2] == 'N'&&pref[3] == 'F') {
+													if (isFromMain == 1) {
+														puts("=-INF");
+													}
+													open = fopen(path, "a+");
+													fputs("=-INF\n", open);
+													fclose(open);
+												}
+												else {
+													prefixDeterminator(result2, path);
+												}
+											}
 										}
 									}
 								}
 							}
 						}
 					}
+					if (isFromSolveNow == 0) {
+						rf++;
+					}
+
 					sprintf(toOpen, "%s\\actualTime.txt", atcPath);
 					open = fopen(toOpen, "r");
 					char actualTime[DIM] = "";

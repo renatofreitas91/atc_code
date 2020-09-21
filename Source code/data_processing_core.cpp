@@ -5,6 +5,7 @@ HANDLE hStdin;
 DWORD fdwSaveOldMode;
 int strStart = 0, strEnd = 0, Pressed = 0;
 char dimensionsTxt[300] = "", windowTxt[300] = "";
+double vectorR[dim][dim], vectorI[dim][dim];
 using namespace std;
 void numSystemsController() {
 	FILE *open;
@@ -79,6 +80,29 @@ void actualTimeController() {
 }
 
 void variableController(char variable[DIM], double result) {
+	char saveExpression[DIM] = "";
+	sprintf(saveExpression, "%s", expressionF);
+	replaceTimes = 0;
+	while (isContained(";", saveExpression) || isContained("\\", saveExpression)) {
+		if (isContained("+", saveExpression)) {
+			replace("+", " ", saveExpression);
+			sprintf(saveExpression, "%s", expressionF);
+		}
+		if (isContained("i", saveExpression)) {
+			replace("i", "", saveExpression);
+			sprintf(saveExpression, "%s", expressionF);
+		}
+		if (isContained("\\", saveExpression)) {
+			replace("\\", ":", saveExpression);
+			sprintf(saveExpression, "%s", expressionF);
+		}
+		if (isContained(";", saveExpression)) {
+			replace(";", "*", saveExpression);
+			sprintf(saveExpression, "%s", expressionF);
+		}
+
+	}
+	sprintf(expressionF, "");
 	FILE *open = NULL;
 	char va[DIM] = "", vari[DIM] = "";
 	int i = 0, f = 0;
@@ -95,7 +119,7 @@ void variableController(char variable[DIM], double result) {
 	}
 	open = NULL;
 	while (open == NULL && i < 100) {
-		open = fopen(toOpen, "a+");
+		open = fopen(toOpen, "r");
 		i++;
 	}
 	if (i < 100) {
@@ -116,13 +140,9 @@ void variableController(char variable[DIM], double result) {
 				i++;
 			}
 			variableData[h] = '\n'; variableData[h + 1] = '\0';
-			replaceTimes = 1;
-			replace(variableData, "", vari);
 			replaceTimes = 0;
+			replace(variableData, "", vari);
 			sprintf(vari, "%s", expressionF);
-			open = fopen(toOpen, "w");
-			fputs(vari, open);
-			fclose(open);
 		}
 		else {
 			if (isContained(toSearch_2, vari)) {
@@ -135,20 +155,26 @@ void variableController(char variable[DIM], double result) {
 					i++;
 				}
 				variableData[h] = '\n'; variableData[h + 1] = '\0';
-				replaceTimes = 1;
-				replace(variableData, "", vari);
 				replaceTimes = 0;
+				replace(variableData, "", vari);
 				sprintf(vari, "%s", expressionF);
-				open = fopen(toOpen, "w");
-				fputs(vari, open);
-				fclose(open);
 			}
 		}
 		open = NULL;
 		while (open == NULL) {
-			open = fopen(toOpen, "a+");
+			open = fopen(toOpen, "w");
 		}
-		fprintf(open, "%s %G %G\n", variable, resultR, resultI);
+		if (isContained("*", saveExpression) || isContained(":", saveExpression)) {
+			sprintf(vari, "%s%s %s\n", vari, variable, saveExpression);
+			sprintf(saveExpression, "");
+			sprintf(expressionF, "");
+		}
+		else {
+			sprintf(vari, "%s%s %G %G\n", vari, variable, resultR, resultI);
+			sprintf(saveExpression, "");
+			sprintf(expressionF, "");
+		}
+		fputs(vari, open);
 		fclose(open);
 	}
 }
@@ -3676,9 +3702,9 @@ double numericalSystems(char numSystem[DIM]) {
 
 double processVariable(char variable[DIM]) {
 	validVar = 0;
+	double varValue = 0;
 	FILE *open = NULL;
 	int i, g, h, y, l = 0, lth = 0, cou = 0;
-	double varValue = 0;
 	char vari[DIM] = "", va[DIM] = "", value[DIM] = "";
 	char *pointer;
 	i = 0;
@@ -3743,6 +3769,10 @@ double processVariable(char variable[DIM]) {
 					y++;
 				}
 				value[y] = '\0';
+				if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1) {
+					convert2Vector(value);
+					check4Vector = 2;
+				}
 				if (space == 0) {
 					resultR = strtod(value, &pointer);
 				}
@@ -3763,6 +3793,15 @@ double processVariable(char variable[DIM]) {
 					imag[gh] = '\0';
 					resultR = strtod(real, &pointer);
 					resultI = strtod(imag, &pointer);
+					if (isEqual("T", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
+						resultR = -7654321;
+						resultI = 0;
+					}
+					if (isEqual("R", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
+						resultR = -1234567;
+						resultI = 0;
+					}
+
 					varValue = resultR;
 				}
 				break;
@@ -3830,6 +3869,10 @@ double processVariable(char variable[DIM]) {
 						y++;
 					}
 					value[y] = '\0';
+					if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1) {
+						convert2Vector(value);
+						check4Vector = 2;
+					}
 					if (space == 0) {
 						resultR = strtod(value, &pointer);
 					}
@@ -3850,6 +3893,14 @@ double processVariable(char variable[DIM]) {
 						imag[gh] = '\0';
 						resultR = strtod(real, &pointer);
 						resultI = strtod(imag, &pointer);
+						if (isEqual("T", variable) && strlen(matrixResult) > 0) {
+							resultR = -7654321;
+							resultI = 0;
+						}
+						if (isEqual("R", variable) && strlen(matrixResult) > 0) {
+							resultR = -1234567;
+							resultI = 0;
+						}
 						varValue = resultR;
 					}
 					break;
@@ -4708,4 +4759,233 @@ boolean isContainedInUserFunction(char variable[DIM]) {
 	}
 	return false;
 }
+
+void convert2Vector(char arithTrig[DIM]) {
+	char saveArithTrig[DIM] = "";
+	sprintf(saveArithTrig, "%s", arithTrig);
+	numVectorCols = 0;
+	numVectorLines = 0;
+	sprintf(vectorString, "");
+	if (isContained(":", arithTrig) && !isContained("*", arithTrig)) {
+		vectorType = 1;
+		int initialCountSplits = 0;
+		char saveSplitResult[200][200];
+		int i = 0;
+		if (countSplits > 0) {
+			initialCountSplits = countSplits;
+			while (i < countSplits) {
+				sprintf(saveSplitResult[i], "%s", splitResult[i]);
+				sprintf(splitResult[i], "");
+				i++;
+			}
+		}
+		countSplits = countOccurrences(":", arithTrig);
+		int N = countSplits + 1;
+		split(":", arithTrig);
+		i = 0;
+		char value[DIM][DIM];
+		while (i <= countSplits) {
+			sprintf(value[i], "%s", splitResult[i]);
+			i++;
+		}
+		i = 0;
+		char *pointer;
+		while (i <= countSplits) {
+			char real[DIM] = "", imag[DIM] = "";
+			int y = 0;
+			while (value[i][y] != ' ') {
+				real[y] = value[i][y];
+				y++;
+			}
+			real[y] = '\0';
+			y++;
+			int gh = 0;
+			while (value[i][y] != '\0') {
+				imag[gh] = value[i][y];
+				y++; gh++;
+			}
+			imag[gh] = '\0';
+			resultR = strtod(real, &pointer);
+			resultI = strtod(imag, &pointer);
+			vectorR[0][i] = resultR; vectorI[0][i] = resultI;
+			if (i < countSplits) {
+				sprintf(vectorString, "%s%G %G:", vectorString, vectorR[0][i], vectorI[0][i]);
+			}
+			else {
+				sprintf(vectorString, "%s%G %G", vectorString, vectorR[0][i], vectorI[0][i]);
+			}
+			i++;
+		}
+		numVectorLines = 1;
+		numVectorCols = countSplits + 1;
+	}
+	else {
+		if (!isContained(":", arithTrig) && isContained("*", arithTrig)) {
+			vectorType = 1;
+			int initialCountSplits = 0;
+			char saveSplitResult[200][200];
+			int i = 0;
+			if (countSplits > 0) {
+				initialCountSplits = countSplits;
+				while (i < countSplits) {
+					sprintf(saveSplitResult[i], "%s", splitResult[i]);
+					sprintf(splitResult[i], "");
+					i++;
+				}
+			}
+			countSplits = countOccurrences("*", arithTrig);
+			int N = countSplits + 1;
+			split("*", arithTrig);
+			i = 0;
+			char value[DIM][DIM];
+			while (i <= countSplits) {
+				sprintf(value[i], "%s", splitResult[i]);
+				i++;
+			}
+			i = 0;
+			char *pointer;
+			while (i <= countSplits) {
+				char real[DIM] = "", imag[DIM] = "";
+				int y = 0;
+				while (value[i][y] != ' ') {
+					real[y] = value[i][y];
+					y++;
+				}
+				real[y] = '\0';
+				y++;
+				int gh = 0;
+				while (value[i][y] != '\0') {
+					imag[gh] = value[i][y];
+					y++; gh++;
+				}
+				imag[gh] = '\0';
+				resultR = strtod(real, &pointer);
+				resultI = strtod(imag, &pointer);
+				vectorR[i][0] = resultR; vectorI[i][0] = resultI;
+				if (i < countSplits) {
+					sprintf(vectorString, "%s%G %G*", vectorString, vectorR[i][0], vectorI[i][0]);
+				}
+				else {
+					sprintf(vectorString, "%s%G %G", vectorString, vectorR[i][0], vectorI[i][0]);
+				}
+				i++;
+			}
+			numVectorCols = 1;
+			numVectorLines = countSplits + 1;
+		}
+		else {
+			if (isContained(":", arithTrig) && isContained("*", arithTrig)) {
+				vectorType = 2;
+				int initialCountSplits = 0;
+				char saveSplitResult[200][200];
+				int i = 0;
+				if (countSplits > 0) {
+					initialCountSplits = countSplits;
+					while (i < countSplits) {
+						sprintf(saveSplitResult[i], "%s", splitResult[i]);
+						sprintf(splitResult[i], "");
+						i++;
+					}
+				}
+
+				countSplits = countOccurrences("*", arithTrig);
+				int N = countSplits + 1;
+				split("*", arithTrig);
+				i = 0;
+				char value[DIM][DIM], lines[DIM][DIM];
+				while (i <= countSplits) {
+					sprintf(lines[i], "%s", splitResult[i]);
+					sprintf(splitResult[i], "");
+					i++;
+				}
+				int l = 0;
+				int countLines = countSplits;
+				while (l <= countLines) {
+					int initialCountSplits = 0;
+
+					int i = 0;
+					if (countSplits > 0) {
+						initialCountSplits = countSplits;
+						while (i < countSplits) {
+							sprintf(saveSplitResult[i], "%s", splitResult[i]);
+							sprintf(splitResult[i], "");
+							i++;
+						}
+					}
+					countSplits = countOccurrences(":", lines[l]);
+					int N = countSplits + 1;
+					split(":", lines[l]);
+					i = 0;
+
+					while (i <= countSplits) {
+						sprintf(value[i], "%s", splitResult[i]);
+						i++;
+					}
+					i = 0;
+					char *pointer;
+					while (i <= countSplits) {
+
+						char real[DIM] = "", imag[DIM] = "";
+						int y = 0;
+						while (value[i][y] != ' ') {
+							real[y] = value[i][y];
+							y++;
+						}
+						real[y] = '\0';
+						y++;
+						int gh = 0;
+						while (value[i][y] != '\0') {
+							imag[gh] = value[i][y];
+							y++; gh++;
+						}
+						imag[gh] = '\0';
+						resultR = strtod(real, &pointer);
+						resultI = strtod(imag, &pointer);
+						vectorR[l][i] = resultR; vectorI[l][i] = resultI;
+						if (i < countSplits) {
+							sprintf(vectorString, "%s%G %G:", vectorString, vectorR[l][i], vectorI[l][i]);
+						}
+						else {
+							sprintf(vectorString, "%s%G %G", vectorString, vectorR[l][i], vectorI[l][i]);
+						}
+						i++;
+					}
+					if (numVectorCols < i) {
+						numVectorCols = i;
+					}
+
+					if (l < countLines) {
+						sprintf(vectorString, "%s*", vectorString);
+					}
+					l++;
+				}
+				numVectorLines = l;
+			}
+		}
+	}
+
+	sprintf(arithTrig, "%s", saveArithTrig);
+}
+
+char* convertVector2String(double vectorR[dim][dim], double vectorI[dim][dim], int numLines, int numCols) {
+	char string[DIM] = "";
+	int i = 0, j = 0;
+	for (i = 0; i < numLines; i++) {
+		for (j = 0; j < numCols; j++) {
+			if (j < numCols - 1) {
+				sprintf(string, "%s%G %G:", string, vectorR[i][j], vectorI[i][j]);
+			}
+			else {
+				sprintf(string, "%s%G %G", string, vectorR[i][j], vectorI[i][j]);
+			}
+		}
+		if (i < numLines - 1) {
+			sprintf(string, "%s*", string);
+		}
+	}
+	sprintf(expressionF, "");
+	return string;
+}
+
+
 

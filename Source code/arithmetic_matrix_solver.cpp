@@ -344,7 +344,7 @@ void arithmeticMatrixSolver() {
 			} while (matrix[mIndex] != '\0');
 			if (errorCols == 0) {
 				printf("\nMatrix transposed:\n");
-				fmtranspose(lins, cols, vMS, vMSI);
+				fmtranspose(lins, cols, vMS, vMSI, rMS, rMSI);
 			}
 			else {
 				puts("\nError: The numbers of columns per line in the matrix is not the same in the lines.\n");
@@ -393,7 +393,7 @@ void arithmeticMatrixSolver() {
 				}
 				else {
 					printf("\nMatrix Inverse:\n");
-					fminverse(lins, cols, vMS, vMSI);
+					fminverse(lins, cols, vMS, vMSI, rMS, rMSI);
 				}
 			}
 			else {
@@ -450,7 +450,7 @@ void arithmeticMatrixSolver() {
 					puts("\nError: The power must be a positive integer >=2.\n");
 				}
 				else {
-					fmpowerm(vMS, vMSI, power, lins, cols);
+					fmpowerm(vMS, vMSI, rMS, rMSI, power, lins, cols);
 				}
 			}
 		}
@@ -519,15 +519,17 @@ void fmsum(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[
 		}
 		sprintf(report, "%s\n", report);
 	}
-	puts(report);
-	int option = -1;
-	while (option != 0 && option != 1) {
-		I_O = true;
-		puts("Export result? (Yes -> 1 \\ No -> 0)");
-		option = (int)getValue();
-	}
-	if (option == 1) {
-		saveToReport(report);
+	if (matrixMode == 0) {
+		puts(report);
+		int option = -1;
+		while (option != 0 && option != 1) {
+			I_O = true;
+			puts("Export result? (Yes -> 1 \\ No -> 0)");
+			option = (int)getValue();
+		}
+		if (option == 1) {
+			saveToReport(report);
+		}
 	}
 }
 
@@ -543,15 +545,17 @@ void fmsubt(int lins, int cols, double v[dim][dim], double u[dim][dim], double r
 		}
 		sprintf(report, "%s\n", report);
 	}
-	puts(report);
-	int option = -1;
-	while (option != 0 && option != 1) {
-		I_O = true;
-		puts("Export result? (Yes -> 1 \\ No -> 0)");
-		option = (int)getValue();
-	}
-	if (option == 1) {
-		saveToReport(report);
+	if (matrixMode == 0) {
+		puts(report);
+		int option = -1;
+		while (option != 0 && option != 1) {
+			I_O = true;
+			puts("Export result? (Yes -> 1 \\ No -> 0)");
+			option = (int)getValue();
+		}
+		if (option == 1) {
+			saveToReport(report);
+		}
 	}
 }
 
@@ -567,15 +571,17 @@ void fmmulr(int lins, int cols, double v[dim][dim], double r[dim][dim], double r
 		}
 		sprintf(report, "%s\n", report);
 	}
-	puts(report);
-	int option = -1;
-	while (option != 0 && option != 1) {
-		I_O = true;
-		puts("Export result? (Yes -> 1 \\ No -> 0)");
-		option = (int)getValue();
-	}
-	if (option == 1) {
-		saveToReport(report);
+	if (matrixMode == 0) {
+		puts(report);
+		int option = -1;
+		while (option != 0 && option != 1) {
+			I_O = true;
+			puts("Export result? (Yes -> 1 \\ No -> 0)");
+			option = (int)getValue();
+		}
+		if (option == 1) {
+			saveToReport(report);
+		}
 	}
 }
 
@@ -583,8 +589,9 @@ void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], doub
 	int k, i, j;
 	char report[DIM] = "";
 	double prod, prodI;
-	if (lins2 != cols1)
-		printf("\nError: The number of columns of first Matrix differs from the numbers of rows of second Matrix.\n");
+	if (lins2 != cols1) {
+		printf("\nError: The number of columns of first Matrix differs from the number of rows of second Matrix.\n");
+	}
 	else {
 		for (i = 0; i < lins1; i++) {
 			for (k = 0; k < cols2; k++) {
@@ -604,21 +611,79 @@ void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], doub
 			}
 			sprintf(report, "%s\n", report);
 		}
-		puts(report);
-		int option = -1;
-		while (option != 0 && option != 1) {
-			I_O = true;
-			puts("Export result? (Yes -> 1 \\ No -> 0)");
-			option = (int)getValue();
-		}
-		if (option == 1) {
-			saveToReport(report);
+		if (matrixMode == 0) {
+			puts(report);
+			int option = -1;
+			while (option != 0 && option != 1) {
+				I_O = true;
+				puts("Export result? (Yes -> 1 \\ No -> 0)");
+				option = (int)getValue();
+			}
+			if (option == 1) {
+				saveToReport(report);
+			}
 		}
 	}
 }
 
-void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]) {
-	double mTransposeR[dim][dim], mTransposeI[dim][dim];
+boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], double u[dim][dim], double vI[dim][dim], double uI[dim][dim]) {
+	int k, i;
+	boolean  divisible = false;
+	char report[DIM] = "";
+	if (cols1 != cols2)
+		printf("\nError: The number of columns of first Matrix differs from the numbers of columns of second Matrix.\n");
+	else
+		if (lins1 != lins2)
+			printf("\nError: The number of lines of first Matrix differs from the numbers of lines of second Matrix.\n");
+		else {
+			int countEquals = 0;
+			char value[100] = "";
+			char * pointer;
+			double quotientR = 0, quotientI = 0;
+			for (i = 0; i < lins1; i++) {
+				for (k = 0; k < cols1; k++) {
+					if ((v[i][k] != 0 || vI[i][k] != 0) && (u[i][k] != 0 || uI[i][k] != 0)) {
+						division(v[i][k], vI[i][k], u[i][k], uI[i][k]);
+						sprintf(value, "%G", resultR);
+						resultR = strtod(value, &pointer);
+						sprintf(value, "%G", resultI);
+						resultI = strtod(value, &pointer);
+						quotientR = resultR; quotientI = resultI;
+						i = lins1;
+						k = cols1;
+					}
+				}
+			}
+			for (i = 0; i < lins1; i++) {
+				for (k = 0; k < cols1; k++) {
+					if ((v[i][k] != 0 || vI[i][k] != 0) && (u[i][k] != 0 || uI[i][k] != 0)) {
+						division(v[i][k], vI[i][k], u[i][k], uI[i][k]);
+						sprintf(value, "%G", resultR);
+						resultR = strtod(value, &pointer);
+						sprintf(value, "%G", resultI);
+						resultI = strtod(value, &pointer);
+						if (resultR == quotientR && resultI == quotientI) {
+							countEquals++;
+						}
+					}
+					else {
+						countEquals++;
+					}
+				}
+			}
+			if (countEquals == lins1 * cols1) {
+				resultR = quotientR;
+				resultI = quotientI;
+				divisible = true;
+				matrixMode = 2;
+				return divisible;
+			}
+			return divisible;
+		}
+	return divisible;
+}
+
+void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim], double mTransposeR[dim][dim], double mTransposeI[dim][dim]) {
 	int i = 0, j = 0;
 	char report[DIM] = "";
 	for (i = 0; i < cols; i++) {
@@ -633,15 +698,17 @@ void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim
 		}
 		sprintf(report, "%s\n", report);
 	}
-	puts(report);
-	int option = -1;
-	while (option != 0 && option != 1) {
-		I_O = true;
-		puts("Export result? (Yes -> 1 \\ No -> 0)");
-		option = (int)getValue();
-	}
-	if (option == 1) {
-		saveToReport(report);
+	if (matrixMode == 0) {
+		puts(report);
+		int option = -1;
+		while (option != 0 && option != 1) {
+			I_O = true;
+			puts("Export result? (Yes -> 1 \\ No -> 0)");
+			option = (int)getValue();
+		}
+		if (option == 1) {
+			saveToReport(report);
+		}
 	}
 }
 
@@ -776,16 +843,47 @@ void fmdeterminant(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][d
 }
 
 void startDetProcessing(char matrix[DIM]) {
+	check4Vector = 1;
+	calcNow(matrix, 0, 0);
+	if (strlen(matrixResult) > 0) {
+		sprintf(expressionF, "%s", matrixResult);
+		replaceTimes = 0;
+		matrixMode = 1;
+		if (isContained(":", expressionF)) {
+			replace(":", "\\", expressionF);
+		}
+		if (isContained("*", expressionF)) {
+			replace("*", ";", expressionF);
+		}
+		sprintf(matrix, "%s", expressionF);
+	}
 	int mIndex = 0, ff = 0, lins = 1, cols = 1, lins1 = 1, cols1 = 1, saveCols = -1, saveCols1 = -1, errorCols = 0, errorCols1 = 0, i = 0, j = 0;
 	double vMS[dim][dim], vMSI[dim][dim];
 	do {
 		char value[DIM] = "";
 		ff = 0;
+		int imag = 0;
 		while (matrix[mIndex] != '\\'&&matrix[mIndex] != ';'&&matrix[mIndex] != '\0') {
+			if (matrix[mIndex] == ' ') {
+				matrix[mIndex] = '+';
+				imag = 1;
+			}
+			if (matrix[mIndex] == '-'&&matrix[mIndex - 1] == '+') {
+				matrix[mIndex] = '_';
+			}
 			value[ff] = matrix[mIndex];
 			ff++; mIndex++;
 		}
-		value[ff] = '\0';
+		if (imag == 0) {
+			value[ff] = '\0';
+		}
+		else {
+			value[ff] = 'i';
+			value[ff + 1] = '\0';
+		}
+		if (value[0] == '-') {
+			value[0] = '_';
+		}
 		calcNow(value, 0, 0);
 		vMS[i][j] = resultR;
 		vMSI[i][j] = resultI;
@@ -808,17 +906,29 @@ void startDetProcessing(char matrix[DIM]) {
 		mIndex++;
 	} while (matrix[mIndex] != '\0');
 	fmdeterminant(lins, cols, vMS, vMSI);
+	matrixMode = 2;
 }
 
-void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]) {
-	int i = 0, j = 0, one = cols, pivot = 0;
-	while (i < cols) {
-		for (j = cols; j < cols * 2; j++) {
+void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim], double inverseR[dim][dim], double inverseI[dim][dim]) {
+	int saveLins = lins, saveCols = cols;
+	double vMSF[dim][dim], vMSIF[dim][dim];
+	int i = 0, j = 0, one = saveCols, pivot = 0;
+	for (i = 0; i < saveLins; i++) {
+		for (j = 0; j < saveCols; j++) {
+			vMSF[i][j] = vMS[i][j];
+			vMSIF[i][j] = vMSI[i][j];
+		}
+	}
+
+
+	i = 0; j = 0;
+	while (i < saveCols) {
+		for (j = saveCols; j < saveCols * 2; j++) {
 			if (one == j) {
-				vMS[i][j] = 1; vMSI[i][j] = 0;
+				vMSF[i][j] = 1; vMSIF[i][j] = 0;
 			}
 			else {
-				vMS[i][j] = 0; vMSI[i][j] = 0;
+				vMSF[i][j] = 0; vMSIF[i][j] = 0;
 			}
 		}
 		one++;
@@ -826,128 +936,74 @@ void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim])
 	}
 	do {
 		i = pivot;
-		while (vMS[i][pivot] == 0 && vMSI[i][pivot] == 0 && i < cols) {
+		while (vMSF[i][pivot] == 0 && vMSIF[i][pivot] == 0 && i < cols) {
 			i++;
 		}
-		if (i == cols) {
+		if (i == saveCols) {
 			i = 0;
-			while (vMS[i][pivot] == 0 && vMSI[i][pivot] == 0 && i < pivot) {
+			while (vMSF[i][pivot] == 0 && vMSIF[i][pivot] == 0 && i < pivot) {
 				i++;
 			}
 		}
 		if (i != pivot) {
 			int t = 0;
 			double saveLineR[dim], saveLineI[dim];
-			for (t = 0; t < cols * 2; t++) {
-				saveLineR[t] = vMS[i][t];
-				saveLineI[t] = vMSI[i][t];
+			for (t = 0; t < saveCols * 2; t++) {
+				saveLineR[t] = vMSF[i][t];
+				saveLineI[t] = vMSIF[i][t];
 			}
-			for (t = 0; t < cols * 2; t++) {
-				vMS[i][t] = vMS[pivot][t];
-				vMSI[i][t] = vMSI[pivot][t];
+			for (t = 0; t < saveCols * 2; t++) {
+				vMSF[i][t] = vMSF[pivot][t];
+				vMSIF[i][t] = vMSIF[pivot][t];
 			}
-			for (t = 0; t < cols * 2; t++) {
-				vMS[pivot][t] = saveLineR[t];
-				vMSI[pivot][t] = saveLineI[t];
+			for (t = 0; t < saveCols * 2; t++) {
+				vMSF[pivot][t] = saveLineR[t];
+				vMSIF[pivot][t] = saveLineI[t];
 			}
 		}
 		i = pivot;
 		double pivotR = 0, pivotI = 0;
 		int linePivot = i, nextCol = linePivot + 1;
 		if (i == pivot) {
-			pivotR = vMS[i][i]; pivotI = vMSI[i][i];
-			for (j = 0; j < cols * 2; j++) {
-				division(vMS[pivot][j], vMSI[pivot][j], pivotR, pivotI);
-				vMS[pivot][j] = resultR; vMSI[pivot][j] = resultI;
+			pivotR = vMSF[i][i]; pivotI = vMSIF[i][i];
+			for (j = 0; j < saveCols * 2; j++) {
+				division(vMSF[pivot][j], vMSIF[pivot][j], pivotR, pivotI);
+				vMSF[pivot][j] = resultR; vMSIF[pivot][j] = resultI;
 			}
 		}
-		for (i = linePivot + 1; i < cols; i++) {
-			for (j = 0; j < cols + nextCol; j++) {
-				multiplication(vMS[i][pivot], vMSI[i][pivot], vMS[pivot][j], vMSI[pivot][j]);
-				subtraction(vMS[i][j], vMSI[i][j], resultR, resultI);
+		for (i = linePivot + 1; i < saveCols; i++) {
+			for (j = 0; j < saveCols + nextCol; j++) {
+				multiplication(vMSF[i][pivot], vMSIF[i][pivot], vMSF[pivot][j], vMSIF[pivot][j]);
+				subtraction(vMSF[i][j], vMSIF[i][j], resultR, resultI);
 				if (j != pivot) {
-					vMS[i][j] = resultR; vMSI[i][j] = resultI;
+					vMSF[i][j] = resultR; vMSIF[i][j] = resultI;
 				}
 			}
-			vMS[i][pivot] = 0; vMSI[i][pivot] = 0;
+			vMSF[i][pivot] = 0; vMSIF[i][pivot] = 0;
 		}
 		for (i = 0; i < pivot; i++) {
-			for (j = 0; j < cols + nextCol; j++) {
-				multiplication(vMS[i][pivot], vMSI[i][pivot], vMS[pivot][j], vMSI[pivot][j]);
-				subtraction(vMS[i][j], vMSI[i][j], resultR, resultI);
+			for (j = 0; j < saveCols + nextCol; j++) {
+				multiplication(vMSF[i][pivot], vMSIF[i][pivot], vMSF[pivot][j], vMSIF[pivot][j]);
+				subtraction(vMSF[i][j], vMSIF[i][j], resultR, resultI);
 				if (j != pivot) {
-					vMS[i][j] = resultR; vMSI[i][j] = resultI;
+					vMSF[i][j] = resultR; vMSIF[i][j] = resultI;
 				}
 			}
-			vMS[i][pivot] = 0; vMSI[i][pivot] = 0;
+			vMSF[i][pivot] = 0; vMSIF[i][pivot] = 0;
 		}
 		pivot++;
-	} while (pivot < cols);
-	double inverseR[dim][dim], inverseI[dim][dim];
-	for (i = 0; i < cols; i++) {
-		for (j = cols; j < cols * 2; j++) {
-			inverseR[i][j - cols] = vMS[i][j];
-			inverseI[i][j - cols] = vMSI[i][j];
+	} while (pivot < saveCols);
+	for (i = 0; i < saveLins; i++) {
+		for (j = 0; j < saveCols; j++) {
+			inverseR[i][j] = vMSF[i][j + saveCols];
+			inverseI[i][j] = vMSIF[i][j + saveCols];
 		}
 	}
-	char report[DIM] = "";
-	for (i = 0; i < cols; i++) {
-		for (j = 0; j < lins; j++) {
-			sprintf(report, "%s%G+%Gi ", report, inverseR[i][j], inverseI[i][j]);
-		}
-		sprintf(report, "%s\n", report);
-	}
-	puts(report);
-	int option = -1;
-	while (option != 0 && option != 1) {
-		I_O = true;
-		puts("Export result? (Yes -> 1 \\ No -> 0)");
-		option = (int)getValue();
-	}
-	if (option == 1) {
-		saveToReport(report);
-	}
-}
-
-void fmpowerm(double v[dim][dim], double vI[dim][dim], int power, int lins, int cols) {
-	int k, i, j;
-	char report[DIM] = "";
-	double prod = 0, prodI = 0;
-	double r[dim][dim], rI[dim][dim], u[dim][dim], uI[dim][dim];
-	for (i = 0; i < lins; i++) {
-		for (k = 0; k < cols; k++) {
-			u[i][k] = v[i][k];
-			uI[i][k] = vI[i][k];
-		}
-	}
-	if (lins != cols)
-		printf("\nError: The number of columns and lines are not equal.\n");
-	else {
-		printf("\nMatrix Power:\n");
-		while (power > 1) {
-			for (i = 0; i < lins; i++) {
-				for (k = 0; k < cols; k++) {
-					prod = 0; prodI = 0;
-					for (j = 0; j < cols; j++) {
-						multiplication(v[i][j], vI[i][j], u[j][k], uI[j][k]);
-						prod = prod + resultR;
-						prodI = prodI + resultI;
-					}
-					r[i][k] = prod;
-					rI[i][k] = prodI;
-				}
-			}
-			for (i = 0; i < lins; i++) {
-				for (k = 0; k < cols; k++) {
-					v[i][k] = r[i][k];
-					vI[i][k] = rI[i][k];
-				}
-			}
-			power--;
-		}
-		for (i = 0; i < lins; i++) {
-			for (k = 0; k < cols; k++) {
-				sprintf(report, "%s%G+%Gi ", report, r[i][k], rI[i][k]);
+	if (matrixMode == 0) {
+		char report[DIM] = "";
+		for (i = 0; i < saveLins; i++) {
+			for (j = 0; j < saveCols; j++) {
+				sprintf(report, "%s%G+%Gi ", report, inverseR[i][j], inverseI[i][j]);
 			}
 			sprintf(report, "%s\n", report);
 		}
@@ -964,7 +1020,115 @@ void fmpowerm(double v[dim][dim], double vI[dim][dim], int power, int lins, int 
 	}
 }
 
-void fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]) {
+void fmpowerm(double v[dim][dim], double vI[dim][dim], double r[dim][dim], double rI[dim][dim], int power, int lins, int cols) {
+	int k = 0, i = 0, j = 0, negative = 0;
+	char report[DIM] = "";
+	double prod = 0, prodI = 0;
+	double  u[dim][dim], uI[dim][dim];
+	for (i = 0; i < lins; i++) {
+		for (k = 0; k < cols; k++) {
+			u[i][k] = v[i][k];
+			uI[i][k] = vI[i][k];
+		}
+	}
+	if (lins != cols) {
+		printf("\nError: The number of columns and lines are not equal.\n");
+	}
+	else {
+		if (matrixMode == 0) {
+			printf("\nMatrix Power:\n");
+		}
+		if (power < 0) {
+			power = power * -1;
+			negative = 1;
+		}
+		if (negative == 1) {
+			fminverse(lins, cols, v, vI, r, rI);
+			for (i = 0; i < lins; i++) {
+				for (k = 0; k < cols; k++) {
+					v[i][k] = r[i][k];
+					vI[i][k] = rI[i][k];
+				}
+			}
+			for (i = 0; i < lins; i++) {
+				for (k = 0; k < cols; k++) {
+					u[i][k] = v[i][k];
+					uI[i][k] = vI[i][k];
+				}
+			}
+			negative = 0;
+		}
+		if (power > 1) {
+			while (power > 1) {
+				for (i = 0; i < lins; i++) {
+					for (k = 0; k < cols; k++) {
+						prod = 0; prodI = 0;
+						for (j = 0; j < cols; j++) {
+							multiplication(v[i][j], vI[i][j], u[j][k], uI[j][k]);
+							prod = prod + resultR;
+							prodI = prodI + resultI;
+						}
+						r[i][k] = prod;
+						rI[i][k] = prodI;
+					}
+				}
+				for (i = 0; i < lins; i++) {
+					for (k = 0; k < cols; k++) {
+						v[i][k] = r[i][k];
+						vI[i][k] = rI[i][k];
+					}
+				}
+				power--;
+			}
+		}
+		else {
+			if (power == 1) {
+				for (i = 0; i < lins; i++) {
+					for (k = 0; k < cols; k++) {
+						r[i][k] = v[i][k];
+						rI[i][k] = vI[i][k];
+					}
+				}
+			}
+			else {
+				if (power == 0) {
+					for (i = 0; i < lins; i++) {
+						for (k = 0; k < cols; k++) {
+							if (i == k) {
+								r[i][k] = 1;
+								rI[i][k] = 0;
+							}
+							else {
+								r[i][k] = 0;
+								rI[i][k] = 0;
+							}
+						}
+					}
+				}
+			}
+		}
+		for (i = 0; i < lins; i++) {
+			for (k = 0; k < cols; k++) {
+				sprintf(report, "%s%G+%Gi ", report, r[i][k], rI[i][k]);
+			}
+			sprintf(report, "%s\n", report);
+		}
+		if (matrixMode == 0) {
+			puts(report);
+			int option = -1;
+			while (option != 0 && option != 1) {
+				I_O = true;
+				puts("Export result? (Yes -> 1 \\ No -> 0)");
+				option = (int)getValue();
+			}
+			if (option == 1) {
+				saveToReport(report);
+			}
+		}
+	}
+}
+
+int fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]) {
 	int i = 0, j = 0, one = cols, pivot = 0;
 	do {
 		i = pivot;
@@ -1023,14 +1187,19 @@ void fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]) {
 		sprintf(report, "%s\n", report);
 	}
 	sprintf(report, "%s\nRank: %d\n", report, rank);
-	puts(report);
-	int option = -1;
-	while (option != 0 && option != 1) {
-		I_O = true;
-		puts("Export result? (Yes -> 1 \\ No -> 0)");
-		option = (int)getValue();
+	if (matrixMode == 0) {
+		puts(report);
+		int option = -1;
+		while (option != 0 && option != 1) {
+			I_O = true;
+			puts("Export result? (Yes -> 1 \\ No -> 0)");
+			option = (int)getValue();
+		}
+		if (option == 1) {
+			saveToReport(report);
+		}
 	}
-	if (option == 1) {
-		saveToReport(report);
-	}
+	matrixMode = 2;
+	return rank;
 }
+

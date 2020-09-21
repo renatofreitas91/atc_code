@@ -55,70 +55,9 @@ void qu_complex(double dividend, double dividendI, double divider, double divide
 	}
 	quoI[i] = '\0';
 	resultI = strtod(quoI, &pointer);
-	round_complex();
 }
 
-void round_complex() {
-	char path4ATC[DIM] = "";
-	if (resultR >= -DBL_MAX && resultR <= DBL_MAX && resultI >= -DBL_MAX && resultI <= DBL_MAX) {
-		FILE *open;
-		sprintf(path4ATC, "%s\\numSystems.txt", atcPath);
-		open = fopen(path4ATC, "r");
-		char numSys[DIM] = "";
-		int numeriSys = 0;
-		if (open != NULL) {
-			fgets(numSys, 10, open);
-			numeriSys = atoi(numSys);
-			fclose(open);
-		}
-		double norm = sqrt(resultR*resultR + resultI * resultI);
-		char response[DIM] = "";
-		char *ty;
-		if (numeriSys == 1) {
-			sprintf(response, "%G", norm);
-			norm = strtod(response, &ty);
-			sprintf(response, "%G", resultI);
-			resultI = strtod(response, &ty);
-			sprintf(response, "%G", resultR);
-			resultR = strtod(response, &ty);
-			if (norm == abs(resultI)) {
-				sprintf(response, "0");
-			}
-			else {
-				sprintf(response, "%G", resultR);
-			}
-			resultR = strtod(response, &ty);
-			if (norm == abs(resultR)) {
-				sprintf(response, "0");
-			}
-			else {
-				sprintf(response, "%G", resultI);
-			}
-		}
-		else {
-			sprintf(response, "%.400f", norm);
-			norm = strtod(response, &ty);
-			sprintf(response, "%.400f", resultI);
-			resultI = strtod(response, &ty);
-			sprintf(response, "%.400f", resultR);
-			resultR = strtod(response, &ty);
-			if (norm == abs(resultI)) {
-				sprintf(response, "0");
-			}
-			else {
-				sprintf(response, "%.400f", resultR);
-			}
-			resultR = strtod(response, &ty);
-			if (norm == abs(resultR)) {
-				sprintf(response, "0");
-			}
-			else {
-				sprintf(response, "%.400f", resultI);
-			}
-		}
-		resultI = strtod(response, &ty);
-	}
-}
+
 
 void exponentiation(double a, double b, double c, double d, int sig) {
 	if (sig == 0) {
@@ -155,7 +94,6 @@ void re_complex(double dividend, double dividendI, double divider, double divide
 	qu_complex(dividend, dividendI, divider, dividerI);
 	multiplication(resultR, resultI, divider, dividerI);
 	subtraction(dividend, dividendI, resultR, resultI);
-	round_complex();
 }
 
 double pot(double base, double exponent, int sig) {

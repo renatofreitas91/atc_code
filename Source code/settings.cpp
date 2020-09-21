@@ -96,7 +96,7 @@ void mode() {
 }
 
 void about2() {
-	system("title Advanced Trigonometry Calculator v2.0.9");
+	system("title Advanced Trigonometry Calculator v2.1.0");
 	system("MODE con cols=90 lines=15");
 	cls();
 	FILE *open = NULL;
@@ -113,7 +113,7 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v2.0.9                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v2.1.0                                                             ==) Enter data (==              ");
 }
 
 void graphSettings() {
@@ -446,7 +446,7 @@ int applySettings(int toDo) {
 
 boolean about() {
 	ShowConsoleCursor(FALSE);
-	system("title Advanced Trigonometry Calculator v2.0.9");
+	system("title Advanced Trigonometry Calculator v2.1.0");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
@@ -473,11 +473,11 @@ boolean about() {
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("                                  %c%c%c%c%c   %c%c%c%c%c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                                      %c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177);
-	printf("                            %c   %c %c%c%c%c%c   %c   %c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                             %c %c  %c       %c   %c       %c\n", 177, 177, 177, 177, 177, 177);
-	printf("                              %c   %c%c%c%c%c %c %c%c%c%c%c %c %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                                  %c%c%c%c%c       %c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                                      %c       %c   %c   %c\n", 177, 177, 177, 177);
+	printf("                            %c   %c %c%c%c%c%c       %c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                             %c %c  %c           %c   %c   %c\n", 177, 177, 177, 177, 177, 177);
+	printf("                              %c   %c%c%c%c%c %c     %c %c %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n                                    Made in Portugal\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
 	trackMouse();
@@ -533,34 +533,6 @@ boolean about() {
 		int Window = 3, Dimensions = 2;
 		applySettings(Window);
 		applySettings(Dimensions);
-
-		char commandF[400] = "";
-		using namespace std;
-		HANDLE ProcSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-		boolean foundATCcommander = false;
-		PROCESSENTRY32W pe = { 0 };
-		pe.dwSize = sizeof(pe);
-		char currentProcess[200] = "";
-		if (Process32FirstW(ProcSnap, &pe)) {
-			do {
-				if (!wcscmp(pe.szExeFile, L"atc_commander.exe") || !wcscmp(pe.szExeFile, L"atc_commander_xp.exe")) {
-					foundATCcommander = true;
-					break;
-				}
-			} while (Process32NextW(ProcSnap, &pe));
-		}
-		if (!foundATCcommander) {
-			if (!IsPreviousToWindowsVista()) {
-				sprintf(commandF, "%s\\atc_commander.exe", atcPath);
-			}
-			else {
-				sprintf(commandF, "%s\\atc_commander_xp.exe", atcPath);
-			}
-			std::string S = string(commandF);
-			std::wstring STEMP = std::wstring(S.begin(), S.end());
-			LPCWSTR SW = STEMP.c_str();
-			ShellExecute(NULL, _T("open"), SW, NULL, NULL, SW_SHOW);
-		}
 	}
 
 	return continu;

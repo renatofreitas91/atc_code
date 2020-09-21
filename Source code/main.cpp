@@ -5,13 +5,13 @@
 
 
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
-char lastCommand[DIM], atcPath[DIM] = "", customFolderPath[DIM] = "", saveATCPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
+char ansMatrices[DIM][DIM], lastCommand[DIM], atcPath[DIM] = "", customFolderPath[DIM] = "", saveATCPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF2[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
 int replaceTimes = 0, processingOK = 1, executedSolver = 0, isFromMain = 0, solutioned = 0, verify = 0, arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
 clock_t start_processing, end_processing;
 char savePathF[DIM], validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_;";
 int toSendCommand = 0;
-void main(int argc, char *argv[]) {
 
+void main(int argc, char *argv[]) {
 	char dataToSolve[DIM] = "";
 	FILE *fout = NULL;
 	int Colors = 1, tD = 0, i = 0;
@@ -43,11 +43,11 @@ void main(int argc, char *argv[]) {
 		}
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v2.0.9");
+		system("title Advanced Trigonometry Calculator v2.1.0");
 		continu = about();
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v2.0.9       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v2.1.0       ==) ATC is ready to process data. (==");
 		do {
 			sprintf(savePathF, "");
 			sprintf(atcPath, "%s", saveATCPath);
@@ -66,22 +66,9 @@ void main(int argc, char *argv[]) {
 					cls();
 				}
 				printf(">");
-
-				if (!(_kbhit() != 0)) {
-					getReady();
-				}
-				else {
-					Pressed = 1;
-				}
-				if (Pressed == 2) {
-					sprintf(trigData, "%s", expressionF);
-					printf("%s\n", trigData);
-				}
-				if (Pressed == 1) {
-					gets_s(trigData);
-				}
+				gets_s(trigData);
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v2.0.9       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v2.1.0       ==) Processing... (==");
 
 			}
 			else {
@@ -105,6 +92,7 @@ void main(int argc, char *argv[]) {
 			for (tD = 0; trigData[tD] != '\0'; tD++) {
 				runningScript = false;
 				fflush(NULL);
+				matrixMode = 0;
 				sprintf(varRename, "");
 				sprintf(revariable, "");
 				validVar = 1; 	processingOK = 1;
@@ -146,7 +134,7 @@ void main(int argc, char *argv[]) {
 						sprintf(arithTrig, "%s", expressionF);
 					}
 				}
-
+				sprintf(matrixResult, "");
 				resultR = sqrt(DBL_MAX);
 				variableController("INF", resultR);
 				processVariable("x");
@@ -156,6 +144,20 @@ void main(int argc, char *argv[]) {
 				}
 				processVariable("x");
 				variableController("x", 0);
+				processVariable("T");
+				if (validVar == 0) {
+					resultR = 0;
+					variableController("T", 0);
+				}
+				processVariable("T");
+				variableController("T", 0);
+				processVariable("R");
+				if (validVar == 0) {
+					resultR = 0;
+					variableController("R", 0);
+				}
+				processVariable("R");
+				variableController("R", 0);
 				sprintf(fTrig, "%s", arithTrig); verbose = 0;
 				main_core(arithTrig, fTrig, fout, path, result1, result2, 1);
 				sprintf(arithTrig, ""); sprintf(fTrig, "");
@@ -246,7 +248,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v2.0.9       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v2.1.0       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -421,8 +423,15 @@ boolean processTxt(char path[DIM], int re) {
 				fflush(NULL);
 				tD = 0;
 				for (tD = 0; trigData[tD] != '\0'; tD++) {
+					fflush(NULL);
+					matrixMode = 0;
+					sprintf(varRename, "");
+					sprintf(revariable, "");
+					validVar = 1;   processingOK = 1;
+					sprintf(varRename, "");
 					i = 0;
 					char arith[DIM] = "";
+					matrixMode = 0;
 					int fl = 1, fr = 0;
 					while (trigData[tD] != '\0'&&trigData[tD] != ',') {
 						if (trigData[tD - 6] == 'p'&&trigData[tD - 5] == 'r'&&trigData[tD - 4] == 'i'&&trigData[tD - 3] == 'n'&&trigData[tD - 2] == 't'&&trigData[tD - 1] == '(') {
@@ -446,6 +455,7 @@ boolean processTxt(char path[DIM], int re) {
 						}
 					}
 					arith[i] = '\0';
+					sprintf(matrixResult, "");
 					resultR = sqrt(DBL_MAX);
 					variableController("INF", resultR);
 					processVariable("x");
@@ -455,6 +465,18 @@ boolean processTxt(char path[DIM], int re) {
 					}
 					processVariable("x");
 					variableController("x", 0);
+					processVariable("T");
+					if (validVar == 0) {
+						resultR = 0;
+						variableController("T", 0);
+					}
+					processVariable("R");
+					if (validVar == 0) {
+						resultR = 0;
+						variableController("R", 0);
+					}
+					processVariable("R");
+					variableController("R", 0);
 					valid = 0;
 					validVar = 1;
 					if (fin != NULL) {
@@ -494,6 +516,7 @@ boolean processTxt(char path[DIM], int re) {
 							sprintf(atcPath, "%s", savePathF);
 						}
 						main_core(arith, arith, fin, path, result1, result2, 0);
+						sprintf(arith, "");
 						if (verified == 1) {
 							result1 = resultR;
 							result2 = resultI;
@@ -965,6 +988,21 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 								}
 								matrix[t] = '\0';
 							}
+							check4Vector = 1;
+							calcNow(matrix, 0, 0);
+							if (strlen(matrixResult) > 0) {
+								sprintf(expressionF, "%s", matrixResult);
+								replaceTimes = 0;
+								matrixMode = 1;
+								if (isContained(":", expressionF)) {
+									replace(":", "\\", expressionF);
+
+								}
+								if (isContained("*", expressionF)) {
+									replace("*", ";", expressionF);
+								}
+								sprintf(matrix, "%s", expressionF);
+							}
 							int mIndex = 0, ff = 0, cols = 1, lins = 1, saveCols = -1, errorCols = 0;
 							do {
 								char value[DIM] = "";
@@ -1005,6 +1043,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 									}
 									if (cols < 2) {
 										puts("\nError: Your matrix must be at minimum of type 2x2.\n");
+										puts("Merda!");
 									}
 								}
 								decision = false;

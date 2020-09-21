@@ -2,7 +2,26 @@
 
 #include "stdafx.h"
 
+char matrixResult[DIM];
+
 double initialProcessor(char arithTrig[DIM], double result) {
+	if (isContained("+0+", arithTrig)) {
+		replaceTimes = 0;
+		replace("+0+", "+", arithTrig);
+		sprintf(arithTrig, "%s", expressionF);
+	}
+	if (isContained("+(0)+", arithTrig)) {
+		replaceTimes = 0;
+		replace("+(0)+", "+", arithTrig);
+		sprintf(arithTrig, "%s", expressionF);
+	}
+	if (isContained("+(0)", arithTrig) && strEnd == strlen(arithTrig)) {
+		replaceTimes = 1;
+		replace("+(0)", "", arithTrig);
+		sprintf(arithTrig, "%s", expressionF);
+	}
+
+	check4Vector = 1;
 	int rasf = abs((int)strlen(arithTrig));
 	while (arithTrig[rasf - 2] == '+'&&arithTrig[rasf - 1] == '0') {
 		rasf = rasf - 2;
@@ -11,17 +30,30 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	if (verbose == 1 && solving) {
 		printf("\n\n==> initialProcessor <==\n\nExpression: %s", arithTrig);
 	}
-	if (strlen(arithTrig) == 0) {
+	if (strlen(arithTrig) == 0 || isEqual("0", arithTrig)) {
+		resultR = 0;
+		resultI = 0;
 		return 0;
 	}
-	char arTrig[DIM] = "", trigon[DIM] = "", trig[DIM] = "", paRect[DIM] = "", cN[DIM] = "", ex[DIM] = "", art[DIM] = "";
+	int signalVectors[DIM];
+	int numVectorCols1 = 0, numVectorLines1 = 0, countVectors = 0;
+	char  arTrig[DIM] = "", trigon[DIM] = "", trig[DIM] = "", paRect[DIM] = "", cN[DIM] = "", ex[DIM] = "", art[DIM] = "";
 	int parent[DIM], facto = 0, sig[DIM], s = 0, rectPar = 0, h = 0, i = 0, rePar = 0, so = 0, j = 0, g = 0, count = 0, e = 0, d = 0, th = 0, f = 0, trigo = 1, trigono = 0, co = 0, k = 0, l = 0, tr = 0, pa = 0, paren = 1, pare = 0, tg = 0, p = 0, a = 0, c = 1, r = 0, iN = 0, iL = 0;
 	double triArith[DIM], triArithI[DIM], exp = 1, result1, result2, amplitude = 1;
+	double vector1_R[dim][dim], vector1_I[dim][dim], res_vectorR[dim][dim], res_vectorI[dim][dim];
+	char vectors[dim][100];
 	for (s = 0; s < abs((int)strlen(arithTrig)); s++) {
 		triArith[s] = 0;
 		triArithI[s] = 0;
+		signalVectors[s] = -1;
 		sig[s] = -1;
 	}
+	for (i = 0; i < dim; i++) {
+		for (j = 0; j < dim; j++) {
+			vector1_R[i][j] = 0; vector1_I[i][j] = 0; res_vectorR[i][j] = 0; res_vectorI[i][j] = 0;
+		}
+	}
+
 	for (i = 0; arithTrig[i] != '\0'; i++) {
 		if (arithTrig[i] == '[' || arithTrig[i] == '{') {
 			arithTrig[i] = '(';
@@ -425,8 +457,17 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					arTrig[c] = arithTrig[i]; c++;
 				}
 				if (strlen(pas) > 0) {
+					check4Vector = 1;
 					triArith[b] = arithSolver(pas, result);
 					triArithI[b] = resultI;
+					if (check4Vector == 2) {
+						triArith[b] = 1;
+						matrixMode = 1;
+						triArithI[b] = 0;
+						signalVectors[b] = countVectors;
+						sprintf(vectors[countVectors], "%s", vectorString);
+						countVectors++;
+					}
 					pas[0] = '\0';
 					b++;
 				}
@@ -515,12 +556,21 @@ double initialProcessor(char arithTrig[DIM], double result) {
 									sprintf(pas, "%s", variableSTring);
 									calcNow(pas, 0, 0);
 									triArith[b] = resultR;
-									triArithI[b] = resultI;;
+									triArithI[b] = resultI;
 								}
 								else {
+									check4Vector = 1;
 									triArith[b] = arithSolver(pas, result);
-									sprintf(expressionF, pas);
 									triArithI[b] = resultI;
+									if (check4Vector == 2) {
+										matrixMode = 1;
+										signalVectors[b] = countVectors;
+										sprintf(vectors[countVectors], "%s", vectorString);
+										triArith[b] = 1;
+										triArithI[b] = 0;
+										countVectors++;
+									}
+									sprintf(expressionF, pas);
 									sig[b] = 1;
 									pas[0] = '\0';
 									ju = 0;
@@ -629,9 +679,18 @@ double initialProcessor(char arithTrig[DIM], double result) {
 										triArithI[b] = resultI;;
 									}
 									else {
+										check4Vector = 1;
 										triArith[b] = initialProcessor(pas, result);
-										sprintf(expressionF, pas);
 										triArithI[b] = resultI;
+										if (strlen(matrixResult) > 0) {
+											matrixMode = 1;
+											signalVectors[b] = countVectors;
+											sprintf(vectors[countVectors], "%s", matrixResult);
+											countVectors++;
+											triArith[b] = 1;
+											triArithI[b] = 0;
+										}
+										sprintf(expressionF, pas);
 										sig[b] = 1;
 										char pas[DIM] = "";
 										if (strlen(op) > 0) {
@@ -682,14 +741,15 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	double asdf = 0, asdfI = 0;
 	for (so = 0; so < c; so++) {
 		int sa = so;
+
 		int b = 0;
-		if (arTrig[so] == '^'&&arTrig[so + 1] == '^') {
+		if (arTrig[so] == '^'&&arTrig[so + 1] == '^'&&signalVectors[so + 1] == -1 && signalVectors[so] == -1) {
 			while (arTrig[so] == '^'&&a != 1) {
 				if (arTrig[so + 1] != '^'&&arTrig[so - 1] == '^'&&a != 2) {
 					asdf = triArith[so + 1];
 					asdfI = triArithI[so + 1];
 					if (sig[so] == -1) {
-						if ((triArith[so] < 0 || triArithI[so] < 0) && !equationSolverRunning) {
+						if ((triArith[so] < 0 || (triArithI[so] < 0 && triArith[so] == 0))) {
 							sig[so] = 0;
 						}
 						else { sig[so] = 1; }
@@ -714,7 +774,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 						if (a == 2) {
 							while (a != 1) {
 								if (sig[so] == -1) {
-									if ((triArith[so] < 0 || triArithI[so] < 0) && !equationSolverRunning) {
+									if (triArith[so] < 0 || (triArithI[so] < 0 && triArith[so] == 0)) {
 										sig[so] = 0;
 									}
 									else { sig[so] = 1; }
@@ -740,10 +800,10 @@ double initialProcessor(char arithTrig[DIM], double result) {
 			}
 		}
 		else {
-			if (arTrig[so] == '^'&&arTrig[so + 1] != '^') {
+			if (arTrig[so] == '^'&&arTrig[so + 1] != '^'&&signalVectors[so + 1] == -1 && signalVectors[so] == -1) {
 				while (arTrig[so] == '^') {
 					if (sig[sa] == -1) {
-						if ((triArith[sa] < 0 || triArithI[sa] < 0) && !equationSolverRunning) {
+						if (triArith[sa] < 0 || (triArithI[sa] < 0 && triArith[sa] == 0)) {
 							sig[sa] = 0;
 						}
 						else { sig[sa] = 1; }
@@ -804,62 +864,486 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	if (verbose == 1 && solving) {
 		printf("\nSimplified expression by initialProcessor: %s\n\n", simplified);
 	}
+
+
+	for (so = 0; so < c; so++) {
+		if (arTrig[so] == '^') {
+			if (signalVectors[so + 1] == -1 && signalVectors[so] != -1) {
+				convert2Vector(vectors[signalVectors[so]]);
+				if (((int)triArith[so + 1] >= 0 || (int)triArith[so + 1] < -1) && (int)triArith[so + 1] != -7654321 && (int)triArith[so + 1] != -1234567) {
+					fmpowerm(vectorR, vectorI, res_vectorR, res_vectorI, (int)triArith[so + 1], numVectorLines, numVectorCols);
+				}
+				if ((int)triArith[so + 1] == -7654321) {
+					fmtranspose(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
+				}
+				if ((int)triArith[so + 1] == -1) {
+					fminverse(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
+				}
+				if ((int)triArith[so + 1] == -1234567) {
+					convert2Vector(vectors[signalVectors[so]]);
+					int n = 0;
+					int m = 0;
+					for (n = 0; n < numVectorLines; n++) {
+						for (m = 0; m < numVectorCols; m++) {
+							vector1_R[n][m] = vectorR[n][m];
+							vector1_I[n][m] = vectorI[n][m];
+						}
+					}
+					numVectorCols1 = numVectorCols;
+					numVectorLines1 = numVectorLines;
+					signalVectors[so] = -1;
+					signalVectors[so + 1] = -1;
+					triArithI[so] = 0;
+					triArith[so] = (double)fmrank(numVectorLines1, numVectorCols1, vector1_R, vector1_I);
+					triArithI[so + 1] = 0;
+					triArith[so + 1] = 1;
+					arTrig[so] = '*';
+				}
+				else {
+					triArith[so] = 1; triArithI[so] = 0;
+					signalVectors[so] = -1;
+					countVectors++;
+					sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
+					signalVectors[so + 1] = countVectors;
+					countVectors++;
+					arTrig[so] = '*';
+				}
+			}
+		}
+	}
+
 	for (so = 0; so < c; so++) {
 		int sa = so;
+		if (signalVectors[sa] != -1) {
+			convert2Vector(vectors[signalVectors[sa]]);
+			int n = 0;
+			int m = 0;
+			for (n = 0; n < numVectorLines; n++) {
+				for (m = 0; m < numVectorCols; m++) {
+					vector1_R[n][m] = vectorR[n][m];
+					vector1_I[n][m] = vectorI[n][m];
+				}
+			}
+			numVectorCols1 = numVectorCols;
+			numVectorLines1 = numVectorLines;
+			countVectors++;
+			signalVectors[sa] = countVectors;
+			sprintf(vectors[countVectors], "%s", convertVector2String(vector1_R, vector1_I, numVectorLines1, numVectorCols1));
+			countVectors++;
+		}
 		while (arTrig[so] == '/') {
-			division(triArith[sa], triArithI[sa], triArith[so + 1], triArithI[so + 1]);
-			triArith[sa] = resultR; triArithI[sa] = resultI;
-			triArith[so + 1] = 1; triArithI[so + 1] = 0;
-			arTrig[so] = '*';
+			if (signalVectors[so + 1] == -1 && signalVectors[sa] != -1) {
+				convert2Vector(vectors[signalVectors[sa]]);
+				division(1.0, 0.0, triArith[so + 1], triArithI[so + 1]);
+				fmmulr(numVectorLines1, numVectorCols1, vector1_R, res_vectorR, resultR, vector1_I, res_vectorI, resultI);
+				countVectors++;
+				signalVectors[sa] = countVectors;
+				sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+				countVectors++;
+				triArith[so + 1] = 1; triArithI[so + 1] = 0;
+				signalVectors[so + 1] = -1;
+				arTrig[so] = '*';
+			}
+			else {
+				if (signalVectors[so + 1] == -1 && signalVectors[sa] == -1) {
+					division(triArith[sa], triArithI[sa], triArith[so + 1], triArithI[so + 1]);
+					triArith[sa] = resultR; triArithI[sa] = resultI;
+					triArith[so + 1] = 1; triArithI[so + 1] = 0;
+					arTrig[so] = '*';
+				}
+				else {
+					if (signalVectors[so + 1] != -1 && signalVectors[sa] != -1 && signalVectors[sa] != signalVectors[so + 1]) {
+						convert2Vector(vectors[signalVectors[sa]]);
+						int n = 0;
+						int m = 0;
+						for (n = 0; n < numVectorLines; n++) {
+							for (m = 0; m < numVectorCols; m++) {
+								vector1_R[n][m] = vectorR[n][m];
+								vector1_I[n][m] = vectorI[n][m];
+							}
+						}
+						numVectorCols1 = numVectorCols;
+						numVectorLines1 = numVectorLines;
+						convert2Vector(vectors[signalVectors[so + 1]]);
+						if (fmdivm(numVectorLines, numVectorCols1, numVectorLines1, numVectorCols, vector1_R, vectorR, vector1_I, vectorI)) {
+							triArith[sa] = resultR; triArithI[sa] = resultI;
+							triArith[so + 1] = 1; triArithI[so + 1] = 0;
+							signalVectors[so + 1] = -1;
+							signalVectors[sa] = -1;
+							arTrig[so] = '*';
+						}
+						else {
+							printf("\nError: The quotient of matrices is not consistent over all matrices members.");
+						}
+					}
+				}
+			}
 			so++;
 		}
 	}
 	for (so = 0; so < c; so++) {
 		int sa = so;
+		if (signalVectors[sa] != -1) {
+			convert2Vector(vectors[signalVectors[sa]]);
+			int n = 0;
+			int m = 0;
+			for (n = 0; n < numVectorLines; n++) {
+				for (m = 0; m < numVectorCols; m++) {
+					vector1_R[n][m] = vectorR[n][m];
+					vector1_I[n][m] = vectorI[n][m];
+				}
+			}
+			numVectorCols1 = numVectorCols;
+			numVectorLines1 = numVectorLines;
+			countVectors++;
+			signalVectors[sa] = countVectors;
+			sprintf(vectors[countVectors], "%s", convertVector2String(vector1_R, vector1_I, numVectorLines1, numVectorCols1));
+			countVectors++;
+
+		}
 		while (arTrig[so] == '*') {
-			multiplication(triArith[sa], triArithI[sa], triArith[so + 1], triArithI[so + 1]);
-			triArith[sa] = resultR; triArithI[sa] = resultI;
-			triArith[so + 1] = 1; triArithI[so + 1] = 0;
-			arTrig[so] = '*';
+			if (signalVectors[so + 1] != -1 && signalVectors[sa] != -1 && signalVectors[sa] != signalVectors[so + 1]) {
+				convert2Vector(vectors[signalVectors[sa]]);
+				int n = 0;
+				int m = 0;
+				for (n = 0; n < numVectorLines; n++) {
+					for (m = 0; m < numVectorCols; m++) {
+						vector1_R[n][m] = vectorR[n][m];
+						vector1_I[n][m] = vectorI[n][m];
+					}
+				}
+				numVectorCols1 = numVectorCols;
+				numVectorLines1 = numVectorLines;
+				convert2Vector(vectors[signalVectors[so + 1]]);
+				fmmulm(numVectorLines, numVectorCols1, numVectorLines1, numVectorCols, vector1_R, vectorR, res_vectorR, vector1_I, vectorI, res_vectorI);
+				countVectors++;
+				signalVectors[sa] = countVectors;
+				sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+				countVectors++;
+				triArith[so + 1] = 1;
+				triArithI[so + 1] = 0;
+				signalVectors[so + 1] = -1;
+				arTrig[so] = '*';
+
+			}
+			else {
+				if (signalVectors[so + 1] != -1 && signalVectors[sa] == -1) {
+					convert2Vector(vectors[signalVectors[so + 1]]);
+					fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, triArith[sa], vectorI, res_vectorI, triArithI[sa]);
+					countVectors++;
+					signalVectors[sa] = countVectors;
+					sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+					countVectors++;
+					triArith[so + 1] = 1;
+					triArithI[so + 1] = 0;
+					signalVectors[so + 1] = -1;
+					arTrig[so] = '*';
+				}
+				else {
+					if (signalVectors[so + 1] == -1 && signalVectors[sa] != -1) {
+						convert2Vector(vectors[signalVectors[sa]]);
+						fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, triArith[so + 1], vectorI, res_vectorI, triArithI[so + 1]);
+						countVectors++;
+						signalVectors[sa] = countVectors;
+						sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+						countVectors++;
+						triArith[so + 1] = 1;
+						triArithI[so + 1] = 0;
+						signalVectors[so + 1] = -1;
+						arTrig[so] = '*';
+					}
+					else {
+
+						if (signalVectors[so + 1] == -1 && signalVectors[sa] == -1) {
+							multiplication(triArith[sa], triArithI[sa], triArith[so + 1], triArithI[so + 1]);
+							triArith[sa] = resultR; triArithI[sa] = resultI;
+							triArith[so + 1] = 1; triArithI[so + 1] = 0;
+							arTrig[so] = '*';
+						}
+					}
+				}
+			}
 			so++;
 		}
 	}
 	char func[DIM] = "";
 	int lo = 0;
+	result1 = 0;
+	result2 = 0;
+	double resRank = 0;
 	for (j = 0; j < c; j++) {
 		if (j == 0) {
-			result1 = triArith[0];
-			result2 = triArithI[0];
+			if (signalVectors[0] != -1) {
+				convert2Vector(vectors[signalVectors[0]]);
+				int n = 0;
+				int m = 0;
+				for (n = 0; n < numVectorLines; n++) {
+					for (m = 0; m < numVectorCols; m++) {
+						vector1_R[n][m] = vectorR[n][m];
+						vector1_I[n][m] = vectorI[n][m];
+					}
+				}
+				numVectorCols1 = numVectorCols;
+				numVectorLines1 = numVectorLines;
+				countVectors++;
+				signalVectors[0] = countVectors;
+				sprintf(vectors[countVectors], "%s", convertVector2String(vector1_R, vector1_I, numVectorLines1, numVectorCols1));
+				countVectors++;
+				sprintf(matrixResult, "%s", convertVector2String(vector1_R, vector1_I, numVectorLines1, numVectorCols1));
+			}
+			else {
+
+				result1 = triArith[0];
+				result2 = triArithI[0];
+			}
 		}
 		if (arTrig[j] == '^') {
-			exponentiation(result1, result2, triArith[j + 1], triArithI[j + 1], 1);
-			result1 = resultR;
-			result2 = resultI;
+			if (signalVectors[j + 1] == -1 && signalVectors[j] != -1) {
+				convert2Vector(vectors[signalVectors[j]]);
+				if (((int)triArith[j + 1] >= 0 || (int)triArith[j + 1] < -1) && (int)triArith[j + 1] != -7654321 && (int)triArith[j + 1] != -1234567) {
+					fmpowerm(vectorR, vectorI, res_vectorR, res_vectorI, (int)triArith[j + 1], numVectorLines, numVectorCols);
+				}
+				if ((int)triArith[j + 1] == -7654321) {
+					fmtranspose(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
+				}
+				if ((int)triArith[j + 1] == -1) {
+					fminverse(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
+				}
+				if ((int)triArith[j + 1] == -1234567) {
+					convert2Vector(vectors[signalVectors[j]]);
+					int n = 0;
+					int m = 0;
+					for (n = 0; n < numVectorLines; n++) {
+						for (m = 0; m < numVectorCols; m++) {
+							vector1_R[n][m] = vectorR[n][m];
+							vector1_I[n][m] = vectorI[n][m];
+						}
+					}
+					numVectorCols1 = numVectorCols;
+					numVectorLines1 = numVectorLines;
+					signalVectors[j] = -1;
+					signalVectors[j + 1] = -1;
+					triArithI[j] = 0;
+					triArith[j] = 0;
+					triArith[j + 1] = 0;
+					triArithI[j + 1] = 0;
+					resRank = resRank + (double)fmrank(numVectorLines1, numVectorCols1, vector1_R, vector1_I);
+				}
+				else {
+					countVectors++;
+					signalVectors[j] = countVectors;
+					sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
+					countVectors++;
+					triArith[j + 1] = 1;
+					triArithI[j + 1] = 0;
+					signalVectors[j + 1] = -1;
+					arTrig[j] = '*';
+					sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
+
+				}
+			}
+			else {
+				exponentiation(result1, result2, triArith[j + 1], triArithI[j + 1], 1);
+				result1 = resultR;
+				result2 = resultI;
+			}
 		}
 		if (arTrig[j] == '*') {
-			multiplication(result1, result2, triArith[j + 1], triArithI[j + 1]);
-			result1 = resultR;
-			result2 = resultI;
+			if (signalVectors[j + 1] != -1 && signalVectors[j] != -1 && signalVectors[j] != signalVectors[j + 1]) {
+				convert2Vector(matrixResult);
+				int n = 0;
+				int m = 0;
+				for (n = 0; n < numVectorLines; n++) {
+					for (m = 0; m < numVectorCols; m++) {
+						vector1_R[n][m] = vectorR[n][m];
+						vector1_I[n][m] = vectorI[n][m];
+					}
+				}
+				numVectorCols1 = numVectorCols;
+				numVectorLines1 = numVectorLines;
+				convert2Vector(vectors[signalVectors[j + 1]]);
+				fmmulm(numVectorLines, numVectorCols1, numVectorLines1, numVectorCols, vector1_R, vectorR, res_vectorR, vector1_I, vectorI, res_vectorI);
+				countVectors++;
+				signalVectors[j + 1] = countVectors;
+				sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+				countVectors++;
+				triArith[j] = 1;
+				triArithI[j] = 0;
+				signalVectors[j] = -1;
+				sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+
+			}
+			else {
+				if (signalVectors[j + 1] != -1 && signalVectors[j] == -1) {
+					convert2Vector(vectors[signalVectors[j + 1]]);
+					fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, triArith[j], vectorI, res_vectorI, triArithI[j]);
+					countVectors++;
+					signalVectors[j + 1] = countVectors;
+					sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+					countVectors++;
+					triArith[j] = 1;
+					triArithI[j] = 0;
+					signalVectors[j] = -1;
+					arTrig[j] = '*';
+					sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+				}
+				else {
+					if (signalVectors[j + 1] == -1 && signalVectors[j] != -1) {
+						convert2Vector(vectors[signalVectors[j]]);
+
+						fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, triArith[j + 1], vectorI, res_vectorI, triArithI[j + 1]);
+						countVectors++;
+						signalVectors[j + 1] = countVectors;
+						sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+						countVectors++;
+						triArith[j] = 1;
+						triArithI[j] = 0;
+						signalVectors[j] = -1;
+						arTrig[j] = '*';
+						sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+					}
+					else {
+						multiplication(result1, result2, triArith[j + 1], triArithI[j + 1]);
+						result1 = resultR;
+						result2 = resultI;
+					}
+				}
+			}
 		}
 		if (arTrig[j] == '/') {
-			division(result1, result2, triArith[j + 1], triArithI[j + 1]);
-			result1 = resultR;
-			result2 = resultI;
+			if (signalVectors[j + 1] == -1 && signalVectors[j] != -1) {
+				convert2Vector(matrixResult);
+				division(1.0, 0.0, triArith[j + 1], triArithI[j + 1]);
+				fmmulr(numVectorLines, numVectorCols, vector1_R, res_vectorR, resultR, vector1_I, res_vectorI, resultI);
+				countVectors++;
+				signalVectors[j + 1] = countVectors;
+				sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+				countVectors++;
+				triArith[j] = 1;
+				triArithI[j] = 0;
+				signalVectors[j] = -1;
+				arTrig[j] = '*';
+				sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+			}
+			else {
+				if (signalVectors[j + 1] != -1 && signalVectors[j] != -1) {
+					convert2Vector(vectors[signalVectors[j]]);
+					int n = 0;
+					int m = 0;
+					for (n = 0; n < numVectorLines; n++) {
+						for (m = 0; m < numVectorCols; m++) {
+							vector1_R[n][m] = vectorR[n][m];
+							vector1_I[n][m] = vectorI[n][m];
+						}
+					}
+					numVectorCols1 = numVectorCols;
+					numVectorLines1 = numVectorLines;
+					convert2Vector(vectors[signalVectors[j + 1]]);
+					if (fmdivm(numVectorLines, numVectorCols1, numVectorLines1, numVectorCols, vector1_R, vectorR, vector1_I, vectorI)) {
+						triArith[j] = resultR; triArithI[j] = resultI;
+						signalVectors[j + 1] = -1;
+						signalVectors[j] = -1;
+						result1 = resultR;
+						result2 = resultI;
+					}
+					else {
+						printf("\nError: The quotient of matrices is not consistent over all matrices members.");
+					}
+				}
+				else {
+					division(result1, result2, triArith[j + 1], triArithI[j + 1]);
+					result1 = resultR;
+					result2 = resultI;
+				}
+			}
 		}
 		if (arTrig[j] == '-') {
-			subtraction(result1, result2, triArith[j + 1], triArithI[j + 1]);
-			result1 = resultR;
-			result2 = resultI;
+			if (signalVectors[j + 1] != -1 && signalVectors[j] != -1 && signalVectors[j] != signalVectors[j + 1]) {
+				convert2Vector(matrixResult);
+				int n = 0;
+				int m = 0;
+				for (n = 0; n < numVectorLines; n++) {
+					for (m = 0; m < numVectorCols; m++) {
+						vector1_R[n][m] = vectorR[n][m];
+						vector1_I[n][m] = vectorI[n][m];
+					}
+				}
+				numVectorCols1 = numVectorCols;
+				numVectorLines1 = numVectorLines;
+				convert2Vector(vectors[signalVectors[j + 1]]);
+				fmsubt(numVectorLines, numVectorCols, vector1_R, vectorR, res_vectorR, vector1_I, vectorI, res_vectorI);
+				countVectors++;
+				signalVectors[j + 1] = countVectors;
+				sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+				countVectors++;
+				signalVectors[j] = -1;
+				sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+
+			}
+			else {
+				subtraction(result1, result2, triArith[j + 1], triArithI[j + 1]);
+				result1 = resultR;
+				result2 = resultI;
+			}
 		}
 		if (arTrig[j] == '+') {
-			sum(result1, result2, triArith[j + 1], triArithI[j + 1]);
-			result1 = resultR;
-			result2 = resultI;
+			if (signalVectors[j + 1] != -1 && signalVectors[j] != -1) {
+				convert2Vector(matrixResult);
+				int n = 0;
+				int m = 0;
+				for (n = 0; n < numVectorLines; n++) {
+					for (m = 0; m < numVectorCols; m++) {
+						vector1_R[n][m] = vectorR[n][m];
+						vector1_I[n][m] = vectorI[n][m];
+					}
+				}
+				numVectorCols1 = numVectorCols;
+				numVectorLines1 = numVectorLines;
+				convert2Vector(vectors[signalVectors[j + 1]]);
+				fmsum(numVectorLines, numVectorCols, vector1_R, vectorR, res_vectorR, vector1_I, vectorI, res_vectorI);
+				countVectors++;
+				signalVectors[j + 1] = countVectors;
+				sprintf(vectors[countVectors], "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+				countVectors++;
+				signalVectors[j] = -1;
+				triArith[j] = 1;
+				triArithI[j] = 0;
+				sprintf(matrixResult, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines1, numVectorCols1));
+			}
+			if (signalVectors[j + 1] != -1 && signalVectors[j] == -1) {
+				convert2Vector(vectors[signalVectors[j + 1]]);
+				signalVectors[j + 1] = countVectors;
+				sprintf(vectors[countVectors], "%s", convertVector2String(vectorR, vectorI, numVectorLines, numVectorCols));
+				countVectors++;
+				triArith[j] = 1;
+				triArithI[j] = 0;
+				signalVectors[j] = -1;
+				arTrig[j] = '*';
+				sprintf(matrixResult, "%s", convertVector2String(vectorR, vectorI, numVectorLines, numVectorCols));
+			}
+			else {
+				if (signalVectors[j + 1] == -1 && signalVectors[j] != -1) {
+					convert2Vector(vectors[signalVectors[j]]);
+					countVectors++;
+					signalVectors[j + 1] = countVectors;
+					sprintf(vectors[countVectors], "%s", convertVector2String(vectorR, vectorI, numVectorLines, numVectorCols));
+					countVectors++;
+					triArith[j] = 1;
+					triArithI[j] = 0;
+					signalVectors[j] = -1;
+					arTrig[j] = '*';
+					sprintf(matrixResult, "%s", convertVector2String(vectorR, vectorI, numVectorLines, numVectorCols));
+				}
+				else {
+					sum(result1, result2, triArith[j + 1], triArithI[j + 1]);
+					result1 = resultR;
+					result2 = resultI;
+				}
+			}
 		}
 	}
 	resultR = result1;
 	resultI = result2;
-	round_complex();
 	result1 = resultR;
 	result2 = resultI;
 	return result1;
@@ -999,23 +1483,49 @@ double arithSolver(char trigon1[DIM], double result) {
 			}
 			number2[y] = '\0';
 			ampl[n] = convertToNumber(number2);
-			ampl[n] = ans[(int)ampl[n]];
 			amplI[n] = convertToNumber(number2);
-			amplI[n] = ansI[(int)amplI[n]];
-			complex = 2;
-			y++;
-			if (number2[y] == 'E') {
-				number2[0] = '1';
-				j = 1;
-				while (number2[y] != '\0') {
-					number2[j] = number2[y];
-					j++; y++;
+			if (strlen(ansMatrices[(int)ampl[n]]) == 0) {
+				ampl[n] = ans[(int)ampl[n]];
+				amplI[n] = ansI[(int)amplI[n]];
+				complex = 2;
+				y++;
+				if (number2[y] == 'E') {
+					number2[0] = '1';
+					j = 1;
+					while (number2[y] != '\0') {
+						number2[j] = number2[y];
+						j++; y++;
+					}
+					number2[j] = '\0';
+					ampl[n] = ampl[n] * convertToNumber(number2);
 				}
-				number2[j] = '\0';
-				ampl[n] = ampl[n] * convertToNumber(number2);
+				number2[0] = '\0';
 			}
-			number2[0] = '\0';
+			else {
+
+				convert2Vector(ansMatrices[(int)ampl[n]]);
+				y = y + 2;
+				if (number2[y] == 'E') {
+					number2[0] = '1';
+					j = 1;
+					while (number2[y] != '\0') {
+						number2[j] = number2[y];
+						j++; y++;
+					}
+					number2[j] = '\0';
+					double expValue = convertToNumber(number2);
+					double res_vectorR[dim][dim], res_vectorI[dim][dim];
+					char answerString[DIM] = "";
+					fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, expValue, vectorI, res_vectorI, 0.0);
+					sprintf(answerString, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
+					convert2Vector(answerString);
+
+				}
+				number2[0] = '\0';
+				check4Vector = 2;
+			}
 		}
+
 		if (number2[0] == '_'&&number2[1] == '#') {
 			res = 1;
 			for (y = 0; number2[y + 2] != '\0'&&number2[y + 2] != 'E'; y++) {
@@ -1023,21 +1533,49 @@ double arithSolver(char trigon1[DIM], double result) {
 			}
 			number2[y] = '\0';
 			ampl[n] = convertToNumber(number2);
-			ampl[n] = ans[(int)ampl[n]] * -1;
 			amplI[n] = convertToNumber(number2);
-			amplI[n] = ansI[(int)amplI[n]] * -1;
-			y = y + 2;
-			if (number2[y] == 'E') {
-				number2[0] = '1';
-				j = 1;
-				while (number2[y] != '\0') {
-					number2[j] = number2[y];
-					j++; y++;
+			if (strlen(ansMatrices[(int)ampl[n]]) == 0) {
+				ampl[n] = ans[(int)ampl[n]] * -1;
+				amplI[n] = ansI[(int)amplI[n]] * -1;
+				y = y + 2;
+				if (number2[y] == 'E') {
+					number2[0] = '1';
+					j = 1;
+					while (number2[y] != '\0') {
+						number2[j] = number2[y];
+						j++; y++;
+					}
+					number2[j] = '\0';
+					ampl[n] = ampl[n] * convertToNumber(number2);
 				}
-				number2[j] = '\0';
-				ampl[n] = ampl[n] * convertToNumber(number2);
+				number2[0] = '\0';
 			}
-			number2[0] = '\0';
+			else {
+
+				convert2Vector(ansMatrices[(int)ampl[n]]);
+				double res_vectorR[dim][dim], res_vectorI[dim][dim];
+				char answerString[DIM] = "";
+				fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, -1.0, vectorI, res_vectorI, 0.0);
+				sprintf(answerString, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
+				convert2Vector(answerString);
+				check4Vector = 2;
+				y = y + 2;
+				if (number2[y] == 'E') {
+					number2[0] = '1';
+					j = 1;
+					while (number2[y] != '\0') {
+						number2[j] = number2[y];
+						j++; y++;
+					}
+					number2[j] = '\0';
+					double expValue = convertToNumber(number2);
+					fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, expValue, vectorI, res_vectorI, 0.0);
+					sprintf(answerString, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
+					convert2Vector(answerString);
+				}
+				number2[0] = '\0';
+
+			}
 		}
 		sif = 0;
 		int df = j;
@@ -1088,6 +1626,9 @@ double arithSolver(char trigon1[DIM], double result) {
 				}
 			}
 			processVariable(number2);
+			ampl[n] = resultR;
+			amplI[n] = resultI;
+
 			if (resultR != 0) {
 				ampl[n] = resultR;
 				if (sign == 1) {
@@ -1117,8 +1658,10 @@ double arithSolver(char trigon1[DIM], double result) {
 					}
 				}
 				processVariable(number2);
+
 				ampl[n] = resultR;
 				amplI[n] = resultI;
+
 				if (sign == 1) {
 					sign = 0;
 					ampl[n] = ampl[n] * -1;
@@ -1212,20 +1755,37 @@ double arithSolver(char trigon1[DIM], double result) {
 			ampl[n] = (-1)*(M_E);
 		}
 		if (number2[0] == 'r'&&number2[1] == 'e'&&number2[2] == 's' || number2[0] == '['&&number2[1] == 'r'&&number2[2] == 'e'&&number2[3] == 's') {
-			ampl[n] = ansRV;
-			amplI[n] = ansIV;
-			if (equationSolverRunning || solverRunning) {
-				ampl[n] = xValuesR;
-				amplI[n] = xValuesI;
+			if (previousAnsType == 0) {
+				ampl[n] = ansRV;
+				amplI[n] = ansIV;
+				if (equationSolverRunning || solverRunning) {
+					ampl[n] = xValuesR;
+					amplI[n] = xValuesI;
+				}
+			}
+			else {
+				convert2Vector(saveMatrixAns);
+				check4Vector = 2;
 			}
 			complex = 2;
 		}
 		if (number2[0] == '_'&&number2[1] == 'r'&&number2[2] == 'e'&&number2[3] == 's' || number2[0] == '['&&number2[1] == '_'&&number2[2] == 'r'&&number2[3] == 'e'&&number2[4] == 's') {
-			ampl[n] = ansRV * -1;
-			amplI[n] = ansIV * -1;
-			if (equationSolverRunning || solverRunning) {
-				ampl[n] = xValuesR * -1;
-				amplI[n] = xValuesI * -1;
+			if (previousAnsType == 0) {
+				ampl[n] = ansRV * -1;
+				amplI[n] = ansIV * -1;
+				if (equationSolverRunning || solverRunning) {
+					ampl[n] = xValuesR * -1;
+					amplI[n] = xValuesI * -1;
+				}
+			}
+			else {
+				convert2Vector(saveMatrixAns);
+				double res_vectorR[dim][dim], res_vectorI[dim][dim];
+				char answerString[DIM] = "";
+				fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, -1.0, vectorI, res_vectorI, 0.0);
+				sprintf(answerString, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
+				convert2Vector(answerString);
+				check4Vector = 2;
 			}
 			complex = 2;
 		}
@@ -1297,7 +1857,7 @@ double arithSolver(char trigon1[DIM], double result) {
 					else {
 						if (a == 2) {
 							while (a != 1) {
-								if ((ampl[so] < 0 || amplI[so] < 0) && !equationSolverRunning) {
+								if (ampl[so] < 0 || (amplI[so] < 0 && ampl[so] == 0)) {
 									sig[so] = 0;
 								}
 								else { sig[so] = 1; }
@@ -1325,7 +1885,7 @@ double arithSolver(char trigon1[DIM], double result) {
 		else {
 			if (amp[so] == '^'&&amp[so + 1] != '^') {
 				while (amp[so] == '^') {
-					if ((ampl[sa] < 0 || amplI[sa] < 0) && !equationSolverRunning) {
+					if (ampl[sa] < 0 || (amplI[sa] < 0 && ampl[sa] == 0)) {
 						sig[sa] = 0;
 					}
 					else { sig[sa] = 1; }
@@ -1443,7 +2003,6 @@ double arithSolver(char trigon1[DIM], double result) {
 	}
 	resultR = result1;
 	resultI = result2;
-	round_complex();
 	result1 = resultR;
 	result2 = resultI;
 	return result1;
@@ -2106,7 +2665,6 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 	result2 = result2 * jg;
 	resultR = result1;
 	resultI = result2;
-	round_complex();
 	if (verbose == 1 && solving) {
 		puts("\nResult of function processing:\n");
 		if (resultR > 0 && resultI > 0) {

@@ -418,22 +418,24 @@ void rootsToPolynomial(char rootsF[DIM]) {
 							}
 						}
 						else {
-							multiplication(polynomialRF[pol], polynomialIF[pol], lastDividerR,
-								lastDividerI);
-							char toSimplify[100] = "";
-							sprintf(toSimplify, convertToString("%G+%Gi"), resultR, resultI);
-							if (isContained("E", toSimplify)) {
-								sprintf(toSimplify, convertToString("%f+%fi"), resultR, resultI);
-							}
-							if (isContained("-", toSimplify)) {
-								replace("-", "_", toSimplify);
-								sprintf(toSimplify, "%s", expressionF);
-							}
-							math_processor(toSimplify);
-							sprintf(Report, convertToString("%s(%G+%Gi)"), report, resultR,
-								resultI);
-							if (isContained("E", Report)) {
-								sprintf(Report, convertToString("%s(%f+%fi)"), report, resultR, resultI);
+							if (exp == 0) {
+								multiplication(polynomialRF[pol], polynomialIF[pol], lastDividerR,
+									lastDividerI);
+								char toSimplify[100] = "";
+								sprintf(toSimplify, convertToString("%G+%Gi"), resultR, resultI);
+								if (isContained("E", toSimplify)) {
+									sprintf(toSimplify, convertToString("%f+%fi"), resultR, resultI);
+								}
+								if (isContained("-", toSimplify)) {
+									replace("-", "_", toSimplify);
+									sprintf(toSimplify, "%s", expressionF);
+								}
+								math_processor(toSimplify);
+								sprintf(Report, convertToString("%s(%G+%Gi)"), report, resultR,
+									resultI);
+								if (isContained("E", Report)) {
+									sprintf(Report, convertToString("%s(%f+%fi)"), report, resultR, resultI);
+								}
 							}
 						}
 					}
@@ -1261,6 +1263,7 @@ double equationSolver(char equation[DIM]) {
 							SolutionR[solvedIndex] = resultR; SolutionI[solvedIndex] = resultI;
 							solvedIndex++;
 						}
+
 					}
 
 					if (maxExponent > 1 || maxExponent == maxMaxExponent) {
@@ -1562,6 +1565,43 @@ double equationSolver(char equation[DIM]) {
 										SummDerivateR = resultR; SummDerivateI = resultI;
 										division(SummatoryR, SummatoryI, SummDerivateR, SummDerivateI);
 										subtraction(xValuesR, xValuesI, resultR, resultI);
+										RootR[g] = resultR;
+										RootI[g] = resultI;
+										double rootR1 = resultR, rootI1 = resultI;
+										double rootR2 = expressionCoefR[1], rootI2 = expressionCoefI[1];
+										subtraction(0.0, 0.0, rootR2, rootI2);
+
+										rootR2 = resultR;
+										rootI2 = resultI;
+										int u = 0;
+										while (u < maxExponent) {
+											if (u != g) {
+												subtraction(rootR2, rootI2, RootR[u], RootI[u]);
+												rootR2 = resultR; rootI2 = resultI;
+											}
+											u++;
+										}
+										double rootR3 = expressionCoefR[maxExponent], rootI3 = expressionCoefI[maxExponent];
+										subtraction(0.0, 0.0, rootR3, rootI3);
+										rootR3 = resultR;
+										rootI3 = resultI;
+										u = 0;
+										double prodR = 1, prodI = 0;
+										while (u < maxExponent) {
+											if (u != g) {
+												subtraction(0.0, 0.0, RootR[u], RootI[u]);
+												multiplication(prodR, prodI, resultR, resultI);
+												prodR = resultR; prodI = resultI;
+											}
+											u++;
+										}
+										division(rootR3, rootI3, prodR, prodI);
+										rootR3 = resultR;
+										rootI3 = resultI;
+
+										resultR = rootR1 + rootR2 + rootR3;
+										resultI = rootI1 + rootI2 + rootI3;
+										division(resultR, resultI, 3.0, 0.0);
 										RootR[g] = resultR;
 										RootI[g] = resultI;
 									}

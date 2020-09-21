@@ -241,6 +241,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		unitConversions();
 		puts("");
 	}
+
 	if (isCommand(arithTrig, "microeconomicscalculations")) {
 		command = true;
 		microeconomicsCalculations();
@@ -1352,6 +1353,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		while (r < rf) {
 			ans[r] = 0;
 			ansI[r] = 0;
+			sprintf(ansMatrices[r], "");
 			r++;
 		}
 		rf = 0;
@@ -1454,33 +1456,48 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			fprintf(fout, "\nResult value\n\n");
 			r = 0;
 			while (r < rf) {
-				if (ans[r] > 0 && ansI[r] > 0) {
-					printf("#%d=%G+%Gi\n", r, ans[r], ansI[r]);
-					fprintf(fout, "#%d=%G+%Gi\n", r, ans[r], ansI[r]);
+				if (strlen(ansMatrices[r]) == 0) {
+					if (ans[r] > 0 && ansI[r] > 0) {
+						printf("#%d=%G+%Gi\n", r, ans[r], ansI[r]);
+						fprintf(fout, "#%d=%G+%Gi\n", r, ans[r], ansI[r]);
+					}
+					if (ans[r] > 0 && ansI[r] < 0) {
+						printf("#%d=%G%Gi\n", r, ans[r], ansI[r]);
+						fprintf(fout, "#%d=%G%Gi\n", r, ans[r], ansI[r]);
+					}
+					if (ans[r] < 0 && ansI[r] > 0) {
+						printf("#%d=%G+%Gi\n", r, ans[r], ansI[r]);
+						fprintf(fout, "#%d=%G+%Gi\n", r, ans[r], ansI[r]);
+					}
+					if (ans[r] < 0 && ansI[r] < 0) {
+						printf("#%d=%G%Gi\n", r, ans[r], ansI[r]);
+						fprintf(fout, "#%d=%G%Gi\n", r, ans[r], ansI[r]);
+					}
+					if (ans[r] == 0 && ansI[r] == 0) {
+						printf("#%d=%G\n", r, ans[r]);
+						fprintf(fout, "#%d=%G\n", r, ans[r]);
+					}
+					if (ans[r] == 0 && ansI[r] != 0) {
+						printf("#%d=%Gi\n", r, ansI[r]);
+						fprintf(fout, "#%d=%Gi\n", r, ansI[r]);
+					}
+					if (ans[r] != 0 && ansI[r] == 0) {
+						printf("#%d=%G\n", r, ans[r]);
+						fprintf(fout, "#%d=%G\n", r, ans[r]);
+					}
 				}
-				if (ans[r] > 0 && ansI[r] < 0) {
-					printf("#%d=%G%Gi\n", r, ans[r], ansI[r]);
-					fprintf(fout, "#%d=%G%Gi\n", r, ans[r], ansI[r]);
-				}
-				if (ans[r] < 0 && ansI[r] > 0) {
-					printf("#%d=%G+%Gi\n", r, ans[r], ansI[r]);
-					fprintf(fout, "#%d=%G+%Gi\n", r, ans[r], ansI[r]);
-				}
-				if (ans[r] < 0 && ansI[r] < 0) {
-					printf("#%d=%G%Gi\n", r, ans[r], ansI[r]);
-					fprintf(fout, "#%d=%G%Gi\n", r, ans[r], ansI[r]);
-				}
-				if (ans[r] == 0 && ansI[r] == 0) {
-					printf("#%d=%G\n", r, ans[r]);
-					fprintf(fout, "#%d=%G\n", r, ans[r]);
-				}
-				if (ans[r] == 0 && ansI[r] != 0) {
-					printf("#%d=%Gi\n", r, ansI[r]);
-					fprintf(fout, "#%d=%Gi\n", r, ansI[r]);
-				}
-				if (ans[r] != 0 && ansI[r] == 0) {
-					printf("#%d=%G\n", r, ans[r]);
-					fprintf(fout, "#%d=%G\n", r, ans[r]);
+				else {
+					convert2Vector(ansMatrices[r]);
+					char report[DIM] = "";
+					for (i = 0; i < numVectorLines; i++) {
+						for (int k = 0; k < numVectorCols; k++) {
+							sprintf(report, "%s%G+%Gi ", report, vectorR[i][k], vectorI[i][k]);
+						}
+						sprintf(report, "%s\n", report);
+					}
+					printf("#%d=\n", r);
+					puts(report);
+					fprintf(fout, "#%d=\n%s", r, report);
 				}
 				r++;
 			}
@@ -1697,7 +1714,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.9  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.0  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(thours, tminutes, tseconds);
 									}
@@ -1896,7 +1913,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.9  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.0  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(thours, tminutes, tseconds);
 									}
@@ -2110,7 +2127,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.9 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.0 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n  %02d:%02d:%02d                   \n", thours, tminutes, tseconds);
@@ -2318,7 +2335,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.0.9 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.0 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(Hours, Minutes, Seconds);
 										printf("\n\n    %02d:%02d:%02d                   \n\n", thours, tminutes, tseconds);
