@@ -545,7 +545,9 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				}
 			}
 			else {
-				printf("\n==> Invalid string name! Only letters from latin alphabet and digits 0-9 can be used. <==\n\n");
+				if (isFromMain == 1) {
+					printf("\n==> Invalid string name! Only letters from latin alphabet and digits 0-9 can be used. <==\n\n");
+				}
 				fprintf(fout, "\n==> Invalid string name! Only letters from latin alphabet and digits 0-9 can be used. <==\n\n");
 				arithTrig[0] = '\0';
 			}
@@ -689,7 +691,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 			}
 			sprintf(arithTrig, "%s", saveArithTr);
 			if (isContained("\\", arithTrig) && isContained(";", arithTrig)) {
-				matrixMode = 2;
+				matrixMode = 1;
 				vectorType = 2;
 				int initialCountSplits = 0;
 				char saveSplitResult[200][200];
@@ -716,6 +718,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				int l = 0;
 				int countLines = countSplits;
 				double vectorR[100], vectorI[100];
+				int previousNumCols = 0;
 				while (l <= countLines) {
 					int initialCountSplits = 0;
 					int i = 0;
@@ -729,6 +732,20 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					}
 					countSplits = countOccurrences("\\", lines[l]);
 					int N = countSplits + 1;
+					if (previousNumCols == 0) {
+						previousNumCols = N;
+					}
+					else {
+						if (N != previousNumCols) {
+							if (isFromMain == 1) {
+								printf("\n==> Error: You are probably missing some members of the matrix. <==\n\n");
+							}
+							fprintf(fout, "\n==> Error: You are probably missing some members of the matrix. <==\n\n");
+							validVar = 0;
+							verify = 0;
+							break;
+						}
+					}
 					split("\\", lines[l]);
 					i = 0;
 
@@ -753,16 +770,17 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					}
 					l++;
 				}
-				if (hk != 0) {
+				if (hk != 0 && verify == 1) {
 					sprintf(expressionF, "%s", vectorString);
 					sprintf(matrixResult, "%s", vectorString);
 					variableController(revariable, 0);
 					sprintf(expressionF, "");
 				}
+				sprintf(matrixResult, "%s", vectorString);
 			}
 			else {
 				if (isContained("\\", arithTrig) && !isContained(";", arithTrig)) {
-					matrixMode = 2;
+					matrixMode = 1;
 					vectorType = 1;
 					double vectorR[100], vectorI[100];
 					int initialCountSplits = 0;
@@ -797,16 +815,17 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						}
 						i++;
 					}
-					if (hk != 0) {
+					if (hk != 0 && verify == 1) {
 						sprintf(expressionF, "%s", vectorString);
 						sprintf(matrixResult, "%s", vectorString);
 						variableController(revariable, 0);
 						sprintf(expressionF, "");
 					}
+					sprintf(matrixResult, "%s", vectorString);
 				}
 				else {
 					if (!isContained("\\", arithTrig) && isContained(";", arithTrig)) {
-						matrixMode = 2;
+						matrixMode = 1;
 						vectorType = 1;
 						double vectorR[100], vectorI[100];
 						int initialCountSplits = 0;
@@ -841,12 +860,13 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							}
 							i++;
 						}
-						if (hk != 0) {
+						if (hk != 0 && verify == 1) {
 							sprintf(expressionF, "%s", vectorString);
 							sprintf(matrixResult, "%s", vectorString);
 							variableController(revariable, 0);
 							sprintf(expressionF, "");
 						}
+						sprintf(matrixResult, "%s", vectorString);
 					}
 				}
 
@@ -1030,13 +1050,13 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						if (strlen(matrixResult) == 0 && strlen(saveMatrixAns) > 0) {
 							matrixMode = 1;
 							convert2Vector(saveMatrixAns);
-							if ((int)resultRM == -7654321) {
+							if ((int)resultRM == -7654321 || (int)resultRM == -7654320) {
 								fmtranspose(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
 							}
 							if ((int)resultRM == -1) {
 								fminverse(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
 							}
-							if (((int)resultRM >= 0 || (int)resultRM < -1) && ((int)resultRM) != -7654321 && ((int)resultRM) != -1234567) {
+							if (((int)resultRM >= 0 || (int)resultRM < -1) && ((int)resultRM) != -7654321 && ((int)resultRM) != -7654320 && ((int)resultRM) != -1234567) {
 								fmpowerm(vectorR, vectorI, res_vectorR, res_vectorI, (int)resultRM, numVectorLines, numVectorCols);
 							}
 							if ((int)resultRM == -1234567) {
@@ -1120,7 +1140,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 									result2 = resultI;
 								}
 								else {
-									printf("\nError: The quotient of matrices is not consistent over all matrices members.");
+									if (isFromMain == 1) {
+										printf("\nError: The quotient of matrices is not consistent over all matrices members.");
+									}
 								}
 							}
 
@@ -1180,21 +1202,20 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				result1 = resultR;
 				result2 = resultI;
 				resultFI = result2;
-				if (isFromSolveNow == 0) {
-					ans[rf] = result1;
-					ansI[rf] = result2;
-					ansRV = result1;
-					ansIV = result2;
-					if (strlen(matrixResult) > 0) {
-						previousAnsType = 1;
-						sprintf(saveMatrixAns, "%s", matrixResult);
-						sprintf(ansMatrices[rf], "%s", matrixResult);
-					}
-					else {
-						previousAnsType = 0;
-						sprintf(saveMatrixAns, "");
-						sprintf(ansMatrices[rf], "");
-					}
+
+				ans[rf] = result1;
+				ansI[rf] = result2;
+				ansRV = result1;
+				ansIV = result2;
+				if (strlen(matrixResult) > 0) {
+					previousAnsType = 1;
+					sprintf(saveMatrixAns, "%s", matrixResult);
+					sprintf(ansMatrices[rf], "%s", matrixResult);
+				}
+				else {
+					previousAnsType = 0;
+					sprintf(saveMatrixAns, "");
+					sprintf(ansMatrices[rf], "");
 				}
 				if (var == 1) {
 
@@ -1229,8 +1250,13 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						}
 						sprintf(expressionF, "%s", matrixResult);
 					}
-					if (matrixMode == 0 || matrixMode == 2 || strlen(matrixResult) > 0) {
+					if ((matrixMode == 0 || matrixMode == 2 || strlen(matrixResult) > 0) && verify == 1) {
 						variableController(revariable, result1);
+					}
+				}
+				if (var == 1) {
+					if (isContained(";", matrixResult) || isContained("\\", matrixResult)) {
+						calcNow(revariable, 0, 0);
 					}
 				}
 				if (valGet == 0 && feedbackValidation == 0) {
@@ -1261,12 +1287,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							fprintf(fout, "#%d=\n%s", rf, report);
 							fclose(fout);
 						}
-
-						if (isFromSolveNow == 0) {
-							rf++;
-						}
 					}
-					if (matrixMode == 0 || (matrixMode == 2 && var != 1)) {
+
+					if (matrixMode == 0 || (matrixMode == 2)) {
 						if (dp == -1) {
 							if (isFromMain == 1) {
 								if (result1 > 0 && result2 > 0) {
@@ -1415,6 +1438,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						vectorR[0][0] = result1; vectorI[0][0] = result2;
 					}
 					else {
+
 						convert2Vector(matrixResult);
 						numLines = numVectorLines;
 						numCols = numVectorCols;
@@ -1436,7 +1460,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							for (w = 0; w < numLines; w++) {
 								for (y = 0; y < numCols; y++) {
 									if (numLines > 1 || numCols > 1) {
-										printf("\nm(%d,%d)=\n", w, y);
+										if (isFromMain == 1) {
+											printf("\nm(%d,%d)=\n", w, y);
+										}
 										open = fopen(path, "a+");
 										fputs("", open);
 										fprintf(open, "\nm(%d,%d)=\n", w, y);
@@ -1559,7 +1585,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							for (w = 0; w < numLines; w++) {
 								for (y = 0; y < numCols; y++) {
 									if (numLines > 1 || numCols > 1) {
-										printf("\nm(%d,%d)=\n", w, y);
+										if (isFromMain == 1) {
+											printf("\nm(%d,%d)=\n", w, y);
+										}
 										open = fopen(path, "a+");
 										fputs("", open);
 										fprintf(open, "\nm(%d,%d)=\n", w, y);
@@ -1656,7 +1684,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							}
 						}
 					}
-					if (isFromSolveNow == 0) {
+					if (isFromSolveNow == 0 && verify == 1 && verified == 1) {
 						rf++;
 					}
 

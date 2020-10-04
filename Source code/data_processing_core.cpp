@@ -4847,7 +4847,7 @@ void convert2Vector(char arithTrig[DIM]) {
 			while (i <= countSplits) {
 				char real[DIM] = "", imag[DIM] = "";
 				int y = 0;
-				while (value[i][y] != ' ') {
+				while (value[i][y] != ' '&&value[i][y] != '\0') {
 					real[y] = value[i][y];
 					y++;
 				}
