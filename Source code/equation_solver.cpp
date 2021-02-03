@@ -1053,12 +1053,28 @@ double equationSolver(char equation[DIM]) {
 									if (isEqual(forSummatory, forExpressionMax)) {
 										lastRootR = abs(h);
 										RootR[g] = h; RootI[g] = 0;
-										SolutionR[solvedIndex] = RootR[g];
-										SolutionI[solvedIndex] = RootI[g];
-										solvedIndex++;
-										saveExpressionCoefR_Max = saveExpressionCoefR_Max / h;
-										saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
-										g++;
+										xValuesR = RootR[g];
+										xValuesI = RootI[g];
+										int rf = 0;
+										double SummatoryR = 0, SummatoryI = 0;
+										while (rf < maxExponent) {
+											exponentiation(xValuesR, xValuesI, (double)maxExponent - rf, 0.0, 1);
+											multiplication(expressionCoefR[rf], expressionCoefI[rf], resultR, resultI);
+											SummatoryR = SummatoryR + resultR;
+											SummatoryI = SummatoryI + resultI;
+											rf++;
+										}
+										sum(SummatoryR, SummatoryI, expressionCoefR[rf], expressionCoefI[rf]);
+										SummatoryR = resultR; SummatoryI = resultI;
+										if (abs(SummatoryR) < 0.1&&abs(SummatoryI) < 0.1) {
+											SolutionR[solvedIndex] = RootR[g];
+											SolutionI[solvedIndex] = RootI[g];
+											solvedIndex++;
+											saveExpressionCoefR_Max = saveExpressionCoefR_Max / h;
+											saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
+											g++;
+										}
+										
 									}
 									h = h * -1;
 									rf = 0;
@@ -1074,12 +1090,28 @@ double equationSolver(char equation[DIM]) {
 									if (isEqual(forSummatory, forExpressionMax)) {
 										lastRootR = abs(h);
 										RootR[g] = h; RootI[g] = 0;
-										SolutionR[solvedIndex] = RootR[g];
-										SolutionI[solvedIndex] = RootI[g];
-										solvedIndex++;
-										saveExpressionCoefR_Max = saveExpressionCoefR_Max / h;
-										saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
-										g++;
+										xValuesR = RootR[g];
+										xValuesI = RootI[g];
+										int rf = 0;
+										double SummatoryR = 0, SummatoryI = 0;
+										while (rf < maxExponent) {
+											exponentiation(xValuesR, xValuesI, (double)maxExponent - rf, 0.0, 1);
+											multiplication(expressionCoefR[rf], expressionCoefI[rf], resultR, resultI);
+											SummatoryR = SummatoryR + resultR;
+											SummatoryI = SummatoryI + resultI;
+											rf++;
+										}
+										sum(SummatoryR, SummatoryI, expressionCoefR[rf], expressionCoefI[rf]);
+										SummatoryR = resultR; SummatoryI = resultI;
+										if (abs(SummatoryR) < 0.1&&abs(SummatoryI) < 0.1) {
+											SolutionR[solvedIndex] = RootR[g];
+											SolutionI[solvedIndex] = RootI[g];
+											solvedIndex++;
+											saveExpressionCoefR_Max = saveExpressionCoefR_Max / h;
+											saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
+											g++;
+										}
+										
 									}
 									h = h * -1;
 									z++;
@@ -1132,23 +1164,55 @@ double equationSolver(char equation[DIM]) {
 									sprintf(forSummatory, "%G", abs(SummatoryI));
 									if (isEqual(forSummatory, forExpressionMax)) {
 										RootR[g] = 0; RootI[g] = h;
-										SolutionR[solvedIndex] = RootR[g];
-										SolutionI[solvedIndex] = RootI[g];
-										solvedIndex++;
-										saveExpressionCoefR_Max = saveExpressionCoefR_Max / h;
-										saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
-										g++;
-									}
-									else {
-										sprintf(forSummatory, "%G", abs(SummatoryR));
-										if (isEqual(forSummatory, forExpressionMax) && abs(SummatoryI) < 1 && real == 1) {
-											RootR[g] = 0; RootI[g] = h;
+										xValuesR = RootR[g];
+										xValuesI = RootI[g];
+										int rf = 0;
+										double SummatoryR = 0, SummatoryI = 0;
+										while (rf < maxExponent) {
+											exponentiation(xValuesR, xValuesI, (double)maxExponent - rf, 0.0, 1);
+											multiplication(expressionCoefR[rf], expressionCoefI[rf], resultR, resultI);
+											SummatoryR = SummatoryR + resultR;
+											SummatoryI = SummatoryI + resultI;
+											rf++;
+										}
+										sum(SummatoryR, SummatoryI, expressionCoefR[rf], expressionCoefI[rf]);
+										SummatoryR = resultR; SummatoryI = resultI;
+										if (abs(SummatoryR) < 0.1&&abs(SummatoryI) < 0.1) {
 											SolutionR[solvedIndex] = RootR[g];
 											SolutionI[solvedIndex] = RootI[g];
 											solvedIndex++;
 											saveExpressionCoefR_Max = saveExpressionCoefR_Max / h;
 											saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
 											g++;
+										}
+										
+									}
+									else {
+										sprintf(forSummatory, "%G", abs(SummatoryR));
+										if (isEqual(forSummatory, forExpressionMax) && abs(SummatoryI) < 1 && real == 1) {
+											RootR[g] = 0; RootI[g] = h;
+											xValuesR = RootR[g];
+											xValuesI = RootI[g];
+											int rf = 0;
+											double SummatoryR = 0, SummatoryI = 0;
+											while (rf < maxExponent) {
+												exponentiation(xValuesR, xValuesI, (double)maxExponent - rf, 0.0, 1);
+												multiplication(expressionCoefR[rf], expressionCoefI[rf], resultR, resultI);
+												SummatoryR = SummatoryR + resultR;
+												SummatoryI = SummatoryI + resultI;
+												rf++;
+											}
+											sum(SummatoryR, SummatoryI, expressionCoefR[rf], expressionCoefI[rf]);
+											SummatoryR = resultR; SummatoryI = resultI;
+											if (abs(SummatoryR) < 0.1&&abs(SummatoryI) < 0.1) {
+												SolutionR[solvedIndex] = RootR[g];
+												SolutionI[solvedIndex] = RootI[g];
+												solvedIndex++;
+												saveExpressionCoefR_Max = saveExpressionCoefR_Max / h;
+												saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
+												g++;
+											}
+											
 										}
 									}
 									h = h * -1;
@@ -1164,23 +1228,55 @@ double equationSolver(char equation[DIM]) {
 									sprintf(forSummatory, "%G", abs(SummatoryI));
 									if (isEqual(forSummatory, forExpressionMax)) {
 										RootR[g] = 0; RootI[g] = h;
-										SolutionR[solvedIndex] = RootR[g];
-										SolutionI[solvedIndex] = RootI[g];
-										solvedIndex++;
-										saveExpressionCoefR_Max = saveExpressionCoefR_Max / h;
-										saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
-										g++;
-									}
-									else {
-										sprintf(forSummatory, "%G", abs(SummatoryR));
-										if (isEqual(forSummatory, forExpressionMax) && abs(SummatoryI) < 1 && real == 1) {
-											RootR[g] = 0; RootI[g] = h;
+										xValuesR = RootR[g];
+										xValuesI = RootI[g];
+										int rf = 0;
+										double SummatoryR = 0, SummatoryI = 0;
+										while (rf < maxExponent) {
+											exponentiation(xValuesR, xValuesI, (double)maxExponent - rf, 0.0, 1);
+											multiplication(expressionCoefR[rf], expressionCoefI[rf], resultR, resultI);
+											SummatoryR = SummatoryR + resultR;
+											SummatoryI = SummatoryI + resultI;
+											rf++;
+										}
+										sum(SummatoryR, SummatoryI, expressionCoefR[rf], expressionCoefI[rf]);
+										SummatoryR = resultR; SummatoryI = resultI;
+										if (abs(SummatoryR) < 0.1&&abs(SummatoryI) < 0.1) {
 											SolutionR[solvedIndex] = RootR[g];
 											SolutionI[solvedIndex] = RootI[g];
 											solvedIndex++;
 											saveExpressionCoefR_Max = saveExpressionCoefR_Max / h;
 											saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
 											g++;
+										}
+										
+									}
+									else {
+										sprintf(forSummatory, "%G", abs(SummatoryR));
+										if (isEqual(forSummatory, forExpressionMax) && abs(SummatoryI) < 1 && real == 1) {
+											RootR[g] = 0; RootI[g] = h;
+											xValuesR = RootR[g];
+											xValuesI = RootI[g];
+											int rf = 0;
+											double SummatoryR = 0, SummatoryI = 0;
+											while (rf < maxExponent) {
+												exponentiation(xValuesR, xValuesI, (double)maxExponent - rf, 0.0, 1);
+												multiplication(expressionCoefR[rf], expressionCoefI[rf], resultR, resultI);
+												SummatoryR = SummatoryR + resultR;
+												SummatoryI = SummatoryI + resultI;
+												rf++;
+											}
+											sum(SummatoryR, SummatoryI, expressionCoefR[rf], expressionCoefI[rf]);
+											SummatoryR = resultR; SummatoryI = resultI;
+											if (abs(SummatoryR) < 0.1&&abs(SummatoryI) < 0.1) {
+												SolutionR[solvedIndex] = RootR[g];
+												SolutionI[solvedIndex] = RootI[g];
+												solvedIndex++;
+												saveExpressionCoefR_Max = saveExpressionCoefR_Max / h;
+												saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
+												g++;
+											}
+											
 										}
 									}
 									h = h * -1;
@@ -1448,6 +1544,42 @@ double equationSolver(char equation[DIM]) {
 									subtraction(RootR[g], RootI[g], resultR, resultI);
 									RootR[g] = resultR;
 									RootI[g] = resultI;
+									if (g >= 1) {
+										double rootR1, rootI1, rootR2, rootI2;
+										multiplication(RootR[g - 1], RootI[g - 1], -1.0, 0.0);
+										rootR1 = resultR; rootI1 = resultI;
+										multiplication(RootR[g], RootI[g], -1.0, 0.0);
+										rootR2 = resultR; rootI2 = resultI;
+										double bR, bI, cR, cI;
+										sum(rootR1, rootI1, rootR2, rootI2);
+										bR = resultR; bI = resultI;
+										multiplication(rootR1, rootI1, rootR2, rootI2);
+										cR = resultR; cI = resultI;
+										multiplication(-1, 0, bR, bI);
+										double minusbR = resultR, minusbI = resultI;
+										multiplication(bR, bI, bR, bI);
+										double bRquad = resultR, bIquad = resultI;
+										multiplication(1.0, 0.0, cR, cI);
+										double acR = resultR, acI = resultI;
+										multiplication(2, 0, 1.0, 0.0);
+										double twoaR = resultR, twoaI = resultI;
+										multiplication(4, 0, acR, acI);
+										double fouracR = resultR, fouracI = resultI;
+										subtraction(bRquad, bIquad, fouracR, fouracI);
+										double radicandR = resultR, radicandI = resultI;
+										exponentiation(radicandR, radicandI, 0.5, 0, 1);
+										double sqrtR = resultR, sqrtI = resultI;
+										subtraction(minusbR, minusbI, sqrtR, sqrtI);
+										double minusR = resultR, minusI = resultI;
+										sum(minusbR, minusbI, sqrtR, sqrtI);
+										double plusR = resultR, plusI = resultI;
+										division(plusR, plusI, twoaR, twoaI);
+										double x1R = resultR, x1I = resultI;
+										division(minusR, minusI, twoaR, twoaI);
+										double x2R = resultR, x2I = resultI;
+										RootR[g - 1] = x1R; RootI[g - 1] = x1I;
+										RootR[g] = x2R; RootI[g] = x2I;
+									}
 								}
 								g++;
 							}
@@ -1565,43 +1697,6 @@ double equationSolver(char equation[DIM]) {
 										SummDerivateR = resultR; SummDerivateI = resultI;
 										division(SummatoryR, SummatoryI, SummDerivateR, SummDerivateI);
 										subtraction(xValuesR, xValuesI, resultR, resultI);
-										RootR[g] = resultR;
-										RootI[g] = resultI;
-										double rootR1 = resultR, rootI1 = resultI;
-										double rootR2 = expressionCoefR[1], rootI2 = expressionCoefI[1];
-										subtraction(0.0, 0.0, rootR2, rootI2);
-
-										rootR2 = resultR;
-										rootI2 = resultI;
-										int u = 0;
-										while (u < maxExponent) {
-											if (u != g) {
-												subtraction(rootR2, rootI2, RootR[u], RootI[u]);
-												rootR2 = resultR; rootI2 = resultI;
-											}
-											u++;
-										}
-										double rootR3 = expressionCoefR[maxExponent], rootI3 = expressionCoefI[maxExponent];
-										subtraction(0.0, 0.0, rootR3, rootI3);
-										rootR3 = resultR;
-										rootI3 = resultI;
-										u = 0;
-										double prodR = 1, prodI = 0;
-										while (u < maxExponent) {
-											if (u != g) {
-												subtraction(0.0, 0.0, RootR[u], RootI[u]);
-												multiplication(prodR, prodI, resultR, resultI);
-												prodR = resultR; prodI = resultI;
-											}
-											u++;
-										}
-										division(rootR3, rootI3, prodR, prodI);
-										rootR3 = resultR;
-										rootI3 = resultI;
-
-										resultR = rootR1 + rootR2 + rootR3;
-										resultI = rootI1 + rootI2 + rootI3;
-										division(resultR, resultI, 3.0, 0.0);
 										RootR[g] = resultR;
 										RootI[g] = resultI;
 									}

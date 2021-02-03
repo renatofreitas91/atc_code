@@ -48,6 +48,7 @@ void main(int argc, char *argv[]) {
 	}
 	if (continu == 1) {
 		system("title Advanced Trigonometry Calculator v2.1.0       ==) ATC is ready to process data. (==");
+
 		do {
 			sprintf(savePathF, "");
 			sprintf(atcPath, "%s", saveATCPath);
@@ -58,6 +59,8 @@ void main(int argc, char *argv[]) {
 			fflush(NULL);
 			tD = 0;
 			toSolve(rf);
+
+
 			if (argc < 2) {
 				sprintf(trigData, "");
 				Pressed = 0;
@@ -66,7 +69,32 @@ void main(int argc, char *argv[]) {
 					cls();
 				}
 				printf(">");
-				gets_s(trigData);
+				char car = 'a';
+				while (car != '\r') {
+					if (car == '\t') {
+						car = 'a';
+						int comp = autoComplete(trigData);
+					}
+					else {
+						if (car == '\r') {
+							break;
+						}
+						else {
+							gets_s(trigData);
+							if (strlen(trigData) > 0) {
+								car = trigData[strlen(trigData) - 1];
+								if (car == '\t') {
+									trigData[strlen(trigData) - 1] = '\0';
+								}
+								else {
+									car = '\r';
+								}
+
+							}
+
+						}
+					}
+				}
 				start_processing = clock();
 				system("title Advanced Trigonometry Calculator v2.1.0       ==) Processing... (==");
 
@@ -696,6 +724,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					if (parent[s] == parent[s + 1] + 1) {
 						decision = false;
 						if (comment == 1) {
+							puts(data);
 							printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n ==> You should use just the required number of parenthesis. <== ", kg, kc);
 							printf("\n");
 						}

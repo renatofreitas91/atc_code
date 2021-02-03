@@ -44,6 +44,7 @@ double calculateIntegral(double a, double b, char function[DIM]);
 double math_processor(char expression[DIM]);
 double solve(char equation[DIM]);
 double solver(char expression[DIM]);
+int autoComplete(char * query);
 int variableValidator(char variable[DIM]);
 int matrixToValues(char matrix[DIM], double result);
 int atcProgramming(char script[DIM]);

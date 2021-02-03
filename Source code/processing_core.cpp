@@ -42,7 +42,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	double triArith[DIM], triArithI[DIM], exp = 1, result1, result2, amplitude = 1;
 	double vector1_R[dim][dim], vector1_I[dim][dim], res_vectorR[dim][dim], res_vectorI[dim][dim];
 	char vectors[dim][100];
-	for (s = 0; s < abs((int)strlen(arithTrig)); s++) {
+	for (s = 0; s < dim; s++) {
 		triArith[s] = 0;
 		triArithI[s] = 0;
 		signalVectors[s] = -1;

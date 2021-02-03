@@ -14,17 +14,16 @@ void subtraction(double numR, double numI, double denR, double denI) {
 }
 
 void multiplication(double numR, double numI, double denR, double denI) {
-	resultR = numR * denR + (numI*denI)*-1;
+	resultR = numR * denR - numI * denI;
 	resultI = numR * denI + numI * denR;
 }
 
 void division(double numR, double numI, double denR, double denI) {
-	multiplication(numR, numI, denR, denI*-1);
-	double nuMR = resultR, nuMI = resultI;
-	multiplication(denR, denI, denR, denI*-1);
-	double deNR = resultR, deNI = resultI;
-	resultR = nuMR / deNR;
-	resultI = nuMI / deNR;
+	double realNum = numR * denR + numI * denI;
+	double imagNum = numI * denR - numR * denI;
+	double realDen = denR * denR + denI * denI;
+	resultR = realNum / realDen;
+	resultI = imagNum / realDen;
 }
 
 double abs_complex(double real, double imaginary) {

@@ -89,14 +89,13 @@ char* getDerivative(char expression[DIM]) {
 	}
 	sprintf(saveExpression, "%s(%G+0i)", saveExpression, coefficient[i]);
 	if (isContained("x^", saveExpression)) {
-		sprintf(expressionF, "(%s)", saveExpression);
-	}
-	else {
-		sprintf(expressionF, "%s", saveExpression);
+		sprintf(saveExpression, "(%s)", saveExpression);
 	}
 	replaceTimes = 0;
-	if (isContained("-", expressionF)) {
-		replace("-", "_", expressionF);
+	if (isContained("-", saveExpression)) {
+		replace("-", "_", saveExpression);
+		sprintf(saveExpression, "%s", expressionF);
 	}
-	return expressionF;
+	sprintf(expressionF, "");
+	return saveExpression;
 }

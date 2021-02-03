@@ -25,11 +25,65 @@ void designGraph(char functionF[DIM]) {
 			numberCols = atoi(number);
 		}
 	}
+	double x_lower = -77777, x_scaleF = -77777, x_higher = -77777;
+	if (isContained(";", functionF)) {
+		char limitInfo[DIM] = "";
+		int hj = strStart + 1;
+		int hi = 0;
+		while (functionF[hj] != '\0') {
+			limitInfo[hi] = functionF[hj];
+			hj++; hi++;
+		}
+		limitInfo[hi] = '\0';
+
+		int countBars = 0;
+
+		int numberBars = countOccurrences("\\", limitInfo);
+		if (numberBars > 0 && numberBars < 3) {
+			int vb = 0, va = 0;
+			char value[DIM] = "";
+			for (vb = 0; limitInfo[vb] != '\0'; vb++) {
+				if (limitInfo[vb] != '\\') {
+					value[va] = limitInfo[vb];
+					va++;
+				}
+				else {
+					value[va] = '\0';
+					countBars++;
+					if (countBars == 1) {
+						x_lower = calcNow(value, 0, 0);
+					}
+					if (countBars == 2) {
+						x_higher = calcNow(value, 0, 0);
+					}
+
+					va = 0;
+				}
+			}
+			value[va] = '\0';
+			countBars++;
+			if (countBars == 3) {
+				x_scaleF = calcNow(value, 0, 0);
+				while (x_scaleF < (x_higher - x_lower) / 120) {
+					printf("Xscale? (minimum: %G)\n", abs(x_higher - x_lower) / 120);
+					x_scaleF = getValue();
+				}
+			}
+		}
+		else {
+			puts("\nError: The number of parameter must be 2 or 3. The first two parameters are mandatory, i.e. the lower value for x and the higher value for x. The third parameter is the scale of x.");
+		}
+		replace(";", "", functionF);
+		sprintf(functionF, "%s", expressionF);
+		replace(limitInfo, "", functionF);
+		sprintf(functionF, "%s", expressionF);
+	}
 	char function[DIM] = "";
 	if (isContained("x", functionF)) {
 		replace("x", "res", functionF);
 		sprintf(function, expressionF);
 	}
+
 	int t = 0, w = 0, p = 0;
 	char functions[20][200];
 	for (t = 0; functionF[t] != '\0'; t++) {
@@ -48,77 +102,109 @@ void designGraph(char functionF[DIM]) {
 	double Xmin, Xmax, Xscale, Ymin, Ymax, Yscale, auto_y_axis;
 	sprintf(toOpen, "%s\\graph.txt", atcPath);
 	graph = fopen(toOpen, "r");
-	if (graph == NULL) {
-		Xmin = -10;
-		Xmax = 10;
-		Xscale = 1;
+	if (x_lower != -77777 && x_higher != -77777 && graph == NULL) {
+		Xmin = x_lower;
+		Xmax = x_higher;
+		if (x_scaleF != -77777) {
+			Xscale = x_scaleF;
+		}
+		else {
+			Xscale = 1;
+		}
 		Ymin = -1E-20;
 		Ymax = 1E-20;
 		Yscale = 1E-21;
 		auto_y_axis = 1;
 	}
 	else {
-		char data[DIM] = "";
-		int i = 0;
-		for (i = 0; (data[i] = fgetc(graph)) != EOF; i++);
-		data[i] = '\0';
-		fclose(graph);
-		i = 0; int j = 0;
-		char value[20] = "";
-		while (data[i] != '\n'&&data[i] != '\0') {
-			value[j] = data[i];
-			i++; j++;
+		if (graph == NULL) {
+			Xmin = -10;
+			Xmax = 10;
+			Xscale = 1;
+			Ymin = -1E-20;
+			Ymax = 1E-20;
+			Yscale = 1E-21;
+			auto_y_axis = 1;
 		}
-		value[j] = '\0';
-		Xmin = calcNow(value, 0, 0);
-		i++;
-		j = 0;
-		while (data[i] != '\n'&&data[i] != '\0') {
-			value[j] = data[i];
-			i++; j++;
+		else {
+			char data[DIM] = "";
+			int i = 0;
+			for (i = 0; (data[i] = fgetc(graph)) != EOF; i++);
+			data[i] = '\0';
+			fclose(graph);
+			i = 0; int j = 0;
+			char value[20] = "";
+			while (data[i] != '\n'&&data[i] != '\0') {
+				value[j] = data[i];
+				i++; j++;
+			}
+			value[j] = '\0';
+			if (x_lower == -77777) {
+				Xmin = calcNow(value, 0, 0);
+			}
+			else {
+				Xmin = x_lower;
+			}
+			i++;
+			j = 0;
+			while (data[i] != '\n'&&data[i] != '\0') {
+				value[j] = data[i];
+				i++; j++;
+			}
+			value[j] = '\0';
+			if (x_higher == -77777) {
+				Xmax = calcNow(value, 0, 0);
+			}
+			else {
+				Xmax = x_higher;
+			}
+			i++;
+			j = 0;
+			while (data[i] != '\n'&&data[i] != '\0') {
+				value[j] = data[i];
+				i++; j++;
+			}
+			value[j] = '\0';
+			if (x_scaleF == -77777) {
+				Xscale = calcNow(value, 0, 0);
+			}
+			else {
+				Xscale = x_scaleF;
+			}
+			i++;
+			j = 0;
+			while (data[i] != '\n'&&data[i] != '\0') {
+				value[j] = data[i];
+				i++; j++;
+			}
+			value[j] = '\0';
+			Ymin = calcNow(value, 0, 0);
+			i++;
+			j = 0;
+			while (data[i] != '\n'&&data[i] != '\0') {
+				value[j] = data[i];
+				i++; j++;
+			}
+			value[j] = '\0';
+			Ymax = calcNow(value, 0, 0);
+			i++;
+			j = 0;
+			while (data[i] != '\n'&&data[i] != '\0') {
+				value[j] = data[i];
+				i++; j++;
+			}
+			value[j] = '\0';
+			Yscale = calcNow(value, 0, 0);
+			i++;
+			j = 0;
+			while (data[i] != '\n'&&data[i] != '\0') {
+				value[j] = data[i];
+				i++; j++;
+			}
+			value[j] = '\0';
+			auto_y_axis = calcNow(value, 0, 0);
 		}
-		value[j] = '\0';
-		Xmax = calcNow(value, 0, 0);
-		i++;
-		j = 0;
-		while (data[i] != '\n'&&data[i] != '\0') {
-			value[j] = data[i];
-			i++; j++;
-		}
-		value[j] = '\0';
-		Xscale = calcNow(value, 0, 0);
-		i++;
-		j = 0;
-		while (data[i] != '\n'&&data[i] != '\0') {
-			value[j] = data[i];
-			i++; j++;
-		}
-		value[j] = '\0';
-		Ymin = calcNow(value, 0, 0);
-		i++;
-		j = 0;
-		while (data[i] != '\n'&&data[i] != '\0') {
-			value[j] = data[i];
-			i++; j++;
-		}
-		value[j] = '\0';
-		Ymax = calcNow(value, 0, 0);
-		i++;
-		j = 0;
-		while (data[i] != '\n'&&data[i] != '\0') {
-			value[j] = data[i];
-			i++; j++;
-		}
-		value[j] = '\0';
-		Yscale = calcNow(value, 0, 0);
-		i++;
-		j = 0;
-		while (data[i] != '\n'&&data[i] != '\0') {
-			value[j] = data[i];
-			i++; j++;
-		}
-		value[j] = '\0';
-		auto_y_axis = calcNow(value, 0, 0);
+
 	}
 	double yValuesAll[20][121];
 	double xDim = Xmax - Xmin;
