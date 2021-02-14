@@ -1043,7 +1043,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				}
 				else {
 					double resultRM = resultR, resultIM = resultI;
-					double res_vectorR[dim][200], res_vectorI[dim][200], vector1_R[dim][dim], vector1_I[dim][dim];
+					double res_vectorR[dim][dim], res_vectorI[dim][dim], vector1_R[dim][dim], vector1_I[dim][dim];
 					int numVectorCols1 = 0, numVectorLines1 = 0;
 					double resRank = 0;
 					if (res == '^') {

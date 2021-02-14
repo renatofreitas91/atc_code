@@ -56,35 +56,39 @@ void qu_complex(double dividend, double dividendI, double divider, double divide
 	resultI = strtod(quoI, &pointer);
 }
 
-
-
 void exponentiation(double a, double b, double c, double d, int sig) {
 	if (sig == 0) {
-		a = a * -1; b = b * -1;
-		exponentiation(a, b, c, d, 1);
-		resultR = resultR * -1;
-		resultI = resultI * -1;
+		if (a == 0 && b == 0 && c == 0 && d == 0) {
+			resultR = -1; resultI = 0;
+		}
+		else {
+			a = a * -1; b = b * -1;
+			exponentiation(a, b, c, d, 1);
+			resultR = resultR * -1;
+			resultI = resultI * -1;
+		}
 	}
 	else {
 		if (sig == 1) {
-			if (b != 0 || d != 0 || a < 0) {
-				double r = sqrt(pow(a, 2.0) + pow(b, 2.0));
-				double arg_ab = atan2(b, a);
-				double part1 = pow(r, c)*pow(M_E, -d * arg_ab);
-				double part2 = cos(d*log(r) + c * arg_ab);
-				double part3 = sin(d*log(r) + c * arg_ab);
-				resultR = part1 * part2;
-				resultI = part1 * part3;
+			if (a == 0 && b == 0 && c == 0 && d == 0) {
+				resultR = 1.0; resultI = 0;
 			}
 			else {
-				resultR = pot(a, c, sig);
-				resultI = 0;
+				if (b != 0 || d != 0 || a < 0) {
+					double r = sqrt(pow(a, 2.0) + pow(b, 2.0));
+					double arg_ab = atan2(b, a);
+					double part1 = pow(r, c)*pow(M_E, -d * arg_ab);
+					double part2 = cos(d*log(r) + c * arg_ab);
+					double part3 = sin(d*log(r) + c * arg_ab);
+					resultR = part1 * part2;
+					resultI = part1 * part3;
+				}
+				else {
+					resultR = pot(a, c, sig);
+					resultI = 0;
+				}
 			}
 		}
-	}
-	if (a == 0 && b == 0) {
-		resultR = 0;
-		resultI = 0;
 	}
 }
 
@@ -93,88 +97,6 @@ void re_complex(double dividend, double dividendI, double divider, double divide
 	qu_complex(dividend, dividendI, divider, dividerI);
 	multiplication(resultR, resultI, divider, dividerI);
 	subtraction(dividend, dividendI, resultR, resultI);
-}
-
-double pot(double base, double exponent, int sig) {
-	double result = 0;
-	if (abs(exponent) >= 1 || exponent == 0) {
-		double rest = 0, result2 = 0;
-		double exponent1, exponent2;
-		int k = 0;
-		if (sig == 0) {
-			base = base * -1;
-			result = -1 * pot((double)base, (double)exponent, 1);
-		}
-		else {
-			if (sig == 1) {
-				exponent1 = quo(exponent);
-				exponent2 = multi(exponent);
-				result2 = base;
-				if (exponent < 0) {
-					exponent1 = exponent1 * -1;
-				}
-				for (k = 1; k < exponent1&&result2 < 1.79769E308; k++) {
-					result2 = result2 * base;
-				}
-				if (exponent < 0) {
-					result2 = 1 / result2;
-				}
-				if (exponent < 0 && exponent2>0) {
-					exponent2 = exponent2 * -1;
-				}
-				if (exponent1 >= 1) {
-					result = pow((double)base, (double)exponent2)*result2;
-				}
-				else {
-					if (exponent != 0) {
-						result = pow((double)base, (double)exponent2);
-					}
-					else {
-						result = 1;
-					}
-				}
-			}
-		}
-	}
-	else {
-		result = rt((double)base, 1 / (double)exponent, sig);
-	}
-	return result;
-}
-
-double rt(double radicand, double degree, int sig) {
-	double result = -1.79769E308, precision = 1.79769E308;
-	int i = 0, j = 0;
-	if (radicand == 0) {
-		result = 0;
-		return result;
-	}
-	if (sig == 0) {
-		radicand = radicand * -1;
-		result = -1 * rt((double)radicand, (double)degree, 1);
-		sig = 1;
-	}
-	else {
-		if (sig == 1) {
-			if (degree < 0) {
-				degree = degree * -1;
-				j = 1;
-			}
-			while (precision >= 1E-309) {
-				while (radicand > pow(result + precision, degree) && i < 10) {
-					result = result + precision;
-					i++;
-				}
-				i = 0;
-				precision = precision / 10;
-			}
-			if (j == 1) {
-				result = 1 / result;
-				j = 0;
-			}
-		}
-	}
-	return result;
 }
 
 double fl(double number) {
@@ -195,6 +117,58 @@ double fl(double number) {
 	qu = strtod(quo, &pointer);
 	return qu;
 }
+double pot(double base, double exponent, int sig) {
+	double result = 0;
+	if (base == 0 && exponent == 0) {
+		return 1.0;
+	}
+	else {
+		if (abs(exponent) >= 1 || exponent == 0) {
+			double rest = 0, result2 = 0;
+			double exponent1, exponent2;
+			int k = 0;
+			if (sig == 0) {
+				base = base * -1;
+				result = -1 * pot((double)base, (double)exponent, 1);
+			}
+			else {
+				if (sig == 1) {
+					exponent1 = quo(exponent);
+					exponent2 = multi(exponent);
+					result2 = base;
+					if (exponent < 0) {
+						exponent1 = exponent1 * -1;
+					}
+					for (k = 1; k < exponent1&&result2 < 1.79769E308; k++) {
+						result2 = result2 * base;
+					}
+					if (exponent < 0) {
+						result2 = 1 / result2;
+					}
+					if (exponent < 0 && exponent2>0) {
+						exponent2 = exponent2 * -1;
+					}
+					if (exponent1 >= 1) {
+						result = pow((double)base, (double)exponent2)*result2;
+					}
+					else {
+						if (exponent != 0) {
+							result = pow((double)base, (double)exponent2);
+						}
+						else {
+							result = 1;
+						}
+					}
+				}
+			}
+		}
+		else {
+			result = rt((double)base, 1 / (double)exponent, sig);
+		}
+	}
+	return result;
+}
+
 
 double multi(double multip) {
 	double mu;
@@ -325,6 +299,41 @@ int summatorial(int integer) {
 	while (i > 0) {
 		result = result + i;
 		i--;
+	}
+	return result;
+}
+
+double rt(double radicand, double degree, int sig) {
+	double result = -1.79769E308, precision = 1.79769E308;
+	int i = 0, j = 0;
+	if (radicand == 0) {
+		result = 0;
+		return result;
+	}
+	if (sig == 0) {
+		radicand = radicand * -1;
+		result = -1 * rt((double)radicand, (double)degree, 1);
+		sig = 1;
+	}
+	else {
+		if (sig == 1) {
+			if (degree < 0) {
+				degree = degree * -1;
+				j = 1;
+			}
+			while (precision >= 1E-309) {
+				while (radicand > pow(result + precision, degree) && i < 10) {
+					result = result + precision;
+					i++;
+				}
+				i = 0;
+				precision = precision / 10;
+			}
+			if (j == 1) {
+				result = 1 / result;
+				j = 0;
+			}
+		}
 	}
 	return result;
 }

@@ -68,7 +68,6 @@ void main(int argc, char *argv[]) {
 					executedSolver = 0;
 					cls();
 				}
-				printf(">");
 				char car = 'a';
 				while (car != '\r') {
 					if (car == '\t') {
@@ -80,6 +79,7 @@ void main(int argc, char *argv[]) {
 							break;
 						}
 						else {
+							printf(">");
 							gets_s(trigData);
 							if (strlen(trigData) > 0) {
 								car = trigData[strlen(trigData) - 1];

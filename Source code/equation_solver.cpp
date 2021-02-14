@@ -1074,7 +1074,7 @@ double equationSolver(char equation[DIM]) {
 											saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
 											g++;
 										}
-										
+
 									}
 									h = h * -1;
 									rf = 0;
@@ -1111,7 +1111,7 @@ double equationSolver(char equation[DIM]) {
 											saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
 											g++;
 										}
-										
+
 									}
 									h = h * -1;
 									z++;
@@ -1185,7 +1185,7 @@ double equationSolver(char equation[DIM]) {
 											saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
 											g++;
 										}
-										
+
 									}
 									else {
 										sprintf(forSummatory, "%G", abs(SummatoryR));
@@ -1212,7 +1212,7 @@ double equationSolver(char equation[DIM]) {
 												saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
 												g++;
 											}
-											
+
 										}
 									}
 									h = h * -1;
@@ -1249,7 +1249,7 @@ double equationSolver(char equation[DIM]) {
 											saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
 											g++;
 										}
-										
+
 									}
 									else {
 										sprintf(forSummatory, "%G", abs(SummatoryR));
@@ -1276,7 +1276,7 @@ double equationSolver(char equation[DIM]) {
 												saveExpressionCoefR_1 = saveExpressionCoefR_1 + h;
 												g++;
 											}
-											
+
 										}
 									}
 									h = h * -1;
