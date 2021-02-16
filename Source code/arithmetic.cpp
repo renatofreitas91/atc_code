@@ -117,54 +117,56 @@ double fl(double number) {
 	qu = strtod(quo, &pointer);
 	return qu;
 }
+
 double pot(double base, double exponent, int sig) {
 	double result = 0;
-	if (base == 0 && exponent == 0) {
-		return 1.0;
-	}
-	else {
-		if (abs(exponent) >= 1 || exponent == 0) {
-			double rest = 0, result2 = 0;
-			double exponent1, exponent2;
-			int k = 0;
-			if (sig == 0) {
-				base = base * -1;
-				result = -1 * pot((double)base, (double)exponent, 1);
+	if (abs(exponent) >= 1 || exponent == 0) {
+		double rest = 0, result2 = 0;
+		double exponent1, exponent2;
+		int k = 0;
+		if (sig == 0) {
+			if (base == 0 && exponent == 0) {
+				return -1.0;
 			}
-			else {
-				if (sig == 1) {
-					exponent1 = quo(exponent);
-					exponent2 = multi(exponent);
-					result2 = base;
-					if (exponent < 0) {
-						exponent1 = exponent1 * -1;
-					}
-					for (k = 1; k < exponent1&&result2 < 1.79769E308; k++) {
-						result2 = result2 * base;
-					}
-					if (exponent < 0) {
-						result2 = 1 / result2;
-					}
-					if (exponent < 0 && exponent2>0) {
-						exponent2 = exponent2 * -1;
-					}
-					if (exponent1 >= 1) {
-						result = pow((double)base, (double)exponent2)*result2;
+			base = base * -1;
+			result = -1 * pot((double)base, (double)exponent, 1);
+		}
+		else {
+			if (sig == 1) {
+				if (base == 0 && exponent == 0) {
+					return 1.0;
+				}
+				exponent1 = quo(exponent);
+				exponent2 = multi(exponent);
+				result2 = base;
+				if (exponent < 0) {
+					exponent1 = exponent1 * -1;
+				}
+				for (k = 1; k < exponent1&&abs(result2) < DBL_MAX; k++) {
+					result2 = result2 * base;
+				}
+				if (exponent < 0) {
+					result2 = 1 / result2;
+				}
+				if (exponent < 0 && exponent2>0) {
+					exponent2 = exponent2 * -1;
+				}
+				if (exponent1 >= 1) {
+					result = pow((double)base, (double)exponent2)*result2;
+				}
+				else {
+					if (exponent != 0) {
+						result = pow((double)base, (double)exponent2);
 					}
 					else {
-						if (exponent != 0) {
-							result = pow((double)base, (double)exponent2);
-						}
-						else {
-							result = 1;
-						}
+						result = 1;
 					}
 				}
 			}
 		}
-		else {
-			result = rt((double)base, 1 / (double)exponent, sig);
-		}
+	}
+	else {
+		result = rt((double)base, 1 / (double)exponent, sig);
 	}
 	return result;
 }

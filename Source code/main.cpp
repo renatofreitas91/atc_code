@@ -164,6 +164,7 @@ void main(int argc, char *argv[]) {
 				}
 				sprintf(matrixResult, "");
 				resultR = sqrt(DBL_MAX);
+				sprintf(expressionF, "");
 				variableController("INF", resultR);
 				processVariable("x");
 				if (validVar == 0) {
@@ -485,6 +486,7 @@ boolean processTxt(char path[DIM], int re) {
 					arith[i] = '\0';
 					sprintf(matrixResult, "");
 					resultR = sqrt(DBL_MAX);
+					sprintf(expressionF, "");
 					variableController("INF", resultR);
 					processVariable("x");
 					if (validVar == 0) {
@@ -540,7 +542,7 @@ boolean processTxt(char path[DIM], int re) {
 						if (isContained("atc", arith)) {
 							sprintf(atcPath, "%s", saveATCPath);
 						}
-						if (!isContained("atc", arith) && (!isContained("User functions", path))) {
+						if (!isContained("atc", arith) && (!isContained("User functions", path)) && !runningScript) {
 							sprintf(atcPath, "%s", savePathF);
 						}
 						main_core(arith, arith, fin, path, result1, result2, 0);

@@ -81,28 +81,30 @@ void actualTimeController() {
 
 void variableController(char variable[DIM], double result) {
 	char saveExpression[DIM] = "";
-	sprintf(saveExpression, "%s", expressionF);
-	replaceTimes = 0;
-	while (isContained(";", saveExpression) || isContained("\\", saveExpression)) {
-		if (isContained("+", saveExpression)) {
-			replace("+", " ", saveExpression);
-			sprintf(saveExpression, "%s", expressionF);
-		}
-		if (isContained("i", saveExpression)) {
-			replace("i", "", saveExpression);
-			sprintf(saveExpression, "%s", expressionF);
-		}
-		if (isContained("\\", saveExpression)) {
-			replace("\\", ":", saveExpression);
-			sprintf(saveExpression, "%s", expressionF);
-		}
-		if (isContained(";", saveExpression)) {
-			replace(";", "*", saveExpression);
-			sprintf(saveExpression, "%s", expressionF);
-		}
+	if (!runningScript) {
+		sprintf(saveExpression, "%s", expressionF);
+		replaceTimes = 0;
+		while (isContained(";", saveExpression) || isContained("\\", saveExpression)) {
+			if (isContained("+", saveExpression)) {
+				replace("+", " ", saveExpression);
+				sprintf(saveExpression, "%s", expressionF);
+			}
+			if (isContained("i", saveExpression)) {
+				replace("i", "", saveExpression);
+				sprintf(saveExpression, "%s", expressionF);
+			}
+			if (isContained("\\", saveExpression)) {
+				replace("\\", ":", saveExpression);
+				sprintf(saveExpression, "%s", expressionF);
+			}
+			if (isContained(";", saveExpression)) {
+				replace(";", "*", saveExpression);
+				sprintf(saveExpression, "%s", expressionF);
+			}
 
+		}
+		sprintf(expressionF, "");
 	}
-	sprintf(expressionF, "");
 	FILE *open = NULL;
 	char va[DIM] = "", vari[DIM] = "";
 	int i = 0, f = 0;
@@ -164,7 +166,7 @@ void variableController(char variable[DIM], double result) {
 		while (open == NULL) {
 			open = fopen(toOpen, "w");
 		}
-		if (isContained("*", saveExpression) || isContained(":", saveExpression)) {
+		if ((isContained("*", saveExpression) || isContained(":", saveExpression)) && !runningScript) {
 			sprintf(vari, "%s%s %s\n", vari, variable, saveExpression);
 			sprintf(saveExpression, "");
 			sprintf(expressionF, "");
@@ -3769,7 +3771,7 @@ double processVariable(char variable[DIM]) {
 					y++;
 				}
 				value[y] = '\0';
-				if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1) {
+				if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1 && !runningScript) {
 					convert2Vector(value);
 					check4Vector = 2;
 				}
@@ -3793,15 +3795,16 @@ double processVariable(char variable[DIM]) {
 					imag[gh] = '\0';
 					resultR = strtod(real, &pointer);
 					resultI = strtod(imag, &pointer);
-					if (isEqual("T", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
-						resultR = -7654321;
-						resultI = 0;
+					if (!runningScript) {
+						if (isEqual("T", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
+							resultR = -7654321;
+							resultI = 0;
+						}
+						if (isEqual("R", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
+							resultR = -1234567;
+							resultI = 0;
+						}
 					}
-					if (isEqual("R", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
-						resultR = -1234567;
-						resultI = 0;
-					}
-
 					varValue = resultR;
 				}
 				break;
@@ -3869,7 +3872,7 @@ double processVariable(char variable[DIM]) {
 						y++;
 					}
 					value[y] = '\0';
-					if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1) {
+					if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1 && !runningScript) {
 						convert2Vector(value);
 						check4Vector = 2;
 					}
@@ -3893,13 +3896,15 @@ double processVariable(char variable[DIM]) {
 						imag[gh] = '\0';
 						resultR = strtod(real, &pointer);
 						resultI = strtod(imag, &pointer);
-						if (isEqual("T", variable) && strlen(matrixResult) > 0) {
-							resultR = -7654321;
-							resultI = 0;
-						}
-						if (isEqual("R", variable) && strlen(matrixResult) > 0) {
-							resultR = -1234567;
-							resultI = 0;
+						if (!runningScript) {
+							if (isEqual("T", variable) && strlen(matrixResult) > 0) {
+								resultR = -7654321;
+								resultI = 0;
+							}
+							if (isEqual("R", variable) && strlen(matrixResult) > 0) {
+								resultR = -1234567;
+								resultI = 0;
+							}
 						}
 						varValue = resultR;
 					}

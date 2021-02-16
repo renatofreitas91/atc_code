@@ -690,7 +690,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				var = 0;
 			}
 			sprintf(arithTrig, "%s", saveArithTr);
-			if (isContained("\\", arithTrig) && isContained(";", arithTrig)) {
+			if (isContained("\\", arithTrig) && isContained(";", arithTrig) && !runningScript) {
 				matrixMode = 1;
 				vectorType = 2;
 				int initialCountSplits = 0;
@@ -779,7 +779,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				sprintf(matrixResult, "%s", vectorString);
 			}
 			else {
-				if (isContained("\\", arithTrig) && !isContained(";", arithTrig)) {
+				if (isContained("\\", arithTrig) && !isContained(";", arithTrig) && !runningScript) {
 					matrixMode = 1;
 					vectorType = 1;
 					double vectorR[100], vectorI[100];
@@ -824,7 +824,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					sprintf(matrixResult, "%s", vectorString);
 				}
 				else {
-					if (!isContained("\\", arithTrig) && isContained(";", arithTrig)) {
+					if (!isContained("\\", arithTrig) && isContained(";", arithTrig) && !runningScript) {
 						matrixMode = 1;
 						vectorType = 1;
 						double vectorR[100], vectorI[100];
@@ -1255,7 +1255,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					}
 				}
 				if (var == 1) {
-					if (isContained(";", matrixResult) || isContained("\\", matrixResult)) {
+					if ((isContained(";", matrixResult) || isContained("\\", matrixResult)) && !runningScript) {
 						calcNow(revariable, 0, 0);
 					}
 				}
