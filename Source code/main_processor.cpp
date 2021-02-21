@@ -2,7 +2,7 @@
 #include "stdafx.h"
 
 char *buf = (char *)malloc(300);
-char bufText[DIM] = "", OutputText[DIM] = "", prefixing[DIM] = "", errorText[DIM] = "", variablesText[DIM] = "", renamedVariablesText[DIM] = "", numSys[DIM] = "", timeText[DIM] = "";
+char bufText[DIM] = "", OutputText[DIM] = "", prefixing[DIM] = "", errorText[DIM] = "", variablesText[DIM] = "", renamedVariablesText[DIM] = "", timeText[DIM] = "";
 int isFromMainProcessor = 0, numSysNum = 0, modeNum = 0, timeNum = 0, prefixNum = 0;
 
 

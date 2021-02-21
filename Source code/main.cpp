@@ -6,10 +6,12 @@
 
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
 char ansMatrices[DIM][DIM], lastCommand[DIM], atcPath[DIM] = "", customFolderPath[DIM] = "", saveATCPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF2[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
+char context[30] = "";
 int replaceTimes = 0, processingOK = 1, executedSolver = 0, isFromMain = 0, solutioned = 0, verify = 0, arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
 clock_t start_processing, end_processing;
 char savePathF[DIM], validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_;";
 int toSendCommand = 0;
+
 
 void main(int argc, char *argv[]) {
 	char dataToSolve[DIM] = "";
@@ -43,13 +45,98 @@ void main(int argc, char *argv[]) {
 		}
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v2.1.0");
+		system("title Advanced Trigonometry Calculator v2.1.1");
 		continu = about();
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v2.1.0       ==) ATC is ready to process data. (==");
-
+		system("title Advanced Trigonometry Calculator v2.1.1       ==) ATC is ready to process data. (==");
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\temp.txt", atcPath);
+		FILE *open = fopen(toOpen, "r");
+		if (open != NULL) {
+			char vari[DIM] = "";
+			for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+			vari[i] = '\0';
+			fclose(open);
+			sprintf(saveVariablesTextFile, "%s", vari);
+		}
+		else {
+			if (open == NULL) {
+				open = fopen(toOpen, "w");
+			}
+			if (open != NULL) {
+				fclose(open);
+			}
+		}
+		sprintf(toOpen, "%s\\variables.txt", atcPath);
+		open = fopen(toOpen, "r");
+		if (open != NULL) {
+			char vari[DIM] = "";
+			for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+			vari[i] = '\0';
+			fclose(open);
+			sprintf(saveVariablesTextFile, "%s", vari);
+		}
+		else {
+			if (open == NULL) {
+				open = fopen(toOpen, "w");
+			}
+			if (open != NULL) {
+				fclose(open);
+			}
+		}
+		sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
+		open = fopen(toOpen, "r");
+		if (open != NULL) {
+			fgets(verboseRes, 10, open);
+			verbose = atoi(verboseRes);
+			fclose(open);
+		}
+		else {
+			if (open == NULL) {
+				open = fopen(toOpen, "w");
+			}
+			if (open != NULL) {
+				fclose(open);
+			}
+		}
+		sprintf(toOpen, "%s\\numSystems.txt", atcPath);
+		open = fopen(toOpen, "r");
+		if (open != NULL) {
+			fgets(numSys, 10, open);
+			fclose(open);
+		}
+		sprintf(toOpen, "%s\\siPrefixes.txt", atcPath);
+		open = fopen(toOpen, "r");
+		if (open != NULL) {
+			fgets(siPref, 10, open);
+			fclose(open);
+		}
+		sprintf(toOpen, "%s\\actualTime.txt", atcPath);
+		open = fopen(toOpen, "r");
+		if (open != NULL) {
+			fgets(actualTime, 10, open);
+			fclose(open);
+		}
+		sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+		open = fopen(toOpen, "r");
+		if (open != NULL) {
+			char vari[DIM] = "";
+			for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+			vari[i] = '\0';
+			fclose(open);
+			sprintf(saveRenamedVariablesTextFile, "%s", vari);
+		}
+		else {
+			if (open == NULL) {
+				open = fopen(toOpen, "w");
+			}
+			if (open != NULL) {
+				fclose(open);
+			}
+		}
 		do {
+			sprintf(context, "main");
 			sprintf(savePathF, "");
 			sprintf(atcPath, "%s", saveATCPath);
 			sprintf(renamedVariable, "");
@@ -96,7 +183,7 @@ void main(int argc, char *argv[]) {
 					}
 				}
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v2.1.0       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v2.1.1       ==) Processing... (==");
 
 			}
 			else {
@@ -150,6 +237,21 @@ void main(int argc, char *argv[]) {
 					}
 				}
 				arithTrig[i] = '\0';
+				if (variableControllersUsed || strlen(saveVariablesTextFile) == 0 || strlen(saveRenamedVariablesTextFile) == 0) {
+					sprintf(toOpen, "%s\\variables.txt", atcPath);
+					open = fopen(toOpen, "w");
+					if (open != NULL) {
+						fprintf(open, "%s", saveVariablesTextFile);
+						fclose(open);
+					}
+					sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+					open = fopen(toOpen, "w");
+					if (open != NULL) {
+						fprintf(open, "%s", saveRenamedVariablesTextFile);
+						fclose(open);
+					}
+					variableControllersUsed = false;
+				}
 				if (isContained("open txt", arithTrig)) {
 					replaceTimes = 1;
 					replace(" ", "", arithTrig);
@@ -277,7 +379,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v2.1.0       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v2.1.1       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -285,6 +387,11 @@ void main(int argc, char *argv[]) {
 }
 
 boolean processTxt(char path[DIM], int re) {
+	if (!runningScript) {
+		sprintf(context, "processTxt");
+	}
+	char toOpen[DIM] = "";
+	FILE *open;
 	char folder[DIM] = "";
 	if (!isContained("User functions", path)) {
 		sprintf(folder, "%s", path);
@@ -322,8 +429,89 @@ boolean processTxt(char path[DIM], int re) {
 			}
 		}
 	}
+	else {
+		sprintf(context, "main");
+	}
+	if (isEqual(saveATCPath, atcPath)) {
+		sprintf(context, "main");
+	}
+	/*	else {
+			sprintf(context,"main");
+			sprintf(toOpen, "%s\\variables.txt", atcPath);
+			open = fopen(toOpen, "r");
+			if (open != NULL) {
+				char vari[DIM] = "";
+				int i = 0;
+				for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+				vari[i] = '\0';
+				fclose(open);
+				sprintf(saveVariablesTextFile, "%s", vari);
+			}
+			else {
+				if (open == NULL) {
+					open = fopen(toOpen, "w");
+				}
+				if (open != NULL) {
+					fclose(open);
+				}
+			}
+			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+			open = fopen(toOpen, "r");
+			if (open != NULL) {
+				char vari[DIM] = "";
+				int i = 0;
+				for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+				vari[i] = '\0';
+				fclose(open);
+				sprintf(saveRenamedVariablesTextFile, "%s", vari);
+			}
+			else {
+				if (open == NULL) {
+					open = fopen(toOpen, "w");
+				}
+				if (open != NULL) {
+					fclose(open);
+				}
+			}
+		}*/
+	sprintf(toOpen, "%s\\variables.txt", atcPath);
+	open = fopen(toOpen, "r");
+	if (open != NULL) {
+		char vari[DIM] = "";
+		int i = 0;
+		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+		vari[i] = '\0';
+		fclose(open);
+		sprintf(saveTxtVariablesTextFile, "%s", vari);
+	}
+	else {
+		if (open == NULL) {
+			open = fopen(toOpen, "w");
+		}
+		if (open != NULL) {
+			fclose(open);
+		}
+	}
+	sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+	open = fopen(toOpen, "r");
+	if (open != NULL) {
+		char vari[DIM] = "";
+		int i = 0;
+		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+		vari[i] = '\0';
+		fclose(open);
+		sprintf(saveRenamedTxtVariablesTextFile, "%s", vari);
+	}
+	else {
+		if (open == NULL) {
+			open = fopen(toOpen, "w");
+		}
+		if (open != NULL) {
+			fclose(open);
+		}
+	}
 	double result1 = 0, result2 = 0, anstxt[DIM], anstxtI[DIM];
-	FILE *fin = NULL, *fout = NULL, *open = NULL, *read = NULL;
+	FILE *fin = NULL, *fout = NULL, *read = NULL;
 	char addBar[DIM] = "", savePath[DIM] = "", arith[DIM] = "", sendFunc[DIM] = "", resp[30] = "_answers.txt", varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
 	int tD = 0, i, j, cP = 0, k, d, e, f, space = 0, v = 0, l = 0, m = 0, re1 = 0, save_rf = rf;
 	boolean toWrite = true;
@@ -403,6 +591,44 @@ boolean processTxt(char path[DIM], int re) {
 		}
 		sprintf(saveSendFunc, sendFunc);
 		if (isContained("script", sendFunc) && strStart == 0) {
+			sprintf(context, "script");
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "%s\\variables.txt", atcPath);
+			FILE *open = fopen(toOpen, "r");
+			if (open != NULL) {
+				char vari[DIM] = "";
+				int i = 0;
+				for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+				vari[i] = '\0';
+				fclose(open);
+				sprintf(saveScriptVariablesTextFile, "%s", vari);
+			}
+			else {
+				if (open == NULL) {
+					open = fopen(toOpen, "w");
+				}
+				if (open != NULL) {
+					fclose(open);
+				}
+			}
+			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+			open = fopen(toOpen, "r");
+			if (open != NULL) {
+				char vari[DIM] = "";
+				int i = 0;
+				for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+				vari[i] = '\0';
+				fclose(open);
+				sprintf(saveScriptRenamedVariablesTextFile, "%s", vari);
+			}
+			else {
+				if (open == NULL) {
+					open = fopen(toOpen, "w");
+				}
+				if (open != NULL) {
+					fclose(open);
+				}
+			}
 			countBreak = countOccurrences("break", sendFunc);
 			countReturn = countOccurrences("return", sendFunc);
 			countUseBreak = 0;
@@ -484,6 +710,23 @@ boolean processTxt(char path[DIM], int re) {
 						}
 					}
 					arith[i] = '\0';
+					if (variableControllersUsed || strlen(saveTxtVariablesTextFile) == 0 || strlen(saveRenamedTxtVariablesTextFile) == 0) {
+						char toOpen[DIM] = "";
+						FILE *open;
+						sprintf(toOpen, "%s\\variables.txt", atcPath);
+						open = fopen(toOpen, "w");
+						if (open != NULL) {
+							fprintf(open, "%s", saveTxtVariablesTextFile);
+							fclose(open);
+						}
+						sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+						open = fopen(toOpen, "w");
+						if (open != NULL) {
+							fprintf(open, "%s", saveRenamedTxtVariablesTextFile);
+							fclose(open);
+						}
+						variableControllersUsed = false;
+					}
 					sprintf(matrixResult, "");
 					resultR = sqrt(DBL_MAX);
 					sprintf(expressionF, "");
@@ -726,7 +969,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					if (parent[s] == parent[s + 1] + 1) {
 						decision = false;
 						if (comment == 1) {
-							puts(data);
 							printf("\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> You can not have a valid math expression where a close parenthesis \")\" is found before its open parenthesis \"(\".\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n ==> You should use just the required number of parenthesis. <== ", kg, kc);
 							printf("\n");
 						}
@@ -1074,7 +1316,6 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 									}
 									if (cols < 2) {
 										puts("\nError: Your matrix must be at minimum of type 2x2.\n");
-										puts("Merda!");
 									}
 								}
 								decision = false;

@@ -4,7 +4,7 @@
 
 int rasf = 0, maxLength = 0, vectorType = 0, check4Vector = 0, numVectorLines = 0, numVectorCols = 0, matrixMode = 0, previousAnsType = 0;
 boolean solving = true;
-char saveArithTrig[DIM] = "", saveExpressionFF[DIM] = "", renamedVariable[DIM] = "", vectorString[DIM] = "", saveMatrixAns[DIM];
+char saveArithTrig[DIM] = "", actualTime[DIM] = "", siPref[DIM] = "", verboseRes[DIM] = "", saveExpressionFF[DIM] = "", renamedVariable[DIM] = "", vectorString[DIM] = "", saveMatrixAns[DIM];
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
 	fflush(NULL);

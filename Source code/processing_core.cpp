@@ -2628,6 +2628,20 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 			char variable[20] = "";
 			sprintf(variable, "Input%c", letters[entered]);
 			variableController(variable, resultR);
+			char toOpen[DIM] = "";
+			FILE *open;
+			sprintf(toOpen, "%s\\variables.txt", atcPath);
+			open = fopen(toOpen, "w");
+			if (open != NULL) {
+				fprintf(open, "%s", saveVariablesTextFile);
+				fclose(open);
+			}
+			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+			open = fopen(toOpen, "w");
+			if (open != NULL) {
+				fprintf(open, "%s", saveRenamedVariablesTextFile);
+				fclose(open);
+			}
 			entered++;
 			x++;
 			sprintf(value, "");

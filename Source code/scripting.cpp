@@ -6,6 +6,7 @@ boolean runningScript = false, I_O = false;
 int Break = 0, countUseBreak = 0, countUseReturn = 0, countBreak = 0, countReturn = 0, countEnters = 0, countUseEnters = 0, countSplits = 0;
 double returnedR = 0, returnedI = 0;
 
+
 void print(char text[DIM], double result1, double result2) {
 	int i = 0, j = 0, varAndValues = 0, k = 0, var2Print = 0, g = 0, valP = 0, l = 0, chChar = 0, b = 0, nV = 0, nC = 0;
 	char toPrint[DIM], listValues[DIM], listText[DIM], varType[DIM], printing[DIM], varValue[DIM], finalString[DIM] = "";
@@ -689,6 +690,7 @@ double solveNow(char toSolveNow[DIM], double result1, double result2) {
 }
 
 double atcProg(char exprDev[DIM]) {
+	sprintf(context, "script");
 	fflush(NULL);
 	FILE *atcDev = NULL;
 	char path[DIM] = "";
@@ -729,6 +731,7 @@ double getValue() {
 }
 
 int atcProgramming(char script[DIM]) {
+	sprintf(context, "script");
 	runningScript = true;
 	char nativeCommands[DIM] = ",print,sprint,get,composecommand,if,else,while,for,break,return,switch,case,cls,";
 	char commandCandidate[DIM] = "", getLine[DIM] = "";
@@ -856,15 +859,34 @@ int atcProgramming(char script[DIM]) {
 						i++; c++;
 					}
 				}
+
 				countUseEnters++;
 				if (c == DIM) {
 					getLine[c - 1] = '\0';
 					puts("\nPlease be careful with terminators ';'.\n");
+					if (variableControllersUsed || strlen(saveScriptVariablesTextFile) == 0 || strlen(saveScriptRenamedVariablesTextFile) == 0) {
+						char toOpen[DIM] = "";
+						FILE *open;
+						sprintf(toOpen, "%s\\variables.txt", atcPath);
+						open = fopen(toOpen, "w");
+						if (open != NULL) {
+							fprintf(open, "%s", saveScriptVariablesTextFile);
+							fclose(open);
+						}
+						sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+						open = fopen(toOpen, "w");
+						if (open != NULL) {
+							fprintf(open, "%s", saveScriptRenamedVariablesTextFile);
+							fclose(open);
+						}
+						variableControllersUsed = false;
+					}
 					return 0;
 				}
 				else {
 					getLine[c] = '\0';
 				}
+
 				c = 0;
 				if (verifyLetter(getLine[c])) {
 					while (verifyLetter(getLine[c])) {
@@ -1142,12 +1164,30 @@ int atcProgramming(char script[DIM]) {
 						atcP = 0;
 					}
 				}
+
 			}
 
 		}
 		else {
 			puts("\nError: The \"script\" word must be written in the first line and followed a press on the \"Enter\" key.");
 		}
+	}
+	if (variableControllersUsed || strlen(saveScriptVariablesTextFile) == 0 || strlen(saveScriptRenamedVariablesTextFile) == 0) {
+		FILE *open;
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\variables.txt", atcPath);
+		open = fopen(toOpen, "w");
+		if (open != NULL) {
+			fprintf(open, "%s", saveScriptVariablesTextFile);
+			fclose(open);
+		}
+		sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+		open = fopen(toOpen, "w");
+		if (open != NULL) {
+			fprintf(open, "%s", saveScriptRenamedVariablesTextFile);
+			fclose(open);
+		}
+		variableControllersUsed = false;
 	}
 	return 0;
 }

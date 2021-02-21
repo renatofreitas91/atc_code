@@ -7,6 +7,16 @@ int strStart = 0, strEnd = 0, Pressed = 0;
 char dimensionsTxt[300] = "", windowTxt[300] = "";
 double vectorR[dim][dim], vectorI[dim][dim];
 using namespace std;
+char saveVariablesTextFile[DIM] = "";
+char saveRenamedVariablesTextFile[DIM] = "";
+char saveTxtVariablesTextFile[DIM] = "";
+char saveRenamedTxtVariablesTextFile[DIM] = "";
+char saveScriptRenamedVariablesTextFile[DIM] = "";
+char saveScriptVariablesTextFile[DIM] = "";
+char saveUserFunctionsRenamedVariablesTextFile[DIM] = "";
+char saveUserFunctionsVariablesTextFile[DIM] = "";
+char numSys[DIM] = "";
+boolean variableControllersUsed = true;
 void numSystemsController() {
 	FILE *open;
 	int state = -1;
@@ -22,6 +32,7 @@ void numSystemsController() {
 	sprintf(toOpen, "%s\\numSystems.txt", atcPath);
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
+	sprintf(numSys, "%d", state);
 	fclose(open);
 }
 
@@ -40,6 +51,7 @@ void verboseResolutionController() {
 	sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
+	sprintf(verboseRes, "%d", state);
 	fclose(open);
 }
 
@@ -58,6 +70,7 @@ void siPrefixController() {
 	sprintf(toOpen, "%s\\siPrefixes.txt", atcPath);
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
+	sprintf(siPref, "%d", state);
 	fclose(open);
 }
 
@@ -76,11 +89,15 @@ void actualTimeController() {
 	sprintf(toOpen, "%s\\actualTime.txt", atcPath);
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
+	sprintf(actualTime, "%d", state);
 	fclose(open);
 }
 
 void variableController(char variable[DIM], double result) {
+	variableControllersUsed = false;
 	char saveExpression[DIM] = "";
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\variables.txt", atcPath);
 	if (!runningScript) {
 		sprintf(saveExpression, "%s", expressionF);
 		replaceTimes = 0;
@@ -110,29 +127,50 @@ void variableController(char variable[DIM], double result) {
 	int i = 0, f = 0;
 	vari[0] = '\0';
 	int y = 0, h = 0, k = 0, g = 0;
-	char toOpen[DIM] = "";
-	sprintf(toOpen, "%s\\variables.txt", atcPath);
-	open = fopen(toOpen, "r");
-	if (open == NULL) {
-		open = fopen(toOpen, "w");
+	boolean defaultVariable = false;
+	if (isEqual(context, "main")) {
+		sprintf(vari, "%s", saveVariablesTextFile);
+		defaultVariable = true;
 	}
-	if (open != NULL) {
-		fclose(open);
+	if (isEqual(context, "processTxt")) {
+		sprintf(vari, "%s", saveTxtVariablesTextFile);
+		defaultVariable = true;
 	}
-	open = NULL;
-	while (open == NULL && i < 100) {
+	if (isEqual(context, "script")) {
+		sprintf(vari, "%s", saveScriptVariablesTextFile);
+		defaultVariable = true;
+	}
+	if (isEqual(context, "userFunctions")) {
+		sprintf(vari, "%s", saveUserFunctionsVariablesTextFile);
+		defaultVariable = true;
+	}
+
+	if (!defaultVariable) {
 		open = fopen(toOpen, "r");
-		i++;
+		if (open == NULL) {
+			open = fopen(toOpen, "w");
+		}
+		if (open != NULL) {
+			fclose(open);
+		}
+		open = NULL;
+		while (open == NULL && i < 100) {
+			open = fopen(toOpen, "r");
+			i++;
+		}
 	}
 	if (i < 100) {
-		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
-		fclose(open);
-		vari[i] = '\0';
+		if (!defaultVariable) {
+			for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+			fclose(open);
+			vari[i] = '\0';
+		}
 		char toSearch_1[DIM] = "";
 		sprintf(toSearch_1, "\n%s ", variable);
 		char toSearch_2[DIM] = "";
 		sprintf(toSearch_2, "%s ", variable);
 		if (isContained(toSearch_1, vari)) {
+			variableControllersUsed = true;
 			int i = strStart + 1;
 			int h = 0;
 			char variableData[DIM] = "";
@@ -148,6 +186,7 @@ void variableController(char variable[DIM], double result) {
 		}
 		else {
 			if (isContained(toSearch_2, vari)) {
+				variableControllersUsed = true;
 				int i = strStart;
 				int h = 0;
 				char variableData[DIM] = "";
@@ -162,9 +201,11 @@ void variableController(char variable[DIM], double result) {
 				sprintf(vari, "%s", expressionF);
 			}
 		}
-		open = NULL;
-		while (open == NULL) {
-			open = fopen(toOpen, "w");
+		if (!defaultVariable) {
+			open = NULL;
+			while (open == NULL) {
+				open = fopen(toOpen, "w");
+			}
 		}
 		if ((isContained("*", saveExpression) || isContained(":", saveExpression)) && !runningScript) {
 			sprintf(vari, "%s%s %s\n", vari, variable, saveExpression);
@@ -176,8 +217,32 @@ void variableController(char variable[DIM], double result) {
 			sprintf(saveExpression, "");
 			sprintf(expressionF, "");
 		}
-		fputs(vari, open);
-		fclose(open);
+		if (!defaultVariable) {
+			fputs(vari, open);
+			fclose(open);
+		}
+		else {
+			if (isEqual(context, "main")) {
+				sprintf(saveVariablesTextFile, "%s", vari);
+			}
+
+			if (isEqual(context, "processTxt")) {
+				sprintf(saveTxtVariablesTextFile, "%s", vari);
+			}
+
+			if (isEqual(context, "script")) {
+				sprintf(saveScriptVariablesTextFile, "%s", vari);
+			}
+			if (isEqual(context, "userFunctions")) {
+				sprintf(saveUserFunctionsVariablesTextFile, "%s", vari);
+			}
+			if (!defaultVariable) {
+				if (open != NULL) {
+					fputs(vari, open);
+					fclose(open);
+				}
+			}
+		}
 	}
 }
 
@@ -536,66 +601,53 @@ void variableRenamer(char variable[DIM]) {
 	sprintf(varRename, "");
 	char vari[DIM] = "";
 	int i = 0, j = 0;
-	FILE *open = NULL;
-	char toOpen[DIM] = "";
-	sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
-	while (open == NULL && i < 50) {
-		open = fopen(toOpen, "a+");
-		i++;
+	boolean defaultVariable = false;
+	if (isEqual(context, "main")) {
+		sprintf(vari, "%s", saveRenamedVariablesTextFile);
+		defaultVariable = true;
 	}
-	if (open != NULL) {
-		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
-		vari[i] = '\0';
-		fclose(open);
-		for (i = 0; vari[i] != '\0'; i++) {
-			j = 0;
-			if (variable[j] == vari[i] && (i == 0 || vari[i - 1] == '\n')) {
-				while (variable[j] == vari[i] && vari[i] != '\0') {
-					j++; i++;
-				}
-				if (strlen(variable) == j) {
-					if (variable[j] == '\0'&&vari[i] == ' ') {
-						valRenamedVar = 1;
-						i++;
-						j = 0;
-						while (vari[i] != '\n'&&vari[i] != '\0') {
-							varRename[j] = vari[i];
-							j++; i++;
-						}
-						varRename[j] = '\0';
-					}
-				}
-			}
-		}
+	if (isEqual(context, "processTxt")) {
+		sprintf(vari, "%s", saveRenamedTxtVariablesTextFile);
+		defaultVariable = true;
 	}
-	if (valRenamedVar == 0) {
-		sprintf(toOpen, "%s\\renamedVar.txt", saveATCPath);
-		open = NULL;
-		i = 0;
+	if (isEqual(context, "script")) {
+		sprintf(vari, "%s", saveScriptRenamedVariablesTextFile);
+		defaultVariable = true;
+	}
+	if (isEqual(context, "userFunctions")) {
+		sprintf(vari, "%s", saveUserFunctionsRenamedVariablesTextFile);
+		defaultVariable = true;
+	}
+	if (!defaultVariable) {
+		FILE *open = NULL;
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
 		while (open == NULL && i < 50) {
 			open = fopen(toOpen, "a+");
 			i++;
 		}
-		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
-		vari[i] = '\0';
-		fclose(open);
-		for (i = 0; vari[i] != '\0'; i++) {
-			j = 0;
-			if (variable[j] == vari[i] && (i == 0 || vari[i - 1] == '\n')) {
-				while (variable[j] == vari[i] && vari[i] != '\0') {
-					j++; i++;
-				}
-				if (strlen(variable) == j) {
-					if (variable[j] == '\0'&&vari[i] == ' ') {
-						valRenamedVar = 1;
-						i++;
-						j = 0;
-						while (vari[i] != '\n'&&vari[i] != '\0') {
-							varRename[j] = vari[i];
-							j++; i++;
-						}
-						varRename[j] = '\0';
+		if (open != NULL) {
+			for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+			vari[i] = '\0';
+			fclose(open);
+		}
+	}
+	for (i = 0; vari[i] != '\0'; i++) {
+		j = 0;
+		if (variable[j] == vari[i] && (i == 0 || vari[i - 1] == '\n')) {
+			while (variable[j] == vari[i] && vari[i] != '\0') {
+				j++; i++;
+			}
+			if (strlen(variable) == j) {
+				if (variable[j] == '\0'&&vari[i] == ' ') {
+					valRenamedVar = 1;
+					i++;
+					j = 0;
+					while (vari[i] != '\n'&&vari[i] != '\0') {
+						varRename[j] = vari[i];
+						j++; i++;
 					}
+					varRename[j] = '\0';
 				}
 			}
 		}
@@ -897,7 +949,7 @@ void variableToMultiply(char expression[DIM]) {
 					j++; i++;
 				}
 			}
-			if (v > 0) {
+			if (v >= 0) {
 				k = l;
 				expression[k + 1] = '\0';
 				for (k; k - 1 > v; k--) {
@@ -926,15 +978,65 @@ void variableToMultiply(char expression[DIM]) {
 
 void toMultiply(char expression[DIM], double result1, double result2) {
 	char vari[DIM] = "";
-	FILE *open;
-	char variablesTxt[DIM] = "";
-	sprintf(variablesTxt, "%s\\variables.txt", atcPath);
-	open = fopen(variablesTxt, "a+");
-
 	int i = 0, verify = 0, verifys = 0, j = 0;
-	for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
-	vari[i] = '\0';
-	fclose(open);
+	char toOpen[DIM] = "";
+	FILE * open;
+	boolean defaultVariable = false;
+	if (isEqual(context, "main")) {
+		sprintf(vari, "%s", saveVariablesTextFile);
+		defaultVariable = true;
+		if (variableControllersUsed || strlen(saveVariablesTextFile) == 0 || strlen(saveRenamedVariablesTextFile) == 0) {
+			sprintf(toOpen, "%s\\variables.txt", atcPath);
+			open = fopen(toOpen, "w");
+			if (open != NULL) {
+				fprintf(open, "%s", saveVariablesTextFile);
+				fclose(open);
+			}
+			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+			open = fopen(toOpen, "w");
+			if (open != NULL) {
+				fprintf(open, "%s", saveRenamedVariablesTextFile);
+				fclose(open);
+			}
+			variableControllersUsed = false;
+		}
+	}
+	if (isEqual(context, "processTxt")) {
+		sprintf(vari, "%s", saveTxtVariablesTextFile);
+		defaultVariable = true;
+	}
+	if (isEqual(context, "script")) {
+		sprintf(vari, "%s", saveScriptVariablesTextFile);
+		defaultVariable = true;
+	}
+	if (isEqual(context, "userFunctions")) {
+		sprintf(vari, "%s", saveUserFunctionsVariablesTextFile);
+		defaultVariable = true;
+	}
+	if (!defaultVariable) {
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\variables.txt", atcPath);
+		FILE *open;
+		open = fopen(toOpen, "r");
+		if (open == NULL) {
+			open = fopen(toOpen, "w");
+		}
+		if (open != NULL) {
+			fclose(open);
+		}
+		open = NULL;
+		while (open == NULL && i < 100) {
+			open = fopen(toOpen, "r");
+			i++;
+		}
+		if (i < 100) {
+			if (!defaultVariable) {
+				for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+				fclose(open);
+				vari[i] = '\0';
+			}
+		}
+	}
 	i = 0;
 	char saveSplitResult[200][200];
 	int initialCountSplits = 0;
@@ -1353,8 +1455,10 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	sprintf(arithTrig, expressionF);
 	int i = 0, j = 0, s = 0, f = 0;
 	variableToMultiply(arithTrig);
+	sprintf(arithTrig, "%s", expressionF);
 	toMultiply(arithTrig, result1, result2);
 	variableToMultiply(arithTrig);
+	sprintf(arithTrig, "%s", expressionF);
 	renamer(arithTrig);
 	sprintf(arithTrig, "%s", expressionF);
 	variableToMultiply(arithTrig);
@@ -3546,37 +3650,37 @@ int variableValidator(char variable[DIM]) {
 	processVariable(variable);
 	if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0) {
 		i = 0;
-		FILE *var1 = NULL;
-		if (var1 != NULL) {
-			fclose(var1);
-		}
-		var1 = NULL;
-		char toOpen[DIM] = "";
-		sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
-		while (var1 == NULL && i < 100) {
-			var1 = fopen(toOpen, "a+");
-			i++;
-		}
 		char vari[DIM] = "";
-		i = 0;
-		for (i = 0; (vari[i] = fgetc(var1)) != EOF; i++);
-		vari[i] = '\0';
-		fclose(var1);
-		var1 = NULL;
-		i = 0;
-		while (var1 == NULL && i < 100) {
-			var1 = fopen(toOpen, "w");
-			i++;
+		if (isEqual(context, "main")) {
+			sprintf(vari, "%s", saveRenamedVariablesTextFile);
 		}
-		if (i < 100) {
-			char line[DIM] = "";
-			sprintf(line, "%s %s\n", variable, revariable);
-			if (!(isContained(line, vari) && (strStart == 0 || vari[strStart - 1] == '\n'))) {
-				fputs(line, var1);
+		if (isEqual(context, "processTxt")) {
+			sprintf(vari, "%s", saveRenamedTxtVariablesTextFile);
+		}
+		if (isEqual(context, "script")) {
+			sprintf(vari, "%s", saveScriptRenamedVariablesTextFile);
+		}
+		if (isEqual(context, "userFunctions")) {
+			sprintf(vari, "%s", saveUserFunctionsRenamedVariablesTextFile);
+		}
+		char line[DIM] = "";
+		sprintf(line, "%s %s\n", variable, revariable);
+		if (!(isContained(line, vari) && (strStart == 0 || vari[strStart - 1] == '\n'))) {
+			if (isEqual(context, "main")) {
+				sprintf(saveRenamedVariablesTextFile, "%s%s", saveRenamedVariablesTextFile, line);
 			}
-			fputs(vari, var1);
-			fclose(var1);
+			if (isEqual(context, "processTxt")) {
+				sprintf(saveRenamedTxtVariablesTextFile, "%s%s", saveRenamedTxtVariablesTextFile, line);
+			}
+			if (isEqual(context, "script")) {
+				sprintf(saveScriptRenamedVariablesTextFile, "%s%s", saveScriptRenamedVariablesTextFile, line);
+			}
+			if (isEqual(context, "userFunctions")) {
+				sprintf(saveUserFunctionsRenamedVariablesTextFile, "%s%s", saveUserFunctionsRenamedVariablesTextFile, line);
+			}
 		}
+
+
 		i = 0;
 	}
 	else {
@@ -3710,207 +3814,132 @@ double processVariable(char variable[DIM]) {
 	char vari[DIM] = "", va[DIM] = "", value[DIM] = "";
 	char *pointer;
 	i = 0;
-	char toOpen[DIM] = "";
-	sprintf(toOpen, "%s\\variables.txt", atcPath);
-	open = fopen(toOpen, "a+");
-	while (open == NULL && cou < 10) {
-		open = fopen(toOpen, "a+");
-		cou++;
+	boolean defaultVariable = false;
+	if (isEqual(context, "main")) {
+		sprintf(vari, "%s", saveVariablesTextFile);
+		defaultVariable = true;
 	}
-	if (cou < 10) {
-		i = 0;
-		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
-		vari[i] = '\0';
-		lth = abs((int)strlen(vari));
-		fclose(open);
-		i = 0;
-		for (i = 0; vari[i] != '\0'; i++) {
-			g = 0;
-			int j = i;
-			while (vari[j] != ' '&&vari[j] != '\0') {
-				j++;
-			}
-			j = j - i;
-			if (vari[i] == variable[g] && (i == 0 || vari[i - 1] == '\n')) {
-				while (vari[i] == variable[g]) {
-					if (vari[i] == variable[g]) {
-						va[g] = vari[i];
-					}i++; g++;
-				}
-				if (vari[i] != ' ') {
-					while (vari[i] != ' ') {
-						va[g] = vari[i];
-						g++; i++;
-					}
-				}
-				va[g] = '\0';
-			}
-			l = i;
-			g = 0;
-			for (y = 0; va[y] != '\0'; y++) {
-				if (va[y] == variable[y]) {
-					g++;
-				}
-			}
-			vari[lth] = '\0';
-			if (g == strlen(va) && strlen(variable) == g && j == g && g != 0) {
-				int space = 0;
-				valid = 1; validVar = 1;
-				int gh = l;
-				while (vari[gh] != '\n') {
-					gh++;
-				}
-				h = gh;
-				gh = l + 1;
-				y = 0;
-				for (gh; gh < h; gh++) {
-					value[y] = vari[gh];
-					if (value[y] == ' ') {
-						space = 1;
-					}
-					y++;
-				}
-				value[y] = '\0';
-				if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1 && !runningScript) {
-					convert2Vector(value);
-					check4Vector = 2;
-				}
-				if (space == 0) {
-					resultR = strtod(value, &pointer);
-				}
-				else {
-					char real[DIM] = "", imag[DIM] = "";
-					y = 0;
-					while (value[y] != ' ') {
-						real[y] = value[y];
-						y++;
-					}
-					real[y] = '\0';
-					y++;
-					gh = 0;
-					while (value[y] != '\0') {
-						imag[gh] = value[y];
-						y++; gh++;
-					}
-					imag[gh] = '\0';
-					resultR = strtod(real, &pointer);
-					resultI = strtod(imag, &pointer);
-					if (!runningScript) {
-						if (isEqual("T", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
-							resultR = -7654321;
-							resultI = 0;
-						}
-						if (isEqual("R", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
-							resultR = -1234567;
-							resultI = 0;
-						}
-					}
-					varValue = resultR;
-				}
-				break;
-			}
-		}
+	if (isEqual(context, "processTxt")) {
+		sprintf(vari, "%s", saveTxtVariablesTextFile);
+		defaultVariable = true;
 	}
-	if (validVar != 1) {
-		sprintf(toOpen, "%s\\variables.txt", saveATCPath);
-		open = fopen(toOpen, "a+");
-		while (open == NULL && cou < 10) {
-			open = fopen(toOpen, "a+");
-			cou++;
+	if (isEqual(context, "script")) {
+		sprintf(vari, "%s", saveScriptVariablesTextFile);
+		defaultVariable = true;
+	}
+	if (isEqual(context, "userFunctions")) {
+		sprintf(vari, "%s", saveUserFunctionsVariablesTextFile);
+		defaultVariable = true;
+	}
+	if (!defaultVariable) {
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\variables.txt", atcPath);
+		open = fopen(toOpen, "r");
+		if (open == NULL) {
+			open = fopen(toOpen, "w");
 		}
-		if (cou < 10) {
-			i = 0;
-			for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
-			vari[i] = '\0';
-			lth = abs((int)strlen(vari));
+		if (open != NULL) {
 			fclose(open);
-			i = 0;
-			for (i = 0; vari[i] != '\0'; i++) {
-				g = 0;
-				int j = i;
-				while (vari[j] != ' '&&vari[j] != '\0') {
-					j++;
-				}
-				j = j - i;
-				if (vari[i] == variable[g] && (i == 0 || vari[i - 1] == '\n')) {
-					while (vari[i] == variable[g]) {
-						if (vari[i] == variable[g]) {
-							va[g] = vari[i];
-						}i++; g++;
-					}
-					if (vari[i] != ' ') {
-						while (vari[i] != ' ') {
-							va[g] = vari[i];
-							g++; i++;
-						}
-					}
-					va[g] = '\0';
-				}
-				l = i;
-				g = 0;
-				for (y = 0; va[y] != '\0'; y++) {
-					if (va[y] == variable[y]) {
-						g++;
-					}
-				}
-				vari[lth] = '\0';
-				if (g == strlen(va) && strlen(variable) == g && j == g && g != 0) {
-					int space = 0;
-					valid = 1; validVar = 1;
-					int gh = l;
-					while (vari[gh] != '\n') {
-						gh++;
-					}
-					h = gh;
-					gh = l + 1;
-					y = 0;
-					for (gh; gh < h; gh++) {
-						value[y] = vari[gh];
-						if (value[y] == ' ') {
-							space = 1;
-						}
-						y++;
-					}
-					value[y] = '\0';
-					if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1 && !runningScript) {
-						convert2Vector(value);
-						check4Vector = 2;
-					}
-					if (space == 0) {
-						resultR = strtod(value, &pointer);
-					}
-					else {
-						char real[DIM] = "", imag[DIM] = "";
-						y = 0;
-						while (value[y] != ' ') {
-							real[y] = value[y];
-							y++;
-						}
-						real[y] = '\0';
-						y++;
-						gh = 0;
-						while (value[y] != '\0') {
-							imag[gh] = value[y];
-							y++; gh++;
-						}
-						imag[gh] = '\0';
-						resultR = strtod(real, &pointer);
-						resultI = strtod(imag, &pointer);
-						if (!runningScript) {
-							if (isEqual("T", variable) && strlen(matrixResult) > 0) {
-								resultR = -7654321;
-								resultI = 0;
-							}
-							if (isEqual("R", variable) && strlen(matrixResult) > 0) {
-								resultR = -1234567;
-								resultI = 0;
-							}
-						}
-						varValue = resultR;
-					}
-					break;
+		}
+		open = NULL;
+		while (open == NULL && i < 100) {
+			open = fopen(toOpen, "r");
+			i++;
+		}
+	}
+	if (i < 100) {
+		if (!defaultVariable) {
+			for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
+			fclose(open);
+			vari[i] = '\0';
+		}
+	}
+	lth = abs((int)strlen(vari));
+	i = 0;
+	for (i = 0; vari[i] != '\0'; i++) {
+		g = 0;
+		int j = i;
+		while (vari[j] != ' '&&vari[j] != '\0') {
+			j++;
+		}
+		j = j - i;
+		if (vari[i] == variable[g] && (i == 0 || vari[i - 1] == '\n')) {
+			while (vari[i] == variable[g]) {
+				if (vari[i] == variable[g]) {
+					va[g] = vari[i];
+				}i++; g++;
+			}
+			if (vari[i] != ' ') {
+				while (vari[i] != ' ') {
+					va[g] = vari[i];
+					g++; i++;
 				}
 			}
+			va[g] = '\0';
+		}
+		l = i;
+		g = 0;
+		for (y = 0; va[y] != '\0'; y++) {
+			if (va[y] == variable[y]) {
+				g++;
+			}
+		}
+		vari[lth] = '\0';
+		if (g == strlen(va) && strlen(variable) == g && j == g && g != 0) {
+			int space = 0;
+			valid = 1; validVar = 1;
+			int gh = l;
+			while (vari[gh] != '\n') {
+				gh++;
+			}
+			h = gh;
+			gh = l + 1;
+			y = 0;
+			for (gh; gh < h; gh++) {
+				value[y] = vari[gh];
+				if (value[y] == ' ') {
+					space = 1;
+				}
+				y++;
+			}
+			value[y] = '\0';
+			if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1 && !runningScript) {
+				convert2Vector(value);
+				check4Vector = 2;
+			}
+			if (space == 0) {
+				resultR = strtod(value, &pointer);
+			}
+			else {
+				char real[DIM] = "", imag[DIM] = "";
+				y = 0;
+				while (value[y] != ' ') {
+					real[y] = value[y];
+					y++;
+				}
+				real[y] = '\0';
+				y++;
+				gh = 0;
+				while (value[y] != '\0') {
+					imag[gh] = value[y];
+					y++; gh++;
+				}
+				imag[gh] = '\0';
+				resultR = strtod(real, &pointer);
+				resultI = strtod(imag, &pointer);
+				if (!runningScript) {
+					if (isEqual("T", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
+						resultR = -7654321;
+						resultI = 0;
+					}
+					if (isEqual("R", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
+						resultR = -1234567;
+						resultI = 0;
+					}
+				}
+				varValue = resultR;
+			}
+			break;
 		}
 	}
 	return varValue;
