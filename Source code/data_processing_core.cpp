@@ -652,6 +652,29 @@ void variableRenamer(char variable[DIM]) {
 			}
 		}
 	}
+	if (valRenamedVar != 1 && strlen(saveRenamedVariablesTextFile) > 0) {
+		sprintf(vari, "%s", saveRenamedVariablesTextFile);
+		for (i = 0; vari[i] != '\0'; i++) {
+			j = 0;
+			if (variable[j] == vari[i] && (i == 0 || vari[i - 1] == '\n')) {
+				while (variable[j] == vari[i] && vari[i] != '\0') {
+					j++; i++;
+				}
+				if (strlen(variable) == j) {
+					if (variable[j] == '\0'&&vari[i] == ' ') {
+						valRenamedVar = 1;
+						i++;
+						j = 0;
+						while (vari[i] != '\n'&&vari[i] != '\0') {
+							varRename[j] = vari[i];
+							j++; i++;
+						}
+						varRename[j] = '\0';
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -3942,6 +3965,97 @@ double processVariable(char variable[DIM]) {
 			break;
 		}
 	}
+	if (validVar != 1 && strlen(saveVariablesTextFile) > 0) {
+		sprintf(vari, "%s", saveVariablesTextFile);
+		lth = abs((int)strlen(vari));
+		i = 0;
+		for (i = 0; vari[i] != '\0'; i++) {
+			g = 0;
+			int j = i;
+			while (vari[j] != ' '&&vari[j] != '\0') {
+				j++;
+			}
+			j = j - i;
+			if (vari[i] == variable[g] && (i == 0 || vari[i - 1] == '\n')) {
+				while (vari[i] == variable[g]) {
+					if (vari[i] == variable[g]) {
+						va[g] = vari[i];
+					}i++; g++;
+				}
+				if (vari[i] != ' ') {
+					while (vari[i] != ' ') {
+						va[g] = vari[i];
+						g++; i++;
+					}
+				}
+				va[g] = '\0';
+			}
+			l = i;
+			g = 0;
+			for (y = 0; va[y] != '\0'; y++) {
+				if (va[y] == variable[y]) {
+					g++;
+				}
+			}
+			vari[lth] = '\0';
+			if (g == strlen(va) && strlen(variable) == g && j == g && g != 0) {
+				int space = 0;
+				valid = 1; validVar = 1;
+				int gh = l;
+				while (vari[gh] != '\n') {
+					gh++;
+				}
+				h = gh;
+				gh = l + 1;
+				y = 0;
+				for (gh; gh < h; gh++) {
+					value[y] = vari[gh];
+					if (value[y] == ' ') {
+						space = 1;
+					}
+					y++;
+				}
+				value[y] = '\0';
+				if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1 && !runningScript) {
+					convert2Vector(value);
+					check4Vector = 2;
+				}
+				if (space == 0) {
+					resultR = strtod(value, &pointer);
+				}
+				else {
+					char real[DIM] = "", imag[DIM] = "";
+					y = 0;
+					while (value[y] != ' ') {
+						real[y] = value[y];
+						y++;
+					}
+					real[y] = '\0';
+					y++;
+					gh = 0;
+					while (value[y] != '\0') {
+						imag[gh] = value[y];
+						y++; gh++;
+					}
+					imag[gh] = '\0';
+					resultR = strtod(real, &pointer);
+					resultI = strtod(imag, &pointer);
+					if (!runningScript) {
+						if (isEqual("T", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
+							resultR = -7654321;
+							resultI = 0;
+						}
+						if (isEqual("R", variable) && (strlen(matrixResult) || strlen(saveMatrixAns) > 0)) {
+							resultR = -1234567;
+							resultI = 0;
+						}
+					}
+					varValue = resultR;
+				}
+				break;
+			}
+		}
+	}
 	return varValue;
 }
 
@@ -5018,7 +5132,8 @@ char* convertVector2String(double vectorR[dim][dim], double vectorI[dim][dim], i
 		}
 	}
 	sprintf(expressionF, "");
-	return string;
+	sprintf(returnCharArray, "%s", string);
+	return returnCharArray;
 }
 
 

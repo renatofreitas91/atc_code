@@ -435,45 +435,6 @@ boolean processTxt(char path[DIM], int re) {
 	if (isEqual(saveATCPath, atcPath)) {
 		sprintf(context, "main");
 	}
-	/*	else {
-			sprintf(context,"main");
-			sprintf(toOpen, "%s\\variables.txt", atcPath);
-			open = fopen(toOpen, "r");
-			if (open != NULL) {
-				char vari[DIM] = "";
-				int i = 0;
-				for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
-				vari[i] = '\0';
-				fclose(open);
-				sprintf(saveVariablesTextFile, "%s", vari);
-			}
-			else {
-				if (open == NULL) {
-					open = fopen(toOpen, "w");
-				}
-				if (open != NULL) {
-					fclose(open);
-				}
-			}
-			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
-			open = fopen(toOpen, "r");
-			if (open != NULL) {
-				char vari[DIM] = "";
-				int i = 0;
-				for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
-				vari[i] = '\0';
-				fclose(open);
-				sprintf(saveRenamedVariablesTextFile, "%s", vari);
-			}
-			else {
-				if (open == NULL) {
-					open = fopen(toOpen, "w");
-				}
-				if (open != NULL) {
-					fclose(open);
-				}
-			}
-		}*/
 	sprintf(toOpen, "%s\\variables.txt", atcPath);
 	open = fopen(toOpen, "r");
 	if (open != NULL) {

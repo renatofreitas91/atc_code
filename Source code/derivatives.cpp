@@ -1,6 +1,7 @@
 
 
 #include "stdafx.h"
+char returnCharArray[DIM] = "";
 
 char* getDerivative(char expression[DIM]) {
 	if (isContained("((", expression) && isContained("))", expression)) {
@@ -97,5 +98,6 @@ char* getDerivative(char expression[DIM]) {
 		sprintf(saveExpression, "%s", expressionF);
 	}
 	sprintf(expressionF, "");
-	return saveExpression;
+	sprintf(returnCharArray, "%s", saveExpression);
+	return returnCharArray;
 }

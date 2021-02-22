@@ -39,7 +39,7 @@ void insert(struct TrieNode *root, const string key)
 {
 	struct TrieNode *pCrawl = root;
 
-	for (int level = 0; level < key.length(); level++)
+	for (int level = 0; level < abs((int)key.length()); level++)
 	{
 		int index = CHAR_TO_INDEX(key[level]);
 		if (!pCrawl->children[index])
@@ -55,7 +55,7 @@ void insert(struct TrieNode *root, const string key)
 // Returns true if key presents in trie, else false 
 bool search(struct TrieNode *root, const string key)
 {
-	int length = key.length();
+	int length = (int)key.length();
 	struct TrieNode *pCrawl = root;
 	for (int level = 0; level < length; level++)
 	{
@@ -119,7 +119,7 @@ int printAutoSuggestions(TrieNode* root, const string query)
 	// the node (of last level) with last character 
 	// of given string. 
 	int level;
-	int n = query.length();
+	int n = (int)query.length();
 	for (level = 0; level < n; level++)
 	{
 		int index = CHAR_TO_INDEX(query[level]);
@@ -155,6 +155,7 @@ int printAutoSuggestions(TrieNode* root, const string query)
 		suggestionsRec(pCrawl, prefix);
 		return 1;
 	}
+	return 0;
 }
 
 // Driver Code 
