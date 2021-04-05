@@ -5,7 +5,7 @@ HANDLE hStdin;
 DWORD fdwSaveOldMode;
 int strStart = 0, strEnd = 0, Pressed = 0;
 char dimensionsTxt[300] = "", windowTxt[300] = "";
-double vectorR[dim][dim], vectorI[dim][dim];
+double vectorR[dim][dIm], vectorI[dim][dIm];
 using namespace std;
 char saveVariablesTextFile[DIM] = "";
 char saveRenamedVariablesTextFile[DIM] = "";
@@ -5115,7 +5115,7 @@ void convert2Vector(char arithTrig[DIM]) {
 	sprintf(arithTrig, "%s", saveArithTrig);
 }
 
-char* convertVector2String(double vectorR[dim][dim], double vectorI[dim][dim], int numLines, int numCols) {
+char* convertVector2String(double vectorR[dim][dIm], double vectorI[dim][dIm], int numLines, int numCols) {
 	char string[DIM] = "";
 	int i = 0, j = 0;
 	for (i = 0; i < numLines; i++) {

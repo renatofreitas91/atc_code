@@ -8,7 +8,7 @@ void arithmeticMatrixSolver() {
 	do {
 		char matrix[DIM] = "";
 		int mIndex = 0, ff = 0, lins = 1, cols = 1, lins1 = 1, cols1 = 1, saveCols = -1, saveCols1 = -1, errorCols = 0, errorCols1 = 0, i = 0, j = 0;
-		double vMS[dim][dim], uMS[dim][dim], vMSI[dim][dim], uMSI[dim][dim], rMSI[dim][dim], rMS[dim][dim];
+		double vMS[dim][dIm], uMS[dim][dIm], vMSI[dim][dIm], uMSI[dim][dIm], rMSI[dim][dIm], rMS[dim][dIm];
 		double 	real = 0, reI;
 		fflush(NULL);
 		puts("\nWhat to do?");
@@ -354,7 +354,7 @@ void arithmeticMatrixSolver() {
 			printf("\nMatrix:\n");
 			gets_s(matrix);
 			int mIndex = 0, ff = 0, lins = 1, cols = 1, lins1 = 1, cols1 = 1, saveCols = -1, saveCols1 = -1, errorCols = 0, errorCols1 = 0, i = 0, j = 0;
-			double vMS[dim][dim], vMSI[dim][dim];
+			double vMS[dim][dIm], vMSI[dim][dIm];
 			do {
 				char value[DIM] = "";
 				ff = 0;
@@ -507,7 +507,7 @@ void arithmeticMatrixSolver() {
 	} while (op1 != 0);
 }
 
-void fmsum(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]) {
+void fmsum(int lins, int cols, double v[dim][dIm], double u[dim][dIm], double r[dim][dIm], double vI[dim][dIm], double uI[dim][dIm], double rI[dim][dIm]) {
 	int i, j;
 	char report[DIM] = "";
 	for (i = 0; i < lins; i++) {
@@ -533,7 +533,7 @@ void fmsum(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[
 	}
 }
 
-void fmsubt(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]) {
+void fmsubt(int lins, int cols, double v[dim][dIm], double u[dim][dIm], double r[dim][dIm], double vI[dim][dIm], double uI[dim][dIm], double rI[dim][dIm]) {
 	int i, j;
 	char report[DIM] = "";
 	for (i = 0; i < lins; i++) {
@@ -559,7 +559,7 @@ void fmsubt(int lins, int cols, double v[dim][dim], double u[dim][dim], double r
 	}
 }
 
-void fmmulr(int lins, int cols, double v[dim][dim], double r[dim][dim], double re, double vI[dim][dim], double rI[dim][dim], double reI) {
+void fmmulr(int lins, int cols, double v[dim][dIm], double r[dim][dIm], double re, double vI[dim][dIm], double rI[dim][dIm], double reI) {
 	int i, j;
 	char report[DIM] = "";
 	for (i = 0; i < lins; i++) {
@@ -585,7 +585,7 @@ void fmmulr(int lins, int cols, double v[dim][dim], double r[dim][dim], double r
 	}
 }
 
-void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]) {
+void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dIm], double u[dim][dIm], double r[dim][dIm], double vI[dim][dIm], double uI[dim][dIm], double rI[dim][dIm]) {
 	int k, i, j;
 	char report[DIM] = "";
 	double prod, prodI;
@@ -626,7 +626,7 @@ void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], doub
 	}
 }
 
-boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], double u[dim][dim], double vI[dim][dim], double uI[dim][dim]) {
+boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dim][dIm], double u[dim][dIm], double vI[dim][dIm], double uI[dim][dIm]) {
 	int k, i;
 	boolean  divisible = false;
 	char report[DIM] = "";
@@ -683,7 +683,7 @@ boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], d
 	return divisible;
 }
 
-void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim], double mTransposeR[dim][dim], double mTransposeI[dim][dim]) {
+void fmtranspose(int lins, int  cols, double vMS[dim][dIm], double vMSI[dim][dIm], double mTransposeR[dim][dIm], double mTransposeI[dim][dIm]) {
 	int i = 0, j = 0;
 	char report[DIM] = "";
 	for (i = 0; i < cols; i++) {
@@ -712,10 +712,10 @@ void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim
 	}
 }
 
-void fmdeterminant(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]) {
+void fmdeterminant(int lins, int  cols, double vMS[dim][dIm], double vMSI[dim][dIm]) {
 	int multiplier = 0;
 	do {
-		double newMatrixR[dim][dim], newMatrixI[dim][dim];
+		double newMatrixR[dim][dIm], newMatrixI[dim][dIm];
 		double lineMultipliedR[dim], lineMultipliedI[dim], lineResultR[dim], lineResultI[dim];
 		int i = 0, j = 0, k = 0, needJacobi = 1, l = 0;
 		if (lins > 2) {
@@ -858,7 +858,7 @@ void startDetProcessing(char matrix[DIM]) {
 		sprintf(matrix, "%s", expressionF);
 	}
 	int mIndex = 0, ff = 0, lins = 1, cols = 1, lins1 = 1, cols1 = 1, saveCols = -1, saveCols1 = -1, errorCols = 0, errorCols1 = 0, i = 0, j = 0;
-	double vMS[dim][dim], vMSI[dim][dim];
+	double vMS[dim][dIm], vMSI[dim][dIm];
 	do {
 		char value[DIM] = "";
 		ff = 0;
@@ -909,9 +909,9 @@ void startDetProcessing(char matrix[DIM]) {
 	matrixMode = 2;
 }
 
-void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim], double inverseR[dim][dim], double inverseI[dim][dim]) {
+void fminverse(int lins, int  cols, double vMS[dim][dIm], double vMSI[dim][dIm], double inverseR[dim][dIm], double inverseI[dim][dIm]) {
 	int saveLins = lins, saveCols = cols;
-	double vMSF[dim][dim], vMSIF[dim][dim];
+	double vMSF[dim][dIm], vMSIF[dim][dIm];
 	int i = 0, j = 0, one = saveCols, pivot = 0;
 	for (i = 0; i < saveLins; i++) {
 		for (j = 0; j < saveCols; j++) {
@@ -1020,11 +1020,11 @@ void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim],
 	}
 }
 
-void fmpowerm(double v[dim][dim], double vI[dim][dim], double r[dim][dim], double rI[dim][dim], int power, int lins, int cols) {
+void fmpowerm(double v[dim][dIm], double vI[dim][dIm], double r[dim][dIm], double rI[dim][dIm], int power, int lins, int cols) {
 	int k = 0, i = 0, j = 0, negative = 0;
 	char report[DIM] = "";
 	double prod = 0, prodI = 0;
-	double  u[dim][dim], uI[dim][dim];
+	double  u[dim][dIm], uI[dim][dIm];
 	for (i = 0; i < lins; i++) {
 		for (k = 0; k < cols; k++) {
 			u[i][k] = v[i][k];
@@ -1128,7 +1128,7 @@ void fmpowerm(double v[dim][dim], double vI[dim][dim], double r[dim][dim], doubl
 	}
 }
 
-int fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]) {
+int fmrank(int lins, int cols, double vMS[dim][dIm], double vMSI[dim][dIm]) {
 	int i = 0, j = 0, one = cols, pivot = 0;
 	do {
 		i = pivot;

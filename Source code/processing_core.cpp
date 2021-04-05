@@ -40,7 +40,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	char  arTrig[DIM] = "", trigon[DIM] = "", trig[DIM] = "", paRect[DIM] = "", cN[DIM] = "", ex[DIM] = "", art[DIM] = "";
 	int parent[DIM], facto = 0, sig[DIM], s = 0, rectPar = 0, h = 0, i = 0, rePar = 0, so = 0, j = 0, g = 0, count = 0, e = 0, d = 0, th = 0, f = 0, trigo = 1, trigono = 0, co = 0, k = 0, l = 0, tr = 0, pa = 0, paren = 1, pare = 0, tg = 0, p = 0, a = 0, c = 1, r = 0, iN = 0, iL = 0;
 	double triArith[DIM], triArithI[DIM], exp = 1, result1, result2, amplitude = 1;
-	double vector1_R[dim][dim], vector1_I[dim][dim], res_vectorR[dim][dim], res_vectorI[dim][dim];
+	double vector1_R[dim][dIm], vector1_I[dim][dIm], res_vectorR[dim][dIm], res_vectorI[dim][dIm];
 	char vectors[dim][100];
 	for (s = 0; s < dim; s++) {
 		triArith[s] = 0;
@@ -1514,7 +1514,7 @@ double arithSolver(char trigon1[DIM], double result) {
 					}
 					number2[j] = '\0';
 					double expValue = convertToNumber(number2);
-					double res_vectorR[dim][dim], res_vectorI[dim][dim];
+					double res_vectorR[dim][dIm], res_vectorI[dim][dIm];
 					char answerString[DIM] = "";
 					fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, expValue, vectorI, res_vectorI, 0.0);
 					sprintf(answerString, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
@@ -1553,7 +1553,7 @@ double arithSolver(char trigon1[DIM], double result) {
 			else {
 
 				convert2Vector(ansMatrices[(int)ampl[n]]);
-				double res_vectorR[dim][dim], res_vectorI[dim][dim];
+				double res_vectorR[dim][dIm], res_vectorI[dim][dIm];
 				char answerString[DIM] = "";
 				fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, -1.0, vectorI, res_vectorI, 0.0);
 				sprintf(answerString, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
@@ -1780,7 +1780,7 @@ double arithSolver(char trigon1[DIM], double result) {
 			}
 			else {
 				convert2Vector(saveMatrixAns);
-				double res_vectorR[dim][dim], res_vectorI[dim][dim];
+				double res_vectorR[dim][dIm], res_vectorI[dim][dIm];
 				char answerString[DIM] = "";
 				fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, -1.0, vectorI, res_vectorI, 0.0);
 				sprintf(answerString, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));

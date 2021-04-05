@@ -549,20 +549,48 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 				}
 			}
 			else {
-				progress = true;
-				equationSolver(data);
-				progress = false;
-				char report[DIM] = "";
-				sprintf(report, "\n%s\n", answers);
-				puts(report);
-				int option = -1;
-				while (option != 0 && option != 1) {
-					I_O = true;
-					puts("\nExport result? (Yes -> 1 \\ No -> 0)");
-					option = (int)getValue();
-				}
-				if (option == 1) {
-					saveToReport(report);
+				synTest = 0;
+				if (dataVerifier(data, 0, 0, 1, 1)) {
+					sprintf(OutputText, "");
+					replaceTimes = 0;
+					lastDividerR = 0;
+					LastDividerR = 0;
+					lastDividerI = 0;
+					LastDividerI = 0;
+					sprintf(saveSimplified, "");
+					sprintf(saveSimplification, "");
+					sprintf(expressionF, "");
+					replaceTimes = 0;
+					int parL = countOccurrences("(", data);
+					int parR = countOccurrences(")", data);
+					replaceTimes = 0;
+					if (parL == 1 && parR == 1) {
+						isContained("(", data);
+						if (strStart == 0) {
+							isContained(")", data);
+							if (strEnd == strlen(data)) {
+								replace("(", "", data);
+								replace(")", "", expressionF);
+								sprintf(data, "%s", expressionF);
+							}
+						}
+					}
+					progress = true;
+					equationSolver(data);
+					progress = false;
+					char report[DIM] = "";
+					sprintf(report, "\n%s\n", answers);
+					puts(report);
+					int option = -1;
+					while (option != 0 && option != 1) {
+
+						I_O = true;
+						puts("\nExport result? (Yes -> 1 \\ No -> 0)");
+						option = (int)getValue();
+					}
+					if (option == 1) {
+						saveToReport(report);
+					}
 				}
 			}
 		}

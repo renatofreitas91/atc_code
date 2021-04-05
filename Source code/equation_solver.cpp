@@ -315,7 +315,7 @@ void rootsToPolynomial(char rootsF[DIM]) {
 		polynomialI[0] = 0;
 		polynomialR[1] = valuesRootsR[0] * -1;
 		polynomialI[1] = valuesRootsI[0] * -1;
-		double saveResultR[dim][dim], saveResultI[dim][dim];
+		double saveResultR[dim][dIm], saveResultI[dim][dIm];
 		double polynomialRF[DIM], polynomialIF[DIM];
 		while (members < numberRoots) {
 			for (i = 0; i < members * 2; i++) {
@@ -1363,24 +1363,7 @@ double equationSolver(char equation[DIM]) {
 					}
 
 					if (maxExponent > 1 || maxExponent == maxMaxExponent) {
-						g = 0;
-						getRealRoot(expressionCoefR, expressionCoefI, maxExponent, -1000);
-						while (g < nrRoots) {
-							RootR[g] = realRoots[g];
-							RootI[g] = 0;
-							g++;
-						}
 						char * pointer;
-						RootR[g] = M_PI; RootI[g] = M_E;
-						int p = g;
-						g++;
-						while (g < maxExponent) {
-							RootR[g] = RootR[p];
-							RootI[g] = RootI[p];
-							multiplication(RootR[g], RootI[p], p + g - p, 0);
-							RootR[g] = resultR; RootI[g] = 0;
-							g++;
-						}
 						g = 0;
 						RootR[g] = M_PI; RootI[g] = M_E;
 						g++;
@@ -1412,299 +1395,351 @@ double equationSolver(char equation[DIM]) {
 						precisionN = 6;
 						double summaR = 0, summaI = 0;
 						double expressCoefR[200], expressCoefI[200];
-						while (n < 2000 && countSolutions < maxMaxExponent - 1) {
-							g = 0;
-							while (g < maxExponent) {
-								xValuesR = RootR[g];
-								xValuesI = RootI[g];
-								int rf = 0;
-								double SummatoryR = 0, SummatoryI = 0;
-								while (rf < maxExponent) {
-									exponentiation(xValuesR, xValuesI, (double)maxExponent - rf, 0.0, 1);
-									multiplication(expressionCoefR[rf], expressionCoefI[rf], resultR, resultI);
-									expressCoefR[rf] = expressionCoefR[rf];
-									expressCoefI[rf] = expressionCoefI[rf];
-									SummatoryR = SummatoryR + resultR;
-									SummatoryI = SummatoryI + resultI;
-									rf++;
-								}
-								sum(SummatoryR, SummatoryI, expressionCoefR[rf], expressionCoefI[rf]);
-								expressCoefR[rf] = expressionCoefR[rf];
-								expressCoefI[rf] = expressionCoefI[rf];
-								summaR = resultR; summaI = resultI;
-								sprintf(value, "%G", RootR[g]);
-								RootR[g] = strtod(value, &pointer);
-								sprintf(value, "%G", RootI[g]);
-								RootI[g] = strtod(value, &pointer);
-								SolutionR[solvedIndex] = RootR[g];
-								SolutionI[solvedIndex] = RootI[g];
-
-								if (abs(SolutionR[solvedIndex]) < 1E-5) {
-									SolutionR[solvedIndex] = 0;
-								}
-								if (abs(SolutionI[solvedIndex]) < 1E-5) {
-									SolutionI[solvedIndex] = 0;
-								}
-
-								double saveLastR = expressionCoefR[maxExponent], saveLastI = expressionCoefI[maxExponent];
-
-								expressCoefR[0] = 1; expressCoefI[0] = 0;
-								int y = 1;
-								while (y - 1 < maxExponent) {
-									multiplication(expressCoefR[y - 1], expressCoefI[y - 1], SolutionR[solvedIndex], SolutionI[solvedIndex]);
-									sum(expressCoefR[y], expressCoefI[y], resultR, resultI);
-									expressCoefR[y] = resultR; expressCoefI[y] = resultI;
-									y++;
-								}
-								double saveResultR = expressCoefR[y - 2], saveResultI = expressCoefI[y - 2];
-
-								xValuesR = M_PI;
-								xValuesI = 0;
-								double SummatoryCR = 0, SummatoryCI = 0;
-								rf = 0;
-								while (rf < (maxExponent - 1)) {
-									exponentiation(xValuesR, xValuesI, (maxExponent - 1) - rf, 0.0, 1);
-									multiplication(expressCoefR[rf], expressCoefI[rf], resultR, resultI);
-									SummatoryCR = SummatoryCR + resultR;
-									SummatoryCI = SummatoryCI + resultI;
-									rf++;
-								}
-								sum(SummatoryCR, SummatoryCI, expressCoefR[rf], expressCoefI[rf]);
-								SummatoryCR = resultR; SummatoryCI = resultI;
-								rf = 0;
-								SummatoryR = 0; SummatoryI = 0;
-								while (rf < maxExponent) {
-									exponentiation(xValuesR, xValuesI, maxExponent - rf, 0.0, 1);
-									multiplication(expressionCoefR[rf], expressionCoefI[rf], resultR, resultI);
-									SummatoryR = SummatoryR + resultR;
-									SummatoryI = SummatoryI + resultI;
-									rf++;
-								}
-								sum(SummatoryR, SummatoryI, expressionCoefR[rf], expressionCoefI[rf]);
-								SummatoryR = resultR; SummatoryI = resultI;
-								multiplication(SummatoryCR, SummatoryCI, xValuesR, xValuesI);
-								double saveR = resultR, saveI = resultI;
-								multiplication(SummatoryCR, SummatoryCI, SolutionR[solvedIndex], SolutionI[solvedIndex]);
-								subtraction(saveR, saveI, resultR, resultI);
-								division(SummatoryR, SummatoryI, resultR, resultI);
-								char result[20] = "";
-								sprintf(result, "%G", resultR);
-								char result_I[20] = "";
-								sprintf(result_I, "%G", resultI);
-
-								if (isEqual("1", result) && isEqual("0", result_I) && (summaR == 0 || summaI == 0)) {
-									re_complex(expressionCoefR[maxExponent], expressionCoefI[maxExponent], SolutionR[solvedIndex], SolutionI[solvedIndex]);
-									sprintf(result, "%G", resultR);
-									sprintf(result_I, "%G", resultI);
-									if (isEqual("0", result) && isEqual("0", result_I)) {
-										int v = 0, u = 0;
-										while (v < maxExponent) {
-											if (v != g) {
-												RootR[u] = RootR[v];
-												RootI[u] = RootI[v];
-												u++;
-											}
-											v++;
-										}
-										countSolutions++;
-										n = 0;
-										g = 0;
-										solvedIndex++;
-										maxExponent--;
-										int y = 1;
-										while (y - 1 < maxExponent) {
-											expressionCoefR[y] = expressCoefR[y]; expressionCoefI[y] = expressCoefI[y];
-											y++;
-										}
-									}
-								}
-								else {
-									double numR = summaR, numI = summaI, denR = 1, denI = 0;
-									int w = 0, h = 0;
-									while (w < maxExponent) {
-										if (w != g) {
-											subtraction(RootR[g], RootI[g], RootR[w], RootI[w]);
-											resultSubR[h] = resultR;
-											resultSubI[h] = resultI;
-											h++;
-										}
-										w++;
-									}
-									int k = h;
-									h = 1;
-									while (h < k) {
-										multiplication(resultSubR[0], resultSubI[0], resultSubR[h], resultSubI[h]);
-										resultSubR[0] = resultR;
-										resultSubI[0] = resultI;
-										h++;
-									}
-									denR = resultSubR[0];
-									denI = resultSubI[0];
-									division(numR, numI, denR, denI);
-									subtraction(RootR[g], RootI[g], resultR, resultI);
-									RootR[g] = resultR;
-									RootI[g] = resultI;
-									if (g >= 1) {
-										double rootR1, rootI1, rootR2, rootI2;
-										multiplication(RootR[g - 1], RootI[g - 1], -1.0, 0.0);
-										rootR1 = resultR; rootI1 = resultI;
-										multiplication(RootR[g], RootI[g], -1.0, 0.0);
-										rootR2 = resultR; rootI2 = resultI;
-										double bR, bI, cR, cI;
-										sum(rootR1, rootI1, rootR2, rootI2);
-										bR = resultR; bI = resultI;
-										multiplication(rootR1, rootI1, rootR2, rootI2);
-										cR = resultR; cI = resultI;
-										multiplication(-1, 0, bR, bI);
-										double minusbR = resultR, minusbI = resultI;
-										multiplication(bR, bI, bR, bI);
-										double bRquad = resultR, bIquad = resultI;
-										multiplication(1.0, 0.0, cR, cI);
-										double acR = resultR, acI = resultI;
-										multiplication(2, 0, 1.0, 0.0);
-										double twoaR = resultR, twoaI = resultI;
-										multiplication(4, 0, acR, acI);
-										double fouracR = resultR, fouracI = resultI;
-										subtraction(bRquad, bIquad, fouracR, fouracI);
-										double radicandR = resultR, radicandI = resultI;
-										exponentiation(radicandR, radicandI, 0.5, 0, 1);
-										double sqrtR = resultR, sqrtI = resultI;
-										subtraction(minusbR, minusbI, sqrtR, sqrtI);
-										double minusR = resultR, minusI = resultI;
-										sum(minusbR, minusbI, sqrtR, sqrtI);
-										double plusR = resultR, plusI = resultI;
-										division(plusR, plusI, twoaR, twoaI);
-										double x1R = resultR, x1I = resultI;
-										division(minusR, minusI, twoaR, twoaI);
-										double x2R = resultR, x2I = resultI;
-										RootR[g - 1] = x1R; RootI[g - 1] = x1I;
-										RootR[g] = x2R; RootI[g] = x2I;
-									}
-								}
-								g++;
-							}
-							n++;
+						double expresR[dim], expresI[dim];
+						int r = 0;
+						for (r = 0; r <= maxExponent; r++) {
+							expresR[r] = expressionCoefR[r];
+							expresI[r] = expressionCoefI[r];
 						}
-						if (maxExponent > 20) {
-							saveMaxExponent = maxExponent;
-							g = 0;
-							double expDerivateR[dim], expDerivateI[dim], saveExpDerivateR[dim], saveExpDerivateI[dim];
-							rf = 0;
-							while (rf < maxExponent) {
-								multiplication(expressionCoefR[rf], expressionCoefI[rf], (double)maxExponent - rf, 0.0);
-								expDerivateR[rf] = resultR;
-								expDerivateI[rf] = resultI;
-								saveExpDerivateR[rf] = resultR;
-								saveExpDerivateI[rf] = resultI;
-								rf++;
-							}
-							rf = 0;
-							double saveExpressionCoefR[dim], saveExpressionCoefI[dim];
-							while (rf <= maxExponent) {
-								saveExpressionCoefR[rf] = expressionCoefR[rf];
-								saveExpressionCoefI[rf] = expressionCoefI[rf];
-								expressCoefR[rf] = expressionCoefR[rf];
-								expressCoefI[rf] = expressionCoefI[rf];
-								rf++;
-							}
-							int countSolutions = 0;
-							rf = 0;
-							while (rf <= maxExponent) {
-								expressCoefR[rf] = expressionCoefR[rf];
-								expressCoefI[rf] = expressionCoefI[rf];
-								rf++;
-							}
-							saveMaxExponent = maxExponent;
-							n = 0;
-							RootR[g] = 0; RootI[g] = 0;
-							while (countSolutions < saveMaxExponent) {
-								if (n == 2000) {
-									countSolutions++;
-									n = 0;
-
-									int y = 1;
-									while (y - 1 < maxExponent) {
-										multiplication(expressCoefR[y - 1], expressCoefI[y - 1], RootR[g], RootI[g]);
-										sum(expressCoefR[y], expressCoefI[y], resultR, resultI);
-										expressCoefR[y] = resultR; expressCoefI[y] = resultI;
-										y++;
-									}
-									rf = 0;
-									while (rf < maxExponent) {
-										multiplication(expressCoefR[rf], expressCoefI[rf], (double)maxExponent - rf, 0.0);
-										expDerivateR[rf] = resultR;
-										expDerivateI[rf] = resultI;
-										rf++;
-									}
-									g++;
-									RootR[g] = RootR[g - 1]; RootI[g] = RootI[g - 1];
-									maxExponent--;
-								}
-								else {
-									double SummDerivateR = 0, SummDerivateI = 0;
+						int breakAction = 0;
+						boolean notSolved = true;
+						if (maxMaxExponent <= 40) {
+							while (((!notSolved&&n < breakAction) || (notSolved&&countSolutions < maxMaxExponent - 1)) && n < 7777) {
+								g = 0;
+								double sumRootsR = 0, sumRootsI = 0;
+								while (g < maxExponent) {
 									xValuesR = RootR[g];
 									xValuesI = RootI[g];
-									rf = 0;
+									int rf = 0;
 									double SummatoryR = 0, SummatoryI = 0;
 									while (rf < maxExponent) {
-										exponentiation(xValuesR, xValuesI, maxExponent - rf, 0.0, 1);
-										multiplication(expressCoefR[rf], expressCoefI[rf], resultR, resultI);
+										exponentiation(xValuesR, xValuesI, (double)maxExponent - rf, 0.0, 1);
+										multiplication(expressionCoefR[rf], expressionCoefI[rf], resultR, resultI);
+										expressCoefR[rf] = expressionCoefR[rf];
+										expressCoefI[rf] = expressionCoefI[rf];
 										SummatoryR = SummatoryR + resultR;
 										SummatoryI = SummatoryI + resultI;
 										rf++;
 									}
-									sum(SummatoryR, SummatoryI, expressCoefR[rf], expressCoefI[rf]);
-									SummatoryR = resultR; SummatoryI = resultI;
-									SummDerivateR = 0; SummDerivateI = 0;
+									sum(SummatoryR, SummatoryI, expressionCoefR[rf], expressionCoefI[rf]);
+									expressCoefR[rf] = expressionCoefR[rf];
+									expressCoefI[rf] = expressionCoefI[rf];
+									summaR = resultR; summaI = resultI;
+									sprintf(value, "%G", RootR[g]);
+									RootR[g] = strtod(value, &pointer);
+									sprintf(value, "%G", RootI[g]);
+									RootI[g] = strtod(value, &pointer);
+									SolutionR[solvedIndex] = RootR[g];
+									SolutionI[solvedIndex] = RootI[g];
+
+									if (abs(SolutionR[solvedIndex]) < 1E-5) {
+										SolutionR[solvedIndex] = 0;
+									}
+									if (abs(SolutionI[solvedIndex]) < 1E-5) {
+										SolutionI[solvedIndex] = 0;
+									}
+
+									double saveLastR = expressionCoefR[maxExponent], saveLastI = expressionCoefI[maxExponent];
+
+									expressCoefR[0] = 1; expressCoefI[0] = 0;
+									int y = 1;
+									while (y - 1 < maxExponent) {
+										multiplication(expressCoefR[y - 1], expressCoefI[y - 1], SolutionR[solvedIndex], SolutionI[solvedIndex]);
+										sum(expressCoefR[y], expressCoefI[y], resultR, resultI);
+										expressCoefR[y] = resultR; expressCoefI[y] = resultI;
+										y++;
+									}
+									double saveResultR = expressCoefR[y - 2], saveResultI = expressCoefI[y - 2];
+
+									xValuesR = M_PI;
+									xValuesI = 0;
+									double SummatoryCR = 0, SummatoryCI = 0;
 									rf = 0;
-									while (rf < maxExponent - 1) {
-										exponentiation(xValuesR, xValuesI, maxExponent - rf - 1, 0.0, 1);
-										multiplication(expDerivateR[rf], expDerivateI[rf], resultR, resultI);
-										SummDerivateR = SummDerivateR + resultR;
-										SummDerivateI = SummDerivateI + resultI;
+									while (rf < (maxExponent - 1)) {
+										exponentiation(xValuesR, xValuesI, (maxExponent - 1) - rf, 0.0, 1);
+										multiplication(expressCoefR[rf], expressCoefI[rf], resultR, resultI);
+										SummatoryCR = SummatoryCR + resultR;
+										SummatoryCI = SummatoryCI + resultI;
 										rf++;
 									}
-									sum(SummDerivateR, SummDerivateI, expDerivateR[rf], expDerivateI[rf]);
-									SummDerivateR = resultR; SummDerivateI = resultI;
-									division(SummatoryR, SummatoryI, SummDerivateR, SummDerivateI);
-									subtraction(xValuesR, xValuesI, resultR, resultI);
-									RootR[g] = resultR;
-									RootI[g] = resultI;
-									if (n > 1000) {
+									sum(SummatoryCR, SummatoryCI, expressCoefR[rf], expressCoefI[rf]);
+									SummatoryCR = resultR; SummatoryCI = resultI;
+									rf = 0;
+									SummatoryR = 0; SummatoryI = 0;
+									while (rf < maxExponent) {
+										exponentiation(xValuesR, xValuesI, maxExponent - rf, 0.0, 1);
+										multiplication(expressionCoefR[rf], expressionCoefI[rf], resultR, resultI);
+										SummatoryR = SummatoryR + resultR;
+										SummatoryI = SummatoryI + resultI;
+										rf++;
+									}
+									sum(SummatoryR, SummatoryI, expressionCoefR[rf], expressionCoefI[rf]);
+									SummatoryR = resultR; SummatoryI = resultI;
+									multiplication(SummatoryCR, SummatoryCI, xValuesR, xValuesI);
+									double saveR = resultR, saveI = resultI;
+									multiplication(SummatoryCR, SummatoryCI, SolutionR[solvedIndex], SolutionI[solvedIndex]);
+									subtraction(saveR, saveI, resultR, resultI);
+									division(SummatoryR, SummatoryI, resultR, resultI);
+									char result[20] = "";
+									sprintf(result, "%G", resultR);
+									char result_I[20] = "";
+									sprintf(result_I, "%G", resultI);
+
+									if (isEqual("1", result) && isEqual("0", result_I) && (summaR == 0 || summaI == 0)) {
+										re_complex(expressionCoefR[maxExponent], expressionCoefI[maxExponent], SolutionR[solvedIndex], SolutionI[solvedIndex]);
+										sprintf(result, "%G", resultR);
+										sprintf(result_I, "%G", resultI);
+										if (isEqual("0", result) && isEqual("0", result_I)) {
+											int v = 0, u = 0;
+											while (v < maxExponent) {
+												if (v != g) {
+													RootR[u] = RootR[v];
+													RootI[u] = RootI[v];
+													u++;
+												}
+												v++;
+											}
+											countSolutions++;
+											n = 0;
+											g = 0;
+											solvedIndex++;
+											maxExponent--;
+											int y = 1;
+											while (y - 1 < maxExponent) {
+												expressionCoefR[y] = expressCoefR[y]; expressionCoefI[y] = expressCoefI[y];
+												y++;
+											}
+										}
+									}
+									else {
+										double numR = summaR, numI = summaI, denR = 1, denI = 0;
+										int w = 0, h = 0;
+										while (w < maxExponent) {
+											if (w != g) {
+												subtraction(RootR[g], RootI[g], RootR[w], RootI[w]);
+												resultSubR[h] = resultR;
+												resultSubI[h] = resultI;
+												h++;
+											}
+											w++;
+										}
+										int k = h;
+										h = 1;
+										while (h < k) {
+											multiplication(resultSubR[0], resultSubI[0], resultSubR[h], resultSubI[h]);
+											resultSubR[0] = resultR;
+											resultSubI[0] = resultI;
+											h++;
+										}
+										denR = resultSubR[0];
+										denI = resultSubI[0];
+										division(numR, numI, denR, denI);
+										subtraction(RootR[g], RootI[g], resultR, resultI);
+										RootR[g] = resultR;
+										RootI[g] = resultI;
+										if (notSolved) {
+											for (r = 0; r <= maxExponent; r++) {
+												expresR[r] = expressionCoefR[r];
+												expresI[r] = expressionCoefI[r];
+											}
+											sumRootsR = 0; sumRootsI = 0;
+											for (int kw = 0; kw < maxExponent; kw++) {
+												if (kw != g) {
+													int y = 1;
+													while (y - 1 < maxExponent) {
+														multiplication(expresR[y - 1], expresI[y - 1], RootR[kw], RootI[kw]);
+														sum(expresR[y], expresI[y], resultR, resultI);
+														expresR[y] = resultR; expresI[y] = resultI;
+														y++;
+													}
+												}
+												sum(sumRootsR, sumRootsI, RootR[kw], RootI[kw]);
+												sumRootsR = resultR; sumRootsI = resultI;
+												division(sumRootsR, sumRootsI, expressCoefR[1], expressCoefI[1]);
+												if (abs(resultR) <= 1 && abs(resultR) > 0.99999&&abs(resultI) < 0.0001) {
+													notSolved = false;
+													breakAction = n + 2000;
+												}
+											}
+											multiplication(-1.0, 0.0, expresR[1], expresI[1]);
+											double helperR = resultR, helperI = resultI;
+											double fromHelperR, fromHelperI;
+											double fromAlgR, fromAlgI;
+											multiplication(0.73, 0.0, helperR, helperI);
+											fromHelperR = resultR; fromHelperI = resultI;
+											multiplication(0.27, 0.0, RootR[g], RootI[g]);
+											fromAlgR = resultR; fromAlgI = resultI;
+											sum(fromAlgR, fromAlgI, fromHelperR, fromHelperI);
+											RootR[g] = resultR;
+											RootI[g] = resultI;
+										}
+										if (g >= 1) {
+											double rootR1, rootI1, rootR2, rootI2;
+											multiplication(RootR[g - 1], RootI[g - 1], -1.0, 0.0);
+											rootR1 = resultR; rootI1 = resultI;
+											multiplication(RootR[g], RootI[g], -1.0, 0.0);
+											rootR2 = resultR; rootI2 = resultI;
+											double bR, bI, cR, cI;
+											sum(rootR1, rootI1, rootR2, rootI2);
+											bR = resultR; bI = resultI;
+											multiplication(rootR1, rootI1, rootR2, rootI2);
+											cR = resultR; cI = resultI;
+											multiplication(-1, 0, bR, bI);
+											double minusbR = resultR, minusbI = resultI;
+											multiplication(bR, bI, bR, bI);
+											double bRquad = resultR, bIquad = resultI;
+											multiplication(1.0, 0.0, cR, cI);
+											double acR = resultR, acI = resultI;
+											multiplication(2, 0, 1.0, 0.0);
+											double twoaR = resultR, twoaI = resultI;
+											multiplication(4, 0, acR, acI);
+											double fouracR = resultR, fouracI = resultI;
+											subtraction(bRquad, bIquad, fouracR, fouracI);
+											double radicandR = resultR, radicandI = resultI;
+											exponentiation(radicandR, radicandI, 0.5, 0, 1);
+											double sqrtR = resultR, sqrtI = resultI;
+											subtraction(minusbR, minusbI, sqrtR, sqrtI);
+											double minusR = resultR, minusI = resultI;
+											sum(minusbR, minusbI, sqrtR, sqrtI);
+											double plusR = resultR, plusI = resultI;
+											division(plusR, plusI, twoaR, twoaI);
+											double x1R = resultR, x1I = resultI;
+											division(minusR, minusI, twoaR, twoaI);
+											double x2R = resultR, x2I = resultI;
+											RootR[g - 1] = x1R; RootI[g - 1] = x1I;
+											RootR[g] = x2R; RootI[g] = x2I;
+										}
+									}
+									g++;
+								}
+								n++;
+
+
+
+							}
+						}
+						else {
+							if (maxExponent > 40) {
+								saveMaxExponent = maxExponent;
+								g = 0;
+								double expDerivateR[dim], expDerivateI[dim], saveExpDerivateR[dim], saveExpDerivateI[dim];
+								rf = 0;
+								while (rf < maxExponent) {
+									multiplication(expressionCoefR[rf], expressionCoefI[rf], (double)maxExponent - rf, 0.0);
+									expDerivateR[rf] = resultR;
+									expDerivateI[rf] = resultI;
+									saveExpDerivateR[rf] = resultR;
+									saveExpDerivateI[rf] = resultI;
+									rf++;
+								}
+								rf = 0;
+								double saveExpressionCoefR[dim], saveExpressionCoefI[dim];
+								while (rf <= maxExponent) {
+									saveExpressionCoefR[rf] = expressionCoefR[rf];
+									saveExpressionCoefI[rf] = expressionCoefI[rf];
+									expressCoefR[rf] = expressionCoefR[rf];
+									expressCoefI[rf] = expressionCoefI[rf];
+									rf++;
+								}
+								int countSolutions = 0;
+								rf = 0;
+								while (rf <= maxExponent) {
+									expressCoefR[rf] = expressionCoefR[rf];
+									expressCoefI[rf] = expressionCoefI[rf];
+									rf++;
+								}
+								saveMaxExponent = maxExponent;
+								n = 0;
+								RootR[g] = 0; RootI[g] = 0;
+								while (countSolutions < saveMaxExponent) {
+									if (n == 2000) {
+										countSolutions++;
+										n = 0;
+
+										int y = 1;
+										while (y - 1 < maxExponent) {
+											multiplication(expressCoefR[y - 1], expressCoefI[y - 1], RootR[g], RootI[g]);
+											sum(expressCoefR[y], expressCoefI[y], resultR, resultI);
+											expressCoefR[y] = resultR; expressCoefI[y] = resultI;
+											y++;
+										}
+										rf = 0;
+										while (rf < maxExponent) {
+											multiplication(expressCoefR[rf], expressCoefI[rf], (double)maxExponent - rf, 0.0);
+											expDerivateR[rf] = resultR;
+											expDerivateI[rf] = resultI;
+											rf++;
+										}
+										g++;
+										RootR[g] = RootR[g - 1]; RootI[g] = RootI[g - 1];
+										maxExponent--;
+									}
+									else {
+										double SummDerivateR = 0, SummDerivateI = 0;
 										xValuesR = RootR[g];
 										xValuesI = RootI[g];
 										rf = 0;
-										SummatoryR = 0; SummatoryI = 0;
-										while (rf < saveMaxExponent) {
-											exponentiation(xValuesR, xValuesI, saveMaxExponent - rf, 0.0, 1);
-											multiplication(saveExpressionCoefR[rf], saveExpressionCoefI[rf], resultR, resultI);
+										double SummatoryR = 0, SummatoryI = 0;
+										while (rf < maxExponent) {
+											exponentiation(xValuesR, xValuesI, maxExponent - rf, 0.0, 1);
+											multiplication(expressCoefR[rf], expressCoefI[rf], resultR, resultI);
 											SummatoryR = SummatoryR + resultR;
 											SummatoryI = SummatoryI + resultI;
 											rf++;
 										}
-										sum(SummatoryR, SummatoryI, saveExpressionCoefR[rf], saveExpressionCoefI[rf]);
+										sum(SummatoryR, SummatoryI, expressCoefR[rf], expressCoefI[rf]);
 										SummatoryR = resultR; SummatoryI = resultI;
 										SummDerivateR = 0; SummDerivateI = 0;
 										rf = 0;
-										while (rf < saveMaxExponent - 1) {
-											exponentiation(xValuesR, xValuesI, saveMaxExponent - rf - 1, 0.0, 1);
-											multiplication(saveExpDerivateR[rf], saveExpDerivateI[rf], resultR, resultI);
+										while (rf < maxExponent - 1) {
+											exponentiation(xValuesR, xValuesI, maxExponent - rf - 1, 0.0, 1);
+											multiplication(expDerivateR[rf], expDerivateI[rf], resultR, resultI);
 											SummDerivateR = SummDerivateR + resultR;
 											SummDerivateI = SummDerivateI + resultI;
 											rf++;
 										}
-										sum(SummDerivateR, SummDerivateI, saveExpDerivateR[rf], saveExpDerivateI[rf]);
+										sum(SummDerivateR, SummDerivateI, expDerivateR[rf], expDerivateI[rf]);
 										SummDerivateR = resultR; SummDerivateI = resultI;
 										division(SummatoryR, SummatoryI, SummDerivateR, SummDerivateI);
 										subtraction(xValuesR, xValuesI, resultR, resultI);
 										RootR[g] = resultR;
 										RootI[g] = resultI;
+										if (n > 1000) {
+											xValuesR = RootR[g];
+											xValuesI = RootI[g];
+											rf = 0;
+											SummatoryR = 0; SummatoryI = 0;
+											while (rf < saveMaxExponent) {
+												exponentiation(xValuesR, xValuesI, saveMaxExponent - rf, 0.0, 1);
+												multiplication(saveExpressionCoefR[rf], saveExpressionCoefI[rf], resultR, resultI);
+												SummatoryR = SummatoryR + resultR;
+												SummatoryI = SummatoryI + resultI;
+												rf++;
+											}
+											sum(SummatoryR, SummatoryI, saveExpressionCoefR[rf], saveExpressionCoefI[rf]);
+											SummatoryR = resultR; SummatoryI = resultI;
+											SummDerivateR = 0; SummDerivateI = 0;
+											rf = 0;
+											while (rf < saveMaxExponent - 1) {
+												exponentiation(xValuesR, xValuesI, saveMaxExponent - rf - 1, 0.0, 1);
+												multiplication(saveExpDerivateR[rf], saveExpDerivateI[rf], resultR, resultI);
+												SummDerivateR = SummDerivateR + resultR;
+												SummDerivateI = SummDerivateI + resultI;
+												rf++;
+											}
+											sum(SummDerivateR, SummDerivateI, saveExpDerivateR[rf], saveExpDerivateI[rf]);
+											SummDerivateR = resultR; SummDerivateI = resultI;
+											division(SummatoryR, SummatoryI, SummDerivateR, SummDerivateI);
+											subtraction(xValuesR, xValuesI, resultR, resultI);
+											RootR[g] = resultR;
+											RootI[g] = resultI;
+										}
 									}
-								}
 
-								n++;
+									n++;
+								}
+								maxExponent = saveMaxExponent;
 							}
-							maxExponent = saveMaxExponent;
 						}
 					}
 				}
@@ -1903,7 +1938,7 @@ void simpleSimplifyPolynomial(char expression[DIM]) {
 	char operaTor[DIM] = "";
 	char operators[DIM] = "";
 	int error = 0;
-	char polys[dim][dim];
+	char polys[dim][dIm];
 	while (expressionS[v] != '\0') {
 		sprintf(operaTor, "%c%c%c", expressionS[v], expressionS[v + 1], expressionS[v + 2]);
 
@@ -2145,7 +2180,7 @@ void simplifyPolynomial(char expression[DIM]) {
 	char operators[dim] = "";
 	char getSimpleExpression[DIM] = "";
 	char getRestExpression[DIM] = "";
-	char parentNum[dim][dim];
+	char parentNum[dim][dIm];
 	int type[dim];
 	if (maxPar > 0) {
 		if (parent[0] == 0) {
@@ -2784,7 +2819,7 @@ void simplifyExpression(char data[DIM]) {
 		}
 		replaceTimes = 1;
 		char alphabet[DIM] = "ABCDEFGHIJKLMNOPQRSTUWVXYZabcdefghijklmnopqrstuwvxyz";
-		char saveConversions[dim][dim];
+		char saveConversions[dim][dIm];
 		int z = 0;
 		for (z = 0; z < abs((int)strlen(expression)); z++) {
 			if (verifyNumerator(expression[z - 1]) && expression[z] == '/'&&verifyNumerator(expression[z + 1])) {
