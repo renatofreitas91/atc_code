@@ -13,8 +13,7 @@
 #include <conio.h>
 #include "atc_functions.h"
 #define DIM 3100
-#define dim 200
-#define dIm 1000
+#define dim 600
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <dirent.h> 
@@ -23,10 +22,10 @@
 #include <tlhelp32.h>
 
 
-extern double vectorR[dim][dIm], vectorI[dim][dIm], realRoots[dim], rootsR[dim], rootsI[dim], expressionCoefR[dim], expressionCoefI[dim], X_k_R[dim], X_k_I[dim], lastElement, lastElementI, LastDividerR, LastDividerI, natureValue, lastDividerR, lastDividerI, returnedR, returnedI, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
+extern double vectorR[dim][dim], vectorI[dim][dim], realRoots[dim], rootsR[dim], rootsI[dim], expressionCoefR[dim], expressionCoefI[dim], X_k_R[dim], X_k_I[dim], lastElement, lastElementI, LastDividerR, LastDividerI, natureValue, lastDividerR, lastDividerI, returnedR, returnedI, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
 extern int previousAnsType, matrixMode, numVectorLines, numVectorCols, check4Vector, vectorType, nrRoots, xATC, yATC, colsATC, linesATC, widthATC, heightATC, Pressed, toSendCommand, countSplits, maxExponent, numSysNum, parentPol[DIM], replaceTimes, countEnters, countReturn, countBreak, Break, countUseReturn, countUseBreak, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
-extern char returnCharArray[DIM], saveUserFunctionsRenamedVariablesTextFile[DIM], saveUserFunctionsVariablesTextFile[DIM], saveScriptRenamedVariablesTextFile[DIM], saveScriptVariablesTextFile[DIM], saveRenamedVariablesTextFile[DIM], saveRenamedTxtVariablesTextFile[DIM], actualTime[DIM], verboseRes[DIM], numSys[DIM], siPref[DIM], context[30], saveTxtVariablesTextFile[DIM], saveVariablesTextFile[DIM], ansMatrices[DIM][DIM], saveMatrixAns[DIM], matrixResult[DIM], vectorString[DIM], customFolderPath[DIM], saveATCPath[DIM], renamedVariable[DIM], dimensionsTxt[300], windowTxt[300], validChars[DIM], lastCommand[DIM], saveSimplified[DIM], saveSimplification[DIM], splitResult[200][200], answers[DIM], saveExpressionFF[DIM], saveArithTrig[DIM], saveExpressionF[DIM], OutputText[DIM], roots[DIM], charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM], expressionF2[DIM];
-extern boolean variableControllersUsed, product, fromEquationSolver, progress, starting, studyFunction, I_O, isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver, poly;
+extern char returnCharArray[DIM], saveUserFunctionsRenamedVariablesTextFile[DIM], saveUserFunctionsVariablesTextFile[DIM], saveScriptRenamedVariablesTextFile[DIM], saveScriptVariablesTextFile[DIM], saveRenamedVariablesTextFile[DIM], saveRenamedTxtVariablesTextFile[DIM], actualTime[DIM], verboseRes[DIM], numSys[DIM], siPref[DIM], context[30], saveTxtVariablesTextFile[DIM], saveVariablesTextFile[DIM], ansMatrices[DIM][DIM], saveMatrixAns[DIM], matrixResult[DIM], vectorString[DIM], customFolderPath[DIM], saveATCPath[DIM], renamedVariable[DIM], dimensionsTxt[dim], windowTxt[dim], validChars[DIM], lastCommand[DIM], saveSimplified[DIM], saveSimplification[DIM], splitResult[dim][dim], answers[DIM], saveExpressionFF[DIM], saveArithTrig[DIM], saveExpressionF[DIM], OutputText[DIM], roots[DIM], charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM], expressionF2[DIM];
+extern boolean notSolved,variableControllersUsed, product, fromEquationSolver, progress, starting, studyFunction, I_O, isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver, poly;
 double functionProcessor(char trigon[DIM], double result, double amplitude, int res);
 double initialProcessor(char arithTrig[DIM], double result);
 double arithSolver(char trigon1[DIM], double result);
@@ -90,20 +89,20 @@ void customFuncRenamer(char variable[DIM]);
 void designGraph(char functionF[DIM]);
 void replace(char toReplace[DIM], char replacement[DIM], char string[DIM]);
 void replaceByIndex(char toReplace[DIM], char replacement[DIM], char string[DIM], int index);
-void fmsum(int lins, int cols, double v[dim][dIm], double u[dim][dIm], double r[dim][dIm], double vI[dim][dIm], double uI[dim][dIm], double rI[dim][dIm]);
-void fmsubt(int lins, int cols, double v[dim][dIm], double u[dim][dIm], double r[dim][dIm], double vI[dim][dIm], double uI[dim][dIm], double rI[dim][dIm]);
-void fmmulr(int lins, int cols, double v[dim][dIm], double r[dim][dIm], double re, double vI[dim][dIm], double rI[dim][dIm], double reI);
-void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dIm], double u[dim][dIm], double r[dim][dIm], double vI[dim][dIm], double uI[dim][dIm], double rI[dim][dIm]);
+void fmsum(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]);
+void fmsubt(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]);
+void fmmulr(int lins, int cols, double v[dim][dim], double r[dim][dim], double re, double vI[dim][dim], double rI[dim][dim], double reI);
+void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]);
 void saveToReport(char report[DIM]);
 double equationSolver(char equation[DIM]);
 void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2, int index);
-void fmtranspose(int lins, int  cols, double vMS[dim][dIm], double vMSI[dim][dIm], double mTransposeR[dim][dIm], double mTransposeI[dim][dIm]);
-void fmdeterminant(int lins, int  cols, double vMS[dim][dIm], double vMSI[dim][dIm]);
+void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim], double mTransposeR[dim][dim], double mTransposeI[dim][dim]);
+void fmdeterminant(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]);
 void startDetProcessing(char matrix[DIM]);
 void rootsToPolynomial(char rooots[DIM]);
-void fminverse(int lins, int  cols, double vMS[dim][dIm], double vMSI[dim][dIm], double inverseR[dim][dIm], double inverseI[dim][dIm]);
-void fmpowerm(double v[dim][dIm], double vI[dim][dIm], double r[dim][dIm], double rI[dim][dIm], int power, int lins, int cols);
-int fmrank(int lins, int cols, double vMS[dim][dIm], double vMSI[dim][dIm]);
+void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim], double inverseR[dim][dim], double inverseI[dim][dim]);
+void fmpowerm(double v[dim][dim], double vI[dim][dim], double r[dim][dim], double rI[dim][dim], int power, int lins, int cols);
+int fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]);
 void sum_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]);
 void sub_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]);
 void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]);
@@ -113,7 +112,7 @@ void removeTriplPars(char expression[DIM]);
 void setWindow(int x, int y);
 void setDimensions(int cols, int lines);
 void convert2Vector(char arithTrig[DIM]);
-boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dim][dIm], double u[dim][dIm], double vI[dim][dIm], double uI[dim][dIm]);
+boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], double u[dim][dim], double vI[dim][dim], double uI[dim][dim]);
 boolean simpleEvaluator(char expression[DIM]);
 boolean advancedEvaluator(char expression[DIM]);
 boolean isContainedVariable(char to_find[DIM], char string[DIM]);
@@ -144,4 +143,4 @@ char* convertToSpaces(char* data);
 void GoToXY(int column, int line);
 COORD GetConsoleCursorPosition(HANDLE hConsoleOutput);
 void getRealRoot(double real[dim], double  imaginary[dim], int maxExponent, double guess);
-char* convertVector2String(double vectorR[dim][dIm], double vectorI[dim][dIm], int numLines, int numCols);
+char* convertVector2String(double vectorR[dim][dim], double vectorI[dim][dim], int numLines, int numCols);

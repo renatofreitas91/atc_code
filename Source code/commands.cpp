@@ -358,7 +358,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	}
 	if (isCommand(arithTrig, "atcfromcmd")) {
 		command = true;
-		char comm[300] = "";
+		char comm[DIM] = "";
 		sprintf(comm, "/C \"setx /M PATH \"%%PATH%%;%s\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
@@ -536,16 +536,22 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					progress = false;
 					char report[DIM] = "";
 					sprintf(report, "\n%s\n", answers);
-					puts(report);
-					int option = -1;
-					while (option != 0 && option != 1) {
-						I_O = true;
-						puts("\nExport result? (Yes -> 1 \\ No -> 0)");
-						option = (int)getValue();
+					if (!notSolved) {
+						puts(report);
+						int option = -1;
+						while (option != 0 && option != 1) {
+							I_O = true;
+							puts("\nExport result? (Yes -> 1 \\ No -> 0)");
+							option = (int)getValue();
+						}
+						if (option == 1) {
+							saveToReport(report);
+						}
 					}
-					if (option == 1) {
-						saveToReport(report);
+					else {
+						puts("\n==> ATC was unable to calculate the solution for your polynomial. <==\n");
 					}
+
 				}
 			}
 			else {
@@ -829,7 +835,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	}
 	if (isCommand(arithTrig, "atcfolder")) {
 		command = true;
-		char comm[300] = "";
+		char comm[DIM] = "";
 		sprintf(comm, "/C \"explorer %s\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
@@ -840,7 +846,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	}
 	if (isCommand(arithTrig, "sourcecode")) {
 		command = true;
-		char comm[300] = "";
+		char comm[DIM] = "";
 		sprintf(comm, "/C \"explorer %s\\Source code\\\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
@@ -851,7 +857,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	}
 	if (isCommand(arithTrig, "scriptsexamples")) {
 		command = true;
-		char comm[300] = "";
+		char comm[DIM] = "";
 		sprintf(comm, "/C \"explorer %s\\Scripts examples\\\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
@@ -862,7 +868,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	}
 	if (isCommand(arithTrig, "strings")) {
 		command = true;
-		char comm[300] = "";
+		char comm[DIM] = "";
 		sprintf(comm, "/C \"explorer %s\\Strings\\\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
@@ -873,7 +879,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	}
 	if (isCommand(arithTrig, "userfunctions")) {
 		command = true;
-		char comm[300] = "";
+		char comm[DIM] = "";
 		sprintf(comm, "/C \"explorer %s\\User functions\\\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
@@ -884,7 +890,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	}
 	if (isCommand(arithTrig, "tosolve")) {
 		command = true;
-		char comm[300] = "";
+		char comm[DIM] = "";
 		sprintf(comm, "/C \"explorer %s\\To solve\\\"", atcPath);
 		using namespace std;
 		std::string s = string(comm);
@@ -1291,8 +1297,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	if (isCommand(arithTrig, "stopwatch") && arithTrig[i + 9] == '(' || isCommand(arithTrig, "runstopwatch") && arithTrig[i + 12] == '(') {
 		if (isCommand(arithTrig, "runstopwatch")) {
 			command = true;
-			char comm[300] = "";
-			char commandToExecute[300] = "";
+			char comm[DIM] = "";
+			char commandToExecute[DIM] = "";
 			replace("run", "", arithTrig);
 			sprintf(commandToExecute, "%s", expressionF);
 			replace("+0", "", commandToExecute);
@@ -1577,8 +1583,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	if (isCommand(arithTrig, "timer") && arithTrig[i + 5] == '(' || isCommand(arithTrig, "runtimer") && arithTrig[i + 8] == '(') {
 		if (isCommand(arithTrig, "runtimer")) {
 			command = true;
-			char comm[300] = "";
-			char commandToExecute[300] = "";
+			char comm[DIM] = "";
+			char commandToExecute[DIM] = "";
 			replace("run", "", arithTrig);
 			sprintf(commandToExecute, "%s", expressionF);
 			replace("+0", "", commandToExecute);
@@ -1776,8 +1782,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	if (isCommand(arithTrig, "bigtimer") && arithTrig[i + 8] == '(' || isCommand(arithTrig, "runbigtimer") && arithTrig[i + 11] == '(') {
 		if (isCommand(arithTrig, "runbigtimer")) {
 			command = true;
-			char comm[300] = "";
-			char commandToExecute[300] = "";
+			char comm[DIM] = "";
+			char commandToExecute[DIM] = "";
 			replace("run", "", arithTrig);
 			sprintf(commandToExecute, "%s", expressionF);
 			replace("+0", "", commandToExecute);
@@ -1975,8 +1981,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	if (isCommand(arithTrig, "clock") && arithTrig[i + 5] == '(' || isCommand(arithTrig, "runclock") && arithTrig[i + 8] == '(') {
 		if (isCommand(arithTrig, "runclock")) {
 			command = true;
-			char comm[300] = "";
-			char commandToExecute[300] = "";
+			char comm[DIM] = "";
+			char commandToExecute[DIM] = "";
 			replace("run", "", arithTrig);
 			sprintf(commandToExecute, "%s", expressionF);
 			replace("+0", "", commandToExecute);

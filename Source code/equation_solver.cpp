@@ -5,12 +5,12 @@
 
 #include "stdafx.h"
 
-boolean fromEquationSolver = false, equationSolverRunning = false, polySimplifier = false, solveMultiPoly = false, simplifying = true, progress = false, product = false;
+boolean notSolved = true, fromEquationSolver = false, equationSolverRunning = false, polySimplifier = false, solveMultiPoly = false, simplifying = true, progress = false, product = false;
 char charMaster[DIM] = "", roots[DIM] = "", answers[DIM] = "", polyNo[DIM] = "", stringHelper[DIM] = "";
 int parentPol[DIM];
 int nrRoots = 0, rootIndex = 1, maxExponent = 0;
 double lastDividerR = 1, lastDividerI = 0, natureValue = 1, lastElement = 0, lastElementI = 0;
-char splitResult[200][200];
+char splitResult[dim][dim];
 double expressionCoefR[dim], expressionCoefI[dim], realRoots[dim];
 
 void solveQuadraticEquation(char arithTrig[DIM], double result1, double result2, int index) {
@@ -315,7 +315,7 @@ void rootsToPolynomial(char rootsF[DIM]) {
 		polynomialI[0] = 0;
 		polynomialR[1] = valuesRootsR[0] * -1;
 		polynomialI[1] = valuesRootsI[0] * -1;
-		double saveResultR[dim][dIm], saveResultI[dim][dIm];
+		double saveResultR[dim][dim], saveResultI[dim][dim];
 		double polynomialRF[DIM], polynomialIF[DIM];
 		while (members < numberRoots) {
 			for (i = 0; i < members * 2; i++) {
@@ -1402,7 +1402,7 @@ double equationSolver(char equation[DIM]) {
 							expresI[r] = expressionCoefI[r];
 						}
 						int breakAction = 0;
-						boolean notSolved = true;
+						notSolved = true;
 						if (maxMaxExponent <= 40) {
 							while (((!notSolved&&n < breakAction) || (notSolved&&countSolutions < maxMaxExponent - 1)) && n < 7777) {
 								g = 0;
@@ -1558,7 +1558,7 @@ double equationSolver(char equation[DIM]) {
 												division(sumRootsR, sumRootsI, expressCoefR[1], expressCoefI[1]);
 												if (abs(resultR) <= 1 && abs(resultR) > 0.99999&&abs(resultI) < 0.0001) {
 													notSolved = false;
-													breakAction = n + 2000;
+													breakAction = n + 237;
 												}
 											}
 											multiplication(-1.0, 0.0, expresR[1], expresI[1]);
@@ -1746,6 +1746,9 @@ double equationSolver(char equation[DIM]) {
 				int y = 0;
 				char value[100] = "";
 				char *pointer;
+				if (maxExponent == 0) {
+					notSolved = false;
+				}
 				while (y < maxExponent) {
 					sprintf(value, "%G", RootR[y]);
 					RootR[y] = strtod(value, &pointer);
@@ -1905,6 +1908,7 @@ double equationSolver(char equation[DIM]) {
 	return 0;
 }
 
+
 void simpleSimplifyPolynomial(char expression[DIM]) {
 
 	isDivisible = true;
@@ -1938,7 +1942,7 @@ void simpleSimplifyPolynomial(char expression[DIM]) {
 	char operaTor[DIM] = "";
 	char operators[DIM] = "";
 	int error = 0;
-	char polys[dim][dIm];
+	char polys[dim][dim];
 	while (expressionS[v] != '\0') {
 		sprintf(operaTor, "%c%c%c", expressionS[v], expressionS[v + 1], expressionS[v + 2]);
 
@@ -2180,7 +2184,7 @@ void simplifyPolynomial(char expression[DIM]) {
 	char operators[dim] = "";
 	char getSimpleExpression[DIM] = "";
 	char getRestExpression[DIM] = "";
-	char parentNum[dim][dIm];
+	char parentNum[dim][dim];
 	int type[dim];
 	if (maxPar > 0) {
 		if (parent[0] == 0) {
@@ -2819,7 +2823,7 @@ void simplifyExpression(char data[DIM]) {
 		}
 		replaceTimes = 1;
 		char alphabet[DIM] = "ABCDEFGHIJKLMNOPQRSTUWVXYZabcdefghijklmnopqrstuwvxyz";
-		char saveConversions[dim][dIm];
+		char saveConversions[dim][dim];
 		int z = 0;
 		for (z = 0; z < abs((int)strlen(expression)); z++) {
 			if (verifyNumerator(expression[z - 1]) && expression[z] == '/'&&verifyNumerator(expression[z + 1])) {

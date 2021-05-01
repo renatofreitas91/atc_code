@@ -141,7 +141,7 @@ void asciiOrder() {
 	do {
 		puts("\nSeperate your expressions by \"\\\" and in the final press \"Enter\"\n");
 		char expressions[DIM] = "";
-		char expressionList[dim][dIm], expressionListS[dim][dIm];
+		char expressionList[dim][dim], expressionListS[dim][dim];
 		double expressionEquivalent[dim];
 		gets_s(expressions);
 		int i = 0, j = 0, maximum = 0, z = 0;
@@ -275,7 +275,7 @@ void inverseAsciiOrder() {
 	do {
 		puts("\nSeperate your expressions by \"\\\" and in the final press \"Enter\"\n");
 		char expressions[DIM] = "";
-		char expressionList[dim][dIm], expressionListS[dim][dIm];
+		char expressionList[dim][dim], expressionListS[dim][dim];
 		double expressionEquivalent[dim];
 		gets_s(expressions);
 		int i = 0, j = 0, maximum = 0, z = 0;
