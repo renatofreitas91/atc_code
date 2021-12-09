@@ -99,7 +99,7 @@ void designGraph(char functionF[DIM]) {
 	}
 
 	FILE *graph = NULL;
-	double Xmin, Xmax, Xscale, Ymin, Ymax, Yscale, auto_y_axis;
+	double Xmin, Xmax, Xscale, Ymin, Ymax, Yscale, auto_y_axis, auto_x_axis;
 	sprintf(toOpen, "%s\\graph.txt", atcPath);
 	graph = fopen(toOpen, "r");
 	if (x_lower != -77777 && x_higher != -77777 && graph == NULL) {
@@ -115,6 +115,7 @@ void designGraph(char functionF[DIM]) {
 		Ymax = 1E-20;
 		Yscale = 1E-21;
 		auto_y_axis = 1;
+		auto_x_axis = 1;
 	}
 	else {
 		if (graph == NULL) {
@@ -125,6 +126,7 @@ void designGraph(char functionF[DIM]) {
 			Ymax = 1E-20;
 			Yscale = 1E-21;
 			auto_y_axis = 1;
+			auto_x_axis = 1;
 		}
 		else {
 			char data[DIM] = "";
@@ -203,9 +205,18 @@ void designGraph(char functionF[DIM]) {
 			}
 			value[j] = '\0';
 			auto_y_axis = calcNow(value, 0, 0);
+			i++;
+			j = 0;
+			while (data[i] != '\n'&&data[i] != '\0') {
+				value[j] = data[i];
+				i++; j++;
+			}
+			value[j] = '\0';
+			auto_x_axis = calcNow(value, 0, 0);
 		}
-
 	}
+
+
 	double yValuesAll[20][121];
 	double xDim = Xmax - Xmin;
 	double valuePerxDim = 120 / xDim;
@@ -233,6 +244,162 @@ void designGraph(char functionF[DIM]) {
 	sprintf(specFunction, function);
 	int r = 0, e = 0, count = 0;
 	char info[DIM] = "";
+	if (auto_x_axis == 1) {
+		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res,pi,e,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,";
+		char func[50] = "";
+		boolean hasFunction = false;
+		for (int f = 0; f < abs((int)strlen(function)); f++) {
+			int g = 0;
+			while (function[f] != '\0'&&function[f] != ',') {
+				func[g] = function[f];
+				g++; f++;
+			}
+			func[g] = '\0';
+			if (isContained(func, functionF)) {
+				hasFunction = true;
+			}
+		}
+		if (!hasFunction) {
+			manageExpression(functionF, 0, 0, 1);
+			sprintf(functionF, "%s", expressionF);
+			replaceTimes = 0;
+			if (isContained("(x)", functionF)) {
+				replace("(x)", "x", functionF);
+				sprintf(functionF, "%s", expressionF);
+			}
+			simplifyExpression(functionF);
+			sprintf(roots, "");
+			sprintf(functionF, "(%s)", expressionF);
+			equationSolver(functionF);
+		}
+		Xscale = -77777;
+		if (strlen(roots) > 0 && !hasFunction) {
+			if (isContained("1", roots) || isContained("2", roots) || isContained("3", roots) || isContained("4", roots) || isContained("5", roots) || isContained("6", roots) || isContained("7", roots) || isContained("8", roots) || isContained("9", roots)) {
+				maximum(roots);
+				if (resultR != 0 && resultI != -DBL_MAX && abs(resultI) < 0.01) {
+					x_higher = resultR;
+					minimum(roots);
+					if (abs(resultI) < 0.01) {
+						x_lower = resultR;
+						x_lower = x_lower - 5;
+						x_higher = x_higher + 5;
+						Xmin = x_lower;
+						Xmax = x_higher;
+						Xscale = (x_higher - x_lower) / 20;
+					}
+				}
+			}
+		}
+		if (Xscale == -77777) {
+			graph = fopen(toOpen, "r");
+			if (x_lower != -77777 && x_higher != -77777 && graph == NULL) {
+				Xmin = x_lower;
+				Xmax = x_higher;
+				if (x_scaleF != -77777) {
+					Xscale = x_scaleF;
+				}
+				else {
+					Xscale = 1;
+				}
+				Ymin = -1E-20;
+				Ymax = 1E-20;
+				Yscale = 1E-21;
+				auto_y_axis = 1;
+				auto_x_axis = 1;
+			}
+			else {
+				if (graph == NULL) {
+					Xmin = -10;
+					Xmax = 10;
+					Xscale = 1;
+					Ymin = -1E-20;
+					Ymax = 1E-20;
+					Yscale = 1E-21;
+					auto_y_axis = 1;
+					auto_x_axis = 1;
+				}
+				else {
+					char data[DIM] = "";
+					int i = 0;
+					for (i = 0; (data[i] = fgetc(graph)) != EOF; i++);
+					data[i] = '\0';
+					fclose(graph);
+					i = 0; int j = 0;
+					char value[20] = "";
+					while (data[i] != '\n'&&data[i] != '\0') {
+						value[j] = data[i];
+						i++; j++;
+					}
+					value[j] = '\0';
+					if (x_lower == -77777) {
+						Xmin = calcNow(value, 0, 0);
+					}
+					else {
+						Xmin = x_lower;
+					}
+					i++;
+					j = 0;
+					while (data[i] != '\n'&&data[i] != '\0') {
+						value[j] = data[i];
+						i++; j++;
+					}
+					value[j] = '\0';
+					if (x_higher == -77777) {
+						Xmax = calcNow(value, 0, 0);
+					}
+					else {
+						Xmax = x_higher;
+					}
+					i++;
+					j = 0;
+					while (data[i] != '\n'&&data[i] != '\0') {
+						value[j] = data[i];
+						i++; j++;
+					}
+					value[j] = '\0';
+					if (x_scaleF == -77777) {
+						Xscale = calcNow(value, 0, 0);
+					}
+					else {
+						Xscale = x_scaleF;
+					}
+					i++;
+					j = 0;
+					while (data[i] != '\n'&&data[i] != '\0') {
+						value[j] = data[i];
+						i++; j++;
+					}
+					value[j] = '\0';
+					Ymin = calcNow(value, 0, 0);
+					i++;
+					j = 0;
+					while (data[i] != '\n'&&data[i] != '\0') {
+						value[j] = data[i];
+						i++; j++;
+					}
+					value[j] = '\0';
+					Ymax = calcNow(value, 0, 0);
+					i++;
+					j = 0;
+					while (data[i] != '\n'&&data[i] != '\0') {
+						value[j] = data[i];
+						i++; j++;
+					}
+					value[j] = '\0';
+					Yscale = calcNow(value, 0, 0);
+					i++;
+					j = 0;
+					while (data[i] != '\n'&&data[i] != '\0') {
+						value[j] = data[i];
+						i++; j++;
+					}
+					value[j] = '\0';
+					auto_y_axis = calcNow(value, 0, 0);
+
+				}
+			}
+		}
+	}
 	if (auto_y_axis == 1) {
 		do {
 			e = 0;
@@ -262,11 +429,11 @@ void designGraph(char functionF[DIM]) {
 				f++;
 			}
 			if (newYmin < Ymin || newYmax > Ymax) {
-				if (abs(newYmin) > newYmax) {
+				if (abs(newYmin) > abs(newYmax)) {
 					newYmax = abs(newYmin);
 				}
 				else {
-					newYmin = newYmax * -1;
+					newYmin = abs(newYmax) * -1;
 				}
 				Ymax = ceil(newYmax);
 				Ymin = floor(newYmin);
@@ -606,7 +773,6 @@ void GoToXY(int column, int line)
 	coord.Y = line;
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleCursorPosition(hConsole, coord);
-
 }
 
 COORD GetConsoleCursorPosition(HANDLE hConsoleOutput)

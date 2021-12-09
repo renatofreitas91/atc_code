@@ -188,7 +188,7 @@ void fft(char values[DIM]) {
 void ifft(char values[DIM]) {
 	double XR[dim], XI[dim];
 	int initialCountSplits = 0;
-	char saveSplitResult[200][200];
+	char saveSplitResult[200][dim];
 	int i = 0;
 	if (countSplits > 0) {
 		initialCountSplits = countSplits;

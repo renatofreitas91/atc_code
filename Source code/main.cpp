@@ -45,11 +45,11 @@ void main(int argc, char *argv[]) {
 		}
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v2.1.1");
+		system("title Advanced Trigonometry Calculator v2.1.2");
 		continu = about();
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v2.1.1       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v2.1.2       ==) ATC is ready to process data. (==");
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\temp.txt", atcPath);
 		FILE *open = fopen(toOpen, "r");
@@ -166,6 +166,7 @@ void main(int argc, char *argv[]) {
 							break;
 						}
 						else {
+
 							printf(">");
 							gets_s(trigData);
 							if (strlen(trigData) > 0) {
@@ -183,7 +184,7 @@ void main(int argc, char *argv[]) {
 					}
 				}
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v2.1.1       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v2.1.2       ==) Processing... (==");
 
 			}
 			else {
@@ -213,6 +214,7 @@ void main(int argc, char *argv[]) {
 				validVar = 1; 	processingOK = 1;
 				sprintf(varRename, "");
 				sprintf(fTrig, "");
+				sprintf(matrixValue, "");
 				i = 0;
 				int fl = 1, fr = 0;
 				while (trigData[tD] != '\0'&&trigData[tD] != ','&&tD < abs((int)strlen(trigData))) {
@@ -239,6 +241,9 @@ void main(int argc, char *argv[]) {
 				arithTrig[i] = '\0';
 				if (variableControllersUsed || strlen(saveVariablesTextFile) == 0 || strlen(saveRenamedVariablesTextFile) == 0) {
 					sprintf(toOpen, "%s\\variables.txt", atcPath);
+					if (open != NULL) {
+						fclose(open);
+					}
 					open = fopen(toOpen, "w");
 					if (open != NULL) {
 						fprintf(open, "%s", saveVariablesTextFile);
@@ -303,7 +308,7 @@ void main(int argc, char *argv[]) {
 			if (fout != NULL) {
 				fclose(fout);
 			}
-			if (continu != 1) {
+			if (continu != 1 && fout != NULL) {
 				fclose(fout);
 			}
 			if (argc >= 2) {
@@ -379,7 +384,7 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v2.1.1       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v2.1.2       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -1189,7 +1194,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					}
 					char saveExpr[DIM] = "";
 					sprintf(saveExpr, "%s", varValidator);
-					double funcF = functionProcessor(varValidator, 2, 7, 12);
+					double funcF = functionProcessor(varValidator, 2, 7, 12, "");
 					if (funcF == 0.5&&isContained("solver", varValidator)) {
 						if (!isContained("x", data)) {
 							if (comment == 1) {
@@ -1507,6 +1512,14 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 					j++;
 				}
 			}
+			if (data[i] == 'l'&&data[i + 1] == 'i'&&data[i + 2] == 'n'&&data[i + 3] == 's'&&data[i + 4] == 'n'&&data[i + 5] == 'u'&&data[i + 6] == 'm') {
+				decision = true;
+				i = i + 6;
+			}
+			if (data[i] == 'c'&&data[i + 1] == 'o'&&data[i + 2] == 'l'&&data[i + 3] == 's'&&data[i + 4] == 'n'&&data[i + 5] == 'u'&&data[i + 6] == 'm') {
+				decision = true;
+				i = i + 6;
+			}
 			if (data[i] == 'r'&&data[i + 1] == 'e'&&data[i + 2] == 's'&&data[i + 3] != 't') {
 				decision = true;
 				i = i + 3;
@@ -1523,12 +1536,12 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				decision = true;
 				i = i + 5;
 			}
-			if (data[i] == 'a' || data[i] == 's'&&data[i - 1] != 'e'&&data[i - 2] != 'r' || data[i] == 'c' || data[i] == 't' || data[i] == 'g' || data[i] == 'd' || data[i] == 'l' || data[i] == 'q' || data[i] == 'r') {
+			if (data[i] == 'a' || data[i] == 's'&&data[i - 1] != 'e'&&data[i - 2] != 'r' || data[i] == 'c' || data[i] == 't' || data[i] == 'g' || data[i] == 'd' || data[i] == 'l' || data[i] == 'q' || data[i] == 'r' || data[i] == 'm') {
 				decision = true;
 				j = 0;
 				while (data[i] != '('&&data[i] != '\0'&&i < abs((int)strlen(data))) {
 					k = 0;
-					if (data[i] == 'b'&&data[i - 1] != 'c') {
+					if (data[i] == 'b'&&data[i - 1] != 'c'&&data[i - 1] != 'm') {
 						function[j] = data[i];
 						j++; i++;
 						k++;
@@ -1659,7 +1672,7 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 				resultI = 0.5;
 				int ko = abs((int)strlen(function));
 				function[ko] = '?'; function[ko + 1] = '\0';
-				if (functionProcessor(function, 0.2, 1.0, 0) != 0 || function[0] == 'r'&&function[1] == 'e'&&function[2] == 's'&&function[3] == 't'&&function[4] == '\0' || function[0] == 'q'&&function[1] == 'u'&&function[2] == 'o'&&function[3] == 't'&&function[4] == 'i'&&function[5] == 'e'&&function[6] == 'n'&&function[7] == 't'&&function[8] == '\0' || function[0] == 'a'&&function[1] == 'c'&&function[2] == 'o'&&function[3] == 's'&&function[4] == 'h'&&function[5] == '\0' || function[0] == 'a'&&function[1] == 'c'&&function[2] == 'o'&&function[3] == 't'&&function[4] == 'a'&&function[5] == 'n'&&function[6] == 'h'&&function[7] == '\0') {
+				if (functionProcessor(function, 0.2, 1.0, 0, "") != 0 || function[0] == 'r'&&function[1] == 'e'&&function[2] == 's'&&function[3] == 't'&&function[4] == '\0' || function[0] == 'q'&&function[1] == 'u'&&function[2] == 'o'&&function[3] == 't'&&function[4] == 'i'&&function[5] == 'e'&&function[6] == 'n'&&function[7] == 't'&&function[8] == '\0' || function[0] == 'a'&&function[1] == 'c'&&function[2] == 'o'&&function[3] == 's'&&function[4] == 'h'&&function[5] == '\0' || function[0] == 'a'&&function[1] == 'c'&&function[2] == 'o'&&function[3] == 't'&&function[4] == 'a'&&function[5] == 'n'&&function[6] == 'h'&&function[7] == '\0') {
 					decision = true;
 				}
 				else {

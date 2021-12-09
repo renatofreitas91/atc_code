@@ -232,7 +232,7 @@ double re(double dividend, double divider) {
 	int i = 0;
 	quotient = dividend / divider;
 	sprintf(quot, "%.300f", quotient);
-	while (quot[i] != '.'&&quot[i] != '\0') {
+	while (quot[i] != '.'&&quot[i] != '\0'&&i<abs((int)strlen(quot))) {
 		quo[i] = quot[i];
 		i++;
 	}

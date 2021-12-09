@@ -113,7 +113,7 @@ boolean advancedEvaluator(char expression[DIM]) {
 							x++; a++;
 						}
 						function[x] = '?'; function[x + 1] = '\0';
-						double funcF = functionProcessor(function, 2, 7, 12);
+						double funcF = functionProcessor(function, 2, 7, 12, "");
 						if (funcF == 0.5) {
 							pas[a] = expression[i];
 							a++;

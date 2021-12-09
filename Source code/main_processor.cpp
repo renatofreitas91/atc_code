@@ -7,6 +7,7 @@ int isFromMainProcessor = 0, numSysNum = 0, modeNum = 0, timeNum = 0, prefixNum 
 
 
 void main_processor(char math_expression[DIM]) {
+	buf= (char *)malloc(300);
 	isFromMainProcessor = 1;
 	char variable[DIM] = "";
 	sprintf(buf, "");
@@ -39,6 +40,7 @@ void main_processor(char math_expression[DIM]) {
 		sprintf(expressionF, "%s", buf);
 	}
 	isFromMainProcessor = 0;
+	free(buf);
 }
 
 double math_processor(char expression[DIM]) {
@@ -348,7 +350,6 @@ double math_processor(char expression[DIM]) {
 				rf++;
 				if (var == 1) {
 					variableController(revariable, resultR);
-
 				}
 				sprintf(bufText, "%s%s", variableFeedback, bufText);
 				char numSysText[DIM] = "";

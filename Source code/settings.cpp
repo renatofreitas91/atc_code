@@ -96,7 +96,7 @@ void mode() {
 }
 
 void about2() {
-	system("title Advanced Trigonometry Calculator v2.1.1");
+	system("title Advanced Trigonometry Calculator v2.1.2");
 	system("MODE con cols=90 lines=15");
 	cls();
 	FILE *open = NULL;
@@ -113,7 +113,7 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v2.1.1                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v2.1.2                                                             ==) Enter data (==              ");
 }
 
 void graphSettings() {
@@ -130,6 +130,7 @@ void graphSettings() {
 		puts("Ymax: 1E-20");
 		puts("Yscale: 1E-21");
 		puts("Auto Y-axis: Enabled");
+		puts("Auto X-axis: Enabled");
 		puts("");
 	}
 	else {
@@ -199,6 +200,19 @@ void graphSettings() {
 		if (isEqual("0", value)) {
 			printf("Auto Y-axis: Disabled\n");
 		}
+		j = 0;
+		i++;
+		while (data[i] != '\n'&&data[i] != '\0') {
+			value[j] = data[i];
+			i++; j++;
+		}
+		value[j] = '\0';
+		if (isEqual("1", value)) {
+			printf("Auto X-axis: Enabled\n");
+		}
+		if (isEqual("0", value)) {
+			printf("Auto X-axis: Disabled\n");
+		}
 		puts("");
 	}
 	int op = -1;
@@ -210,14 +224,24 @@ void graphSettings() {
 	if (op == 1) {
 		int error = -1;
 		while (error == -1) {
-			puts("Xmin?");
-			double Xmin = getValue();
-			puts("Xmax?");
-			double Xmax = getValue();
-			double Xscale = 0.00001;
-			while (Xscale < (Xmax - Xmin) / 120) {
-				printf("Xscale? (minimum: %G)\n", abs(Xmax - Xmin) / 120);
-				Xscale = getValue();
+			int auto_x_axis = -1;
+			while (auto_x_axis != 1 && auto_x_axis != 0) {
+				puts("Auto X-axis? (Enable -> 1 \\ Disable -> 0)");
+				auto_x_axis = (int)getValue();
+			}
+			double Xmin = -10;
+			double Xmax = 10;
+			double Xscale = 1;
+			if (auto_x_axis == 0) {
+				puts("Xmin?");
+				double Xmin = getValue();
+				puts("Xmax?");
+				double Xmax = getValue();
+				double Xscale = 0.00000000001;
+				while (Xscale < (Xmax - Xmin) / 120) {
+					printf("Xscale? (minimum: %G)\n", abs(Xmax - Xmin) / 120);
+					Xscale = getValue();
+				}
 			}
 			int auto_y_axis = -1;
 			while (auto_y_axis != 1 && auto_y_axis != 0) {
@@ -256,7 +280,7 @@ void graphSettings() {
 						else {
 							error = 0;
 							graph = fopen(toOpen, "w");
-							sprintf(settingsGraph, "%G\n%G\n%G\n%G\n%G\n%G\n%d\n", Xmin, Xmax, Xscale, Ymin, Ymax, Yscale, auto_y_axis);
+							sprintf(settingsGraph, "%G\n%G\n%G\n%G\n%G\n%G\n%d\n%d\n", Xmin, Xmax, Xscale, Ymin, Ymax, Yscale, auto_y_axis, auto_x_axis);
 							if (isContained("-", settingsGraph)) {
 								replace("-", "_", settingsGraph);
 								sprintf(settingsGraph, expressionF);
@@ -446,7 +470,7 @@ int applySettings(int toDo) {
 
 boolean about() {
 	ShowConsoleCursor(FALSE);
-	system("title Advanced Trigonometry Calculator v2.1.1");
+	system("title Advanced Trigonometry Calculator v2.1.2");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
@@ -473,11 +497,11 @@ boolean about() {
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("                                  %c%c%c%c%c       %c       %c\n", 177, 177, 177, 177, 177, 177, 177);
+	printf("                                  %c%c%c%c%c       %c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("                                      %c       %c       %c\n", 177, 177, 177);
-	printf("                            %c   %c %c%c%c%c%c       %c       %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                             %c %c  %c           %c       %c\n", 177, 177, 177, 177, 177);
-	printf("                              %c   %c%c%c%c%c %c     %c %c     %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                            %c   %c %c%c%c%c%c       %c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                             %c %c  %c           %c   %c\n", 177, 177, 177, 177, 177);
+	printf("                              %c   %c%c%c%c%c %c     %c %c %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n                                    Made in Portugal\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
 	trackMouse();

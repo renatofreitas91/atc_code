@@ -431,7 +431,6 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			arithTrig[0] = '\0';
 		}
 	}
-
 	variable[0] = '\0';
 	if (!isContained("opentxt", arithTrig) && !isContained("open txt", arithTrig)) {
 		for (i = 0; arithTrig[i] != '\0'; i++) {
@@ -626,11 +625,15 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 		if (verify == 1) {
 			fprintf(fout, ">%s\n", savefTrig);
 		}
+
 		command = commands(arithTrig, path, result1, result2);
+
 		if (command == (boolean)false && continu&&strlen(arithTrig) > 0) {
 			main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
 			sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 		}
+
+
 	}
 	return result1;
 }
@@ -694,7 +697,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				matrixMode = 1;
 				vectorType = 2;
 				int initialCountSplits = 0;
-				char saveSplitResult[200][200];
+				char saveSplitResult[200][dim];
 				int i = 0;
 				if (countSplits > 0) {
 					initialCountSplits = countSplits;
@@ -779,12 +782,12 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				sprintf(matrixResult, "%s", vectorString);
 			}
 			else {
-				if (isContained("\\", arithTrig) && !isContained(";", arithTrig) && !runningScript) {
+				if (isContained("\\", arithTrig) && !isContained(";", arithTrig) && !runningScript && !isContained("getcols", arithTrig) && !isContained("getlins", arithTrig)) {
 					matrixMode = 1;
 					vectorType = 1;
 					double vectorR[100], vectorI[100];
 					int initialCountSplits = 0;
-					char saveSplitResult[200][200];
+					char saveSplitResult[200][dim];
 					int i = 0;
 					if (countSplits > 0) {
 						initialCountSplits = countSplits;
@@ -829,7 +832,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						vectorType = 1;
 						double vectorR[100], vectorI[100];
 						int initialCountSplits = 0;
-						char saveSplitResult[200][200];
+						char saveSplitResult[200][dim];
 						int i = 0;
 						if (countSplits > 0) {
 							initialCountSplits = countSplits;
@@ -983,7 +986,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 	if (verify == 1) {
 		verified = 1;
 	}
-	fclose(fout);
+	if (fout != NULL) {
+		fclose(fout);
+	}
 	if (arithTrig[0] != '\0'&&isFromMain == 1 && feedbackValidation == 0) {
 		Clock(0);
 	}
@@ -1233,7 +1238,6 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							}
 							sprintf(report, "%s\n", report);
 						}
-						puts(report);
 					}
 					if (matrixMode == 1) {
 						sprintf(matrixResult, "%s", saveMatrixResult);

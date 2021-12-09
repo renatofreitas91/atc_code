@@ -12,7 +12,7 @@ void ascendingOrder(char values[DIM]) {
 	int members = number_of_values;
 	i = 0;
 	char toValue[DIM] = "";
-	double sValues[DIM];
+	double sValues[DIM], sValuesI[DIM];
 	int p = 0;
 	while (p < members) {
 		int b = 0;
@@ -23,12 +23,14 @@ void ascendingOrder(char values[DIM]) {
 		toValue[b] = '\0';
 		calcNow(toValue, 0, 0);
 		sValues[p] = resultR;
+		sValuesI[p] = resultI;
 		p++;
 		sprintf(toValue, "");
 		i++;
 	}
 	i = 0;
-	double lowest = DBL_MAX;
+	double lowest = DBL_MAX, lowestI = DBL_MAX;
+	double orderR[DIM], orderI[DIM];
 	int savePosition = -1;
 	int j = 0;
 	do
@@ -38,19 +40,76 @@ void ascendingOrder(char values[DIM]) {
 			if (lowest > sValues[i] && i != savePosition || savePosition == -1)
 			{
 				lowest = sValues[i];
+				lowestI = sValuesI[i];
 				savePosition = i;
 			}
 		}
-		if (j < number_of_values - 1) {
-			sprintf(report, "%s%G, ", report, lowest);
-		}
-		else {
-			sprintf(report, "%s%G", report, lowest);
-		}
-		j++;
+		orderR[j] = lowest;
+		orderI[j] = lowestI;
 		lowest = DBL_MAX;
+		lowestI = DBL_MAX;
 		sValues[savePosition] = lowest;
+		sValuesI[savePosition] = lowestI;
+		j++;
+
 	} while (j < number_of_values);
+	savePosition = -1;
+	j = 0;
+	for (j = 0; j < number_of_values; j++) {
+		sValues[j] = orderR[j];
+		sValuesI[j] = orderI[j];
+	}
+	lowest = DBL_MAX;
+	lowestI = DBL_MAX;
+	j = 0;
+	sprintf(report, "");
+
+	for (int h = 0; h < number_of_values; h++) {
+		int start = h;
+		while (sValues[h] == sValues[h + 1]) {
+			h++;
+		}
+		int end = ++h;
+		do
+		{
+			for (i = start; i < end; i++)
+			{
+				if (lowestI > sValuesI[i] && i != savePosition || savePosition == -1)
+				{
+					lowest = sValues[i];
+					lowestI = sValuesI[i];
+					savePosition = i;
+				}
+			}
+
+			if (j < end - 1 || end < number_of_values) {
+				if (lowestI >= 0) {
+					sprintf(report, "%s%G+%Gi, ", report, lowest, lowestI);
+				}
+				else {
+					sprintf(report, "%s%G%Gi, ", report, lowest, lowestI);
+				}
+			}
+			else {
+				if (lowestI >= 0) {
+					sprintf(report, "%s%G+%Gi, ", report, lowest, lowestI);
+				}
+				else {
+					sprintf(report, "%s%G%Gi, ", report, lowest, lowestI);
+				}
+			}
+			orderR[j] = lowest;
+			orderI[j] = lowestI;
+			j++;
+			lowest = DBL_MAX;
+			lowestI = DBL_MAX;
+			sValues[savePosition] = lowest;
+			sValuesI[savePosition] = lowestI;
+			h = j - 1;
+		} while (j < end);
+
+
+	}
 	puts(" ");
 	puts(report);
 	puts(" ");
@@ -77,7 +136,7 @@ void descendingOrder(char values[DIM]) {
 	int members = number_of_values;
 	i = 0;
 	char toValue[DIM] = "";
-	double sValues[DIM];
+	double sValues[DIM], sValuesI[DIM];
 	int p = 0;
 	while (p < members) {
 		int b = 0;
@@ -88,15 +147,14 @@ void descendingOrder(char values[DIM]) {
 		toValue[b] = '\0';
 		calcNow(toValue, 0, 0);
 		sValues[p] = resultR;
+		sValuesI[p] = resultI;
 		p++;
 		sprintf(toValue, "");
 		i++;
 	}
 	i = 0;
-
-	int k = 0;
-
-	double biggest = -DBL_MAX;
+	double biggest = -DBL_MAX, biggestI = -DBL_MAX;
+	double orderR[DIM], orderI[DIM];
 	int savePosition = -1;
 	int j = 0;
 	do
@@ -106,21 +164,75 @@ void descendingOrder(char values[DIM]) {
 			if (biggest < sValues[i] && i != savePosition || savePosition == -1)
 			{
 				biggest = sValues[i];
+				biggestI = sValuesI[i];
 				savePosition = i;
 			}
 		}
-		if (j < number_of_values - 1) {
-			sprintf(report, "%s%G, ", report, biggest);
-		}
-		else {
-			sprintf(report, "%s%G", report, biggest);
-		}
-		j++;
+		orderR[j] = biggest;
+		orderI[j] = biggestI;
 		biggest = -DBL_MAX;
+		biggestI = -DBL_MAX;
 		sValues[savePosition] = biggest;
-	}
+		sValuesI[savePosition] = biggestI;
+		j++;
 
-	while (j < number_of_values);
+	} while (j < number_of_values);
+	savePosition = -1;
+	j = 0;
+	for (j = 0; j < number_of_values; j++) {
+		sValues[j] = orderR[j];
+		sValuesI[j] = orderI[j];
+	}
+	biggest = -DBL_MAX;
+	biggestI = -DBL_MAX;
+	j = 0;
+	sprintf(report, "");
+
+	for (int h = 0; h < number_of_values; h++) {
+		int start = h;
+		while (sValues[h] == sValues[h + 1]) {
+			h++;
+		}
+		int end = ++h;
+		do
+		{
+			for (i = start; i < end; i++)
+			{
+				if (biggestI < sValuesI[i] && i != savePosition || savePosition == -1)
+				{
+					biggest = sValues[i];
+					biggestI = sValuesI[i];
+					savePosition = i;
+				}
+			}
+			if (j < end - 1 || end < number_of_values) {
+				if (biggestI >= 0) {
+					sprintf(report, "%s%G+%Gi, ", report, biggest, biggestI);
+				}
+				else {
+					sprintf(report, "%s%G%Gi, ", report, biggest, biggestI);
+				}
+			}
+			else {
+				if (biggestI >= 0) {
+					sprintf(report, "%s%G+%Gi, ", report, biggest, biggestI);
+				}
+				else {
+					sprintf(report, "%s%G%Gi, ", report, biggest, biggestI);
+				}
+			}
+			orderR[j] = biggest;
+			orderI[j] = biggestI;
+			j++;
+			biggest = -DBL_MAX;
+			biggestI = -DBL_MAX;
+			sValues[savePosition] = biggest;
+			sValuesI[savePosition] = biggestI;
+			h = j - 1;
+		} while (j < end);
+
+
+	}
 	puts(" ");
 	puts(report);
 	puts(" ");
@@ -135,6 +247,319 @@ void descendingOrder(char values[DIM]) {
 	}
 	puts(" ");
 }
+
+
+void maximum(char values[DIM]) {
+	char matrixExpr[DIM] = "";
+	if (strlen(values) > 0) {
+		sprintf(matrixExpr, "%s", values);
+		sprintf(matrixValue, "");
+		replaceTimes = 0;
+		if (isContained("*", matrixExpr)) {
+			replace("*", "i\\", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained(":", matrixExpr)) {
+			replace(":", "i\\", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained(" ", matrixExpr)) {
+			replace(" ", "+", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained("-", matrixExpr)) {
+			replace("-", "_", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained(" ", values)) {
+			sprintf(matrixExpr, "%si", matrixExpr);
+		}
+		sprintf(values, "%s", matrixExpr);
+		matrixMode = 1;
+		char report[DIM] = "";
+		int i = 0, number_of_values = 1;
+		for (i = 0; values[i] != '\0'; i++) {
+			if (values[i] == '\\') {
+				number_of_values++;
+			}
+		}
+		int members = number_of_values;
+		i = 0;
+		char toValue[DIM] = "";
+		double sValues[DIM], sValuesI[DIM];
+		int p = 0;
+		while (p < members) {
+			int b = 0;
+			while (values[i] != '\\'&&values[i] != '\0') {
+				toValue[b] = values[i];
+				b++; i++;
+			}
+			toValue[b] = '\0';
+			calcNow(toValue, 0, 0);
+			sValues[p] = resultR;
+			sValuesI[p] = resultI;
+			p++;
+			sprintf(toValue, "");
+			i++;
+		}
+		i = 0;
+		double biggest = -DBL_MAX, biggestI = -DBL_MAX;
+		double orderR[DIM], orderI[DIM];
+		int savePosition = -1;
+		int j = 0;
+		do
+		{
+			for (i = 0; i < number_of_values; i++)
+			{
+				if (biggest < sValues[i] && i != savePosition || savePosition == -1)
+				{
+					biggest = sValues[i];
+					biggestI = sValuesI[i];
+					savePosition = i;
+				}
+			}
+			orderR[j] = biggest;
+			orderI[j] = biggestI;
+			biggest = -DBL_MAX;
+			biggestI = -DBL_MAX;
+			sValues[savePosition] = biggest;
+			sValuesI[savePosition] = biggestI;
+			j++;
+
+		} while (j < number_of_values);
+		savePosition = -1;
+		j = 0;
+		for (j = 0; j < number_of_values; j++) {
+			sValues[j] = orderR[j];
+			sValuesI[j] = orderI[j];
+		}
+		biggest = -DBL_MAX;
+		biggestI = -DBL_MAX;
+		j = 0;
+		sprintf(report, "");
+
+		for (int h = 0; h < number_of_values; h++) {
+			int start = h;
+			while (sValues[h] == sValues[h + 1]) {
+				h++;
+			}
+			int end = ++h;
+			do
+			{
+				for (i = start; i < end; i++)
+				{
+					if (biggestI < sValuesI[i] && i != savePosition || savePosition == -1)
+					{
+						biggest = sValues[i];
+						biggestI = sValuesI[i];
+						savePosition = i;
+					}
+				}
+				orderR[j] = biggest;
+				orderI[j] = biggestI;
+				j++;
+				biggest = -DBL_MAX;
+				biggestI = -DBL_MAX;
+				sValues[savePosition] = biggest;
+				sValuesI[savePosition] = biggestI;
+				h = j - 1;
+			} while (j < end);
+		}
+		resultR = orderR[0];
+		resultI = orderI[0];
+	}
+}
+
+void minimum(char values[DIM]) {
+	char matrixExpr[DIM] = "";
+	if (strlen(values) > 0) {
+		sprintf(matrixExpr, "%s", values);
+		sprintf(matrixValue, "");
+		replaceTimes = 0;
+		if (isContained("*", matrixExpr)) {
+			replace("*", "i\\", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained(":", matrixExpr)) {
+			replace(":", "i\\", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained(" ", matrixExpr)) {
+			replace(" ", "+", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained("-", matrixExpr)) {
+			replace("-", "_", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained(" ", values)) {
+			sprintf(matrixExpr, "%si", matrixExpr);
+		}
+		sprintf(matrixValue, "not_checking");
+		matrixMode = 1;
+
+
+		if (strlen(matrixExpr) > 0) {
+			sprintf(values, "%s", matrixExpr);
+		}
+		char report[DIM] = "";
+		int i = 0, number_of_values = 1;
+		for (i = 0; values[i] != '\0'; i++) {
+			if (values[i] == '\\') {
+				number_of_values++;
+			}
+		}
+		int members = number_of_values;
+		i = 0;
+		char toValue[DIM] = "";
+		double sValues[DIM], sValuesI[DIM];
+		int p = 0;
+		while (p < members) {
+			int b = 0;
+			while (values[i] != '\\'&&values[i] != '\0') {
+				toValue[b] = values[i];
+				b++; i++;
+			}
+			toValue[b] = '\0';
+			calcNow(toValue, 0, 0);
+			sValues[p] = resultR;
+			sValuesI[p] = resultI;
+			p++;
+			sprintf(toValue, "");
+			i++;
+		}
+		i = 0;
+		double lowest = DBL_MAX, lowestI = DBL_MAX;
+		double orderR[DIM], orderI[DIM];
+		int savePosition = -1;
+		int j = 0;
+		do
+		{
+			for (i = 0; i < number_of_values; i++)
+			{
+				if (lowest > sValues[i] && i != savePosition || savePosition == -1)
+				{
+					lowest = sValues[i];
+					lowestI = sValuesI[i];
+					savePosition = i;
+				}
+			}
+			orderR[j] = lowest;
+			orderI[j] = lowestI;
+			lowest = DBL_MAX;
+			lowestI = DBL_MAX;
+			sValues[savePosition] = lowest;
+			sValuesI[savePosition] = lowestI;
+			j++;
+
+		} while (j < number_of_values);
+		savePosition = -1;
+		j = 0;
+		for (j = 0; j < number_of_values; j++) {
+			sValues[j] = orderR[j];
+			sValuesI[j] = orderI[j];
+		}
+		lowest = DBL_MAX;
+		lowestI = DBL_MAX;
+		j = 0;
+		sprintf(report, "");
+
+		for (int h = 0; h < number_of_values; h++) {
+			int start = h;
+			while (sValues[h] == sValues[h + 1]) {
+				h++;
+			}
+			int end = ++h;
+			do
+			{
+				for (i = start; i < end; i++)
+				{
+					if (lowestI > sValuesI[i] && i != savePosition || savePosition == -1)
+					{
+						lowest = sValues[i];
+						lowestI = sValuesI[i];
+						savePosition = i;
+					}
+				}
+				orderR[j] = lowest;
+				orderI[j] = lowestI;
+				j++;
+				lowest = DBL_MAX;
+				lowestI = DBL_MAX;
+				sValues[savePosition] = lowest;
+				sValuesI[savePosition] = lowestI;
+				h = j - 1;
+			} while (j < end);
+		}
+		resultR = orderR[0];
+		resultI = orderI[0];
+	}
+}
+
+void average(char values[DIM]) {
+	char matrixExpr[DIM] = "";
+	if (strlen(values) > 0) {
+		sprintf(matrixExpr, "%s", values);
+		sprintf(matrixValue, "");
+		replaceTimes = 0;
+		if (isContained("*", matrixExpr)) {
+			replace("*", "i\\", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained(":", matrixExpr)) {
+			replace(":", "i\\", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained(" ", matrixExpr)) {
+			replace(" ", "+", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained("-", matrixExpr)) {
+			replace("-", "_", matrixExpr);
+			sprintf(matrixExpr, "%s", expressionF);
+		}
+		if (isContained(" ", values)) {
+			sprintf(matrixExpr, "%si", matrixExpr);
+		}
+		sprintf(values, "%s", matrixExpr);
+		matrixMode = 1;
+		char report[DIM] = "";
+		int i = 0, number_of_values = 1;
+		for (i = 0; values[i] != '\0'; i++) {
+			if (values[i] == '\\') {
+				number_of_values++;
+			}
+		}
+		int members = number_of_values;
+		i = 0;
+		char toValue[DIM] = "";
+		double sValues[DIM], sValuesI[DIM];
+		int p = 0;
+		while (p < members) {
+			int b = 0;
+			while (values[i] != '\\'&&values[i] != '\0') {
+				toValue[b] = values[i];
+				b++; i++;
+			}
+			toValue[b] = '\0';
+			calcNow(toValue, 0, 0);
+			sValues[p] = resultR;
+			sValuesI[p] = resultI;
+			p++;
+			sprintf(toValue, "");
+			i++;
+		}
+		int j = 0;
+		double sumR = 0, sumI = 0;
+		for (i = 0; i < number_of_values; i++)
+		{
+			sum(sumR, sumI, sValues[i], sValuesI[i]);
+			sumR = resultR; sumI = resultI;
+		}
+		division(sumR, sumI, (double)number_of_values, 0.0);
+	}
+}
+
 
 void asciiOrder() {
 	int continu = 1;

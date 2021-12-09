@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-char matrixResult[DIM];
+char matrixResult[DIM], matrixValue[DIM] = "";
 
 double initialProcessor(char arithTrig[DIM], double result) {
 	if (isContained("+0+", arithTrig)) {
@@ -165,7 +165,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 						z++; v++;
 					}
 					toVal[v] = '?'; toVal[v + 1] = '\0';
-					check = functionProcessor(toVal, 0, 0, 0);
+					check = functionProcessor(toVal, 0, 0, 0, "");
 				}
 				if (check != 0.5) {
 					arithTrig[u] = '*';
@@ -219,7 +219,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	}
 	s = 0;
 	for (s; paTrig[s] != '\0'; s++) {
-		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'i'&&paTrig[s + 1] != 'e'&&paTrig[s - 1] == 'p' || (paTrig[s - 1] == 'v'&&paTrig[s - 2] == 'l'&&paTrig[s - 3] == 'o'&&paTrig[s - 4] == 's'&&paTrig[s + 1] == 'r') == false && paTrig[s] == 'e'&&paTrig[s - 1] != 'c'&&paTrig[s - 1] != 'd'&&paTrig[s - 1] != 'r'&&paTrig[s - 1] != 's'&&paTrig[s - 1] != 'i'&&paTrig[s + 2] != 't' || paTrig[s] == ')') && (paTrig[s + 1] == '(' || paTrig[s + 1] == 'a' || paTrig[s + 1] == 's' || paTrig[s + 1] == 'c' || paTrig[s + 1] == 't' || paTrig[s + 1] == 'l' || paTrig[s + 1] == 'p' || paTrig[s + 1] == 'e' || paTrig[s + 1] == 'r'&&paTrig[s + 2] != 'r' || paTrig[s + 1] == 'd' || paTrig[s + 1] == 'q' || paTrig[s + 1] == 'g'&&paTrig[s - 1] != 'd')) {
+		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'i'&&paTrig[s + 1] != 'e'&&paTrig[s - 1] == 'p' || (paTrig[s - 1] == 'v'&&paTrig[s - 2] == 'l'&&paTrig[s - 3] == 'o'&&paTrig[s - 4] == 's'&&paTrig[s + 1] == 'r') == false && paTrig[s] == 'e'&&paTrig[s - 1] != 'c'&&paTrig[s - 1] != 'd'&&paTrig[s - 1] != 'r'&&paTrig[s - 1] != 's'&&paTrig[s - 1] != 'i'&&paTrig[s + 2] != 't' || paTrig[s] == ')') && (paTrig[s + 1] == '(' || paTrig[s + 1] == 'a' || paTrig[s + 1] == 's' || paTrig[s + 1] == 'c' || (paTrig[s + 1] == 't'&&paTrig[s - 1] != 'g'&&paTrig[s] != 'e') || paTrig[s + 1] == 'l' || paTrig[s + 1] == 'p' || paTrig[s + 1] == 'e' || paTrig[s + 1] == 'r'&&paTrig[s + 2] != 'r' || paTrig[s + 1] == 'd' || paTrig[s + 1] == 'm' || paTrig[s + 1] == 'q' || paTrig[s + 1] == 'g'&&paTrig[s - 1] != 'd')) {
 			s++;
 			arithTrig[s] = '*';
 			for (s; paTrig[s] != '\0'; s++) {
@@ -413,7 +413,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 			int jk = 0;
 			char op[DIM] = "";
 			while (parent[i] < 1 && i <= klp && i < DIM) {
-				if (arithTrig[i] == '_' && (arithTrig[i + 1] == 'g' || arithTrig[i + 1] == 's' || arithTrig[i + 1] == 'c' || arithTrig[i + 1] == 't' || arithTrig[i + 1] == 'a' || arithTrig[i + 1] == 'l' || arithTrig[i + 1] == 'd' || arithTrig[i + 1] == 'r') || arithTrig[i] == 'q' || arithTrig[i] == 's' || arithTrig[i] == 'c' || arithTrig[i] == 't' || arithTrig[i] == 'a' || arithTrig[i] == 'r' && (arithTrig[i + 3] == 't'&&arithTrig[i + 4] != 'g'&&arithTrig[i + 4] != 'a' || arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'd' || arithTrig[i + 1] == 't'&&arithTrig[i + 2] == 'D') || arithTrig[i] == 'd' || arithTrig[i] == 'l' || arithTrig[i] == 'g') {
+				if (arithTrig[i] == '_' && (arithTrig[i + 1] == 'm' || arithTrig[i + 1] == 'g' || arithTrig[i + 1] == 's' || arithTrig[i + 1] == 'c' || arithTrig[i + 1] == 't' || arithTrig[i + 1] == 'a' || arithTrig[i + 1] == 'l' || arithTrig[i + 1] == 'd' || arithTrig[i + 1] == 'r') || arithTrig[i] == 'q' || arithTrig[i] == 's' || arithTrig[i] == 'c' || arithTrig[i] == 't' || arithTrig[i] == 'a' || arithTrig[i] == 'r' && (arithTrig[i + 3] == 't'&&arithTrig[i + 4] != 'g'&&arithTrig[i + 4] != 'a' || arithTrig[i + 1] == 'a'&&arithTrig[i + 2] == 'd' || arithTrig[i + 1] == 't'&&arithTrig[i + 2] == 'D') || arithTrig[i] == 'd' || arithTrig[i] == 'l' || arithTrig[i] == 'g' || arithTrig[i] == 'm') {
 					if (arithTrig[i] == '_') {
 						thj = 1;
 					}
@@ -435,10 +435,10 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					op[ju] = '\0';
 				}
 				else {
-					a = 0; if (arithTrig[i] == '_'&&arithTrig[i + 1] != 's'&&arithTrig[i + 1] != 'c'&&arithTrig[i + 1] != 't'&&arithTrig[i + 1] != 'a'&&arithTrig[i + 1] != 'l'&&arithTrig[i + 1] != 'd'&&arithTrig[i + 1] != 'r'&&arithTrig[i + 1] != 'g') {
+					a = 0; if (arithTrig[i] == '_'&&arithTrig[i + 1] != 's'&&arithTrig[i + 1] != 'c'&&arithTrig[i + 1] != 't'&&arithTrig[i + 1] != 'a'&&arithTrig[i + 1] != 'l'&&arithTrig[i + 1] != 'd'&&arithTrig[i + 1] != 'r'&&arithTrig[i + 1] != 'g'&&arithTrig[i + 1] != 'm') {
 						pas[a] = arithTrig[i]; a++; i++;
 					}
-					while (arithTrig[i] != '+'&&arithTrig[i] != '-'&&arithTrig[i] != '*'&&arithTrig[i] != '/'&&arithTrig[i] != '^'&&arithTrig[i] != '!') {
+					while (arithTrig[i] != '+'&&arithTrig[i] != '-'&&arithTrig[i] != '*'&&arithTrig[i] != '/'&&arithTrig[i] != '^'&&arithTrig[i] != '!'&&arithTrig[i] != ')') {
 						pas[a] = arithTrig[i];
 						a++;
 						i++;
@@ -514,85 +514,232 @@ double initialProcessor(char arithTrig[DIM], double result) {
 							triArithI[b] = 0;
 						}
 						else {
-							if (isContained("countoccurrences", op)) {
-								if (countOccurrences("\\", arithTrig) == 1) {
-									renamer(pas);
-									sprintf(pas, "%s", expressionF);
-									int p = 0, q = 0;
-									char string[DIM] = "";
-									char to_find[DIM] = "";
-									while (pas[p] != '\\') {
-										to_find[p] = pas[p];
-										p++;
-									}
-									to_find[p] = '\0';
-									renamer(to_find);
-									sprintf(to_find, "%s", expressionF);
-									p++;
-									q = 0;
-									while (pas[p] != '\0') {
-										string[q] = pas[p];
-										p++; q++;
-									}
-									string[q] = '\0';
-									renamer(string);
-									sprintf(string, "%s", expressionF);
-									stringVariableToString(to_find);
-									sprintf(to_find, "%s", variableSTring);
-									stringVariableToString(string);
-									sprintf(string, "%s", variableSTring);
-									triArith[b] = (double)countOccurrences(to_find, string);
+							if (isContained("colsnum", op)) {
+								triArith[b] = (double)colsNumber(pas);
+								triArithI[b] = 0;
+							}
+							else {
+								if (isContained("linsnum", op)) {
+									triArith[b] = (double)linesNumber(pas);
 									triArithI[b] = 0;
 								}
 								else {
-									puts("\nError: Please use a \"\\\" to separate the variables.\n");
-								}
-							}
-							else {
-								if (isContained("calc", op)) {
-									renamer(pas);
-									sprintf(pas, "%s", expressionF);
-									stringVariableToString(pas);
-									sprintf(pas, "%s", variableSTring);
-									calcNow(pas, 0, 0);
-									triArith[b] = resultR;
-									triArithI[b] = resultI;
-								}
-								else {
-									check4Vector = 1;
-									triArith[b] = arithSolver(pas, result);
-									triArithI[b] = resultI;
-									if (check4Vector == 2) {
-										matrixMode = 1;
-										signalVectors[b] = countVectors;
-										sprintf(vectors[countVectors], "%s", vectorString);
-										triArith[b] = 1;
-										triArithI[b] = 0;
-										countVectors++;
-									}
-									sprintf(expressionF, pas);
-									sig[b] = 1;
-									pas[0] = '\0';
-									ju = 0;
-									if (strlen(op) > 0) {
-										if (op[3] == 't' && (op[2] == 's' || op[2] == 'o'&&op[1] != 'c')) {
-											resultI = triArithI[b]; resultR = triArithI[b - 1];
-											triArith[b - 1] = functionProcessor(op, triArith[b], triArith[b - 1], rf);
-											triArith[b] = 0;
-											triArithI[b - 1] = resultI;
+									if (isContained("countoccurrences", op)) {
+										if (countOccurrences("\\", arithTrig) == 1) {
+											renamer(pas);
+											sprintf(pas, "%s", expressionF);
+											int p = 0, q = 0;
+											char string[DIM] = "";
+											char to_find[DIM] = "";
+											while (pas[p] != '\\') {
+												to_find[p] = pas[p];
+												p++;
+											}
+											to_find[p] = '\0';
+											renamer(to_find);
+											sprintf(to_find, "%s", expressionF);
+											p++;
+											q = 0;
+											while (pas[p] != '\0') {
+												string[q] = pas[p];
+												p++; q++;
+											}
+											string[q] = '\0';
+											renamer(string);
+											sprintf(string, "%s", expressionF);
+											stringVariableToString(to_find);
+											sprintf(to_find, "%s", variableSTring);
+											stringVariableToString(string);
+											sprintf(string, "%s", variableSTring);
+											triArith[b] = (double)countOccurrences(to_find, string);
 											triArithI[b] = 0;
-											arTrig[b - 1] = '+';
 										}
 										else {
-											triArith[b] = functionProcessor(op, triArith[b], amplitude, rf);
+											puts("\nError: Please use a \"\\\" to separate the variables.\n");
+										}
+									}
+									else {
+										if (isContained("calc", op)) {
+											renamer(pas);
+											sprintf(pas, "%s", expressionF);
+											stringVariableToString(pas);
+											sprintf(pas, "%s", variableSTring);
+											calcNow(pas, 0, 0);
+											triArith[b] = resultR;
 											triArithI[b] = resultI;
 										}
-										if (thj == 1) { thj = 0; sig[b] = 0; }
 										else {
-											sig[b] = 1;
+
+											if (isContained("getlins", op)) {
+												getLines(pas);
+												if (numVectorCols > 1 || numVectorLines > 1) {
+													matrixMode = 1;
+													signalVectors[b] = countVectors;
+													sprintf(vectors[countVectors], "%s", matrixValue);
+													countVectors++;
+													triArith[b] = 1;
+													triArithI[b] = 0;
+												}
+												else {
+													triArith[b] = vectorR[0][0];
+													triArithI[b] = vectorI[0][0];
+													signalVectors[b] = -1;
+													matrixMode = 0;
+												}
+											}
+											else {
+												if (isContained("getcols", op)) {
+													getCols(pas);
+													if (numVectorCols > 1 || numVectorLines > 1) {
+														matrixMode = 1;
+														signalVectors[b] = countVectors;
+														sprintf(vectors[countVectors], "%s", matrixValue);
+														countVectors++;
+														triArith[b] = 1;
+														triArithI[b] = 0;
+													}
+													else {
+														triArith[b] = vectorR[0][0];
+														triArithI[b] = vectorI[0][0];
+														signalVectors[b] = -1;
+														matrixMode = 0;
+													}
+												}
+												else {
+													check4Vector = 1;
+													triArith[b] = arithSolver(pas, result);
+													triArithI[b] = resultI;
+													if (check4Vector == 2) {
+														matrixMode = 1;
+														signalVectors[b] = countVectors;
+														sprintf(vectors[countVectors], "%s", vectorString);
+														triArith[b] = 1;
+														triArithI[b] = 0;
+														countVectors++;
+														sprintf(matrixValue, "%s", vectorString);
+													}
+													sprintf(expressionF, pas);
+													sig[b] = 1;
+													pas[0] = '\0';
+													ju = 0;
+													if (strlen(op) > 0) {
+														double vector1_R[dim][dim], vector1_I[dim][dim];
+														int numVectorCols1 = 0, numVectorLines1 = 0;
+														char saveFunc[DIM] = "";
+														sprintf(saveFunc, "%s", op);
+														if (isContained("avg", op)) {
+															average(matrixValue);
+															triArith[b] = resultR;
+															triArithI[b] = resultI;
+															if (op[0] == '_') {
+																triArith[b] = triArith[b] * -1;
+																triArithI[b] = triArithI[b] * -1;
+																sig[b] = 0;
+															}
+															matrixMode = 0;
+															sprintf(matrixValue, "");
+															signalVectors[b] = -1;
+														}
+														else {
+															if (isContained("max", op)) {
+																maximum(matrixValue);
+																triArith[b] = resultR;
+																triArithI[b] = resultI;
+																if (op[0] == '_') {
+																	triArith[b] = triArith[b] * -1;
+																	triArithI[b] = triArithI[b] * -1;
+																	sig[b] = 0;
+																}
+																matrixMode = 0;
+																sprintf(matrixValue, "");
+																signalVectors[b] = -1;
+															}
+															else {
+																if (isContained("min", op)) {
+																	minimum(matrixValue);
+																	triArith[b] = resultR;
+																	triArithI[b] = resultI;
+																	if (op[0] == '_') {
+																		triArith[b] = triArith[b] * -1;
+																		triArithI[b] = triArithI[b] * -1;
+																		sig[b] = 0;
+																	}
+																	matrixMode = 0;
+																	sprintf(matrixValue, "");
+																	signalVectors[b] = -1;
+																}
+																else {
+																	if (op[3] == 't' && (op[2] == 's' || op[2] == 'o'&&op[1] != 'c')) {
+																		if (strlen(matrixValue) > 0) {
+																			convert2Vector(matrixValue);
+																			sprintf(matrixValue, "");
+																			int n = 0;
+																			int m = 0;
+																			for (n = 0; n < numVectorLines; n++) {
+																				for (m = 0; m < numVectorCols; m++) {
+																					sprintf(op, "%s", saveFunc);
+																					resultI = vectorI[n][m]; resultR = triArithI[b - 1];
+																					vector1_R[n][m] = functionProcessor(op, vectorR[n][m], triArith[b - 1], rf, "");
+																					triArith[b] = 0;
+																					vector1_I[n][m] = resultI;
+																					triArithI[b] = 0;
+																				}
+																			}
+																			numVectorCols1 = numVectorCols;
+																			numVectorLines1 = numVectorLines;
+																			sprintf(matrixResult, convertVector2String(vector1_R, vector1_I, numVectorLines1, numVectorCols1));
+																			sprintf(vectors[countVectors - 1], "%s", matrixResult);
+																		}
+																		else {
+																			resultI = triArithI[b]; resultR = triArithI[b - 1];
+																			triArith[b - 1] = functionProcessor(op, triArith[b], triArith[b - 1], rf, "");
+																			triArith[b] = 0;
+																			triArithI[b - 1] = resultI;
+																			triArithI[b] = 0;
+																		}
+																		arTrig[b - 1] = '+';
+																	}
+																	else {
+																		if (strlen(matrixValue) > 0) {
+																			convert2Vector(matrixValue);
+																			sprintf(matrixValue, "");
+																			int n = 0;
+																			int m = 0;
+																			for (n = 0; n < numVectorLines; n++) {
+																				for (m = 0; m < numVectorCols; m++) {
+																					sprintf(op, "%s", saveFunc);
+																					resultI = vectorI[n][m];
+																					vector1_R[n][m] = functionProcessor(op, vectorR[n][m], amplitude, rf, "");
+																					vector1_I[n][m] = resultI;
+																				}
+																			}
+																			numVectorCols1 = numVectorCols;
+																			numVectorLines1 = numVectorLines;
+																			numVectorCols1 = numVectorCols;
+																			numVectorLines1 = numVectorLines;
+																			sprintf(matrixResult, convertVector2String(vector1_R, vector1_I, numVectorLines1, numVectorCols1));
+																			sprintf(vectors[countVectors - 1], "%s", matrixResult);
+																		}
+																		else {
+																			triArith[b] = functionProcessor(op, triArith[b], amplitude, rf, "");
+																			triArithI[b] = resultI;
+																		}
+																	}
+																}
+															}
+														}
+														if (thj == 1) { thj = 0; sig[b] = 0; }
+														else {
+															sig[b] = 1;
+														}
+														pas[0] = '\0';
+														ju = 0;
+
+
+													}
+												}
+											}
 										}
-										pas[0] = '\0';
-										ju = 0;
 									}
 								}
 							}
@@ -634,78 +781,204 @@ double initialProcessor(char arithTrig[DIM], double result) {
 								triArithI[b] = 0;
 							}
 							else {
-								if (isContained("countoccurrences", op)) {
-									if (countOccurrences("\\", arithTrig) == 1) {
-										renamer(pas);
-										sprintf(pas, "%s", expressionF);
-										int p = 0, q = 0;
-										char string[DIM] = "";
-										char to_find[DIM] = "";
-										while (pas[p] != '\\') {
-											to_find[p] = pas[p];
-											p++;
-										}
-										to_find[p] = '\0';
-										renamer(to_find);
-										sprintf(to_find, "%s", expressionF);
-										p++;
-										q = 0;
-										while (pas[p] != '\0') {
-											string[q] = pas[p];
-											p++; q++;
-										}
-										string[q] = '\0';
-										renamer(string);
-										sprintf(string, "%s", expressionF);
-										stringVariableToString(to_find);
-										sprintf(to_find, "%s", variableSTring);
-										stringVariableToString(string);
-										sprintf(string, "%s", variableSTring);
-										triArith[b] = (double)countOccurrences(to_find, string);
+								if (isContained("colsnum", op)) {
+									triArith[b] = (double)colsNumber(pas);
+									triArithI[b] = 0;
+								}
+								else {
+									if (isContained("linsnum", op)) {
+										triArith[b] = (double)linesNumber(pas);
 										triArithI[b] = 0;
 									}
 									else {
-										puts("\nError: Please use a \"\\\" to separate the variables.\n");
-									}
-								}
-								else {
-									if (isContained("calc", op)) {
-										renamer(pas);
-										sprintf(pas, "%s", expressionF);
-										stringVariableToString(pas);
-										sprintf(pas, "%s", variableSTring);
-										calcNow(pas, 0, 0);
-										triArith[b] = resultR;
-										triArithI[b] = resultI;;
-									}
-									else {
-										check4Vector = 1;
-										triArith[b] = initialProcessor(pas, result);
-										triArithI[b] = resultI;
-										if (strlen(matrixResult) > 0) {
-											matrixMode = 1;
-											signalVectors[b] = countVectors;
-											sprintf(vectors[countVectors], "%s", matrixResult);
-											countVectors++;
-											triArith[b] = 1;
-											triArithI[b] = 0;
-										}
-										sprintf(expressionF, pas);
-										sig[b] = 1;
-										char pas[DIM] = "";
-										if (strlen(op) > 0) {
-											resultI = triArithI[b];
-											triArith[b] = functionProcessor(op, triArith[b], amplitude, rf);
-											triArithI[b] = resultI;
-											if (thj == 1) { thj = 0; sig[b] = 0; }
-											else {
-												sig[b] = 1;
+										if (isContained("countoccurrences", op)) {
+											if (countOccurrences("\\", arithTrig) == 1) {
+												renamer(pas);
+												sprintf(pas, "%s", expressionF);
+												int p = 0, q = 0;
+												char string[DIM] = "";
+												char to_find[DIM] = "";
+												while (pas[p] != '\\') {
+													to_find[p] = pas[p];
+													p++;
+												}
+												to_find[p] = '\0';
+												renamer(to_find);
+												sprintf(to_find, "%s", expressionF);
+												p++;
+												q = 0;
+												while (pas[p] != '\0') {
+													string[q] = pas[p];
+													p++; q++;
+												}
+												string[q] = '\0';
+												renamer(string);
+												sprintf(string, "%s", expressionF);
+												stringVariableToString(to_find);
+												sprintf(to_find, "%s", variableSTring);
+												stringVariableToString(string);
+												sprintf(string, "%s", variableSTring);
+												triArith[b] = (double)countOccurrences(to_find, string);
+												triArithI[b] = 0;
 											}
-											pas[0] = '\0';
+											else {
+												puts("\nError: Please use a \"\\\" to separate the variables.\n");
+											}
 										}
-										ju = 0;
+										else {
+											if (isContained("calc", op)) {
+												renamer(pas);
+												sprintf(pas, "%s", expressionF);
+												stringVariableToString(pas);
+												sprintf(pas, "%s", variableSTring);
+												calcNow(pas, 0, 0);
+												triArith[b] = resultR;
+												triArithI[b] = resultI;;
+											}
+											else {
+												if (isContained("getlins", op)) {
+													getLines(pas);
+													if (numVectorCols > 1 || numVectorLines > 1) {
+														matrixMode = 1;
+														signalVectors[b] = countVectors;
+														sprintf(vectors[countVectors], "%s", matrixValue);
+														countVectors++;
+														triArith[b] = 1;
+														triArithI[b] = 0;
+													}
+													else {
+														triArith[b] = vectorR[0][0];
+														triArithI[b] = vectorI[0][0];
+														signalVectors[b] = -1;
+														matrixMode = 0;
+													}
+												}
+												else {
+													if (isContained("getcols", op)) {
+														getCols(pas);
+														if (numVectorCols > 1 || numVectorLines > 1) {
+															matrixMode = 1;
+															signalVectors[b] = countVectors;
+															sprintf(vectors[countVectors], "%s", matrixValue);
+															countVectors++;
+															triArith[b] = 1;
+															triArithI[b] = 0;
+														}
+														else {
+															triArith[b] = vectorR[0][0];
+															triArithI[b] = vectorI[0][0];
+															signalVectors[b] = -1;
+															matrixMode = 0;
+														}
+													}
+													else {
+
+														check4Vector = 1;
+														triArith[b] = initialProcessor(pas, result);
+														triArithI[b] = resultI;
+														if (strlen(matrixResult) > 0) {
+															matrixMode = 1;
+															signalVectors[b] = countVectors;
+															sprintf(vectors[countVectors], "%s", matrixResult);
+															countVectors++;
+															triArith[b] = 1;
+															triArithI[b] = 0;
+															sprintf(matrixValue, "%s", matrixResult);
+														}
+														sprintf(expressionF, pas);
+														sig[b] = 1;
+														char pas[DIM] = "";
+														if (strlen(op) > 0) {
+															if (isContained("avg", op)) {
+																average(matrixValue);
+																triArith[b] = resultR;
+																triArithI[b] = resultI;
+																if (op[0] == '_') {
+																	triArith[b] = triArith[b] * -1;
+																	triArithI[b] = triArithI[b] * -1;
+																	sig[b] = 0;
+																}
+																matrixMode = 0;
+																sprintf(matrixValue, "");
+																signalVectors[b] = -1;
+															}
+															else {
+																if (isContained("max", op)) {
+																	maximum(matrixValue);
+																	triArith[b] = resultR;
+																	triArithI[b] = resultI;
+																	if (op[0] == '_') {
+																		triArith[b] = triArith[b] * -1;
+																		triArithI[b] = triArithI[b] * -1;
+																		sig[b] = 0;
+																	}
+																	matrixMode = 0;
+																	sprintf(matrixValue, "");
+																	signalVectors[b] = -1;
+																}
+																else {
+																	if (isContained("min", op)) {
+																		minimum(matrixValue);
+																		triArith[b] = resultR;
+																		triArithI[b] = resultI;
+																		if (op[0] == '_') {
+																			triArith[b] = triArith[b] * -1;
+																			triArithI[b] = triArithI[b] * -1;
+																			sig[b] = 0;
+																		}
+																		matrixMode = 0;
+																		sprintf(matrixValue, "");
+																		signalVectors[b] = -1;
+																	}
+
+																	else {
+																		double vector1_R[dim][dim], vector1_I[dim][dim];
+																		int numVectorCols1 = 0, numVectorLines1 = 0;
+																		if (strlen(matrixValue) > 0) {
+																			convert2Vector(matrixValue);
+																			sprintf(matrixValue, "");
+																			int n = 0;
+																			int m = 0;
+																			char saveFunc[DIM] = "";
+																			sprintf(saveFunc, "%s", op);
+																			for (n = 0; n < numVectorLines; n++) {
+																				for (m = 0; m < numVectorCols; m++) {
+																					sprintf(op, "%s", saveFunc);
+																					resultI = vectorI[n][m];
+																					amplitude = 1;
+																					vector1_R[n][m] = functionProcessor(op, vectorR[n][m], amplitude, rf, "");
+																					vector1_I[n][m] = resultI;
+																				}
+																			}
+																			numVectorCols1 = numVectorCols;
+																			numVectorLines1 = numVectorLines;
+																			sprintf(matrixResult, convertVector2String(vector1_R, vector1_I, numVectorLines1, numVectorCols1));
+																			sprintf(vectors[countVectors - 1], "%s", matrixResult);
+																		}
+																		else {
+																			resultI = triArithI[b];
+																			triArith[b] = functionProcessor(op, triArith[b], amplitude, rf, "");
+																			triArithI[b] = resultI;
+																		}
+																	}
+																}
+															}
+															if (thj == 1) { thj = 0; sig[b] = 0; }
+															else {
+																sig[b] = 1;
+															}
+															pas[0] = '\0';
+
+															ju = 0;
+
+														}
+													}
+												}
+											}
+										}
 									}
 								}
+
 							}
 						}
 					}
@@ -2008,14 +2281,14 @@ double arithSolver(char trigon1[DIM], double result) {
 	return result1;
 }
 
-double functionProcessor(char trigon[DIM], double result, double amplitude, int res) {
+double functionProcessor(char trigon[DIM], double result, double amplitude, int res, char argNotNumber[DIM]) {
 	char saveArgument[DIM] = "";
 	sprintf(saveArgument, "%s", expressionF);
 	if (verbose == 1 && solving) {
 		printf("\n\n==> functionProcessor <==\n\nFunction: %s", trigon);
 	}
 	int i = 0, var = 0, j = 0, n = 0, count = 0, opt = 0, l = 0, p = 0, cn = 0, s, rad = 1, jg = 1, gon = 0, tri = 0, co = 0, trigono = 0, paren = 1, pare = 0, parent = 0, e = 0, f = 0, kl = 0, ar = 0, deg = 0, type = 0, g = 0;
-	char trig[DIM] = "0", base[DIM], number[DIM] = "0", number1[DIM] = "0", number2[DIM] = "0", op[DIM] = "0", signal = '*', numb[DIM] = "0", sig = '0', point = '0', cieNot[DIM] = "0", arg[DIM] = "0", amp[DIM] = "0", trigon1[DIM] = "0", ex[DIM] = "", eX[DIM] = "", trig1[DIM] = "", function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res,pi,e,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,";
+	char trig[DIM] = "0", base[DIM], number[DIM] = "0", number1[DIM] = "0", number2[DIM] = "0", op[DIM] = "0", signal = '*', numb[DIM] = "0", sig = '0', point = '0', cieNot[DIM] = "0", arg[DIM] = "0", amp[DIM] = "0", trigon1[DIM] = "0", ex[DIM] = "", eX[DIM] = "", trig1[DIM] = "", function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res,pi,e,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,";
 	double num = 0, v[DIM], vI[DIM], argu[DIM], ampl[DIM], exp = 1, result1 = 0, baLog = 0, dgrt = 0, result2 = resultI, dgrt2 = 0;
 	char userFunc[DIM] = "", atcFunc[DIM] = "", funcU[DIM] = "";
 	char saveFunction[DIM] = "";
@@ -2661,7 +2934,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 			system(txtSolved);
 		}
 		type = 1;
-		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,";
+		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,";
 		return result1;
 	}
 	if (op[0] == 'a'&&type == 0) {

@@ -20,13 +20,17 @@
 #include <tchar.h>
 #include <Shellapi.h>
 #include <tlhelp32.h>
+#include <cstdlib>
+#include <cstring>
+#include <fstream> 
+#include <string>
 
 
 extern double vectorR[dim][dim], vectorI[dim][dim], realRoots[dim], rootsR[dim], rootsI[dim], expressionCoefR[dim], expressionCoefI[dim], X_k_R[dim], X_k_I[dim], lastElement, lastElementI, LastDividerR, LastDividerI, natureValue, lastDividerR, lastDividerI, returnedR, returnedI, xValuesR, xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, ans[DIM], ansI[DIM], resultFI, valInd[DIM][DIM], values[DIM][DIM], valuesI[DIM][DIM], valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM];
 extern int previousAnsType, matrixMode, numVectorLines, numVectorCols, check4Vector, vectorType, nrRoots, xATC, yATC, colsATC, linesATC, widthATC, heightATC, Pressed, toSendCommand, countSplits, maxExponent, numSysNum, parentPol[DIM], replaceTimes, countEnters, countReturn, countBreak, Break, countUseReturn, countUseBreak, executedSolver, strStart, strEnd, rasf, processingOK, isFromMain, isFromSolveNow, verify, arG, feedbackValidation, isFromSolveNow, nPlaces, Mode, validVar, valid, valRenamedVar, synTest, count, continu, cleanhistory, rf, verified, verbose;
-extern char returnCharArray[DIM], saveUserFunctionsRenamedVariablesTextFile[DIM], saveUserFunctionsVariablesTextFile[DIM], saveScriptRenamedVariablesTextFile[DIM], saveScriptVariablesTextFile[DIM], saveRenamedVariablesTextFile[DIM], saveRenamedTxtVariablesTextFile[DIM], actualTime[DIM], verboseRes[DIM], numSys[DIM], siPref[DIM], context[30], saveTxtVariablesTextFile[DIM], saveVariablesTextFile[DIM], ansMatrices[DIM][DIM], saveMatrixAns[DIM], matrixResult[DIM], vectorString[DIM], customFolderPath[DIM], saveATCPath[DIM], renamedVariable[DIM], dimensionsTxt[dim], windowTxt[dim], validChars[DIM], lastCommand[DIM], saveSimplified[DIM], saveSimplification[DIM], splitResult[dim][dim], answers[DIM], saveExpressionFF[DIM], saveArithTrig[DIM], saveExpressionF[DIM], OutputText[DIM], roots[DIM], charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM], expressionF2[DIM];
-extern boolean notSolved,variableControllersUsed, product, fromEquationSolver, progress, starting, studyFunction, I_O, isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver, poly;
-double functionProcessor(char trigon[DIM], double result, double amplitude, int res);
+extern char matrixValue[DIM], returnCharArray[DIM], saveUserFunctionsRenamedVariablesTextFile[DIM], saveUserFunctionsVariablesTextFile[DIM], saveScriptRenamedVariablesTextFile[DIM], saveScriptVariablesTextFile[DIM], saveRenamedVariablesTextFile[DIM], saveRenamedTxtVariablesTextFile[DIM], actualTime[DIM], verboseRes[DIM], numSys[DIM], siPref[DIM], context[30], saveTxtVariablesTextFile[DIM], saveVariablesTextFile[DIM], ansMatrices[DIM][DIM], saveMatrixAns[DIM], matrixResult[DIM], vectorString[DIM], customFolderPath[DIM], saveATCPath[DIM], renamedVariable[DIM], dimensionsTxt[dim], windowTxt[dim], validChars[DIM], lastCommand[DIM], saveSimplified[DIM], saveSimplification[DIM], splitResult[dim][dim], answers[DIM], saveExpressionFF[DIM], saveArithTrig[DIM], saveExpressionF[DIM], OutputText[DIM], roots[DIM], charMaster[DIM], saveEquation[DIM], atcPath[DIM], calendarStr[DIM], revariable[DIM], varRename[DIM], expressionF[DIM], pathNAme[DIM], variableSTring[DIM], integral[DIM], usRFunctions[DIM], usRFuncTrans[DIM], expressionF2[DIM];
+extern boolean notSolved, variableControllersUsed, product, fromEquationSolver, progress, starting, studyFunction, I_O, isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver, poly;
+double functionProcessor(char trigon[DIM], double result, double amplitude, int res, char argNotNumber[DIM]);
 double initialProcessor(char arithTrig[DIM], double result);
 double arithSolver(char trigon1[DIM], double result);
 double processVariable(char variable[DIM]);
@@ -52,6 +56,8 @@ int strlength(char stringV[DIM]);
 int countOccurrences(char to_find[DIM], char expression[DIM]);
 int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x);
 int getCorrectExponent(char expression[DIM], char maxExp[10], int maxExponent);
+int linesNumber(char values[DIM]);
+int colsNumber(char values[DIM]);
 void getNumerationPol(char expression[DIM]);
 void simplifyPolynomial(char expression[DIM]);
 void split(char splitter[DIM], char data[DIM]);
@@ -112,6 +118,11 @@ void removeTriplPars(char expression[DIM]);
 void setWindow(int x, int y);
 void setDimensions(int cols, int lines);
 void convert2Vector(char arithTrig[DIM]);
+void maximum(char values[DIM]);
+void minimum(char values[DIM]);
+void getCols(char data[DIM]);
+void getLines(char data[DIM]);
+void average(char values[DIM]);
 boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], double u[dim][dim], double vI[dim][dim], double uI[dim][dim]);
 boolean simpleEvaluator(char expression[DIM]);
 boolean advancedEvaluator(char expression[DIM]);
@@ -121,7 +132,7 @@ boolean verifyNumberExpression(char number);
 boolean processTxt(char path[DIM], int re);
 boolean dataVerifier(char data[DIM], double result1, double result2, int comment, int verify);
 boolean searchExtension(char filename[DIM], char extension[DIM]);
-boolean commands(char arithTrig[DIM], char path[DIM], double result1, double result2);
+boolean commands(char expression[DIM], char path[DIM], double result1, double result2);
 boolean atcFunctions(char functionName[DIM]);
 boolean isToWrite(char arith[DIM]);
 boolean isCommand(char forTesting[DIM], char command[DIM]);

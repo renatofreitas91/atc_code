@@ -16,6 +16,7 @@ char saveScriptVariablesTextFile[DIM] = "";
 char saveUserFunctionsRenamedVariablesTextFile[DIM] = "";
 char saveUserFunctionsVariablesTextFile[DIM] = "";
 char numSys[DIM] = "";
+char stringF[DIM] = "";
 boolean variableControllersUsed = true;
 void numSystemsController() {
 	FILE *open;
@@ -1016,6 +1017,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 				fclose(open);
 			}
 			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+			open = NULL;
 			open = fopen(toOpen, "w");
 			if (open != NULL) {
 				fprintf(open, "%s", saveRenamedVariablesTextFile);
@@ -1061,7 +1063,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 		}
 	}
 	i = 0;
-	char saveSplitResult[200][200];
+	char saveSplitResult[200][dim];
 	int initialCountSplits = 0;
 	if (countSplits > 0) {
 		initialCountSplits = countSplits;
@@ -1076,7 +1078,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 	split("\n", vari);
 	i = 0;
 	j = 0;
-	char saveLines[200][200];
+	char saveLines[200][dim];
 	while (i < countSplits) {
 		sprintf(saveLines[i], "%s", splitResult[i]);
 		i++;
@@ -1383,7 +1385,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 void customFuncRenamer(char variable[DIM]) {
 	int i = 0;
 	for (i = 0; variable[i] != '\0'; i++) {
-		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
+		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd' || variable[i] == 'm')) {
 			if (variable[i] == 's') {
 				revariable[i] = 'S';
 			}
@@ -1410,6 +1412,9 @@ void customFuncRenamer(char variable[DIM]) {
 			}
 			if (variable[i] == 'd') {
 				revariable[i] = 'K';
+			}
+			if (variable[i] == 'm') {
+				revariable[i] = 'M';
 			}
 		}
 		else {
@@ -1730,7 +1735,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					func[lo] = arithTrig[i]; lo++;
 					func[lo] = '?'; lo++;
 					func[lo] = '\0';
-					if (functionProcessor(func, 0, 0, 0) == 0.5) {
+					if (functionProcessor(func, 0, 0, 0, "") == 0.5) {
 						i = i + 2;
 					}
 				}
@@ -1769,7 +1774,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					func[lo] = arithTrig[i]; lo++;
 					func[lo] = '?'; lo++;
 					func[lo] = '\0';
-					if (functionProcessor(func, 0, 0, 0) == 0.5) {
+					if (functionProcessor(func, 0, 0, 0, "") == 0.5) {
 						i = i + 2;
 					}
 				}
@@ -1832,9 +1837,13 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	char functionP[DIM] = "";
 	while (needAst == 1) {
 		valRenamedVar = 0;
+		boolean entered = false;
 		for (i = mark1; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) && needAst == 1) {
-				if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) && needAst == 1 && (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b')) {
+				int countB = countOccurrences("b", arithTrig);
+				int countD = countOccurrences("D", arithTrig);
+				if (countB >= 2 || countD >= 2) {
+					entered = true;
 					while (verifyLetter(arithTrig[i])) {
 						i--;
 					}
@@ -1849,12 +1858,13 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					func[lo] = arithTrig[i]; lo++;
 					func[lo] = '?'; lo++;
 					func[lo] = '\0';
-					if (functionProcessor(func, 0, 0, 0) == 0.5) {
+					if (functionProcessor(func, 0, 0, 0, "") == 0.5) {
 						i = i + 2;
 					}
 				}
 			}
 			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) && needAst == 1) {
+				entered = true;
 				mark1 = i + 1;
 				j = i;
 				i = abs((int)strlen(arithTrig));
@@ -1871,7 +1881,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 						p++; y++;
 					}
 					function[y] = '?'; function[y + 1] = '\0';
-					isFunc = (float)functionProcessor(function, 0, 0, 0);
+					isFunc = (float)functionProcessor(function, 0, 0, 0, "");
 					if (isFunc == 0.5) {
 						break;
 					}
@@ -1961,9 +1971,11 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 		}
 		for (i = mark; arithTrig[i] != '\0'; i++) {
-			needAst = 0;
-			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1])) {
-				if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&& verifyLetter(arithTrig[i + 1]) && (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b')) {
+				int countB = countOccurrences("b", arithTrig);
+				int countD = countOccurrences("D", arithTrig);
+				if (countB >= 2 || countD >= 2) {
+					entered = true;
 					while (verifyLetter(arithTrig[i])) {
 						i--;
 					}
@@ -1978,14 +1990,17 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 					func[lo] = arithTrig[i]; lo++;
 					func[lo] = '?'; lo++;
 					func[lo] = '\0';
-					if (functionProcessor(func, 0, 0, 0) == 0.5) {
+					if (functionProcessor(func, 0, 0, 0, "") == 0.5) {
 						i = i + 2;
 					}
 				}
 			}
-			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1])) {
+			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e'&&verifyLetter(arithTrig[i + 1]) && entered) {
 				mark = i + 1;
 				needAst = 1;
+			}
+			else {
+				needAst = 0;
 			}
 		}
 	}
@@ -2031,7 +2046,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 						z++; v++;
 					}
 					toVal[v] = '?'; toVal[v + 1] = '\0';
-					check = functionProcessor(toVal, 0, 0, 0);
+					check = functionProcessor(toVal, 0, 0, 0, "");
 				}
 				if (check != 0.5) {
 					arithTrig[u] = '*';
@@ -3543,7 +3558,7 @@ int variableValidator(char variable[DIM]) {
 	abc = abs((int)strlen(variable));
 	valid = 0;
 	for (i = 0; variable[i] != '\0'; i++) {
-		if (i == 0 && (variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
+		if (i == 0 && (variable[i] == 'm' || variable[i] == 's' || variable[i] == 'c' || variable[i] == 't' || variable[i] == 'a' || variable[i] == 'l' || variable[i] == 'r' || variable[i] == 'q' || variable[i] == 'g' || variable[i] == 'd')) {
 			if (variable[i] == 's') {
 				revariable[i] = 'S';
 			}
@@ -3570,6 +3585,9 @@ int variableValidator(char variable[DIM]) {
 			}
 			if (variable[i] == 'd') {
 				revariable[i] = 'K';
+			}
+			if (variable[i] == 'm') {
+				revariable[i] = 'M';
 			}
 			h = 1;
 		}
@@ -3668,7 +3686,7 @@ int variableValidator(char variable[DIM]) {
 		testPrefix[i] = '\0';
 		prefix = arithSolver(testPrefix, 0);
 	}
-	func = functionProcessor(variableT, 0.3, 1.0, 0);
+	func = functionProcessor(variableT, 0.3, 1.0, 0, "");
 	variable[abc] = '\0';
 	processVariable(variable);
 	if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0) {
@@ -3929,6 +3947,8 @@ double processVariable(char variable[DIM]) {
 			if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1 && !runningScript) {
 				convert2Vector(value);
 				check4Vector = 2;
+				sprintf(matrixValue, "%s", value);
+
 			}
 			if (space == 0) {
 				resultR = strtod(value, &pointer);
@@ -4019,6 +4039,8 @@ double processVariable(char variable[DIM]) {
 				if ((isContained(":", value) || isContained("*", value)) && check4Vector == 1 && !runningScript) {
 					convert2Vector(value);
 					check4Vector = 2;
+					sprintf(matrixValue, "%s", value);
+
 				}
 				if (space == 0) {
 					resultR = strtod(value, &pointer);
@@ -4138,7 +4160,7 @@ double calcNow(char toCalc[DIM], double result1, double result2) {
 }
 
 boolean firstLetterVariable(char letter) {
-	char letters[100] = "QWRTYUISGJKLZXVNMwyuofhjkxzvnmp";
+	char letters[100] = "QWRTYUISGJKLZXVNMwyuofhjkxzvnp";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(letters)); i++) {
 		if (letter == letters[i]) {
@@ -4397,7 +4419,7 @@ boolean verifyPrefix(char prefix[DIM]) {
 }
 
 boolean firstLetterFunction(char letter) {
-	char letters[100] = "castlrqgd";
+	char letters[100] = "castlrqgdm";
 	int i = 0;
 	for (i = 0; i < abs((int)strlen(letters)); i++) {
 		if (letter == letters[i]) {
@@ -4917,7 +4939,7 @@ void convert2Vector(char arithTrig[DIM]) {
 	if (isContained(":", arithTrig) && !isContained("*", arithTrig)) {
 		vectorType = 1;
 		int initialCountSplits = 0;
-		char saveSplitResult[200][200];
+		char saveSplitResult[200][dim];
 		int i = 0;
 		if (countSplits > 0) {
 			initialCountSplits = countSplits;
@@ -4971,7 +4993,7 @@ void convert2Vector(char arithTrig[DIM]) {
 		if (!isContained(":", arithTrig) && isContained("*", arithTrig)) {
 			vectorType = 1;
 			int initialCountSplits = 0;
-			char saveSplitResult[200][200];
+			char saveSplitResult[200][dim];
 			int i = 0;
 			if (countSplits > 0) {
 				initialCountSplits = countSplits;
@@ -5025,7 +5047,7 @@ void convert2Vector(char arithTrig[DIM]) {
 			if (isContained(":", arithTrig) && isContained("*", arithTrig)) {
 				vectorType = 2;
 				int initialCountSplits = 0;
-				char saveSplitResult[200][200];
+				char saveSplitResult[200][dim];
 				int i = 0;
 				if (countSplits > 0) {
 					initialCountSplits = countSplits;
@@ -5138,3 +5160,204 @@ char* convertVector2String(double vectorR[dim][dim], double vectorI[dim][dim], i
 
 
 
+int colsNumber(char values[DIM]) {
+	initialProcessor(values, 0);
+	if (strlen(matrixResult) > 0) {
+		sprintf(values, "%s", matrixResult);
+	}
+	matrixMode = 0;
+	int numberCols = 0;
+	if (isContained(":", values) && !isContained("*", values)) {
+		numberCols = countOccurrences(":", values) + 1;
+		return numberCols;
+	}
+	else {
+		if (!isContained(":", values) && isContained("*", values)) {
+			numberCols = 1;
+			return numberCols;
+		}
+		else {
+			if (isContained(":", values) && isContained("*", values)) {
+				char firstLine[DIM] = "";
+				int i = 0;
+				while (values[i] != '*') {
+					firstLine[i] = values[i];
+					i++;
+				}
+				firstLine[i] = '\0';
+				numberCols = countOccurrences(":", firstLine) + 1;
+				return numberCols;
+			}
+			else {
+				return 0;
+			}
+
+		}
+	}
+
+}
+
+int linesNumber(char values[DIM]) {
+	initialProcessor(values, 0);
+	if (strlen(matrixResult) > 0) {
+		sprintf(values, "%s", matrixResult);
+	}
+	matrixMode = 0;
+	int numberLines = 0;
+	if (isContained(":", values) && !isContained("*", values)) {
+		numberLines = 1;
+		return numberLines;
+	}
+	else {
+		if (!isContained(":", values) && isContained("*", values)) {
+			numberLines = countOccurrences("*", values) + 1;
+			return numberLines;
+		}
+		else {
+			if (isContained(":", values) && isContained("*", values)) {
+				numberLines = countOccurrences("*", values) + 1;
+				return numberLines;
+			}
+			else {
+				return 0;
+			}
+
+		}
+	}
+}
+
+void getCols(char data[DIM]) {
+	int numberLines = 0, numberColumns = 0, startColIndex = 0, endColIndex = 0;
+	if (isContained("\\", data)) {
+		int numberBars = countOccurrences("\\", data);
+		if (numberBars == 2) {
+			char varName[DIM] = "";
+			int i = 0;
+			while (data[i] != '\\') {
+				varName[i] = data[i];
+				i++;
+			}
+			varName[i] = '\0';
+			char value[dim] = "";
+			i++;
+			int j = 0;
+			while (data[i] != '\\') {
+				value[j] = data[i];
+				i++; j++;
+			}
+			value[j] = '\0';
+			startColIndex = (int)calcNow(value, 0, 0);
+			i++;
+			j = 0;
+			while (data[i] != '\0') {
+				value[j] = data[i];
+				i++; j++;
+			}
+			value[j] = '\0';
+			endColIndex = (int)calcNow(value, 0, 0);
+			check4Vector = 1;
+			initialProcessor(varName, 0);
+			sprintf(matrixValue, "%s", matrixResult);
+			convert2Vector(matrixValue);
+			double vector_R[dim][dim], vector_I[dim][dim];
+			int n = 0;
+			int m = 0;
+			for (n = 0; n < numVectorLines; n++) {
+				for (m = 0; m < numVectorCols; m++) {
+					vector_R[n][m] = vectorR[n][m];
+					vector_I[n][m] = vectorI[n][m];
+				}
+			}
+			numberColumns = numVectorCols;
+			numberLines = numVectorLines;
+			if (startColIndex <= endColIndex && endColIndex < numberColumns) {
+				int i = 0, j = 0;
+				numVectorLines = numberLines; numVectorCols = 0;
+				for (i = 0; i < numberLines; i++) {
+					numVectorCols = 0;
+					for (j = startColIndex; j <= endColIndex; j++) {
+						vectorR[i][j - startColIndex] = vector_R[i][j];
+						vectorI[i][j - startColIndex] = vector_I[i][j];
+						numVectorCols++;
+					}
+
+				}
+				sprintf(matrixValue, "%s", convertVector2String(vectorR, vectorI, numVectorLines, numVectorCols));
+			}
+		}
+	}
+}
+
+void getLines(char data[DIM]) {
+	int numberLines = 0, numberColumns = 0, startLineIndex = 0, endLineIndex = 0;
+	char saveRestExpr[DIM] = "";
+	if (isContained(")\\", data)) {
+		int i = 0;
+		while (i <= strStart) {
+			saveRestExpr[i] = data[i];
+			i++;
+		}
+		saveRestExpr[i] = '\0';
+		printf("\nsaveRestExpr-> %s", saveRestExpr);
+		initialProcessor(saveRestExpr, 0);
+		sprintf(matrixValue, "%s", matrixResult);
+	}
+	else {
+		if (isContained("\\", data)) {
+			int numberBars = countOccurrences("\\", data);
+			if (numberBars == 2) {
+				char varName[DIM] = "";
+				int i = 0;
+				while (data[i] != '\\') {
+					varName[i] = data[i];
+					i++;
+				}
+				varName[i] = '\0';
+				char value[dim] = "";
+				i++;
+				int j = 0;
+				while (data[i] != '\\') {
+					value[j] = data[i];
+					i++; j++;
+				}
+				value[j] = '\0';
+				startLineIndex = (int)calcNow(value, 0, 0);
+				i++;
+				j = 0;
+				while (data[i] != '\0') {
+					value[j] = data[i];
+					i++; j++;
+				}
+				value[j] = '\0';
+				endLineIndex = (int)calcNow(value, 0, 0);
+				check4Vector = 1;
+				initialProcessor(varName, 0);
+				sprintf(matrixValue, "%s", matrixResult);
+				convert2Vector(matrixValue);
+				double vector_R[dim][dim], vector_I[dim][dim];
+				int n = 0;
+				int m = 0;
+				for (n = 0; n < numVectorLines; n++) {
+					for (m = 0; m < numVectorCols; m++) {
+						vector_R[n][m] = vectorR[n][m];
+						vector_I[n][m] = vectorI[n][m];
+					}
+				}
+				numberColumns = numVectorCols;
+				numberLines = numVectorLines;
+				if (startLineIndex <= endLineIndex && endLineIndex < numberLines) {
+					int i = 0, j = 0;
+					numVectorLines = 0; numVectorCols = numberColumns;
+					for (i = startLineIndex; i <= endLineIndex; i++) {
+						for (j = 0; j < numberColumns; j++) {
+							vectorR[i - startLineIndex][j] = vector_R[i][j];
+							vectorI[i - startLineIndex][j] = vector_I[i][j];
+						}
+						numVectorLines++;
+					}
+					sprintf(matrixValue, "%s", convertVector2String(vectorR, vectorI, numVectorLines, numVectorCols));
+				}
+			}
+		}
+	}
+}
