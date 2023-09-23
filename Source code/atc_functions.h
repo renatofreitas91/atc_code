@@ -5,6 +5,7 @@ void dimensions();
 void window();
 void mode();
 void about2();
+void higherPrecisionController();
 void numSystemsController();
 void siPrefixController();
 void actualTimeController();

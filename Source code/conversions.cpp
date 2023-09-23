@@ -72,17 +72,17 @@ void unitConversions() {
 					if (opLength == 11) {
 						valueInMeters = value * 9.46066E15;
 					}
-					printf("\nMeter: %G", valueInMeters);
-					printf("\nKilometer: %G", valueInMeters*0.001);
-					printf("\nCentimeter: %G", valueInMeters * 100);
-					printf("\nMillimeter: %G", valueInMeters * 1000);
-					printf("\nMicrometer: %G", valueInMeters*1E6);
-					printf("\nNanometer: %G", valueInMeters*1E9);
-					printf("\nMile: %G", valueInMeters*0.0006213689);
-					printf("\nYard: %G", valueInMeters*1.0936132983);
-					printf("\nFoot: %G", valueInMeters*3.280839895);
-					printf("\nInch: %G", valueInMeters*39.37007874);
-					printf("\nLight Year: %G", valueInMeters * 1.057008707E-16);
+					printf("\nMeter: %s", convert2Exponential(valueInMeters));
+					printf("\nKilometer: %s", convert2Exponential(valueInMeters*0.001));
+					printf("\nCentimeter: %s", convert2Exponential(valueInMeters * 100));
+					printf("\nMillimeter: %s", convert2Exponential(valueInMeters * 1000));
+					printf("\nMicrometer: %s", convert2Exponential(valueInMeters*1E6));
+					printf("\nNanometer: %s", convert2Exponential(valueInMeters*1E9));
+					printf("\nMile: %s", convert2Exponential(valueInMeters*0.0006213689));
+					printf("\nYard: %s", convert2Exponential(valueInMeters*1.0936132983));
+					printf("\nFoot: %s", convert2Exponential(valueInMeters*3.280839895));
+					printf("\nInch: %s", convert2Exponential(valueInMeters*39.37007874));
+					printf("\nLight Year: %s", convert2Exponential(valueInMeters * 1.057008707E-16));
 				}
 				fflush(NULL);
 				opLength1 = -1;
@@ -119,9 +119,9 @@ void unitConversions() {
 					if (opTemperature == 3) {
 						valueInCelsius = (value - 32) / 1.8;
 					}
-					printf("\nCelsius: %G", valueInCelsius);
-					printf("\nKelvin: %G", valueInCelsius + 273.15);
-					printf("\nFahrenheit: %G", valueInCelsius*1.8 + 32);
+					printf("\nCelsius: %s", convert2Exponential(valueInCelsius));
+					printf("\nKelvin: %s", convert2Exponential(valueInCelsius + 273.15));
+					printf("\nFahrenheit: %s", convert2Exponential(valueInCelsius*1.8 + 32));
 				}
 				fflush(NULL);
 				opTemperature1 = -1;
@@ -190,17 +190,17 @@ void unitConversions() {
 					if (opArea == 11) {
 						valueInSquareMeters = value * 4046.8564224;
 					}
-					printf("\nSquare Meter: %G", valueInSquareMeters);
-					printf("\nSquare Kilometer: %G", valueInSquareMeters*0.000001);
-					printf("\nSquare Centimeter: %G", valueInSquareMeters * 10000);
-					printf("\nSquare Millimeter: %G", valueInSquareMeters * 1000000);
-					printf("\nSquare Micrometer: %G", valueInSquareMeters * 1000000000000);
-					printf("\nHectare: %G", valueInSquareMeters*0.0001);
-					printf("\nSquare Mile: %G", valueInSquareMeters*3.861018768E-7);
-					printf("\nSquare Yard: %G", valueInSquareMeters*1.1959900463);
-					printf("\nSquare Foot: %G", valueInSquareMeters*10.763910417);
-					printf("\nSquare Inch: %G", valueInSquareMeters*1550.0031);
-					printf("\nAcre: %G", valueInSquareMeters * 0.0002471054);
+					printf("\nSquare Meter: %s", convert2Exponential(valueInSquareMeters));
+					printf("\nSquare Kilometer: %s", convert2Exponential(valueInSquareMeters*0.000001));
+					printf("\nSquare Centimeter: %s", convert2Exponential(valueInSquareMeters * 10000));
+					printf("\nSquare Millimeter: %s", convert2Exponential(valueInSquareMeters * 1000000));
+					printf("\nSquare Micrometer: %s", convert2Exponential(valueInSquareMeters * 1000000000000));
+					printf("\nHectare: %s", convert2Exponential(valueInSquareMeters*0.0001));
+					printf("\nSquare Mile: %s", convert2Exponential(valueInSquareMeters*3.861018768E-7));
+					printf("\nSquare Yard: %s", convert2Exponential(valueInSquareMeters*1.1959900463));
+					printf("\nSquare Foot: %s", convert2Exponential(valueInSquareMeters*10.763910417));
+					printf("\nSquare Inch: %s", convert2Exponential(valueInSquareMeters*1550.0031));
+					printf("\nAcre: %s", convert2Exponential(valueInSquareMeters * 0.0002471054));
 				}
 				fflush(NULL);
 				opArea1 = -1;
@@ -317,30 +317,30 @@ void unitConversions() {
 					if (opVolume == 23) {
 						valueInCubicMeters = value * 0.0000163871;
 					}
-					printf("\nCubic Meter: %G", valueInCubicMeters);
-					printf("\nCubic Kilometer: %G", valueInCubicMeters*1E-9);
-					printf("\nCubic Centimeter: %G", valueInCubicMeters * 1000000);
-					printf("\nCubic Millimeter: %G", valueInCubicMeters * 1000000000);
-					printf("\nSquare Micrometer: %G", valueInCubicMeters * 1000000000000);
-					printf("\nLiter: %G", valueInCubicMeters * 1000);
-					printf("\nMilliliter: %G", valueInCubicMeters * 1000000);
-					printf("\nUS Gallon: %G", valueInCubicMeters*264.17217686);
-					printf("\nUS Quart: %G", valueInCubicMeters*1056.6887074);
-					printf("\nUS Pint: %G", valueInCubicMeters*2113.3774149);
-					printf("\nUS Cup: %G", valueInCubicMeters*4226.7548297);
-					printf("\nUS Fluid Ounce: %G", valueInCubicMeters*33814.038638);
-					printf("\nUS Table Spoon: %G", valueInCubicMeters*67628.077276);
-					printf("\nUS Tea Spoon: %G", valueInCubicMeters*202884.23183);
-					printf("\nImperial Gallon: %G", valueInCubicMeters*219.9692483);
-					printf("\nImperial Quart: %G", valueInCubicMeters*879.8769932);
-					printf("\nImperial Pint: %G", valueInCubicMeters*1759.7539864);
-					printf("\nImperial Fluid Ounce: %G", valueInCubicMeters*35195.079728);
-					printf("\nImperial Table Spoon: %G", valueInCubicMeters*56312.127565);
-					printf("\nImperial Tea Spoon: %G", valueInCubicMeters*168936.38269);
-					printf("\nCubic Mile: %G", valueInCubicMeters*2.399128636E-10);
-					printf("\nCubic Yard: %G", valueInCubicMeters*1.3079506193);
-					printf("\nCubic Foot: %G", valueInCubicMeters*35.314666721);
-					printf("\nCubic Inch: %G", valueInCubicMeters*61023.744095);
+					printf("\nCubic Meter: %s", convert2Exponential(valueInCubicMeters));
+					printf("\nCubic Kilometer: %s", convert2Exponential(valueInCubicMeters*1E-9));
+					printf("\nCubic Centimeter: %s", convert2Exponential(valueInCubicMeters * 1000000));
+					printf("\nCubic Millimeter: %s", convert2Exponential(valueInCubicMeters * 1000000000));
+					printf("\nSquare Micrometer: %s", convert2Exponential(valueInCubicMeters * 1000000000000));
+					printf("\nLiter: %s", convert2Exponential(valueInCubicMeters * 1000));
+					printf("\nMilliliter: %s", convert2Exponential(valueInCubicMeters * 1000000));
+					printf("\nUS Gallon: %s", convert2Exponential(valueInCubicMeters*264.17217686));
+					printf("\nUS Quart: %s", convert2Exponential(valueInCubicMeters*1056.6887074));
+					printf("\nUS Pint: %s", convert2Exponential(valueInCubicMeters*2113.3774149));
+					printf("\nUS Cup: %s", convert2Exponential(valueInCubicMeters*4226.7548297));
+					printf("\nUS Fluid Ounce: %s", convert2Exponential(valueInCubicMeters*33814.038638));
+					printf("\nUS Table Spoon: %s", convert2Exponential(valueInCubicMeters*67628.077276));
+					printf("\nUS Tea Spoon: %s", convert2Exponential(valueInCubicMeters*202884.23183));
+					printf("\nImperial Gallon: %s", convert2Exponential(valueInCubicMeters*219.9692483));
+					printf("\nImperial Quart: %s", convert2Exponential(valueInCubicMeters*879.8769932));
+					printf("\nImperial Pint: %s", convert2Exponential(valueInCubicMeters*1759.7539864));
+					printf("\nImperial Fluid Ounce: %s", convert2Exponential(valueInCubicMeters*35195.079728));
+					printf("\nImperial Table Spoon: %s", convert2Exponential(valueInCubicMeters*56312.127565));
+					printf("\nImperial Tea Spoon: %s", convert2Exponential(valueInCubicMeters*168936.38269));
+					printf("\nCubic Mile: %s", convert2Exponential(valueInCubicMeters*2.399128636E-10));
+					printf("\nCubic Yard: %s", convert2Exponential(valueInCubicMeters*1.3079506193));
+					printf("\nCubic Foot: %s", convert2Exponential(valueInCubicMeters*35.314666721));
+					printf("\nCubic Inch: %s", convert2Exponential(valueInCubicMeters*61023.744095));
 				}
 				fflush(NULL);
 				opVolume1 = -1;
@@ -405,17 +405,17 @@ void unitConversions() {
 					if (opWeight == 10) {
 						valueInKilograms = value * 1.660540199E-27;
 					}
-					printf("\nKilogram: %G", valueInKilograms);
-					printf("\nGram: %G", valueInKilograms * 1000);
-					printf("\nMilligram: %G", valueInKilograms * 1000000);
-					printf("\nMetric Ton: %G", valueInKilograms * 0.001);
-					printf("\nLong Ton: %G", valueInKilograms*0.0009842073);
-					printf("\nShort Ton: %G", valueInKilograms*0.0011023122);
-					printf("\nPound: %G", valueInKilograms*2.2046244202);
-					printf("\nOunce: %G", valueInKilograms*35.273990723);
-					printf("\nFoot: %G", valueInKilograms*3.280839895);
-					printf("\nCarrat: %G", valueInKilograms * 5000);
-					printf("\nAtomic Mass Unit: %G", valueInKilograms * 6.022136652E+26);
+					printf("\nKilogram: %s", convert2Exponential(valueInKilograms));
+					printf("\nGram: %s", convert2Exponential(valueInKilograms * 1000));
+					printf("\nMilligram: %s", convert2Exponential(valueInKilograms * 1000000));
+					printf("\nMetric Ton: %s", convert2Exponential(valueInKilograms * 0.001));
+					printf("\nLong Ton: %s", convert2Exponential(valueInKilograms*0.0009842073));
+					printf("\nShort Ton: %s", convert2Exponential(valueInKilograms*0.0011023122));
+					printf("\nPound: %s", convert2Exponential(valueInKilograms*2.2046244202));
+					printf("\nOunce: %s", convert2Exponential(valueInKilograms*35.273990723));
+					printf("\nFoot: %s", convert2Exponential(valueInKilograms*3.280839895));
+					printf("\nCarrat: %s", convert2Exponential(valueInKilograms * 5000));
+					printf("\nAtomic Mass Unit: %s", convert2Exponential(valueInKilograms * 6.022136652E+26));
 				}
 				fflush(NULL);
 				opWeight1 = -1;
@@ -484,17 +484,17 @@ void unitConversions() {
 					if (opTime == 11) {
 						valueInSeconds = value * 31557600;
 					}
-					printf("\nSecond: %G", valueInSeconds);
-					printf("\nMillisecond: %G", valueInSeconds * 1000);
-					printf("\nMicrosecond: %G", valueInSeconds * 1000000);
-					printf("\nNanosecond: %G", valueInSeconds * 1000000000);
-					printf("\nPicosecond: %G", valueInSeconds * 1000000000000);
-					printf("\nMinute: %G", valueInSeconds*0.0166666667);
-					printf("\nHour: %G", valueInSeconds*0.0002777778);
-					printf("\nDay: %G", valueInSeconds*0.0000115741);
-					printf("\nWeek: %G", valueInSeconds*0.0000016534);
-					printf("\nMonth: %G", valueInSeconds*3.802570537E-7);
-					printf("\nYear: %G", valueInSeconds * 3.168808781E-8);
+					printf("\nSecond: %s", convert2Exponential(valueInSeconds));
+					printf("\nMillisecond: %s", convert2Exponential(valueInSeconds * 1000));
+					printf("\nMicrosecond: %s", convert2Exponential(valueInSeconds * 1000000));
+					printf("\nNanosecond: %s", convert2Exponential(valueInSeconds * 1000000000));
+					printf("\nPicosecond: %s", convert2Exponential(valueInSeconds * 1000000000000));
+					printf("\nMinute: %s", convert2Exponential(valueInSeconds*0.0166666667));
+					printf("\nHour: %s", convert2Exponential(valueInSeconds*0.0002777778));
+					printf("\nDay: %s", convert2Exponential(valueInSeconds*0.0000115741));
+					printf("\nWeek: %s", convert2Exponential(valueInSeconds*0.0000016534));
+					printf("\nMonth: %s", convert2Exponential(valueInSeconds*3.802570537E-7));
+					printf("\nYear: %s", convert2Exponential(valueInSeconds * 3.168808781E-8));
 				}
 				fflush(NULL);
 				opTime1 = -1;
@@ -559,16 +559,16 @@ void unitConversions() {
 					if (opAngle == 10) {
 						valueInDegree = value * 360 / 6400;
 					}
-					printf("\nDegree: %G", valueInDegree);
-					printf("\nRadian: %G", valueInDegree*M_PI / 180);
-					printf("\nGradian: %G", valueInDegree / 0.9);
-					printf("\nRevolution: %G", valueInDegree / 360);
-					printf("\nMinutes: %G", valueInDegree * 60);
-					printf("\nSeconds: %G", valueInDegree * 3600);
-					printf("\nOctant: %G", valueInDegree / 45);
-					printf("\nSextant: %G", valueInDegree / 60);
-					printf("\nQuadrant: %G", valueInDegree / 90);
-					printf("\nMilliradian: %G", valueInDegree * 6400 / 360);
+					printf("\nDegree: %s", convert2Exponential(valueInDegree));
+					printf("\nRadian: %s", convert2Exponential(valueInDegree*M_PI / 180));
+					printf("\nGradian: %s", convert2Exponential(valueInDegree / 0.9));
+					printf("\nRevolution: %s", convert2Exponential(valueInDegree / 360));
+					printf("\nMinutes: %s", convert2Exponential(valueInDegree * 60));
+					printf("\nSeconds: %s", convert2Exponential(valueInDegree * 3600));
+					printf("\nOctant: %s", convert2Exponential(valueInDegree / 45));
+					printf("\nSextant: %s", convert2Exponential(valueInDegree / 60));
+					printf("\nQuadrant: %s", convert2Exponential(valueInDegree / 90));
+					printf("\nMilliradian: %s", convert2Exponential(valueInDegree * 6400 / 360));
 				}
 				fflush(NULL);
 				opAngle1 = -1;

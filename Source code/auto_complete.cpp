@@ -18,7 +18,7 @@ struct TrieNode
 
 	// isWordEnd is true if the node represents 
 	// end of a word 
-	bool isWordEnd;
+	boolean isWordEnd;
 };
 
 // Returns new trie node (initialized to NULLs) 
@@ -53,7 +53,7 @@ void insert(struct TrieNode *root, const string key)
 }
 
 // Returns true if key presents in trie, else false 
-bool search(struct TrieNode *root, const string key)
+boolean search(struct TrieNode *root, const string key)
 {
 	int length = (int)key.length();
 	struct TrieNode *pCrawl = root;
@@ -72,7 +72,7 @@ bool search(struct TrieNode *root, const string key)
 
 // Returns 0 if current node has a child 
 // If all children are NULL, return 1. 
-bool isLastNode(struct TrieNode* root)
+boolean isLastNode(struct TrieNode* root)
 {
 	for (int i = 0; i < ALPHABET_SIZE; i++)
 		if (root->children[i])
@@ -132,11 +132,11 @@ int printAutoSuggestions(TrieNode* root, const string query)
 	}
 
 	// If prefix is present as a word. 
-	bool isWord = (pCrawl->isWordEnd == true);
+	boolean isWord = (pCrawl->isWordEnd == true);
 
 	// If prefix is last node of tree (has no 
 	// children) 
-	bool isLast = isLastNode(pCrawl);
+	boolean isLast = isLastNode(pCrawl);
 
 	// If prefix is present as a word, but 
 	// there is no subtree below the last 
@@ -162,7 +162,7 @@ int printAutoSuggestions(TrieNode* root, const string query)
 int autoComplete(char* query)
 {
 	struct TrieNode* root = getNode();
-	std::string commands = "clean;exit;about;clean history;user guide;update;update x64;update portable;reset all;reset all now;reset settings;reset settings now;colors;dimensions;window;run atc;restart atc;history;predefine txt;solve txt;see abbreviations;eliminate abbreviations;enable txt detector;eliminate strings;see strings;auto solve txt;atc from cmd;atc over cmd;donate;atc facebook;atc sourceforge;current settings;mode;verbose resolution;see variables;renamed variables;eliminate variables;numerical systems;si prefixes;see results;eliminate results;solve equations system();solve quadratic equation();solve equation();triangles rectangles solver;arithmetic matrix solver;roots to polynomial();financial calculations;graph settings;graph();geometry calculations;statistics calculations;physics calculations;unit conversions;microeconomics calculations;simplify polynomial();function study();fft();ifft();atc folder;source code;to solve;scripts examples;user functions;strings;day of week();stopwatch();run stopwatch();timer();run timer();run big timer();clock();run clock();big clock();run big clock();time;calendar();actual time response;time difference calculations;shutdown;shutdown now;restart pc;restart pc now;hibernate;log off;sleep;lock;ascending order();descending order();ascii order();inverse ascii order();cos();acos();sin();asin();tan();atan();sec();asec();cosec();acosec();cotan();acotan();cosh();acosh();sinh();asinh();tanh();atanh();sech();asech();cosech();acosech();cotanh();acotanh();sinc();log();ln();logb b();rest();quotient();rtD D();sqrt();cbrt();afact();abs();+;-;*;/;^;!;e;pi;_;INF;gerror();gerrorinv();gerrorc();gerrorcinv();qfunc();qfuncinv();min();max();avg();linsnum();colsnum();getlins();getcols();";
+	std::string commands = "check for updates;enable atc intro;disable atc intro;auto adjust window;clean;exit;about;clean history;user guide;update;update x64;update portable;reset all;reset all now;reset settings;reset settings now;colors;dimensions;window;run atc;restart atc;history;predefine txt;solve txt;see abbreviations;eliminate abbreviations;enable txt detector;eliminate strings;see strings;auto solve txt;atc from cmd;atc over cmd;donate;atc facebook;atc sourceforge;current settings;mode;verbose resolution;see variables;renamed variables;eliminate variables;numerical systems;si prefixes;see results;eliminate results;solve equations system();solve quadratic equation();solve equation();triangles rectangles solver;arithmetic matrix solver;roots to polynomial();financial calculations;graph settings;graph();geometry calculations;statistics calculations;physics calculations;unit conversions;microeconomics calculations;simplify polynomial();function study();fft();ifft();atc folder;source code;to solve;scripts examples;user functions;strings;higher precision;day of week();stopwatch();run stopwatch();timer();run timer();run big timer();clock();run clock();big clock();run big clock();time;calendar();actual time response;time difference calculations;shutdown;shutdown now;restart pc;restart pc now;hibernate;log off;sleep;lock;ascending order();descending order();ascii order();inverse ascii order();cos();acos();sin();asin();tan();atan();sec();asec();cosec();acosec();cotan();acotan();cosh();acosh();sinh();asinh();tanh();atanh();sech();asech();cosech();acosech();cotanh();acotanh();sinc();log();ln();logb b();rest();quotient();rtD D();sqrt();cbrt();afact();abs();+;-;*;/;^;!;e;pi;_;INF;gerror();gerrorinv();gerrorc();gerrorcinv();qfunc();qfuncinv();min();max();avg();linsnum();colsnum();getlins();getcols();";
 	replace(" ", "", query);
 	sprintf(query, "%s", expressionF);
 	std::string delimiter = ";";

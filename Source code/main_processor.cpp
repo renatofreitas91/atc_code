@@ -7,7 +7,7 @@ int isFromMainProcessor = 0, numSysNum = 0, modeNum = 0, timeNum = 0, prefixNum 
 
 
 void main_processor(char math_expression[DIM]) {
-	buf= (char *)malloc(300);
+	buf = (char *)malloc(300);
 	isFromMainProcessor = 1;
 	char variable[DIM] = "";
 	sprintf(buf, "");
@@ -227,6 +227,10 @@ double math_processor(char expression[DIM]) {
 			sprintf(arithTrig, "%s", expressionF);
 			sprintf(saveExpressionFF, "%s", expressionF);
 			synTest = 0;
+			if (isContained("(*(", arithTrig)) {
+				replace("(*(", "((", arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+			}
 			verify = dataVerifier(arithTrig, 0, 0, 1, 1);
 		}
 		else {
@@ -267,36 +271,37 @@ double math_processor(char expression[DIM]) {
 			}
 			if (isFromMainProcessor == 1) {
 				if (dp == -1) {
+					convertComplex2Exponential(resultR, resultI);
 					if (resultR > 0 && resultI > 0) {
-						sprintf(bufText, "%s#%d=%G+%Gi\n", bufText, rf, resultR, resultI);
+						sprintf(bufText, "%s#%d=%s+%si\n", bufText, rf, respR, respI);
 					}
 					else {
 						if (resultR > 0 && resultI < 0) {
-							sprintf(bufText, "%s#%d=%G%Gi\n", bufText, rf, resultR, resultI);
+							sprintf(bufText, "%s#%d=%s%si\n", bufText, rf, respR, respI);
 						}
 						else {
 							if (resultR < 0 && resultI > 0) {
-								sprintf(bufText, "%s#%d=%G+%Gi\n", bufText, rf, resultR, resultI);
+								sprintf(bufText, "%s#%d=%s+%si\n", bufText, rf, respR, respI);
 							}
 							else {
 								if (resultR < 0 && resultI < 0) {
-									sprintf(bufText, "%s#%d=%G%Gi\n", bufText, rf, resultR, resultI);
+									sprintf(bufText, "%s#%d=%s%si\n", bufText, rf, respR, respI);
 								}
 								else {
 									if (resultR == 0 && resultI == 0) {
-										sprintf(bufText, "%s#%d=%G\n", bufText, rf, resultR);
+										sprintf(bufText, "%s#%d=%s\n", bufText, rf, convert2Exponential(resultR));
 									}
 									else {
 										if (resultR == 0 && resultI != 0) {
-											sprintf(bufText, "%s#%d=%Gi\n", bufText, rf, resultI);
+											sprintf(bufText, "%s#%d=%si\n", bufText, rf, convert2Exponential(resultI));
 										}
 										else {
 											if (resultR != 0 && resultI == 0) {
-												sprintf(bufText, "%s#%d=%G\n", bufText, rf, resultR);
+												sprintf(bufText, "%s#%d=%s\n", bufText, rf, convert2Exponential(resultR));
 											}
 											else {
-												sprintf(bufText, "%s#%d=%G+%Gi\n", bufText, rf, resultR,
-													resultI);
+												sprintf(bufText, "%s#%d=%s+%si\n", bufText, rf, respR,
+													respI);
 											}
 										}
 									}
@@ -355,7 +360,7 @@ double math_processor(char expression[DIM]) {
 				char numSysText[DIM] = "";
 				if (numSysNum == 1 || bp != -1 || op != -1 || hp != -1) {
 					char syst[DIM] = "";
-					sprintf(syst, "%G", resultR);
+					sprintf(syst, "%s", convert2Exponential(resultR));
 					if (isEqual(syst, "-NAN")) {
 						sprintf(numSysText, "%s", numSysText);
 						sprintf(numSysText, "%sIn binary=-NAN\n", numSysText);
@@ -424,7 +429,7 @@ double math_processor(char expression[DIM]) {
 				char prefixText[DIM] = "";
 				if (prefixNum == 1) {
 					char pref[DIM] = "";
-					sprintf(pref, "%G", resultR);
+					sprintf(pref, "%s", convert2Exponential(resultR));
 					if (isEqual(pref, "-NAN")) {
 
 						sprintf(prefixText, "%s=-NAN\n", prefixText);
@@ -451,7 +456,7 @@ double math_processor(char expression[DIM]) {
 						}
 					}
 
-					sprintf(pref, "%G", resultI);
+					sprintf(pref, "%s", convert2Exponential(resultI));
 					if (isEqual(pref, "-NAN(IND)")) {
 						sprintf(prefixText, "%s=-NAN\n", prefixText);
 					}

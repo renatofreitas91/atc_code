@@ -417,7 +417,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				command = 1;
 				arithTrig[0] = '\0';
 			}
-			sprintf(arithTrig, "%s=%G", getVarName, value);
+			sprintf(arithTrig, "%s=%s", getVarName, convert2Exponential(value));
 			if (isContained("-", arithTrig)) {
 				replaceTimes = 0;
 				replace("-", "_", arithTrig);
@@ -697,7 +697,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				matrixMode = 1;
 				vectorType = 2;
 				int initialCountSplits = 0;
-				char saveSplitResult[200][dim];
+				char saveSplitResult[200][dime];
 				int i = 0;
 				if (countSplits > 0) {
 					initialCountSplits = countSplits;
@@ -761,10 +761,12 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						calcNow(value[i], 0, 0);
 						vectorR[i] = resultR; vectorI[i] = resultI;
 						if (i < countSplits) {
-							sprintf(vectorString, "%s%G+%Gi\\", vectorString, vectorR[i], vectorI[i]);
+							convertComplex2Exponential(vectorR[i], vectorI[i]);
+							sprintf(vectorString, "%s%s+%si\\", vectorString, respR, respI);
 						}
 						else {
-							sprintf(vectorString, "%s%G+%Gi", vectorString, vectorR[i], vectorI[i]);
+							convertComplex2Exponential(vectorR[i], vectorI[i]);
+							sprintf(vectorString, "%s%s+%si", vectorString, respR, respI);
 						}
 						i++;
 					}
@@ -787,7 +789,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					vectorType = 1;
 					double vectorR[100], vectorI[100];
 					int initialCountSplits = 0;
-					char saveSplitResult[200][dim];
+					char saveSplitResult[200][dime];
 					int i = 0;
 					if (countSplits > 0) {
 						initialCountSplits = countSplits;
@@ -811,10 +813,12 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						calcNow(value[i], 0, 0);
 						vectorR[i] = resultR; vectorI[i] = resultI;
 						if (i < countSplits) {
-							sprintf(vectorString, "%s%G+%Gi\\", vectorString, vectorR[i], vectorI[i]);
+							convertComplex2Exponential(vectorR[i], vectorI[i]);
+							sprintf(vectorString, "%s%s+%si\\", vectorString, respR, respI);
 						}
 						else {
-							sprintf(vectorString, "%s%G+%Gi", vectorString, vectorR[i], vectorI[i]);
+							convertComplex2Exponential(vectorR[i], vectorI[i]);
+							sprintf(vectorString, "%s%s+%si", vectorString, respR, respI);
 						}
 						i++;
 					}
@@ -832,7 +836,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						vectorType = 1;
 						double vectorR[100], vectorI[100];
 						int initialCountSplits = 0;
-						char saveSplitResult[200][dim];
+						char saveSplitResult[200][dime];
 						int i = 0;
 						if (countSplits > 0) {
 							initialCountSplits = countSplits;
@@ -855,11 +859,12 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						while (i <= countSplits) {
 							calcNow(value[i], 0, 0);
 							vectorR[i] = resultR; vectorI[i] = resultI;
+							convertComplex2Exponential(vectorR[i], vectorI[i]);
 							if (i < countSplits) {
-								sprintf(vectorString, "%s%G+%Gi;", vectorString, vectorR[i], vectorI[i]);
+								sprintf(vectorString, "%s%s+%si;", vectorString, respR, respI);
 							}
 							else {
-								sprintf(vectorString, "%s%G+%Gi", vectorString, vectorR[i], vectorI[i]);
+								sprintf(vectorString, "%s%s+%si", vectorString, respR, respI);
 							}
 							i++;
 						}
@@ -1048,7 +1053,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 				}
 				else {
 					double resultRM = resultR, resultIM = resultI;
-					double res_vectorR[dim][dim], res_vectorI[dim][dim], vector1_R[dim][dim], vector1_I[dim][dim];
+					double res_vectorR[dime][dime], res_vectorI[dime][dime], vector1_R[dime][dime], vector1_I[dime][dime];
 					int numVectorCols1 = 0, numVectorLines1 = 0;
 					double resRank = 0;
 					if (res == '^') {
@@ -1204,6 +1209,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					}
 				}
 				verified = 1;
+				roundSolution();
 				result1 = resultR;
 				result2 = resultI;
 				resultFI = result2;
@@ -1234,7 +1240,8 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						char report[DIM] = "";
 						for (i = 0; i < numVectorLines; i++) {
 							for (int k = 0; k < numVectorCols; k++) {
-								sprintf(report, "%s%G+%Gi ", report, vectorR[i][k], vectorI[i][k]);
+								convertComplex2Exponential(vectorR[i][k], vectorI[i][k]);
+								sprintf(report, "%s%s+%si ", report, respR, respI);
 							}
 							sprintf(report, "%s\n", report);
 						}
@@ -1272,7 +1279,8 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 						char report[DIM] = "";
 						for (i = 0; i < numVectorLines; i++) {
 							for (int k = 0; k < numVectorCols; k++) {
-								sprintf(report, "%s%G+%Gi ", report, vectorR[i][k], vectorI[i][k]);
+								convertComplex2Exponential(vectorR[i][k], vectorI[i][k]);
+								sprintf(report, "%s%s+%si ", report, respR, respI);
 							}
 							sprintf(report, "%s\n", report);
 						}
@@ -1296,35 +1304,36 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 					if (matrixMode == 0 || (matrixMode == 2)) {
 						if (dp == -1) {
 							if (isFromMain == 1) {
+								convertComplex2Exponential(result1, result2);
 								if (result1 > 0 && result2 > 0) {
-									printf("#%d=%G+%Gi\n", rf, result1, result2);
+									printf("#%d=%s+%si\n", rf, respR, respI);
 								}
 								else {
 									if (result1 > 0 && result2 < 0) {
-										printf("#%d=%G%Gi\n", rf, result1, result2);
+										printf("#%d=%s%si\n", rf, respR, respI);
 									}
 									else {
 										if (result1 < 0 && result2 > 0) {
-											printf("#%d=%G+%Gi\n", rf, result1, result2);
+											printf("#%d=%s+%si\n", rf, respR, respI);
 										}
 										else {
 											if (result1 < 0 && result2 < 0) {
-												printf("#%d=%G%Gi\n", rf, result1, result2);
+												printf("#%d=%s%si\n", rf, respR, respI);
 											}
 											else {
 												if (result1 == 0 && result2 == 0) {
-													printf("#%d=%G\n", rf, result1);
+													printf("#%d=%s\n", rf, convert2Exponential(result1));
 												}
 												else {
 													if (result1 == 0 && result2 != 0) {
-														printf("#%d=%Gi\n", rf, result2);
+														printf("#%d=%si\n", rf, convert2Exponential(result2));
 													}
 													else {
 														if (result1 != 0 && result2 == 0) {
-															printf("#%d=%G\n", rf, result1);
+															printf("#%d=%s\n", rf, convert2Exponential(result1));
 														}
 														else {
-															printf("#%d=%G+%Gi\n", rf, result1, result2);
+															printf("#%d=%s+%si\n", rf, respR, respI);
 														}
 													}
 												}
@@ -1340,35 +1349,36 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							while (fout == NULL) {
 								fout = fopen(path, "a+");
 							}
+							convertComplex2Exponential(result1, result2);
 							if (result1 > 0 && result2 > 0) {
-								fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
+								fprintf(fout, "#%d=%s+%si\n", rf, respR, respI);
 							}
 							else {
 								if (result1 > 0 && result2 < 0) {
-									fprintf(fout, "#%d=%G%Gi\n", rf, result1, result2);
+									fprintf(fout, "#%d=%s%si\n", rf, respR, respI);
 								}
 								else {
 									if (result1 < 0 && result2 > 0) {
-										fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
+										fprintf(fout, "#%d=%s+%si\n", rf, respR, respI);
 									}
 									else {
 										if (result1 < 0 && result2 < 0) {
-											fprintf(fout, "#%d=%G%Gi\n", rf, result1, result2);
+											fprintf(fout, "#%d=%s%si\n", rf, respR, respI);
 										}
 										else {
 											if (result1 == 0 && result2 == 0) {
-												fprintf(fout, "#%d=%G\n", rf, result1);
+												fprintf(fout, "#%d=%s\n", rf, convert2Exponential(result1));
 											}
 											else {
 												if (result1 == 0 && result2 != 0) {
-													fprintf(fout, "#%d=%Gi\n", rf, result2);
+													fprintf(fout, "#%d=%si\n", rf, convert2Exponential(result2));
 												}
 												else {
 													if (result1 != 0 && result2 == 0) {
-														fprintf(fout, "#%d=%G\n", rf, result1);
+														fprintf(fout, "#%d=%s\n", rf, convert2Exponential(result1));
 													}
 													else {
-														fprintf(fout, "#%d=%G+%Gi\n", rf, result1, result2);
+														fprintf(fout, "#%d=%s+%si\n", rf, respR, respI);
 													}
 												}
 											}
@@ -1475,7 +1485,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 									result1 = vectorR[w][y];
 									result2 = vectorI[w][y];
 									char syst[DIM] = "";
-									sprintf(syst, "%G", result1);
+									sprintf(syst, "%s", convert2Exponential(result1));
 									if (isEqual(syst, "-NAN(IND)")) {
 										if (isFromMain == 1) {
 											puts("");
@@ -1600,7 +1610,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 									result1 = vectorR[w][y];
 									result2 = vectorI[w][y];
 									char pref[DIM] = "";
-									sprintf(pref, "%G", result1);
+									sprintf(pref, "%s", convert2Exponential(result1));
 									char Value[DIM] = "";
 									if (result1 != 0 || result1 == 0 && result2 == 0) {
 										open = fopen(path, "a+");
@@ -1610,7 +1620,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 										}
 										fclose(open);
 										char pref[DIM] = "";
-										sprintf(pref, "%G", result1);
+										sprintf(pref, "%s", convert2Exponential(result1));
 										if (isEqual(pref, "-NAN(IND)")) {
 											if (isFromMain == 1) {
 												puts("=-NAN(IND)");
@@ -1651,7 +1661,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 										}
 										fclose(open);
 										char pref[DIM] = "";
-										sprintf(pref, "%G", result2);
+										sprintf(pref, "%s", convert2Exponential(result2));
 										if (isEqual(pref, "-NAN(IND)")) {
 											if (isFromMain == 1) {
 												puts("=-NAN(IND)");

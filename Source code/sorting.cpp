@@ -81,21 +81,21 @@ void ascendingOrder(char values[DIM]) {
 					savePosition = i;
 				}
 			}
-
+			convertComplex2Exponential(lowest, lowestI);
 			if (j < end - 1 || end < number_of_values) {
 				if (lowestI >= 0) {
-					sprintf(report, "%s%G+%Gi, ", report, lowest, lowestI);
+					sprintf(report, "%s%s+%si, ", report, respR, respI);
 				}
 				else {
-					sprintf(report, "%s%G%Gi, ", report, lowest, lowestI);
+					sprintf(report, "%s%s%si, ", report, respR, respI);
 				}
 			}
 			else {
 				if (lowestI >= 0) {
-					sprintf(report, "%s%G+%Gi, ", report, lowest, lowestI);
+					sprintf(report, "%s%s+%si, ", report, respR, respI);
 				}
 				else {
-					sprintf(report, "%s%G%Gi, ", report, lowest, lowestI);
+					sprintf(report, "%s%s%si, ", report, respR, respI);
 				}
 			}
 			orderR[j] = lowest;
@@ -205,20 +205,21 @@ void descendingOrder(char values[DIM]) {
 					savePosition = i;
 				}
 			}
+			convertComplex2Exponential(biggest, biggestI);
 			if (j < end - 1 || end < number_of_values) {
 				if (biggestI >= 0) {
-					sprintf(report, "%s%G+%Gi, ", report, biggest, biggestI);
+					sprintf(report, "%s%s+%si, ", report, respR, respI);
 				}
 				else {
-					sprintf(report, "%s%G%Gi, ", report, biggest, biggestI);
+					sprintf(report, "%s%s%si, ", report, respR, respI);
 				}
 			}
 			else {
 				if (biggestI >= 0) {
-					sprintf(report, "%s%G+%Gi, ", report, biggest, biggestI);
+					sprintf(report, "%s%s+%si, ", report, respR, respI);
 				}
 				else {
-					sprintf(report, "%s%G%Gi, ", report, biggest, biggestI);
+					sprintf(report, "%s%s%si, ", report, respR, respI);
 				}
 			}
 			orderR[j] = biggest;
@@ -248,31 +249,32 @@ void descendingOrder(char values[DIM]) {
 	puts(" ");
 }
 
-
 void maximum(char values[DIM]) {
 	char matrixExpr[DIM] = "";
 	if (strlen(values) > 0) {
 		sprintf(matrixExpr, "%s", values);
 		sprintf(matrixValue, "");
 		replaceTimes = 0;
-		if (isContained("*", matrixExpr)) {
-			replace("*", "i\\", matrixExpr);
-			sprintf(matrixExpr, "%s", expressionF);
-		}
-		if (isContained(":", matrixExpr)) {
-			replace(":", "i\\", matrixExpr);
-			sprintf(matrixExpr, "%s", expressionF);
-		}
-		if (isContained(" ", matrixExpr)) {
-			replace(" ", "+", matrixExpr);
-			sprintf(matrixExpr, "%s", expressionF);
-		}
-		if (isContained("-", matrixExpr)) {
-			replace("-", "_", matrixExpr);
-			sprintf(matrixExpr, "%s", expressionF);
-		}
-		if (isContained(" ", values)) {
-			sprintf(matrixExpr, "%si", matrixExpr);
+		if (isContained("*", matrixExpr) || isContained(":", matrixExpr)) {
+			if (isContained("*", matrixExpr)) {
+				replace("*", "i\\", matrixExpr);
+				sprintf(matrixExpr, "%s", expressionF);
+			}
+			if (isContained(":", matrixExpr)) {
+				replace(":", "i\\", matrixExpr);
+				sprintf(matrixExpr, "%s", expressionF);
+			}
+			if (isContained(" ", matrixExpr)) {
+				replace(" ", "+", matrixExpr);
+				sprintf(matrixExpr, "%s", expressionF);
+			}
+			if (isContained("-", matrixExpr)) {
+				replace("-", "_", matrixExpr);
+				sprintf(matrixExpr, "%s", expressionF);
+			}
+			if (!isContainedByIndex("i", matrixExpr, abs((int)strlen(matrixExpr)) - 1)) {
+				sprintf(matrixExpr, "%si", matrixExpr);
+			}
 		}
 		sprintf(values, "%s", matrixExpr);
 		matrixMode = 1;
@@ -376,25 +378,28 @@ void minimum(char values[DIM]) {
 		sprintf(matrixExpr, "%s", values);
 		sprintf(matrixValue, "");
 		replaceTimes = 0;
-		if (isContained("*", matrixExpr)) {
-			replace("*", "i\\", matrixExpr);
-			sprintf(matrixExpr, "%s", expressionF);
+		if (isContained("*", matrixExpr) || isContained(":", matrixExpr)) {
+			if (isContained("*", matrixExpr)) {
+				replace("*", "i\\", matrixExpr);
+				sprintf(matrixExpr, "%s", expressionF);
+			}
+			if (isContained(":", matrixExpr)) {
+				replace(":", "i\\", matrixExpr);
+				sprintf(matrixExpr, "%s", expressionF);
+			}
+			if (isContained(" ", matrixExpr)) {
+				replace(" ", "+", matrixExpr);
+				sprintf(matrixExpr, "%s", expressionF);
+			}
+			if (isContained("-", matrixExpr)) {
+				replace("-", "_", matrixExpr);
+				sprintf(matrixExpr, "%s", expressionF);
+			}
+			if (!isContainedByIndex("i", matrixExpr, abs((int)strlen(matrixExpr)) - 1)) {
+				sprintf(matrixExpr, "%si", matrixExpr);
+			}
 		}
-		if (isContained(":", matrixExpr)) {
-			replace(":", "i\\", matrixExpr);
-			sprintf(matrixExpr, "%s", expressionF);
-		}
-		if (isContained(" ", matrixExpr)) {
-			replace(" ", "+", matrixExpr);
-			sprintf(matrixExpr, "%s", expressionF);
-		}
-		if (isContained("-", matrixExpr)) {
-			replace("-", "_", matrixExpr);
-			sprintf(matrixExpr, "%s", expressionF);
-		}
-		if (isContained(" ", values)) {
-			sprintf(matrixExpr, "%si", matrixExpr);
-		}
+		sprintf(values, "%s", matrixExpr);
 		sprintf(matrixValue, "not_checking");
 		matrixMode = 1;
 
@@ -518,7 +523,7 @@ void average(char values[DIM]) {
 			replace("-", "_", matrixExpr);
 			sprintf(matrixExpr, "%s", expressionF);
 		}
-		if (isContained(" ", values)) {
+		if (!isContainedByIndex("i", matrixExpr, abs((int)strlen(matrixExpr)) - 1)) {
 			sprintf(matrixExpr, "%si", matrixExpr);
 		}
 		sprintf(values, "%s", matrixExpr);
@@ -566,8 +571,8 @@ void asciiOrder() {
 	do {
 		puts("\nSeperate your expressions by \"\\\" and in the final press \"Enter\"\n");
 		char expressions[DIM] = "";
-		char expressionList[dim][dim], expressionListS[dim][dim];
-		double expressionEquivalent[dim];
+		char expressionList[dime][dime], expressionListS[dime][dime];
+		double expressionEquivalent[dime];
 		gets_s(expressions);
 		int i = 0, j = 0, maximum = 0, z = 0;
 		while (i < abs((int)strlen(expressions))) {
@@ -638,11 +643,11 @@ void asciiOrder() {
 			j = 0;
 			double Summatory = 0;
 			while (j < abs((int)strlen(expressionListS[i]))) {
-				Summatory = Summatory + (static_cast<unsigned char>(expressionListS[i][j]))*pow(summatorial((maximum - j) + 1), 20.0);
+				Summatory = Summatory + (static_cast<unsigned char>(expressionListS[i][j]))*pot(summatorial((maximum - j) + 1), 20.0, 1);
 				j++;
 			}
 			while (j < maximum) {
-				Summatory = Summatory + abs(maximum - (int)strlen(expressionListS[i]) + 1)*pow(summatorial((maximum - j) + 1), 20.0);
+				Summatory = Summatory + abs(maximum - (int)strlen(expressionListS[i]) + 1)*pot(summatorial((maximum - j) + 1), 20.0, 1);
 				j++;
 			}
 			expressionEquivalent[i] = Summatory;
@@ -700,8 +705,8 @@ void inverseAsciiOrder() {
 	do {
 		puts("\nSeperate your expressions by \"\\\" and in the final press \"Enter\"\n");
 		char expressions[DIM] = "";
-		char expressionList[dim][dim], expressionListS[dim][dim];
-		double expressionEquivalent[dim];
+		char expressionList[dime][dime], expressionListS[dime][dime];
+		double expressionEquivalent[dime];
 		gets_s(expressions);
 		int i = 0, j = 0, maximum = 0, z = 0;
 		while (i < abs((int)strlen(expressions))) {
@@ -772,11 +777,11 @@ void inverseAsciiOrder() {
 			j = 0;
 			double Summatory = 0;
 			while (j < abs((int)strlen(expressionListS[i]))) {
-				Summatory = Summatory + (static_cast<unsigned char>(expressionListS[i][j]))*pow(summatorial((maximum - j) + 1), 20.0);
+				Summatory = Summatory + (static_cast<unsigned char>(expressionListS[i][j]))*pot(summatorial((maximum - j) + 1), 20.0, 1);
 				j++;
 			}
 			while (j < maximum) {
-				Summatory = Summatory + abs(maximum - (int)strlen(expressionListS[i]) + 1)*pow(summatorial((maximum - j) + 1), 20.0);
+				Summatory = Summatory + abs(maximum - (int)strlen(expressionListS[i]) + 1)*pot(summatorial((maximum - j) + 1), 20.0, 1);
 				j++;
 			}
 			expressionEquivalent[i] = Summatory;

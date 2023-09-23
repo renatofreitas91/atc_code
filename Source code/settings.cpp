@@ -39,7 +39,8 @@ void dimensions() {
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
 	open = fopen(toOpen, "w");
-	fprintf(open, "MODE con cols=%G lines=%G", ncols, nlins);
+	convertComplex2Exponential(ncols, nlins);
+	fprintf(open, "MODE con cols=%s lines=%s", respR, respI);
 	fclose(open);
 	applySettings(toDo);
 }
@@ -96,7 +97,7 @@ void mode() {
 }
 
 void about2() {
-	system("title Advanced Trigonometry Calculator v2.1.2");
+	system("title Advanced Trigonometry Calculator v2.1.4");
 	system("MODE con cols=90 lines=15");
 	cls();
 	FILE *open = NULL;
@@ -113,7 +114,7 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	system("title Advanced Trigonometry Calculator v2.1.2                                                             ==) Enter data (==              ");
+	system("title Advanced Trigonometry Calculator v2.1.4                                                             ==) Enter data (==              ");
 }
 
 void graphSettings() {
@@ -239,7 +240,7 @@ void graphSettings() {
 				double Xmax = getValue();
 				double Xscale = 0.00000000001;
 				while (Xscale < (Xmax - Xmin) / 120) {
-					printf("Xscale? (minimum: %G)\n", abs(Xmax - Xmin) / 120);
+					printf("Xscale? (minimum: %s)\n", convert2Exponential(abs(Xmax - Xmin) / 120));
 					Xscale = getValue();
 				}
 			}
@@ -257,7 +258,7 @@ void graphSettings() {
 				puts("Ymax?");
 				Ymax = getValue();
 				while (Yscale < (Ymax - Ymin) / 60) {
-					printf("Yscale? (minimum: %G)\n", abs(Ymax - Ymin) / 60);
+					printf("Yscale? (minimum: %s)\n", convert2Exponential(abs(Ymax - Ymin) / 60));
 					Yscale = getValue();
 				}
 			}
@@ -338,10 +339,7 @@ int applySettings(int toDo) {
 				if (GetWindowRect(hwnd, &rect))
 				{
 					widthATC = (rect.right - rect.left);
-					xATC = (int)(widthATC - 0.99*widthATC);
-					widthATC = (int)(widthATC * 0.9);
 					heightATC = (rect.bottom - rect.top);
-					heightATC = (int)(heightATC*0.9);
 					sprintf(toOpen, "%s\\window.txt", atcPath);
 					open = NULL;
 					while (open == NULL) {
@@ -353,19 +351,24 @@ int applySettings(int toDo) {
 				}
 			}
 		}
+		HWND b;
+		b = GetConsoleWindow();
+		ShowWindow(b, SW_SHOWMAXIMIZED);
 		return 0;
 	}
 	if (toDo == 3) {
+
 		int i = 0, e = 0;
 		int x, y, width, height, a = 1;
 		char value[DIM];
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\window.txt", atcPath);
 		if (fopen(toOpen, "r") == NULL) {
+			system("MODE con cols=4000 lines=4000");
+			int x = 0, y = 0, maxX = 0, maxY = 0;
 			HWND b;
 			b = GetConsoleWindow();
-			MoveWindow(b, 0, 0, 100, 100, TRUE);
-			system("MODE con cols=4000 lines=4000");
+			ShowWindow(b, SW_SHOWMAXIMIZED);
 			int width, height;
 			HWND hwnd = GetConsoleWindow();
 			RECT rect;
@@ -387,7 +390,10 @@ int applySettings(int toDo) {
 			CONSOLE_SCREEN_BUFFER_INFO csbi;
 			int columns, rows;
 			GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-			columns = (int)((csbi.srWindow.Right - csbi.srWindow.Left)*0.97);
+			columns = (int)((csbi.srWindow.Right - csbi.srWindow.Left));
+			if (columns < 0) {
+				columns = (int)((csbi.srWindow.Left + csbi.srWindow.Right));
+			}
 			rows = 5000;
 			sprintf(toOpen, "%s\\dimensions.txt", atcPath);
 			char setting[300] = "";
@@ -401,6 +407,8 @@ int applySettings(int toDo) {
 			sprintf(dimensionsTxt, "%s", setting);
 			fputs(setting, open);
 			fclose(open);
+			b = GetConsoleWindow();
+			ShowWindow(b, SW_SHOWMAXIMIZED);
 		}
 		else {
 			open = NULL;
@@ -442,6 +450,9 @@ int applySettings(int toDo) {
 				sprintf(windowTxt, "%s", setting);
 			}
 		}
+		HWND b;
+		b = GetConsoleWindow();
+		ShowWindow(b, SW_SHOWMAXIMIZED);
 		return 0;
 	}
 	if (toDo == 4) {
@@ -470,11 +481,11 @@ int applySettings(int toDo) {
 
 boolean about() {
 	ShowConsoleCursor(FALSE);
-	system("title Advanced Trigonometry Calculator v2.1.2");
+	system("title Advanced Trigonometry Calculator v2.1.4");
 	HWND a;
 	a = GetConsoleWindow();
 	MoveWindow(a, 0, 0, 1000, 1000, FALSE);
-	system("MODE con cols=84 lines=41");
+	system("MODE con cols=84 lines=43");
 	_flushall();
 	char exit[DIM] = "";
 	boolean continu = true;
@@ -497,18 +508,20 @@ boolean about() {
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	printf("                                  %c%c%c%c%c       %c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                                      %c       %c       %c\n", 177, 177, 177);
+	printf("                                  %c%c%c%c%c       %c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                                      %c       %c   %c   %c\n", 177, 177, 177, 177);
 	printf("                            %c   %c %c%c%c%c%c       %c   %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                             %c %c  %c           %c   %c\n", 177, 177, 177, 177, 177);
-	printf("                              %c   %c%c%c%c%c %c     %c %c %c%c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                             %c %c  %c           %c       %c\n", 177, 177, 177, 177, 177);
+	printf("                              %c   %c%c%c%c%c %c     %c %c     %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n                                    Made in Portugal\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
 	trackMouse();
 	clock_t start, end;
 	start = clock();
 	end = clock();
+	puts("        Keep your ATC application up to date by entering \"check for updates\"\n");
 	puts("Press \"Enter\" to continue or wait 10 seconds . . .\n");
+
 	int saveSecond = 0, second = 0, i = 0;
 	char getEnter[20] = "";
 	printf("\r");

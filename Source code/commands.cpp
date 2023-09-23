@@ -6,6 +6,7 @@ boolean returned = false, equation_solver = false;
 char saveExpressionF[DIM] = "";
 
 
+
 boolean commands(char expression[DIM], char path[DIM], double result1, double result2) {
 	if (isContained("\\\\", expression)) {
 		printf("\nError inside argument of command. \n\n ==> ATC has detected \"\\\" followed by  \"\\\", i.e. \"\\\\\".\n\n");
@@ -36,6 +37,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 	i = 0;
 	if (isCommand(arithTrig, "functionstudy")) {
 		command = true;
+		notUseHigherPrecison = true;
 		if (arithTrig[13] == '(') {
 			int tDev = 14, tGet = 0;
 			char exprDev[DIM] = "";
@@ -53,6 +55,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			}
 			char solution[DIM] = "";
 			synTest = 0;
+			sprintf(roots, "");
 			manageExpression(data, 0, 0, 1);
 			sprintf(data, "%s", expressionF);
 			sprintf(expressionF, "%s", data);
@@ -89,9 +92,11 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			}
 		}
 		puts("");
+		notUseHigherPrecison = false;
 	}
 	if (isCommand(arithTrig, "graph")) {
 		command = true;
+		notUseHigherPrecison = true;
 		if (arithTrig[5] == '(') {
 			int tDev = 6, tGet = 0;
 			char exprDev[DIM] = "";
@@ -103,6 +108,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			designGraph(exprDev);
 		}
 		puts("");
+		notUseHigherPrecison = false;
 	}
 	if (isCommand(arithTrig, "fft")) {
 		command = true;
@@ -162,6 +168,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		equation_solver = true;
 		isDivisible = true;
 		lastDividerR = 1, lastDividerI = 0;
+		notUseHigherPrecison = true;
 		if (arithTrig[18] == '(') {
 			int tDev = 19, tGet = 0;
 			char exprDev[DIM] = "";
@@ -237,6 +244,22 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			}
 		}
 		puts("");
+		notUseHigherPrecison = false;
+	}
+	if (isCommand(arithTrig, "disableatcintro")) {
+		command = true;
+		FILE *create = NULL;
+		char toOpen[DIM] = "";
+		sprintf(toOpen, "%s\\aboutDisabled.txt", atcPath);
+		create = fopen(toOpen, "w");
+		if (create != NULL) {
+			fclose(create);
+			printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
+		}
+		else {
+			printf("\n==> It was not possible to disable atc intro. <==\n\n");
+
+		}
 	}
 	if (isCommand(arithTrig, "unitconversions")) {
 		command = true;
@@ -250,9 +273,11 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		puts("");
 	}
 	if (isCommand(arithTrig, "physicscalculations")) {
+		notUseHigherPrecison = true;
 		command = true;
 		physicsCalculations();
 		puts("");
+		notUseHigherPrecison = false;
 	}
 	if (isCommand(arithTrig, "graphsettings")) {
 		command = true;
@@ -454,7 +479,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			double time_ms = (end_processing - start_processing) / (CLOCKS_PER_SEC / 1000);
 			double time_s = qu(time_ms, 1000);
 			double time_ms_final = re(time_ms, 1000);
-			printf("==> Processed in %Gs and %Gms. ATC is ready to process more data. <==\n\n", time_s, time_ms_final);
+			convertComplex2Exponential(time_s, time_ms_final);
+			printf("==> Processed in %ss and %sms. ATC is ready to process more data. <==\n\n", respR, respI);
 		} while (continu == 1);
 	}
 	if (isCommand(arithTrig, "autosolvetxt")) {
@@ -477,8 +503,11 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		openTxt();
 	}
 	if (isCommand(arithTrig, "solveequation")) {
+		ansRV = 0;
+		ansIV = 0;
 		command = true;
 		equation_solver = true;
+		notUseHigherPrecison = true;
 		resultR = 0; resultI = 0;
 		lastDividerR = 1, lastDividerI = 0, natureValue = 1;
 		sprintf(roots, ""), sprintf(answers, "");
@@ -604,9 +633,14 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		}
 		sprintf(arithTrig, "");
 		puts("");
+		notUseHigherPrecison = false;
+		ansRV = ans[rf - 1];
+		ansIV = ansI[rf - 1];
+
 	}
 	if (isCommand(arithTrig, "rootstopolynomial")) {
 		command = true;
+		notUseHigherPrecison = true;
 		if (arithTrig[17] == '(') {
 			int tDev = 18, tGet = 0;
 			char exprDev[DIM] = "";
@@ -633,6 +667,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			}
 		}
 		puts("");
+		notUseHigherPrecison = false;
 	}
 	if (isCommand(arithTrig, "solvequadraticequation") && arithTrig[i + 22] == '(') {
 		puts("");
@@ -771,6 +806,17 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		Sleep(200);
 		puts(" ");
 	}
+	if (isCommand(arithTrig, "enableatcintro")) {
+		command = true;
+		puts(" ");
+		FILE *start;
+		char path4ATC[DIM] = "";
+		sprintf(path4ATC, "%s\\onStart.txt", atcPath);
+		start = fopen(path4ATC, "w");
+		fprintf(start, "enableatcintro");
+		fclose(start);
+		printf("\n==> Restart the application to apply changes entering \"restart atc\". <==\n\n");
+	}
 	if (isCommand(arithTrig, "history")) {
 		command = true;
 		puts(" ");
@@ -890,6 +936,12 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
 		puts("");
 	}
+	if (isCommand(arithTrig, "checkforupdates")) {
+		command = true;
+		check4Updates();
+		puts("");
+	}
+
 	if (isCommand(arithTrig, "tosolve")) {
 		command = true;
 		char comm[DIM] = "";
@@ -1131,14 +1183,14 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 								solutionI = solutionI + resultI;
 							}
 							char Value[DIM] = "";
-							sprintf(Value, "%G", solutionR);
-							for (int v = 0; Value[v]; v++) {
+							sprintf(Value, "%s", convert2Exponential(solutionR));
+							for (int v = 0; Value[v] != '\0'; v++) {
 								if (Value[v] == '-')
 									Value[v] = '_';
 							}
 							solutionR = calcNow(Value, result1, result2);
-							sprintf(Value, "%G", valuesS[p][count - 1]);
-							for (int v = 0; Value[v]; v++) {
+							sprintf(Value, "%s", convert2Exponential(valuesS[p][count - 1]));
+							for (int v = 0; Value[v] != '\0'; v++) {
 								if (Value[v] == '-') {
 									Value[v] = '_';
 								}
@@ -1147,14 +1199,14 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 								}
 							}
 							valuesS[p][count - 1] = calcNow(Value, result1, result2);
-							sprintf(Value, "%G", solutionI);
-							for (int v = 0; Value[v]; v++) {
+							sprintf(Value, "%s", convert2Exponential(solutionI));
+							for (int v = 0; Value[v] != '\0'; v++) {
 								if (Value[v] == '-')
 									Value[v] = '_';
 							}
 							solutionI = calcNow(Value, result1, result2);
-							sprintf(Value, "%G", valuesSI[p][count - 1]);
-							for (int v = 0; Value[v]; v++) {
+							sprintf(Value, "%s", convert2Exponential(valuesSI[p][count - 1]));
+							for (int v = 0; Value[v] != '\0'; v++) {
 								if (Value[v] == '-') {
 									Value[v] = '_';
 								}
@@ -1176,40 +1228,41 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 							puts("");
 							for (p = 0; p < count - 1; p++) {
 								char Value[DIM] = "";
-								sprintf(Value, "%f", values[p][count - 1]);
-								for (int v = 0; Value[v]; v++) {
+								sprintf(Value, "%s", convert2Exponential(values[p][count - 1]));
+								for (int v = 0; Value[v] != '\0'; v++) {
 									if (Value[v] == '-')
 										Value[v] = '_';
 								}
 								values[p][count - 1] = calcNow(Value, result1, result2);
+								convertComplex2Exponential(values[p][count - 1], valuesI[p][count - 1]);
 								if (values[p][count - 1] >= 0 && valuesI[p][count - 1] > 0) {
-									printf("x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
-									fprintf(fout, "x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+									printf("x%d=%s+%si\n", p + 1, respR, respI);
+									fprintf(fout, "x%d=%s+%si\n", p + 1, respR, respI);
 								}
 								else {
 									if (values[p][count - 1] >= 0 && valuesI[p][count - 1] < 0) {
-										printf("x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
-										fprintf(fout, "x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+										printf("x%d=%s%si\n", p + 1, respR, respI);
+										fprintf(fout, "x%d=%s%si\n", p + 1, respR, respI);
 									}
 									else {
 										if (values[p][count - 1] < 0 && valuesI[p][count - 1] < 0) {
-											printf("x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
-											fprintf(fout, "x%d=%G%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+											printf("x%d=%s%si\n", p + 1, respR, respI);
+											fprintf(fout, "x%d=%s%si\n", p + 1, respR, respI);
 										}
 										else {
 											if (values[p][count - 1] < 0 && valuesI[p][count - 1] > 0) {
-												printf("x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
-												fprintf(fout, "x%d=%G+%Gi\n", p + 1, values[p][count - 1], valuesI[p][count - 1]);
+												printf("x%d=%s+%si\n", p + 1, respR, respI);
+												fprintf(fout, "x%d=%s+%si\n", p + 1, respR, respI);
 											}
 											else {
 												if (values[p][count - 1] == 0 && valuesI[p][count - 1] != 0) {
-													printf("x%d=%Gi\n", p + 1, valuesI[p][count - 1]);
-													fprintf(fout, "x%d=%Gi\n", p + 1, valuesI[p][count - 1]);
+													printf("x%d=%si\n", p + 1, respI);
+													fprintf(fout, "x%d=%si\n", p + 1, respI);
 												}
 												else {
 													if (valuesI[p][count - 1] == 0) {
-														printf("x%d=%G\n", p + 1, values[p][count - 1]);
-														fprintf(fout, "x%d=%G\n", p + 1, values[p][count - 1]);
+														printf("x%d=%s\n", p + 1, respR);
+														fprintf(fout, "x%d=%s\n", p + 1, respR);
 													}
 												}
 											}
@@ -1245,6 +1298,10 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			fprintf(fout, "\nError in parentheses. \n ==> The number of left and right parenthesis entered must be equal.\n ==> Enter \"[\" or \"{\" is the same as \"(\" and \"]\" or \"}\" is the same as \")\".\n ==> The expression that you entered has %d left parenthesis and %d right parenthesis.\n\n\n", countL, countR);
 		}
 		arithTrig[0] = '\0'; command = true;
+	}
+	if (isCommand(arithTrig, "autoadjustwindow")) {
+		command = true;
+		autoAdjustWindow();
 	}
 	if (isCommand(arithTrig, "eliminatevariables")) {
 		FILE *open = NULL;
@@ -1495,33 +1552,34 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 			r = 0;
 			while (r < rf) {
 				if (strlen(ansMatrices[r]) == 0) {
+					convertComplex2Exponential(ans[r], ansI[r]);
 					if (ans[r] > 0 && ansI[r] > 0) {
-						printf("#%d=%G+%Gi\n", r, ans[r], ansI[r]);
-						fprintf(fout, "#%d=%G+%Gi\n", r, ans[r], ansI[r]);
+						printf("#%d=%s+%si\n", r, respR, respI);
+						fprintf(fout, "#%d=%s+%si\n", r, respR, respI);
 					}
 					if (ans[r] > 0 && ansI[r] < 0) {
-						printf("#%d=%G%Gi\n", r, ans[r], ansI[r]);
-						fprintf(fout, "#%d=%G%Gi\n", r, ans[r], ansI[r]);
+						printf("#%d=%s%si\n", r, respR, respI);
+						fprintf(fout, "#%d=%s%si\n", r, respR, respI);
 					}
 					if (ans[r] < 0 && ansI[r] > 0) {
-						printf("#%d=%G+%Gi\n", r, ans[r], ansI[r]);
-						fprintf(fout, "#%d=%G+%Gi\n", r, ans[r], ansI[r]);
+						printf("#%d=%s+%si\n", r, respR, respI);
+						fprintf(fout, "#%d=%s+%si\n", r, respR, respI);
 					}
 					if (ans[r] < 0 && ansI[r] < 0) {
-						printf("#%d=%G%Gi\n", r, ans[r], ansI[r]);
-						fprintf(fout, "#%d=%G%Gi\n", r, ans[r], ansI[r]);
+						printf("#%d=%s%si\n", r, respR, respI);
+						fprintf(fout, "#%d=%s%si\n", r, respR, respI);
 					}
 					if (ans[r] == 0 && ansI[r] == 0) {
-						printf("#%d=%G\n", r, ans[r]);
-						fprintf(fout, "#%d=%G\n", r, ans[r]);
+						printf("#%d=%s\n", r, respR);
+						fprintf(fout, "#%d=%s\n", r, respR);
 					}
 					if (ans[r] == 0 && ansI[r] != 0) {
-						printf("#%d=%Gi\n", r, ansI[r]);
-						fprintf(fout, "#%d=%Gi\n", r, ansI[r]);
+						printf("#%d=%si\n", r, respI);
+						fprintf(fout, "#%d=%si\n", r, respI);
 					}
 					if (ans[r] != 0 && ansI[r] == 0) {
-						printf("#%d=%G\n", r, ans[r]);
-						fprintf(fout, "#%d=%G\n", r, ans[r]);
+						printf("#%d=%s\n", r, respR);
+						fprintf(fout, "#%d=%s\n", r, respR);
 					}
 				}
 				else {
@@ -1529,7 +1587,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 					char report[DIM] = "";
 					for (i = 0; i < numVectorLines; i++) {
 						for (int k = 0; k < numVectorCols; k++) {
-							sprintf(report, "%s%G+%Gi ", report, vectorR[i][k], vectorI[i][k]);
+							convertComplex2Exponential(vectorR[i][k], vectorI[i][k]);
+							sprintf(report, "%s%s+%si ", report, respR, respI);
 						}
 						sprintf(report, "%s\n", report);
 					}
@@ -1579,6 +1638,15 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 		printf("\n==> Configuration of numerical systems response <==\n\n");
 		fprintf(fout, "\n==> Configuration of numerical systems response <==\n\n");
 		numSystemsController();
+		fprintf(fout, "\n");
+		printf("\n");
+	}
+	if (isCommand(arithTrig, "higherprecision")) {
+		char arithTrig[DIM] = ""; command = true;
+		arithTrig[0] = '\0';
+		printf("\n==> Configuration of higher precision to improve precision of calculations <==\n\n");
+		fprintf(fout, "\n==> Configuration of higher precision to improve precision of calculations <==\n\n");
+		higherPrecisionController();
 		fprintf(fout, "\n");
 		printf("\n");
 	}
@@ -1703,8 +1771,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 										tim[24] = '\0';
 										char hou[3] = { tim[11], tim[12], '\0' };
 										int Hours = atoi(hou);
-										char min[3] = { tim[14], tim[15], '\0' };
-										int Minutes = atoi(min);
+										char Min[3] = { tim[14], tim[15], '\0' };
+										int Minutes = atoi(Min);
 										char sec[3] = { tim[17], tim[18], '\0' };
 										int Seconds = atoi(sec);
 										char toOpen[DIM] = "";
@@ -1752,7 +1820,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.2  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.4  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(thours, tminutes, tseconds);
 									}
@@ -1902,8 +1970,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 										tim[24] = '\0';
 										char hou[3] = { tim[11], tim[12], '\0' };
 										int Hours = atoi(hou);
-										char min[3] = { tim[14], tim[15], '\0' };
-										int Minutes = atoi(min);
+										char Min[3] = { tim[14], tim[15], '\0' };
+										int Minutes = atoi(Min);
 										char sec[3] = { tim[17], tim[18], '\0' };
 										int Seconds = atoi(sec);
 										char toOpen[DIM] = "";
@@ -1951,7 +2019,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.2  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.4  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(thours, tminutes, tseconds);
 									}
@@ -2116,8 +2184,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 										tim[24] = '\0';
 										char hou[3] = { tim[11], tim[12], '\0' };
 										int Hours = atoi(hou);
-										char min[3] = { tim[14], tim[15], '\0' };
-										int Minutes = atoi(min);
+										char Min[3] = { tim[14], tim[15], '\0' };
+										int Minutes = atoi(Min);
 										char sec[3] = { tim[17], tim[18], '\0' };
 										int Seconds = atoi(sec);
 										char toOpen[DIM] = "";
@@ -2165,7 +2233,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.2 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.4 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n  %02d:%02d:%02d                   \n", thours, tminutes, tseconds);
@@ -2324,8 +2392,8 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 										tim[24] = '\0';
 										char hou[3] = { tim[11], tim[12], '\0' };
 										int Hours = atoi(hou);
-										char min[3] = { tim[14], tim[15], '\0' };
-										int Minutes = atoi(min);
+										char Min[3] = { tim[14], tim[15], '\0' };
+										int Minutes = atoi(Min);
 										char sec[3] = { tim[17], tim[18], '\0' };
 										int Seconds = atoi(sec);
 										char toOpen[DIM] = "";
@@ -2373,7 +2441,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.2 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.4 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(Hours, Minutes, Seconds);
 										printf("\n\n    %02d:%02d:%02d                   \n\n", thours, tminutes, tseconds);
@@ -2704,13 +2772,13 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 				day = day - datePreciser(day + day1S, month + month1S, year + year1S, dayS, monthS, yearS);
 			}
 			char tim[DIM] = "";
-			sprintf(tim, "%G", day);
+			sprintf(tim, "%s", convert2Exponential(day));
 			int daY = (int)calcNow(tim, result1, result2);
 			if (verified == 1) {
-				sprintf(tim, "%G", month);
+				sprintf(tim, "%s", convert2Exponential(month));
 				int montH = (int)calcNow(tim, result1, result2);
 				if (verified == 1) {
-					sprintf(tim, "%G", year);
+					sprintf(tim, "%s", convert2Exponential(year));
 					int yeaR = (int)calcNow(tim, result1, result2);
 					if (verified == 1) {
 						if (daY < 1 || daY>31) {

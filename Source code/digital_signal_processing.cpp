@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "calc.h"
-double X_k_R[dim], X_k_I[dim];
+double X_k_R[dime], X_k_I[dime];
 
 void sinc(double x, double y) {
 	if (x == 0.0 && y == 0.0) {
@@ -24,7 +24,7 @@ void sinc(double x, double y) {
 }
 
 void fft(char values[DIM]) {
-	double xR[dim], xI[dim];
+	double xR[dime], xI[dime];
 	int initialCountSplits = 0;
 	char saveSplitResult[200][200];
 	int i = 0;
@@ -56,7 +56,7 @@ void fft(char values[DIM]) {
 		double SummatoryR = 0, SummatoryI = 0;
 		int m = 0;
 		k = 0;
-		double exponent = 0, DFT_EvenR[dim], DFT_OddR[dim], DFT_EvenI[dim], DFT_OddI[dim];
+		double exponent = 0, DFT_EvenR[dime], DFT_OddR[dime], DFT_EvenI[dime], DFT_OddI[dime];
 		while (k <= N / 2) {
 			m = 0;
 			SummatoryR = 0; SummatoryI = 0;
@@ -186,9 +186,9 @@ void fft(char values[DIM]) {
 }
 
 void ifft(char values[DIM]) {
-	double XR[dim], XI[dim];
+	double XR[dime], XI[dime];
 	int initialCountSplits = 0;
-	char saveSplitResult[200][dim];
+	char saveSplitResult[200][dime];
 	int i = 0;
 	if (countSplits > 0) {
 		initialCountSplits = countSplits;
@@ -213,7 +213,7 @@ void ifft(char values[DIM]) {
 		XR[i] = resultR; XI[i] = resultI;
 		i++;
 	}
-	double x_k_R[dim], x_k_I[dim];
+	double x_k_R[dime], x_k_I[dime];
 	int k = 0;
 	double SummatoryR = 0, SummatoryI = 0;
 	int n = 0;

@@ -40,16 +40,16 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	char  arTrig[DIM] = "", trigon[DIM] = "", trig[DIM] = "", paRect[DIM] = "", cN[DIM] = "", ex[DIM] = "", art[DIM] = "";
 	int parent[DIM], facto = 0, sig[DIM], s = 0, rectPar = 0, h = 0, i = 0, rePar = 0, so = 0, j = 0, g = 0, count = 0, e = 0, d = 0, th = 0, f = 0, trigo = 1, trigono = 0, co = 0, k = 0, l = 0, tr = 0, pa = 0, paren = 1, pare = 0, tg = 0, p = 0, a = 0, c = 1, r = 0, iN = 0, iL = 0;
 	double triArith[DIM], triArithI[DIM], exp = 1, result1, result2, amplitude = 1;
-	double vector1_R[dim][dim], vector1_I[dim][dim], res_vectorR[dim][dim], res_vectorI[dim][dim];
-	char vectors[dim][100];
-	for (s = 0; s < dim; s++) {
+	double vector1_R[dime][dime], vector1_I[dime][dime], res_vectorR[dime][dime], res_vectorI[dime][dime];
+	char vectors[dime][100];
+	for (s = 0; s < dime; s++) {
 		triArith[s] = 0;
 		triArithI[s] = 0;
 		signalVectors[s] = -1;
 		sig[s] = -1;
 	}
-	for (i = 0; i < dim; i++) {
-		for (j = 0; j < dim; j++) {
+	for (i = 0; i < dime; i++) {
+		for (j = 0; j < dime; j++) {
 			vector1_R[i][j] = 0; vector1_I[i][j] = 0; res_vectorR[i][j] = 0; res_vectorI[i][j] = 0;
 		}
 	}
@@ -623,7 +623,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 													pas[0] = '\0';
 													ju = 0;
 													if (strlen(op) > 0) {
-														double vector1_R[dim][dim], vector1_I[dim][dim];
+														double vector1_R[dime][dime], vector1_I[dime][dime];
 														int numVectorCols1 = 0, numVectorLines1 = 0;
 														char saveFunc[DIM] = "";
 														sprintf(saveFunc, "%s", op);
@@ -932,7 +932,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 																	}
 
 																	else {
-																		double vector1_R[dim][dim], vector1_I[dim][dim];
+																		double vector1_R[dime][dime], vector1_I[dime][dime];
 																		int numVectorCols1 = 0, numVectorLines1 = 0;
 																		if (strlen(matrixValue) > 0) {
 																			convert2Vector(matrixValue);
@@ -1093,31 +1093,32 @@ double initialProcessor(char arithTrig[DIM], double result) {
 	char simplified[DIM] = "";
 	int RF = 0;
 	for (RF = 0; RF < c; RF++) {
+		convertComplex2Exponential(triArith[RF], triArithI[RF]);
 		if (triArith[RF] > 0 && triArithI[RF] < 0) {
-			sprintf(simplified, "%s(%G%Gi)%c", simplified, triArith[RF], triArithI[RF], arTrig[RF]);
+			sprintf(simplified, "%s(%s%si)%c", simplified, respR, respI, arTrig[RF]);
 		}
 		else {
 			if (triArith[RF] < 0 && triArithI[RF] > 0) {
-				sprintf(simplified, "%s(%G+%Gi)%c", simplified, triArith[RF], triArithI[RF], arTrig[RF]);
+				sprintf(simplified, "%s(%s+%si)%c", simplified, respR, respI, arTrig[RF]);
 			}
 			else {
 				if (triArith[RF] < 0 && triArithI[RF] < 0) {
-					sprintf(simplified, "%s(%G%Gi)%c", simplified, triArith[RF], triArithI[RF], arTrig[RF]);
+					sprintf(simplified, "%s(%s%si)%c", simplified, respR, respI, arTrig[RF]);
 				}
 				else {
 					if (triArith[RF] == 0 && triArithI[RF] == 0) {
-						sprintf(simplified, "%s%G%c", simplified, triArith[RF], arTrig[RF]);
+						sprintf(simplified, "%s%s%c", simplified, convert2Exponential(triArith[RF]), arTrig[RF]);
 					}
 					else {
 						if (triArith[RF] == 0 && triArithI[RF] != 0) {
-							sprintf(simplified, "%s%Gi%c", simplified, triArithI[RF], arTrig[RF]);
+							sprintf(simplified, "%s%si%c", simplified, convert2Exponential(triArithI[RF]), arTrig[RF]);
 						}
 						else {
 							if (triArith[RF] != 0 && triArithI[RF] == 0) {
-								sprintf(simplified, "%s%G%c", simplified, triArith[RF], arTrig[RF]);
+								sprintf(simplified, "%s%s%c", simplified, convert2Exponential(triArith[RF]), arTrig[RF]);
 							}
 							else {
-								sprintf(simplified, "%s(%G+%Gi)%c", simplified, triArith[RF], triArithI[RF], arTrig[RF]);
+								sprintf(simplified, "%s(%s+%si)%c", simplified, respR, respI, arTrig[RF]);
 							}
 						}
 					}
@@ -1787,7 +1788,7 @@ double arithSolver(char trigon1[DIM], double result) {
 					}
 					number2[j] = '\0';
 					double expValue = convertToNumber(number2);
-					double res_vectorR[dim][dim], res_vectorI[dim][dim];
+					double res_vectorR[dime][dime], res_vectorI[dime][dime];
 					char answerString[DIM] = "";
 					fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, expValue, vectorI, res_vectorI, 0.0);
 					sprintf(answerString, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
@@ -1826,7 +1827,7 @@ double arithSolver(char trigon1[DIM], double result) {
 			else {
 
 				convert2Vector(ansMatrices[(int)ampl[n]]);
-				double res_vectorR[dim][dim], res_vectorI[dim][dim];
+				double res_vectorR[dime][dime], res_vectorI[dime][dime];
 				char answerString[DIM] = "";
 				fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, -1.0, vectorI, res_vectorI, 0.0);
 				sprintf(answerString, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
@@ -2053,7 +2054,7 @@ double arithSolver(char trigon1[DIM], double result) {
 			}
 			else {
 				convert2Vector(saveMatrixAns);
-				double res_vectorR[dim][dim], res_vectorI[dim][dim];
+				double res_vectorR[dime][dime], res_vectorI[dime][dime];
 				char answerString[DIM] = "";
 				fmmulr(numVectorLines, numVectorCols, vectorR, res_vectorR, -1.0, vectorI, res_vectorI, 0.0);
 				sprintf(answerString, "%s", convertVector2String(res_vectorR, res_vectorI, numVectorLines, numVectorCols));
@@ -2176,31 +2177,32 @@ double arithSolver(char trigon1[DIM], double result) {
 	char simplified[DIM] = "";
 	int RF = 0;
 	for (RF = 0; RF < n; RF++) {
+		convertComplex2Exponential(ampl[RF], amplI[RF]);
 		if (ampl[RF] > 0 && amplI[RF] < 0) {
-			sprintf(simplified, "%s(%G%Gi)%c", simplified, ampl[RF], amplI[RF], amp[RF]);
+			sprintf(simplified, "%s(%s%si)%c", simplified, respR, respI, amp[RF]);
 		}
 		else {
 			if (ampl[RF] < 0 && amplI[RF] > 0) {
-				sprintf(simplified, "%s(%G+%Gi)%c", simplified, ampl[RF], amplI[RF], amp[RF]);
+				sprintf(simplified, "%s(%s+%si)%c", simplified, respR, respI, amp[RF]);
 			}
 			else {
 				if (ampl[RF] < 0 && amplI[RF] < 0) {
-					sprintf(simplified, "%s(%G%Gi)%c", simplified, ampl[RF], amplI[RF], amp[RF]);
+					sprintf(simplified, "%s(%s%si)%c", simplified, respR, respI, amp[RF]);
 				}
 				else {
 					if (ampl[RF] == 0 && amplI[RF] == 0) {
-						sprintf(simplified, "%s%G%c", simplified, ampl[RF], amp[RF]);
+						sprintf(simplified, "%s%s%c", simplified, convert2Exponential(ampl[RF]), amp[RF]);
 					}
 					else {
 						if (ampl[RF] == 0 && amplI[RF] != 0) {
-							sprintf(simplified, "%s%Gi%c", simplified, amplI[RF], amp[RF]);
+							sprintf(simplified, "%s%si%c", simplified, convert2Exponential(amplI[RF]), amp[RF]);
 						}
 						else {
 							if (ampl[RF] != 0 && amplI[RF] == 0) {
-								sprintf(simplified, "%s%G%c", simplified, ampl[RF], amp[RF]);
+								sprintf(simplified, "%s%s%c", simplified, convert2Exponential(ampl[RF]), amp[RF]);
 							}
 							else {
-								sprintf(simplified, "%s(%G+%Gi)%c", simplified, ampl[RF], amplI[RF], amp[RF]);
+								sprintf(simplified, "%s(%s+%si)%c", simplified, respR, respI, amp[RF]);
 							}
 						}
 					}
@@ -2379,35 +2381,36 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 	vI[1] = resultI;
 	if (verbose == 1 && solving) {
 		puts("\nFunction arguments:\n1st interactor: \n");
+		convertComplex2Exponential(v[0], vI[0]);
 		if (v[0] > 0 && vI[0] > 0) {
-			printf("=%G+%Gi\n", v[0], vI[0]);
+			printf("=%s+%si\n", respR, respI);
 		}
 		else {
 			if (v[0] > 0 && vI[0] < 0) {
-				printf("=%G%Gi\n", v[0], vI[0]);
+				printf("=%s%si\n", respR, respI);
 			}
 			else {
 				if (v[0] < 0 && vI[0] > 0) {
-					printf("=%G+%Gi\n", v[0], vI[0]);
+					printf("=%s+%si\n", respR, respI);
 				}
 				else {
 					if (v[0] < 0 && vI[0] < 0) {
-						printf("=%G%Gi\n", v[0], vI[0]);
+						printf("=%s%si\n", respR, respI);
 					}
 					else {
 						if (v[0] == 0 && vI[0] == 0) {
-							printf("=%G\n", v[0]);
+							printf("=%s\n", convert2Exponential(v[0]));
 						}
 						else {
 							if (v[0] == 0 && vI[0] != 0) {
-								printf("=%Gi\n", vI[0]);
+								printf("=%si\n", convert2Exponential(vI[0]));
 							}
 							else {
 								if (v[0] != 0 && vI[0] == 0) {
-									printf("=%G\n", v[0]);
+									printf("=%s\n", convert2Exponential(v[0]));
 								}
 								else {
-									printf("=%G+%Gi\n", v[0], vI[0]);
+									printf("=%s+%si\n", respR, respI);
 								}
 							}
 						}
@@ -2416,35 +2419,36 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 			}
 		}
 		puts("\n\n2nd interactor: \n");
+		convertComplex2Exponential(v[1], vI[1]);
 		if (v[1] > 0 && vI[1] > 0) {
-			printf("=%G+%Gi\n", v[1], vI[1]);
+			printf("=%s+%si\n", respR, respI);
 		}
 		else {
 			if (v[1] > 0 && vI[1] < 0) {
-				printf("=%G%Gi\n", v[1], vI[1]);
+				printf("=%s%si\n", respR, respI);
 			}
 			else {
 				if (v[1] < 0 && vI[1] > 0) {
-					printf("=%G+%Gi\n", v[1], vI[1]);
+					printf("=%s+%si\n", respR, respI);
 				}
 				else {
 					if (v[1] < 0 && vI[1] < 0) {
-						printf("=%G%Gi\n", v[1], vI[1]);
+						printf("=%s%si\n", respR, respI);
 					}
 					else {
 						if (v[1] == 0 && vI[1] == 0) {
-							printf("=%G\n", v[1]);
+							printf("=%s\n", convert2Exponential(v[1]));
 						}
 						else {
 							if (v[1] == 0 && vI[1] != 0) {
-								printf("=%Gi\n", vI[1]);
+								printf("=%si\n", convert2Exponential(vI[1]));
 							}
 							else {
 								if (v[1] != 0 && vI[1] == 0) {
-									printf("=%G\n", v[1]);
+									printf("=%s\n", convert2Exponential(v[1]));
 								}
 								else {
-									printf("=%G+%Gi\n", v[1], vI[1]);
+									printf("=%s+%si\n", respR, respI);
 								}
 							}
 						}
@@ -2523,7 +2527,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 			base[i] = '+'; base[i + 1] = '0'; base[i + 2] = '\0';
 			resultR = 0; resultI = 0;
 			baLog = 0;
-			baLog = solveNow(base, 0, 0);
+			baLog = initialProcessor(base, 0);
 			dgrt = baLog;
 			dgrt2 = resultI;
 			resultI = 0; resultR = 0; baLog = 0;
@@ -2954,35 +2958,36 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 	resultI = result2;
 	if (verbose == 1 && solving) {
 		puts("\nResult of function processing:\n");
+		convertComplex2Exponential(resultR, resultI);
 		if (resultR > 0 && resultI > 0) {
-			printf("=%G+%Gi\n", resultR, resultI);
+			printf("=%s+%si\n", respR, respI);
 		}
 		else {
 			if (resultR > 0 && resultI < 0) {
-				printf("=%G%Gi\n", resultR, resultI);
+				printf("=%s%si\n", respR, respI);
 			}
 			else {
 				if (resultR < 0 && resultI > 0) {
-					printf("=%G+%Gi\n", resultR, resultI);
+					printf("=%s+%si\n", respR, respI);
 				}
 				else {
 					if (resultR < 0 && resultI < 0) {
-						printf("=%G%Gi\n", resultR, resultI);
+						printf("=%s%si\n", respR, respI);
 					}
 					else {
 						if (resultR == 0 && resultI == 0) {
-							printf("=%G\n", resultR);
+							printf("=%s\n", convert2Exponential(resultR));
 						}
 						else {
 							if (resultR == 0 && resultI != 0) {
-								printf("=%Gi\n", resultI);
+								printf("=%si\n", convert2Exponential(resultI));
 							}
 							else {
 								if (resultR != 0 && resultI == 0) {
-									printf("=%G\n", resultR);
+									printf("=%s\n", convert2Exponential(resultR));
 								}
 								else {
-									printf("=%G+%Gi\n", resultR, resultI);
+									printf("=%s+%si\n", respR, respI);
 								}
 							}
 						}

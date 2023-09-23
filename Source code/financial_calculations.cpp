@@ -85,7 +85,7 @@ void financialCalculations() {
 				puts("Number of periods?");
 				double number_periods = getValue();
 				double den = (1 + (return_rate / 100));
-				den = pow(den, number_periods);
+				den = pot(den, number_periods, 1);
 				double present_value = c_1 / den;
 				printf("\nPresent Value: $%.2f\n", present_value);
 			}
@@ -104,7 +104,7 @@ void financialCalculations() {
 					puts("Number of periods?");
 					double number_periods = getValue();
 					double den = (1 + (return_rate / 100));
-					den = 1 / pow(den, number_periods);
+					den = 1 / pot(den, number_periods, 1);
 					double present_value = future_value * den;
 					printf("\nPresent Value: $%.2f\n", present_value);
 				}
@@ -129,7 +129,7 @@ void financialCalculations() {
 				puts("Number of periods?");
 				double number_periods = (int)getValue();
 				double num = (1 + (return_rate / 100));
-				num = pow(num, number_periods);
+				num = pot(num, number_periods, 1);
 				double future_value = c_0 * num;
 				printf("\nFuture Value: $%.2f\n", future_value);
 			}
@@ -148,7 +148,7 @@ void financialCalculations() {
 					puts("Number of periods?");
 					double number_periods = getValue();
 					double num = (1 + (return_rate / 100));
-					num = pow(num, number_periods);
+					num = pot(num, number_periods, 1);
 					double future_value = present_value * num;
 					printf("\nFuture Value: $%.2f\n", future_value);
 				}
@@ -176,7 +176,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double compound_interest = principal * (pow((1 + rate), number_periods) - 1);
+			double compound_interest = principal * (pot((1 + rate), number_periods, 1) - 1);
 			printf("\nCompound Interest: $%.2f\n", compound_interest);
 		}
 		if (op == 5) {
@@ -185,7 +185,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Number of times compounded?");
 			double number_times = getValue();
-			double annual_percentage_yield = pow((1 + rate / number_times), number_times) - 1;
+			double annual_percentage_yield = pot((1 + rate / number_times), number_times, 1) - 1;
 			printf("\nAnnual Percentage Yield: %.2f%%\n", annual_percentage_yield * 100);
 		}
 		if (op == 6) {
@@ -196,7 +196,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("time (number of periods)?");
 			double number_times = getValue();
-			double continuous_compounding = principal * pow(M_E, rate*number_times);
+			double continuous_compounding = principal * pot(M_E, rate*number_times, 1);
 			printf("\nContinuous Compounding: $%.2f\n", continuous_compounding);
 		}
 		if (op == 7) {
@@ -277,7 +277,7 @@ void financialCalculations() {
 			puts("Number of periods?");
 			double number_periods = getValue();
 			double den = (1 + (return_rate / 100));
-			den = pow(den, number_periods);
+			den = pot(den, number_periods, 1);
 			double present_value_factor = 1 / den;
 			printf("\nPresent Value Factor: %.2f\n", present_value_factor);
 		}
@@ -318,7 +318,7 @@ void financialCalculations() {
 			int k = 1;
 			double baseCF = 0;
 			while (k <= members) {
-				baseCF = baseCF + cashFlow[k - 1] / pow(1 + discount_rate, k);
+				baseCF = baseCF + cashFlow[k - 1] / pot(1 + discount_rate, (double)k, 1);
 				k++;
 			}
 			double net_present_value = baseCF - initial_investment;
@@ -332,7 +332,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double present_value_annuity = periodic_payment * ((1 - pow(1 + rate, number_periods*-1)) / rate);
+			double present_value_annuity = periodic_payment * ((1 - pot(1 + rate, number_periods*-1, 1)) / rate);
 			printf("\nPresent Value of Annuity: $%.2f\n", present_value_annuity);
 		}
 		if (op == 12) {
@@ -343,7 +343,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Time?");
 			double time = getValue();
-			double pv_continuous_compounding = cash_flow / pow(M_E, rate*time);
+			double pv_continuous_compounding = cash_flow / pot(M_E, rate*time, 1);
 			printf("\nPV - Continuous Compounding: $%.2f\n", pv_continuous_compounding);
 		}
 		if (op == 13) {
@@ -362,7 +362,7 @@ void financialCalculations() {
 			double rate_per_period = getValue();
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double future_value_factor = pow(1 + rate_per_period / 100, number_periods);
+			double future_value_factor = pot(1 + rate_per_period / 100, number_periods, 1);
 			printf("\nFuture Value Factor: %.2f\n", future_value_factor);
 		}
 		if (op == 15) {
@@ -373,7 +373,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Time?");
 			double time = getValue();
-			double fv_continuous_compounding = present_value * pow(M_E, rate*time);
+			double fv_continuous_compounding = present_value * pot(M_E, rate*time, 1);
 			printf("\nFV - Continuous Compounding: $%.2f\n", fv_continuous_compounding);
 		}
 		if (op == 16) {
@@ -392,7 +392,7 @@ void financialCalculations() {
 			rate_per_period = rate_per_period / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double equivalent_annual_annuity = (rate_per_period*net_present_value) / (1 - pow(1 + rate_per_period, -1 * number_periods));
+			double equivalent_annual_annuity = (rate_per_period*net_present_value) / (1 - pot(1 + rate_per_period, -1 * number_periods, 1));
 			printf("\nEquivalent Annual Annuity: $%.2f\n", equivalent_annual_annuity);
 		}
 		if (op == 18) {
@@ -414,7 +414,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Payment/Cash Flows?");
 			double payment_cash_flows = getValue();
-			double number_periods = ln(pow(1 - (present_value_annuity*rate) / payment_cash_flows, -1)) / ln(1 + rate);
+			double number_periods = ln(pot(1 - (present_value_annuity*rate) / payment_cash_flows, -1, 1)) / ln(1 + rate);
 			printf("\nAnnuity (PV)- Solve for n: %.2f\n", number_periods);
 		}
 		if (op == 20) {
@@ -425,7 +425,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double annuity_payment_pv = (rate*present_value) / (1 - pow(1 + rate, -1 * number_periods));
+			double annuity_payment_pv = (rate*present_value) / (1 - pot(1 + rate, -1 * number_periods, 1));
 			printf("\nAnnuity Payment (PV): $%.2f\n", annuity_payment_pv);
 		}
 		if (op == 21) {
@@ -434,7 +434,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double annuity_pv_factor = (1 - pow(1 + rate, -1 * number_periods)) / rate;
+			double annuity_pv_factor = (1 - pot(1 + rate, -1 * number_periods, 1)) / rate;
 			printf("\nPresent Value Annuity Factor: %.2f\n", annuity_pv_factor);
 		}
 		if (op == 22) {
@@ -445,7 +445,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double pv_annuity_due = periodic_payment + periodic_payment * ((1 - pow(1 + rate, -1 * (number_periods - 1))) / rate);
+			double pv_annuity_due = periodic_payment + periodic_payment * ((1 - pot(1 + rate, -1 * (number_periods - 1), 1)) / rate);
 			printf("\nPresent Value of Annuity Due: $%.2f\n", pv_annuity_due);
 		}
 		if (op == 23) {
@@ -459,7 +459,7 @@ void financialCalculations() {
 			growth_rate = growth_rate / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double pv_growing_annuity = (first_payment / (rate - growth_rate))*(1 - pow((1 + growth_rate) / (1 + rate), number_periods));
+			double pv_growing_annuity = (first_payment / (rate - growth_rate))*(1 - pot((1 + growth_rate) / (1 + rate), number_periods, 1));
 			printf("\nPresent Value of a Growing Annuity: $%.2f\n", pv_growing_annuity);
 		}
 		if (op == 24) {
@@ -470,7 +470,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double fv_value_of_annuity = periodic_payment * ((pow(1 + rate, number_periods) - 1) / rate);
+			double fv_value_of_annuity = periodic_payment * ((pot(1 + rate, number_periods, 1) - 1) / rate);
 			printf("\nFuture Value of Annuity: $%.2f\n", fv_value_of_annuity);
 		}
 		if (op == 25) {
@@ -588,7 +588,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Time?");
 			double time = getValue();
-			double fv_annuity_continuos_compounding = cash_flow * ((pow(M_E, rate*time) - 1) / (pow(M_E, rate) - 1));
+			double fv_annuity_continuos_compounding = cash_flow * ((pot(M_E, rate*time, 1) - 1) / (pot(M_E, rate, 1) - 1));
 			printf("\nFV of Annuity - Continuous Compounding: $%.2f\n", fv_annuity_continuos_compounding);
 		}
 		if (op == 33) {
@@ -601,7 +601,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Number of payments?");
 			double number_payments = getValue();
-			double fv_remaining_balance = present_value * pow(1 + rate, number_payments) - payment * ((pow(1 + rate, number_payments) - 1) / rate);
+			double fv_remaining_balance = present_value * pot(1 + rate, number_payments, 1) - payment * ((pot(1 + rate, number_payments, 1) - 1) / rate);
 			printf("\nRemaining Balance on Loan: $%.2f\n", fv_remaining_balance);
 		}
 		if (op == 34) {
@@ -612,7 +612,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double loan_payment = (rate*present_value) / (1 - pow(1 + rate, -1 * number_periods));
+			double loan_payment = (rate*present_value) / (1 - pot(1 + rate, -1 * number_periods, 1));
 			printf("\nLoan Payment: $%.2f\n", loan_payment);
 		}
 		if (op == 35) {
@@ -625,7 +625,7 @@ void financialCalculations() {
 			rate = rate / 100;
 			puts("Number of payments?");
 			double number_payments = getValue();
-			double fv_balloon_balance = present_value * pow(1 + rate, number_payments) - payment * ((pow(1 + rate, number_payments) - 1) / rate);
+			double fv_balloon_balance = present_value * pot(1 + rate, number_payments, 1) - payment * ((pot(1 + rate, number_payments, 1) - 1) / rate);
 			printf("\nBalloon Balance of a Loan: $%.2f\n", fv_balloon_balance);
 		}
 		if (op == 36) {
@@ -637,7 +637,7 @@ void financialCalculations() {
 			double rate = getValue() / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double payment_balloon_loan = (present_value - balloon_amount / pow(1 + rate, number_periods))*rate / (1 - pow(1 + rate, -1 * number_periods));
+			double payment_balloon_loan = (present_value - balloon_amount / pot(1 + rate, number_periods, 1))*rate / (1 - pot(1 + rate, -1 * number_periods, 1));
 			printf("\nPayments on a Balloon Loan: $%.2f\n", payment_balloon_loan);
 		}
 		if (op == 37) {
@@ -645,7 +645,7 @@ void financialCalculations() {
 			double rate = getValue() / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double payment_factor = rate / (1 - pow(1 + rate, -1 * number_periods));
+			double payment_factor = rate / (1 - pot(1 + rate, -1 * number_periods, 1));
 			printf("\nAnnuity Payment Factor - PV: %.2f\n", payment_factor);
 		}
 		if (op == 38) {
@@ -657,7 +657,7 @@ void financialCalculations() {
 			double growth_rate = getValue() / 100;
 			puts("Number of periods");
 			double number_periods = getValue();
-			double fv_growing_annuity = first_payment * ((pow(1 + rate, number_periods) - pow(1 + growth_rate, number_periods)) / (rate - growth_rate));
+			double fv_growing_annuity = first_payment * ((pot(1 + rate, number_periods, 1) - pot(1 + growth_rate, number_periods, 1)) / (rate - growth_rate));
 			printf("\nFuture Value of Growing Annuity: $%.2f\n", fv_growing_annuity);
 		}
 		if (op == 39) {
@@ -669,7 +669,7 @@ void financialCalculations() {
 			double growth_rate = getValue() / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double growing_annuity_payment_fv = future_value * ((rate - growth_rate) / (pow(1 + rate, number_periods) - pow(1 + growth_rate, number_periods)));
+			double growing_annuity_payment_fv = future_value * ((rate - growth_rate) / (pot(1 + rate, number_periods, 1) - pot(1 + growth_rate, number_periods, 1)));
 			printf("\nGrowing Annuity Payment - FV: $%.2f\n", growing_annuity_payment_fv);
 		}
 		if (op == 40) {
@@ -681,7 +681,7 @@ void financialCalculations() {
 			double growth_rate = getValue() / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double initial_payment = present_value * ((rate - growth_rate) / (1 - pow((1 + growth_rate) / (1 + rate), number_periods)));
+			double initial_payment = present_value * ((rate - growth_rate) / (1 - pot((1 + growth_rate) / (1 + rate), number_periods, 1)));
 			printf("\nGrowing Annuity Payment - PV: $%.2f\n", initial_payment);
 		}
 		if (op == 41) {
@@ -691,7 +691,7 @@ void financialCalculations() {
 			double rate = getValue() / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double payment = (future_value*rate) / (pow(1 + rate, number_periods) - 1);
+			double payment = (future_value*rate) / (pot(1 + rate, number_periods, 1) - 1);
 			printf("\nAnnuity Payment - FV: $%.2f\n", payment);
 		}
 		if (op == 42) {
@@ -701,7 +701,7 @@ void financialCalculations() {
 			double rate = getValue() / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double payment = future_value * (rate / (pow(1 + rate, number_periods) - 1))*(1 / (1 + rate));
+			double payment = future_value * (rate / (pot(1 + rate, number_periods, 1) - 1))*(1 / (1 + rate));
 			printf("\nAnnuity Due Payment - FV: $%.2f\n", payment);
 		}
 		if (op == 43) {
@@ -711,7 +711,7 @@ void financialCalculations() {
 			double rate = getValue() / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double payment = present_value * (rate / (1 - pow(1 + rate, -1 * number_periods)))*(1 / (1 + rate));
+			double payment = present_value * (rate / (1 - pot(1 + rate, -1 * number_periods, 1)))*(1 / (1 + rate));
 			printf("\nAnnuity Due Payment - PV: $%.2f\n", payment);
 		}
 		if (op == 44) {
@@ -721,7 +721,7 @@ void financialCalculations() {
 			double rate = getValue() / 100;
 			puts("Number of periods?");
 			double number_periods = getValue();
-			double fv_annuity_due = (1 + rate)*periodic_payment*((pow(1 + rate, number_periods) - 1) / rate);
+			double fv_annuity_due = (1 + rate)*periodic_payment*((pot(1 + rate, number_periods, 1) - 1) / rate);
 			printf("\nFuture Value of Annuity Due: $%.2f\n", fv_annuity_due);
 		}
 		if (op == 45) {
@@ -730,7 +730,7 @@ void financialCalculations() {
 			puts("Sales Revenue?");
 			double sales_revenue = getValue();
 			double asset_to_sales = total_assets / sales_revenue;
-			printf("\nAsset to Sales Ratio: %G\n", asset_to_sales);
+			printf("\nAsset to Sales Ratio: %s\n", convert2Exponential(asset_to_sales));
 		}
 		if (op == 46) {
 			puts("Sales Revenue?");
@@ -738,13 +738,13 @@ void financialCalculations() {
 			puts("Total Assets?");
 			double total_assets = getValue();
 			double asset_turnover = sales_revenue / total_assets;
-			printf("\nAsset Turnover Ratio: %G\n", asset_turnover);
+			printf("\nAsset Turnover Ratio: %s\n", convert2Exponential(asset_turnover));
 		}
 		if (op == 47) {
 			puts("Receivables Turnover?");
 			double receivables_turnover = getValue();
 			double avg_collection_period = 365 / receivables_turnover;
-			printf("\nAverage Collection Period: %G\n", avg_collection_period);
+			printf("\nAverage Collection Period: %s\n", convert2Exponential(avg_collection_period));
 		}
 		if (op == 48) {
 			puts("Ask Price?");
@@ -804,7 +804,7 @@ void financialCalculations() {
 			puts("Current Liabilities?");
 			double current_liabilities = getValue();
 			double current_ratio = current_assets / current_liabilities;
-			printf("\nCurrent Ratio: %G\n", current_ratio);
+			printf("\nCurrent Ratio: %s\n", convert2Exponential(current_ratio));
 		}
 		if (op == 55) {
 			puts("Annual Coupons?");
@@ -818,7 +818,7 @@ void financialCalculations() {
 			puts("Inventory Turnover?");
 			double inventory_turnover = getValue();
 			double inventory_days = 365 / inventory_turnover;
-			printf("\nDays in Inventory: %G\n", inventory_days);
+			printf("\nDays in Inventory: %s\n", convert2Exponential(inventory_days));
 		}
 		if (op == 57) {
 			puts("Net Operation Income?");
@@ -1163,7 +1163,7 @@ void financialCalculations() {
 			double rate_or_yield = getValue() / 100;
 			puts("Time to Maturity?");
 			double time_to_maturity = getValue();
-			double zero_coupon_bond_value = face_value_of_bond / pow(1 + rate_or_yield, time_to_maturity);
+			double zero_coupon_bond_value = face_value_of_bond / pot(1 + rate_or_yield, time_to_maturity, 1);
 			printf("\nZero Coupon Bond Value: $%.2f\n", zero_coupon_bond_value);
 		}
 		if (op == 97) {
@@ -1173,7 +1173,7 @@ void financialCalculations() {
 			double present_value = getValue();
 			puts("Number of Periods?");
 			double number_of_periods = getValue();
-			double zero_coupon_bond_yield = pow(face_value / present_value, 1 / number_of_periods) - 1;
+			double zero_coupon_bond_yield = pot(face_value / present_value, 1 / number_of_periods, 1) - 1;
 			printf("\nZero Coupon Bond Effective Yield: %.3f%%\n", zero_coupon_bond_yield * 100);
 		}
 		if (op < 1 || op>97) {

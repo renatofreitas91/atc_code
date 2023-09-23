@@ -23,7 +23,7 @@ double gerrorc(double q) {
 double gerrorcinv(double a) {
 	double result = 0;
 	if (a <= 2 && a >= 0) {
-		if (a == 0) { result = pow(2.0, 2000); return result; }
+		if (a == 0) { result = pot(2.0, 2000, 1); return result; }
 		result = boost::math::erfc_inv(a);
 		return result;
 	}
@@ -58,8 +58,8 @@ double gerror(double q) {
 double gerrorinv(double e) {
 	double result = 0;
 	if (e <= 1 && e >= -1) {
-		if (e == 1) { result = pow(2.0, 2000); return result; }
-		if (e == -1) { result = -pow(2.0, 2000); return result; }
+		if (e == 1) { result = pot(2.0, 2000, 1); return result; }
+		if (e == -1) { result = -pot(2.0, 2000, 1); return result; }
 		result = boost::math::erf_inv(e);
 		return result;
 	}

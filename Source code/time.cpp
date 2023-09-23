@@ -16,8 +16,8 @@ void Clock(int a)
 	char toOpen[DIM] = "";
 	sprintf(toOpen, "%s\\history.txt", atcPath);
 	fout = fopen(toOpen, "a+");
-	char min[3] = { tim[14], tim[15], '\0' };
-	minutes = atoi(min);
+	char Min[3] = { tim[14], tim[15], '\0' };
+	minutes = atoi(Min);
 	char hou[3] = { tim[11], tim[12], '\0' };
 	hours = atoi(hou);
 	char yea[5] = { tim[20], tim[21], tim[22], tim[23], '\0' };
@@ -944,8 +944,8 @@ void timeDifferenceCalculations() {
 			tim[24] = '\0';
 			char sec[3] = { tim[17], tim[18], '\0' };
 			aSeconds = atoi(sec);
-			char min[3] = { tim[14], tim[15], '\0' };
-			aMinutes = atoi(min);
+			char Min[3] = { tim[14], tim[15], '\0' };
+			aMinutes = atoi(Min);
 			char hou[3] = { tim[11], tim[12], '\0' };
 			aHour = atoi(hou);
 			char yea[5] = { tim[20], tim[21], tim[22], tim[23], '\0' };
@@ -1090,8 +1090,8 @@ void timeDifferenceCalculations() {
 			tim[24] = '\0';
 			char sec[3] = { tim[17], tim[18], '\0' };
 			bSeconds = atoi(sec);
-			char min[3] = { tim[14], tim[15], '\0' };
-			bMinutes = atoi(min);
+			char Min[3] = { tim[14], tim[15], '\0' };
+			bMinutes = atoi(Min);
 			char hou[3] = { tim[11], tim[12], '\0' };
 			bHour = atoi(hou);
 			char yea[5] = { tim[20], tim[21], tim[22], tim[23], '\0' };

@@ -622,7 +622,7 @@ boolean simpleEvaluator(char expression[DIM]) {
 			replace(" ", ",", expressionF);
 		}
 		sprintf(valuesToExtract, expressionF);
-		double valuesR[dim], valuesI[dim];
+		double valuesR[dime], valuesI[dime];
 		char values[DIM] = "";
 		int f = 0;
 		for (g = 0; valuesToExtract[g] != '\0'; g++) {
@@ -644,7 +644,7 @@ boolean simpleEvaluator(char expression[DIM]) {
 			}
 		}
 		h = 0;
-		boolean results[dim];
+		boolean results[dime];
 		while (h < f) {
 			results[h] = 1;
 			h++;

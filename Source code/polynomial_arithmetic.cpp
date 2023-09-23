@@ -250,8 +250,8 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 
 
 		char rootChar[DIM] = "";
-		double rootR2[dim], rootI2[dim];
-		double rootR1[dim], rootI1[dim];
+		double rootR2[dime], rootI2[dime];
+		double rootR1[dime], rootI1[dime];
 		int i = 0, p = 0, r = 0;
 		if (strlen(rootsPoly2) > 0 && strlen(rootsPoly1) > 0) {
 			while (rootsPoly2[i] != '\0') {

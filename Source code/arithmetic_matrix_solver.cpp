@@ -8,7 +8,7 @@ void arithmeticMatrixSolver() {
 	do {
 		char matrix[DIM] = "";
 		int mIndex = 0, ff = 0, lins = 1, cols = 1, lins1 = 1, cols1 = 1, saveCols = -1, saveCols1 = -1, errorCols = 0, errorCols1 = 0, i = 0, j = 0;
-		double vMS[dim][dim], uMS[dim][dim], vMSI[dim][dim], uMSI[dim][dim], rMSI[dim][dim], rMS[dim][dim];
+		double vMS[dime][dime], uMS[dime][dime], vMSI[dime][dime], uMSI[dime][dime], rMSI[dime][dime], rMS[dime][dime];
 		double 	real = 0, reI;
 		fflush(NULL);
 		puts("\nWhat to do?");
@@ -354,7 +354,7 @@ void arithmeticMatrixSolver() {
 			printf("\nMatrix:\n");
 			gets_s(matrix);
 			int mIndex = 0, ff = 0, lins = 1, cols = 1, lins1 = 1, cols1 = 1, saveCols = -1, saveCols1 = -1, errorCols = 0, errorCols1 = 0, i = 0, j = 0;
-			double vMS[dim][dim], vMSI[dim][dim];
+			double vMS[dime][dime], vMSI[dime][dime];
 			do {
 				char value[DIM] = "";
 				ff = 0;
@@ -507,7 +507,7 @@ void arithmeticMatrixSolver() {
 	} while (op1 != 0);
 }
 
-void fmsum(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]) {
+void fmsum(int lins, int cols, double v[dime][dime], double u[dime][dime], double r[dime][dime], double vI[dime][dime], double uI[dime][dime], double rI[dime][dime]) {
 	int i, j;
 	char report[DIM] = "";
 	for (i = 0; i < lins; i++) {
@@ -515,7 +515,8 @@ void fmsum(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[
 			sum(v[i][j], vI[i][j], u[i][j], uI[i][j]);
 			r[i][j] = resultR;
 			rI[i][j] = resultI;
-			sprintf(report, "%s%G+%Gi ", report, r[i][j], rI[i][j]);
+			convertComplex2Exponential(resultR, resultI);
+			sprintf(report, "%s%s+%si ", report, respR, respI);
 		}
 		sprintf(report, "%s\n", report);
 	}
@@ -533,7 +534,7 @@ void fmsum(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[
 	}
 }
 
-void fmsubt(int lins, int cols, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]) {
+void fmsubt(int lins, int cols, double v[dime][dime], double u[dime][dime], double r[dime][dime], double vI[dime][dime], double uI[dime][dime], double rI[dime][dime]) {
 	int i, j;
 	char report[DIM] = "";
 	for (i = 0; i < lins; i++) {
@@ -541,7 +542,8 @@ void fmsubt(int lins, int cols, double v[dim][dim], double u[dim][dim], double r
 			subtraction(v[i][j], vI[i][j], u[i][j], uI[i][j]);
 			r[i][j] = resultR;
 			rI[i][j] = resultI;
-			sprintf(report, "%s%G+%Gi ", report, r[i][j], rI[i][j]);
+			convertComplex2Exponential(resultR, resultI);
+			sprintf(report, "%s%s+%si ", report, respR, respI);
 		}
 		sprintf(report, "%s\n", report);
 	}
@@ -559,7 +561,7 @@ void fmsubt(int lins, int cols, double v[dim][dim], double u[dim][dim], double r
 	}
 }
 
-void fmmulr(int lins, int cols, double v[dim][dim], double r[dim][dim], double re, double vI[dim][dim], double rI[dim][dim], double reI) {
+void fmmulr(int lins, int cols, double v[dime][dime], double r[dime][dime], double re, double vI[dime][dime], double rI[dime][dime], double reI) {
 	int i, j;
 	char report[DIM] = "";
 	for (i = 0; i < lins; i++) {
@@ -567,7 +569,8 @@ void fmmulr(int lins, int cols, double v[dim][dim], double r[dim][dim], double r
 			multiplication(v[i][j], vI[i][j], re, reI);
 			r[i][j] = resultR;
 			rI[i][j] = resultI;
-			sprintf(report, "%s%G+%Gi ", report, r[i][j], rI[i][j]);
+			convertComplex2Exponential(resultR, resultI);
+			sprintf(report, "%s%s+%si ", report, respR, respI);
 		}
 		sprintf(report, "%s\n", report);
 	}
@@ -585,7 +588,7 @@ void fmmulr(int lins, int cols, double v[dim][dim], double r[dim][dim], double r
 	}
 }
 
-void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], double u[dim][dim], double r[dim][dim], double vI[dim][dim], double uI[dim][dim], double rI[dim][dim]) {
+void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dime][dime], double u[dime][dime], double r[dime][dime], double vI[dime][dime], double uI[dime][dime], double rI[dime][dime]) {
 	int k, i, j;
 	char report[DIM] = "";
 	double prod, prodI;
@@ -607,7 +610,8 @@ void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], doub
 		}
 		for (i = 0; i < lins1; i++) {
 			for (k = 0; k < cols2; k++) {
-				sprintf(report, "%s%G+%Gi ", report, r[i][k], rI[i][k]);
+				convertComplex2Exponential(r[i][k], rI[i][k]);
+				sprintf(report, "%s%s+%si ", report, respR, respI);
 			}
 			sprintf(report, "%s\n", report);
 		}
@@ -626,7 +630,7 @@ void fmmulm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], doub
 	}
 }
 
-boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], double u[dim][dim], double vI[dim][dim], double uI[dim][dim]) {
+boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dime][dime], double u[dime][dime], double vI[dime][dime], double uI[dime][dime]) {
 	int k, i;
 	boolean  divisible = false;
 	char report[DIM] = "";
@@ -644,9 +648,9 @@ boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], d
 				for (k = 0; k < cols1; k++) {
 					if ((v[i][k] != 0 || vI[i][k] != 0) && (u[i][k] != 0 || uI[i][k] != 0)) {
 						division(v[i][k], vI[i][k], u[i][k], uI[i][k]);
-						sprintf(value, "%G", resultR);
+						sprintf(value, "%s", convert2Exponential(resultR));
 						resultR = strtod(value, &pointer);
-						sprintf(value, "%G", resultI);
+						sprintf(value, "%s", convert2Exponential(resultI));
 						resultI = strtod(value, &pointer);
 						quotientR = resultR; quotientI = resultI;
 						i = lins1;
@@ -658,9 +662,9 @@ boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], d
 				for (k = 0; k < cols1; k++) {
 					if ((v[i][k] != 0 || vI[i][k] != 0) && (u[i][k] != 0 || uI[i][k] != 0)) {
 						division(v[i][k], vI[i][k], u[i][k], uI[i][k]);
-						sprintf(value, "%G", resultR);
+						sprintf(value, "%s", convert2Exponential(resultR));
 						resultR = strtod(value, &pointer);
-						sprintf(value, "%G", resultI);
+						sprintf(value, "%s", convert2Exponential(resultI));
 						resultI = strtod(value, &pointer);
 						if (resultR == quotientR && resultI == quotientI) {
 							countEquals++;
@@ -683,7 +687,7 @@ boolean fmdivm(int lins2, int cols1, int lins1, int cols2, double v[dim][dim], d
 	return divisible;
 }
 
-void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim], double mTransposeR[dim][dim], double mTransposeI[dim][dim]) {
+void fmtranspose(int lins, int  cols, double vMS[dime][dime], double vMSI[dime][dime], double mTransposeR[dime][dime], double mTransposeI[dime][dime]) {
 	int i = 0, j = 0;
 	char report[DIM] = "";
 	for (i = 0; i < cols; i++) {
@@ -694,7 +698,8 @@ void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim
 	}
 	for (i = 0; i < cols; i++) {
 		for (j = 0; j < lins; j++) {
-			sprintf(report, "%s%G+%Gi ", report, mTransposeR[i][j], mTransposeI[i][j]);
+			convertComplex2Exponential(mTransposeR[i][j], mTransposeI[i][j]);
+			sprintf(report, "%s%s+%si ", report, respR, respI);
 		}
 		sprintf(report, "%s\n", report);
 	}
@@ -712,11 +717,11 @@ void fmtranspose(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim
 	}
 }
 
-void fmdeterminant(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim]) {
+void fmdeterminant(int lins, int  cols, double vMS[dime][dime], double vMSI[dime][dime]) {
 	int multiplier = 0;
 	do {
-		double newMatrixR[dim][dim], newMatrixI[dim][dim];
-		double lineMultipliedR[dim], lineMultipliedI[dim], lineResultR[dim], lineResultI[dim];
+		double newMatrixR[dime][dime], newMatrixI[dime][dime];
+		double lineMultipliedR[dime], lineMultipliedI[dime], lineResultR[dime], lineResultI[dime];
 		int i = 0, j = 0, k = 0, needJacobi = 1, l = 0;
 		if (lins > 2) {
 			for (i = 0; i < lins; i++) {
@@ -858,7 +863,7 @@ void startDetProcessing(char matrix[DIM]) {
 		sprintf(matrix, "%s", expressionF);
 	}
 	int mIndex = 0, ff = 0, lins = 1, cols = 1, lins1 = 1, cols1 = 1, saveCols = -1, saveCols1 = -1, errorCols = 0, errorCols1 = 0, i = 0, j = 0;
-	double vMS[dim][dim], vMSI[dim][dim];
+	double vMS[dime][dime], vMSI[dime][dime];
 	do {
 		char value[DIM] = "";
 		ff = 0;
@@ -909,9 +914,9 @@ void startDetProcessing(char matrix[DIM]) {
 	matrixMode = 2;
 }
 
-void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim], double inverseR[dim][dim], double inverseI[dim][dim]) {
+void fminverse(int lins, int  cols, double vMS[dime][dime], double vMSI[dime][dime], double inverseR[dime][dime], double inverseI[dime][dime]) {
 	int saveLins = lins, saveCols = cols;
-	double vMSF[dim][dim], vMSIF[dim][dim];
+	double vMSF[dime][dime], vMSIF[dime][dime];
 	int i = 0, j = 0, one = saveCols, pivot = 0;
 	for (i = 0; i < saveLins; i++) {
 		for (j = 0; j < saveCols; j++) {
@@ -947,7 +952,7 @@ void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim],
 		}
 		if (i != pivot) {
 			int t = 0;
-			double saveLineR[dim], saveLineI[dim];
+			double saveLineR[dime], saveLineI[dime];
 			for (t = 0; t < saveCols * 2; t++) {
 				saveLineR[t] = vMSF[i][t];
 				saveLineI[t] = vMSIF[i][t];
@@ -1003,7 +1008,8 @@ void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim],
 		char report[DIM] = "";
 		for (i = 0; i < saveLins; i++) {
 			for (j = 0; j < saveCols; j++) {
-				sprintf(report, "%s%G+%Gi ", report, inverseR[i][j], inverseI[i][j]);
+				convertComplex2Exponential(inverseR[i][j], inverseI[i][j]);
+				sprintf(report, "%s%s+%si ", report, respR, respI);
 			}
 			sprintf(report, "%s\n", report);
 		}
@@ -1020,11 +1026,11 @@ void fminverse(int lins, int  cols, double vMS[dim][dim], double vMSI[dim][dim],
 	}
 }
 
-void fmpowerm(double v[dim][dim], double vI[dim][dim], double r[dim][dim], double rI[dim][dim], int power, int lins, int cols) {
+void fmpowerm(double v[dime][dime], double vI[dime][dime], double r[dime][dime], double rI[dime][dime], int power, int lins, int cols) {
 	int k = 0, i = 0, j = 0, negative = 0;
 	char report[DIM] = "";
 	double prod = 0, prodI = 0;
-	double  u[dim][dim], uI[dim][dim];
+	double  u[dime][dime], uI[dime][dime];
 	for (i = 0; i < lins; i++) {
 		for (k = 0; k < cols; k++) {
 			u[i][k] = v[i][k];
@@ -1109,7 +1115,8 @@ void fmpowerm(double v[dim][dim], double vI[dim][dim], double r[dim][dim], doubl
 		}
 		for (i = 0; i < lins; i++) {
 			for (k = 0; k < cols; k++) {
-				sprintf(report, "%s%G+%Gi ", report, r[i][k], rI[i][k]);
+				convertComplex2Exponential(r[i][k], rI[i][k]);
+				sprintf(report, "%s%s+%si ", report, respR, respI);
 			}
 			sprintf(report, "%s\n", report);
 		}
@@ -1128,7 +1135,7 @@ void fmpowerm(double v[dim][dim], double vI[dim][dim], double r[dim][dim], doubl
 	}
 }
 
-int fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]) {
+int fmrank(int lins, int cols, double vMS[dime][dime], double vMSI[dime][dime]) {
 	int i = 0, j = 0, one = cols, pivot = 0;
 	do {
 		i = pivot;
@@ -1143,7 +1150,7 @@ int fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]) {
 		}
 		if (i != pivot) {
 			int t = 0;
-			double saveLineR[dim], saveLineI[dim];
+			double saveLineR[dime], saveLineI[dime];
 			for (t = 0; t < cols; t++) {
 				saveLineR[t] = vMS[i][t];
 				saveLineI[t] = vMSI[i][t];
@@ -1179,7 +1186,8 @@ int fmrank(int lins, int cols, double vMS[dim][dim], double vMSI[dim][dim]) {
 		for (j = 0; j < cols; j++) {
 			sum(vMS[i][j], vMSI[i][j], sumR, sumI);
 			sumR = resultR; sumI = resultI;
-			sprintf(report, "%s%G+%Gi ", report, vMS[i][j], vMSI[i][j]);
+			convertComplex2Exponential(vMS[i][j], vMSI[i][j]);
+			sprintf(report, "%s%s+%si ", report, respR, respI);
 		}
 		if (sumR != 0 || sumI != 0) {
 			rank++;

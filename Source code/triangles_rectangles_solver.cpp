@@ -193,7 +193,6 @@ void saveToReport(char report[DIM]) {
 	FILE *save = NULL;
 	char pathName[DIM] = "";
 	printf("\nDrag-and-drop to here your txt file to save the report.\n");
-	getReady();
 	while (save == NULL) {
 		gets_s(pathName);
 		if (isContained("\\", pathName)) {
@@ -210,7 +209,6 @@ void saveToReport(char report[DIM]) {
 		save = fopen(pathName, "r");
 		if (save == NULL) {
 			printf("\nDrag-and-drop to here your txt file to save the report.\n");
-			getReady();
 		}
 	}
 	if (save != NULL) {

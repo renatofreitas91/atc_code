@@ -13,14 +13,14 @@ void decimalToBinary(double decimal, char path[DIM], int bp) {
 	if (decimal >= 0) {
 		sN = log10(decimal) / log10(2.0);
 		sN1 = quo(sN);
-		sN2 = pow(2.0, multi(sN));
+		sN2 = pot(2.0, multi(sN), 1);
 	}
 	else {
 		if (decimal < 0) {
 			decimal = decimal * -1;
 			sN = log10(decimal) / log10(2.0);
 			sN1 = quo(sN);
-			sN2 = pow(2.0, multi(sN))*-1;
+			sN2 = pot(2.0, multi(sN), 1)*-1;
 			decimal = decimal * -1;
 		}
 	}
@@ -337,14 +337,14 @@ void decimalToOctal(double decimal, char path[DIM], int op) {
 	if (decimal >= 0) {
 		sN = log10(decimal) / log10(8.0);
 		sN1 = quo(sN);
-		sN2 = pow(8.0, multi(sN));
+		sN2 = pot(8.0, multi(sN), 1);
 	}
 	else {
 		if (decimal < 0) {
 			decimal = decimal * -1;
 			sN = log10(decimal) / log10(8.0);
 			sN1 = quo(sN);
-			sN2 = pow(8.0, multi(sN))*-1;
+			sN2 = pot(8.0, multi(sN), 1)*-1;
 			decimal = decimal * -1;
 		}
 	}
@@ -659,14 +659,14 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 	if (decimal >= 0) {
 		sN = log10(decimal) / log10(16.0);
 		sN1 = quo(sN);
-		sN2 = pow(16.0, multi(sN));
+		sN2 = pot(16.0, multi(sN), 1);
 	}
 	else {
 		if (decimal < 0) {
 			decimal = decimal * -1;
 			sN = log10(decimal) / log10(16.0);
 			sN1 = quo(sN);
-			sN2 = pow(16.0, multi(sN))*-1;
+			sN2 = pot(16.0, multi(sN), 1)*-1;
 			decimal = decimal * -1;
 		}
 	}
@@ -683,7 +683,7 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pow(16.000, c) + decimal;
+			decimal1 = pot(16.000, c, 1) + decimal;
 		}
 		while (quotient > 15) {
 			quotient = decimal1 / 16;
@@ -877,7 +877,7 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pow(16.000, c) + decimal;
+			decimal1 = pot(16.000, c, 1) + decimal;
 		}
 		while (quotient > 15) {
 			quotient = decimal1 / 16;
@@ -1036,7 +1036,7 @@ void decimalToHexadecimal(double decimal, char path[DIM], int hp) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pow(16.000, c) + decimal2;
+			decimal1 = pot(16.000, c, 1) + decimal2;
 		}
 		while (quotient > 15) {
 			quotient = decimal1 / 16;

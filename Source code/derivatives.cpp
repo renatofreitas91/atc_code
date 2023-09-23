@@ -10,7 +10,7 @@ char* getDerivative(char expression[DIM]) {
 		replace("))", ")", expression);
 		sprintf(expression, "%s", expressionF);
 	}
-	double coefficient[dim], exponents[dim];
+	double coefficient[dime], exponents[dime];
 	char saveExpression[DIM] = "", value[DIM] = "";
 	sprintf(saveExpression, "%s", expression);
 	char to_replace[DIM] = "";
@@ -85,10 +85,11 @@ char* getDerivative(char expression[DIM]) {
 	i = 0;
 	sprintf(saveExpression, "");
 	while (exponents[i] > 1) {
-		sprintf(saveExpression, "%s(%G+0i)x^%G+", saveExpression, coefficient[i], exponents[i] - 1);
+		convertComplex2Exponential(coefficient[i], exponents[i] - 1);
+		sprintf(saveExpression, "%s(%s+0i)x^%s+", saveExpression, respR, respI);
 		i++;
 	}
-	sprintf(saveExpression, "%s(%G+0i)", saveExpression, coefficient[i]);
+	sprintf(saveExpression, "%s(%s+0i)", saveExpression, convert2Exponential(coefficient[i]));
 	if (isContained("x^", saveExpression)) {
 		sprintf(saveExpression, "(%s)", saveExpression);
 	}

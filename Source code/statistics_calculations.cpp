@@ -56,15 +56,15 @@ void statisticsCalculations() {
 				summatory = summatory + values[b];
 			}
 			double mean = summatory / number_of_population;
-			printf("\nMean: %G\n", mean);
+			printf("\nMean: %s\n", convert2Exponential(mean));
 			summatory = 0;
 			for (b = 0; b < number_of_population; b++) {
-				summatory = summatory + pow(values[b] - mean, 2.0);
+				summatory = summatory + pot(values[b] - mean, 2.0, 1);
 			}
 			double variance = ((double)1.0 / number_of_population)*summatory;
-			printf("\nVariance: %G\n", variance);
+			printf("\nVariance: %s\n", convert2Exponential(variance));
 			double standard_deviation = sqrt(variance);
-			printf("\nStandard Deviation: %G\n", standard_deviation);
+			printf("\nStandard Deviation: %s\n", convert2Exponential(standard_deviation));
 		}
 		if (op == 2) {
 			puts("Sampling population?\nInfo: separate values by using '\\'. Example: \"20\\30\\60\"");
@@ -100,15 +100,15 @@ void statisticsCalculations() {
 				summatory = summatory + values[b];
 			}
 			double mean = summatory / number_of_population;
-			printf("\nSample mean: %G\n", mean);
+			printf("\nSample mean: %s\n", convert2Exponential(mean));
 			summatory = 0;
 			for (b = 0; b < number_of_population; b++) {
-				summatory = summatory + pow(values[b] - mean, 2.0);
+				summatory = summatory + pot(values[b] - mean, 2.0, 1);
 			}
 			double variance = (double)1.0 / (number_of_population - 1)*summatory;
-			printf("\nSample variance: %G\n", variance);
+			printf("\nSample variance: %s\n", convert2Exponential(variance));
 			double standard_deviation = sqrt(variance);
-			printf("\nSample standard deviation: %G\n", standard_deviation);
+			printf("\nSample standard deviation: %s\n", convert2Exponential(standard_deviation));
 		}
 		if (op == 3) {
 			puts("First number?");
@@ -194,9 +194,9 @@ void statisticsCalculations() {
 			double population_size = getValue();
 			double z = confidenceLevelToZscore(confidence_level);
 			if (z != -77777) {
-				double unlimited_population = (pow(z, 2.0)*population_proportion*(1 - population_proportion)) / pow(confidence_interval, 2.0);
+				double unlimited_population = (pot(z, 2.0, 1)*population_proportion*(1 - population_proportion)) / pot(confidence_interval, 2.0, 1);
 				if (population_size == 0) {
-					printf("\nYou will need to measure %G or more samples.\n", unlimited_population);
+					printf("\nYou will need to measure %s or more samples.\n", convert2Exponential(unlimited_population));
 				}
 				else {
 					double finite_population = unlimited_population / (1 + unlimited_population * (1 / population_size));
@@ -241,14 +241,14 @@ void statisticsCalculations() {
 				puts("");
 				double a_complement = 1 - probability_event_a;
 				double b_complement = 1 - probability_event_b;
-				printf("The probability that event A does not occur is %G\n", a_complement);
-				printf("The probability that event B does not occur is %G\n", b_complement);
+				printf("The probability that event A does not occur is %s\n", convert2Exponential(a_complement));
+				printf("The probability that event B does not occur is %s\n", convert2Exponential(b_complement));
 				double intersection_a_with_b = probability_event_a * probability_event_b;
 				double union_a_with_b = probability_event_a + probability_event_b - intersection_a_with_b;
 				double exclusive_or_of_a_and_b = union_a_with_b - 2 * intersection_a_with_b;
-				printf("The probability that event A and/or event B occurs is %G\n", union_a_with_b);
-				printf("The probability that event A and event B both occur is %G\n", intersection_a_with_b);
-				printf("The probability that either A or event B occurs, but not both is %G\n", exclusive_or_of_a_and_b);
+				printf("The probability that event A and/or event B occurs is %s\n", convert2Exponential(union_a_with_b));
+				printf("The probability that event A and event B both occur is %s\n", convert2Exponential(intersection_a_with_b));
+				printf("The probability that either A or event B occurs, but not both is %s\n", convert2Exponential(exclusive_or_of_a_and_b));
 			}
 			else {
 				puts("\nError: The probability of an event needs to be a number between 0 and 1.\n");
@@ -267,10 +267,11 @@ void statisticsCalculations() {
 			double left_probability = 0.5*(1 + gerror((left_bound - mean) / (standard_deviation*sqrt(2.0))));
 			double right_probability = 0.5*(1 + gerror((right_bound - mean) / (standard_deviation*sqrt(2.0))));
 			puts("");
-			printf("The probability between %G and %G is %f\n", left_bound, right_bound, right_probability - left_probability);
-			printf("The probability outside of %G and %G is 1 - %G = %f\n", left_bound, right_bound, (right_probability - left_probability), 1 - (right_probability - left_probability));
-			printf("The probability of %G or less (<=%G) is %f\n", left_bound, left_bound, left_probability);
-			printf("The probability of %G or more (>=%G) is %f\n", right_bound, right_bound, 1 - right_probability);
+			convertComplex2Exponential(left_bound, right_bound);
+			printf("The probability between %s and %s is %f\n", respR, respI, right_probability - left_probability);
+			printf("The probability outside of %s and %s is 1 - %G = %f\n", respR, respI, (right_probability - left_probability), 1 - (right_probability - left_probability));
+			printf("The probability of %s or less (<=%s) is %f\n", respR, respR, left_probability);
+			printf("The probability of %s or more (>=%s) is %f\n", respI, respI, 1 - right_probability);
 		}
 		if (op == 10) {
 			puts("Total Amount in a Set?");
@@ -316,16 +317,16 @@ void statisticsCalculations() {
 				summatory = summatory + values[b];
 			}
 			double mean = summatory / number_of_population;
-			printf("\nMean: %G", mean);
+			printf("\nMean: %s", convert2Exponential(mean));
 			if (number_of_population % 2 == 1) {
 				int index = (number_of_population + 1) / 2;
-				printf("\nMedian: %G", values[index - 1]);
+				printf("\nMedian: %s", convert2Exponential(values[index - 1]));
 			}
 			else {
 				int index_1 = number_of_population / 2;
 				int index_2 = index_1 + 1;
 				double median = (values[index_1 - 1] + values[index_2 - 1]) / 2;
-				printf("\nMedian: %G", median);
+				printf("\nMedian: %s", convert2Exponential(median));
 			}
 			i = 0;
 			int j = 0;
@@ -370,7 +371,7 @@ void statisticsCalculations() {
 			int k = 0;
 			while (i < number_of_population) {
 				if (max == valuesF[i]) {
-					printf("%G ", valuesS[i]);
+					printf("%s ", convert2Exponential(valuesS[i]));
 					k++;
 				}
 				i++;
@@ -392,10 +393,10 @@ void statisticsCalculations() {
 				}
 				i++;
 			}
-			printf("\nRange: %G", largest - smallest);
-			printf("\nLargest: %G", largest);
-			printf("\nSmallest: %G", smallest);
-			printf("\nSum: %G", summatory);
+			printf("\nRange: %s", convert2Exponential(largest - smallest));
+			printf("\nLargest: %s", convert2Exponential(largest));
+			printf("\nSmallest: %s", convert2Exponential(smallest));
+			printf("\nSum: %s", convert2Exponential(summatory));
 			printf("\nCount %d", number_of_population);
 		}
 		if (op < 1 || op>11) {

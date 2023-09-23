@@ -27,7 +27,8 @@ void geometryCalculations() {
 			double side = getPosValue();
 			double area = side * side;
 			double perimeter = 4 * side;
-			printf("\nArea: %G\nPerimeter: %G\n", area, perimeter);
+			convertComplex2Exponential(area, perimeter);
+			printf("\nArea: %s\nPerimeter: %s\n", respR, respI);
 		}
 		if (op == 2) {
 			puts("Length?");
@@ -36,7 +37,8 @@ void geometryCalculations() {
 			double width = getPosValue();
 			double area = length * width;
 			double perimeter = 2 * length + 2 * width;
-			printf("\nArea: %G\nPerimeter: %G\n", area, perimeter);
+			convertComplex2Exponential(area, perimeter);
+			printf("\nArea: %s\nPerimeter: %s\n", respR, respI);
 		}
 		if (op == 3) {
 			puts("Length?");
@@ -48,7 +50,8 @@ void geometryCalculations() {
 			if ((length + width) > height || (length + height) > width || (width + height) > length) {
 				double area = length * height;
 				double perimeter = 2 * length + 2 * width;
-				printf("\nArea: %G\nPerimeter: %G\n", area, perimeter);
+				convertComplex2Exponential(area, perimeter);
+				printf("\nArea: %s\nPerimeter: %s\n", respR, respI);
 			}
 			else {
 				puts("\n\nError: Invalid dimensions\n\n");
@@ -68,6 +71,8 @@ void geometryCalculations() {
 			if ((height + base_1 + base_2 + side_1) > side_2 || (height + base_1 + base_2 + side_2) > side_1 || (side_1 + base_1 + base_2 + side_2) > height || (side_1 + height + base_2 + side_2) > base_1 || (side_1 + base_1 + height + side_2) > base_2) {
 				double area = 0.5*height*(base_1 + base_2);
 				double perimeter = side_1 + side_2 + base_1 + base_2;
+				convertComplex2Exponential(area, perimeter);
+				printf("\nArea: %s\nPerimeter: %s\n", respR, respI);
 			}
 			else {
 				puts("\n\nError: Invalid dimensions\n\n");
@@ -85,7 +90,8 @@ void geometryCalculations() {
 			if ((height + side_1 + side_2) > base || (base + side_1 + side_2) > height || (base + height + side_2) > side_1 || (base + height + side_1) > side_2) {
 				double area = 0.5*base*height;
 				double perimeter = side_1 + side_2 + base;
-				printf("\nArea: %G\nPerimeter: %G\n", area, perimeter);
+				convertComplex2Exponential(area, perimeter);
+				printf("\nArea: %s\nPerimeter: %s\n", respR, respI);
 			}
 			else {
 				puts("\n\nError: Invalid dimensions\n\n");
@@ -94,9 +100,10 @@ void geometryCalculations() {
 		if (op == 6) {
 			puts("Radius?");
 			double radius = getPosValue();
-			double area = M_PI * pow(radius, 2.0);
+			double area = M_PI * pot(radius, 2.0, 1);
 			double perimeter = 2 * M_PI*radius;
-			printf("\nArea: %G\nCircumference (Perimeter of a circle): %G\n", area, perimeter);
+			convertComplex2Exponential(area, perimeter);
+			printf("\nArea: %s\nCircumference (Perimeter of a circle): %s\n", respR, respI);
 		}
 		if (op == 7) {
 			puts("Length?");
@@ -107,39 +114,44 @@ void geometryCalculations() {
 			double height = getPosValue();
 			double volume = length * width*height;
 			double surface_area = 2 * length*height + 2 * width*height + 2 * width*length;
-			printf("\nVolume: %G\nSurface Area: %G\n", volume, surface_area);
+			convertComplex2Exponential(volume, surface_area);
+			printf("\nVolume: %s\nSurface Area: %s\n", respR, respI);
 		}
 		if (op == 8) {
 			puts("Side?");
 			double side = getPosValue();
-			double volume = pow(side, 3.0);
-			double surface_area = 6 * pow(side, 2.0);
-			printf("\nVolume: %G\nSurface Area: %G\n", volume, surface_area);
+			double volume = pot(side, 3.0, 1);
+			double surface_area = 6 * pot(side, 2.0, 1);
+			convertComplex2Exponential(volume, surface_area);
+			printf("\nVolume: %s\nSurface Area: %s\n", respR, respI);
 		}
 		if (op == 9) {
 			puts("Radius?");
 			double radius = getPosValue();
 			puts("Height?");
 			double height = getPosValue();
-			double volume = M_PI * pow(radius, 2.0)*height;
-			double surface_area = 2 * M_PI*radius*height + 2 * M_PI*pow(radius, 2.0);
-			printf("\nVolume: %G\nSurface Area: %G\n", volume, surface_area);
+			double volume = M_PI * pot(radius, 2.0, 1)*height;
+			double surface_area = 2 * M_PI*radius*height + 2 * M_PI*pot(radius, 2.0, 1);
+			convertComplex2Exponential(volume, surface_area);
+			printf("\nVolume: %s\nSurface Area: %s\n", respR, respI);
 		}
 		if (op == 10) {
 			puts("Radius?");
 			double radius = getPosValue();
-			double volume = (4.0 / 3.0)*M_PI*pow(radius, 3.0);
-			double surface_area = 4.0*M_PI*pow(radius, 2.0);
-			printf("\nVolume: %G\nSurface Area: %G\n", volume, surface_area);
+			double volume = (4.0 / 3.0)*M_PI*pot(radius, 3.0, 1);
+			double surface_area = 4.0*M_PI*pot(radius, 2.0, 1);
+			convertComplex2Exponential(volume, surface_area);
+			printf("\nVolume: %s\nSurface Area: %s\n", respR, respI);
 		}
 		if (op == 11) {
 			puts("Radius?");
 			double radius = getPosValue();
 			puts("Height?");
 			double height = getPosValue();
-			double volume = (1.0 / 3.0)*M_PI*pow(radius, 2.0)*height;
-			double surface_area = M_PI * radius*sqrt(pow(radius, 2.0) + pow(height, 2.0));
-			printf("\nVolume: %G\nSurface Area: %G\n", volume, surface_area);
+			double volume = (1.0 / 3.0)*M_PI*pot(radius, 2.0, 1)*height;
+			double surface_area = M_PI * radius*sqrt(pot(radius, 2.0, 1) + pot(height, 2.0, 1));
+			convertComplex2Exponential(volume, surface_area);
+			printf("\nVolume: %s\nSurface Area: %s\n", respR, respI);
 		}
 		if (op == 12) {
 			puts("Length?");
@@ -150,7 +162,8 @@ void geometryCalculations() {
 			double height = getPosValue();
 			double volume = (1.0 / 3.0)*length*width*height;
 			double surface_area = (((2 * width + 2 * length)*height) / 2) + (length*width);
-			printf("\nVolume: %G\nSurface Area: %G\n", volume, surface_area);
+			convertComplex2Exponential(volume, surface_area);
+			printf("\nVolume: %s\nSurface Area: %s\n", respR, respI);
 		}
 		if (op == 13) {
 			puts("Radius of the upper base?");
@@ -161,9 +174,10 @@ void geometryCalculations() {
 			double height = getPosValue();
 			puts("Side?");
 			double side = getPosValue();
-			double volume = (M_PI*(pow(radius_upper_base, 2.0) + radius_upper_base * radius_lower_base + pow(radius_lower_base, 2.0))*height) / 3.0;
+			double volume = (M_PI*(pot(radius_upper_base, 2.0, 1) + radius_upper_base * radius_lower_base + pot(radius_lower_base, 2.0, 1))*height) / 3.0;
 			double surface_area = M_PI * side*(radius_lower_base + radius_upper_base);
-			printf("\nVolume: %G\nSurface Area: %G\n", volume, surface_area);
+			convertComplex2Exponential(volume, surface_area);
+			printf("\nVolume: %s\nSurface Area: %s\n", respR, respI);
 		}
 		if (op < 1 || op>13) {
 			puts("\n\nError: Incorrect option id.\n\n");

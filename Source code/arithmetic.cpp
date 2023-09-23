@@ -27,7 +27,7 @@ void division(double numR, double numI, double denR, double denI) {
 }
 
 double abs_complex(double real, double imaginary) {
-	resultR = pow(real*real + imaginary * imaginary, 0.5);
+	resultR = sqrt(real*real + imaginary * imaginary);
 	resultI = 0;
 	return resultR;
 }
@@ -142,9 +142,25 @@ double pot(double base, double exponent, int sig) {
 				if (exponent < 0) {
 					exponent1 = exponent1 * -1;
 				}
-				for (k = 1; k < exponent1&&abs(result2) < DBL_MAX; k++) {
-					result2 = result2 * base;
+				if (exponent1 > 1) {
+					k = (int)exponent1 - 1;
+					while (k > 1) {
+						if ((int)exponent1%k == 0) {
+							break;
+						}
+						k--;
+					}
+					result2 = pow(base, exponent1 / (double)k);
+					for (int i = 1; i < k; i++) {
+						result2 = result2 * pow(base, exponent1 / (double)k);
+					}
 				}
+				else {
+					if (exponent1 == 1) {
+						result2 = base;
+					}
+				}
+
 				if (exponent < 0) {
 					result2 = 1 / result2;
 				}
@@ -177,7 +193,7 @@ double multi(double multip) {
 	char mult[DIM] = "", mul[DIM] = "";
 	char *pointer;
 	int i = 0, j = 0;
-	sprintf(mult, "%.500f", multip);
+	sprintf(mult, "%.150f", multip);
 	mul[0] = '0'; i++;
 	while (mult[j] != '.') { j++; }
 	while (mult[j] != '\0') {
@@ -198,7 +214,7 @@ double quo(double quotient) {
 	char quot[DIM] = "", quo[DIM] = "";
 	char *pointer;
 	int i = 0;
-	sprintf(quot, "%.500f", quotient);
+	sprintf(quot, "%.150f", quotient);
 	while (quot[i] != '.'&&quot[i] != '\0') {
 		quo[i] = quot[i];
 		i++;
@@ -232,7 +248,7 @@ double re(double dividend, double divider) {
 	int i = 0;
 	quotient = dividend / divider;
 	sprintf(quot, "%.300f", quotient);
-	while (quot[i] != '.'&&quot[i] != '\0'&&i<abs((int)strlen(quot))) {
+	while (quot[i] != '.'&&quot[i] != '\0'&&i < abs((int)strlen(quot))) {
 		quo[i] = quot[i];
 		i++;
 	}
@@ -287,7 +303,7 @@ double returnDeciPart(double number) {
 	char *pointer;
 	int i = 0;
 	sprintf(quot, "%.100f", number);
-	while (quot[i] != '.') {
+	while (quot[i] != '.'&&quot[i] != '\0') {
 		quo[i] = quot[i];
 		i++;
 	}
@@ -323,14 +339,7 @@ double rt(double radicand, double degree, int sig) {
 				degree = degree * -1;
 				j = 1;
 			}
-			while (precision >= 1E-309) {
-				while (radicand > pow(result + precision, degree) && i < 10) {
-					result = result + precision;
-					i++;
-				}
-				i = 0;
-				precision = precision / 10;
-			}
+			result = pow(10.0, log10(radicand) / degree);
 			if (j == 1) {
 				result = 1 / result;
 				j = 0;

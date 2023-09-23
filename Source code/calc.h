@@ -50,6 +50,7 @@ void complex_tanh(double x, double y);
 void complex_asin(double x, double y);
 void complex_acos(double x, double y);
 void complex_atan(double x, double y);
+void roundSolution();
 void solveSystem();
 void rearrangeValues();
 void getSolutions();

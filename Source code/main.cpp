@@ -7,7 +7,7 @@
 double ansIV = 0, ansRV = 0, ans[DIM], ansI[DIM], valInd[DIM][DIM], values[DIM][DIM], resultFI = 0, valuesS[DIM][DIM], valuesSI[DIM][DIM], valuesF[DIM][DIM], valuesFI[DIM][DIM], valuesI[DIM][DIM], resultR = 0, resultI = 0, intVal = 0;
 char ansMatrices[DIM][DIM], lastCommand[DIM], atcPath[DIM] = "", customFolderPath[DIM] = "", saveATCPath[DIM] = "", varRename[DIM] = "", revariable[DIM] = "", pathNAme[DIM] = "", variableSTring[DIM] = "", expressionF2[DIM] = "", expressionF[DIM] = "", usRFunctions[DIM] = ",", usRFuncTrans[DIM] = ",";
 char context[30] = "";
-int replaceTimes = 0, processingOK = 1, executedSolver = 0, isFromMain = 0, solutioned = 0, verify = 0, arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
+int higherPrecision = 0, replaceTimes = 0, processingOK = 1, executedSolver = 0, isFromMain = 0, solutioned = 0, verify = 0, arG = 1, Mode = 0, isFromSolveNow = 0, valid = 0, validVar = 0, count = 2, synTest = 0, valRenamedVar = 0, continu = 1, cleanhistory = 0, rf = 0, verified = 0, nPlaces = 0, verbose = 0, feedbackValidation = 0;
 clock_t start_processing, end_processing;
 char savePathF[DIM], validChars[DIM] = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789.0/*-+\\!#()[]{} ^_;";
 int toSendCommand = 0;
@@ -45,11 +45,23 @@ void main(int argc, char *argv[]) {
 		}
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v2.1.2");
-		continu = about();
+		system("title Advanced Trigonometry Calculator v2.1.4");
+		char commandF[400] = "";
+		sprintf(commandF, "%s\\aboutDisabled.txt", atcPath);
+		FILE * ab = NULL;
+		ab = fopen(commandF, "r");
+		if (ab == NULL) {
+			continu = about();
+		}
+		else {
+			continu = 1;
+			int Window = 3, Dimensions = 2;
+			applySettings(Window);
+			applySettings(Dimensions);
+		}
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v2.1.2       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v2.1.4       ==) ATC is ready to process data. (==");
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\temp.txt", atcPath);
 		FILE *open = fopen(toOpen, "r");
@@ -106,6 +118,14 @@ void main(int argc, char *argv[]) {
 			fgets(numSys, 10, open);
 			fclose(open);
 		}
+		sprintf(toOpen, "%s\\higherPrecision.txt", atcPath);
+		open = fopen(toOpen, "r");
+		if (open != NULL) {
+			char value[100] = "";
+			fgets(value, 10, open);
+			higherPrecision = (int)convertToNumber(value);
+			fclose(open);
+		}
 		sprintf(toOpen, "%s\\siPrefixes.txt", atcPath);
 		open = fopen(toOpen, "r");
 		if (open != NULL) {
@@ -146,8 +166,6 @@ void main(int argc, char *argv[]) {
 			fflush(NULL);
 			tD = 0;
 			toSolve(rf);
-
-
 			if (argc < 2) {
 				sprintf(trigData, "");
 				Pressed = 0;
@@ -166,7 +184,6 @@ void main(int argc, char *argv[]) {
 							break;
 						}
 						else {
-
 							printf(">");
 							gets_s(trigData);
 							if (strlen(trigData) > 0) {
@@ -184,7 +201,7 @@ void main(int argc, char *argv[]) {
 					}
 				}
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v2.1.2       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v2.1.4       ==) Processing... (==");
 
 			}
 			else {
@@ -335,8 +352,8 @@ void main(int argc, char *argv[]) {
 			tim[24] = '\0';
 			char hou[3] = { tim[11], tim[12], '\0' };
 			int Hours = atoi(hou);
-			char min[3] = { tim[14], tim[15], '\0' };
-			int Minutes = atoi(min);
+			char Min[3] = { tim[14], tim[15], '\0' };
+			int Minutes = atoi(Min);
 			char sec[3] = { tim[17], tim[18], '\0' };
 			int Seconds = atoi(sec);
 			char toOpen[DIM] = "";
@@ -384,7 +401,8 @@ void main(int argc, char *argv[]) {
 				months = 12;
 			}
 			char toTitle[DIM] = "";
-			sprintf(state, "title Advanced Trigonometry Calculator v2.1.2       ==) Processed in %Gs and %Gms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", time_s, time_ms_final, years, months, days, Hours, Minutes, Seconds);
+			convertComplex2Exponential(time_s, time_ms_final);
+			sprintf(state, "title Advanced Trigonometry Calculator v2.1.4       ==) Processed in %ss and %sms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", respR, respI, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 		} while (continu == 1);
 	}
@@ -1110,13 +1128,20 @@ boolean dataVerifier(char data[DIM], double result1, double result2, int comment
 			}
 			w = abs((int)strlen(data)) - 3;
 			if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && isContainedByIndex("+0", data, w - 1) && !isContainedByIndex("+0)", data, w - 1)) {
-				verify = 0;
-				if (comment == 1) {
-					puts("\nYour expression is terminating with an arithmetic symbol.\n");
+				boolean detectedDoubleZero = false;
+				if (isContainedByIndex("00", data, abs((int)strlen(data) - 2))) {
+					detectedDoubleZero = true;
 				}
-				sprintf(data, "%s+0", data);
-				decision = false;
-				return decision;
+				if (!detectedDoubleZero) {
+					verify = 0;
+					if (comment == 1) {
+						puts("\nYour expression is terminating with an arithmetic symbol.\n");
+					}
+					sprintf(data, "%s+0", data);
+					decision = false;
+					return decision;
+				}
+
 			}
 			for (w = 0; data[w] != '\0'; w++) {
 				if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && (data[w + 1] == '+' || data[w + 1] == '-'&&data[w - 2] != '1'&&data[w - 1] != '0' || data[w + 1] == '*' || data[w + 1] == '/' || data[w + 1] == '^' || data[w + 1] == '!')) {

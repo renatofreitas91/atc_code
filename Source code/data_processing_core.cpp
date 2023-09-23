@@ -4,8 +4,8 @@
 HANDLE hStdin;
 DWORD fdwSaveOldMode;
 int strStart = 0, strEnd = 0, Pressed = 0;
-char dimensionsTxt[dim] = "", windowTxt[dim] = "";
-double vectorR[dim][dim], vectorI[dim][dim];
+char dimensionsTxt[dime] = "", windowTxt[dime] = "";
+double vectorR[dime][dime], vectorI[dime][dime];
 using namespace std;
 char saveVariablesTextFile[DIM] = "";
 char saveRenamedVariablesTextFile[DIM] = "";
@@ -17,7 +17,27 @@ char saveUserFunctionsRenamedVariablesTextFile[DIM] = "";
 char saveUserFunctionsVariablesTextFile[DIM] = "";
 char numSys[DIM] = "";
 char stringF[DIM] = "";
-boolean variableControllersUsed = true;
+char resp[DIM] = "", respR[DIM] = "", respI[DIM] = "";
+boolean variableControllersUsed = true, notUseHigherPrecison = false;
+
+void higherPrecisionController() {
+	FILE *open;
+	int state = -1;
+	while (state != 1 && state != 0) {
+		I_O = true;
+		printf("Enable -> 1\nDisable -> 0\n");
+		state = (int)getValue();
+		if (state != 1 && state != 0) {
+			printf("Error, incorrect choice.\n");
+		}
+	}
+	char toOpen[DIM] = "";
+	sprintf(toOpen, "%s\\higherPrecision.txt", atcPath);
+	open = fopen(toOpen, "w");
+	fprintf(open, "%d", state);
+	higherPrecision = state;
+	fclose(open);
+}
 void numSystemsController() {
 	FILE *open;
 	int state = -1;
@@ -214,7 +234,8 @@ void variableController(char variable[DIM], double result) {
 			sprintf(expressionF, "");
 		}
 		else {
-			sprintf(vari, "%s%s %G %G\n", vari, variable, resultR, resultI);
+			convertComplex2Exponential(resultR, resultI);
+			sprintf(vari, "%s%s %s %s\n", vari, variable, respR, respI);
 			sprintf(saveExpression, "");
 			sprintf(expressionF, "");
 		}
@@ -270,9 +291,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gy (yocto-)\n", result);
+		fprintf(open, "=%sy (yocto-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Gy (yocto-)\n", result);
+			printf("=%sy (yocto-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'B':
@@ -280,9 +301,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gz (zepto-)\n", result);
+		fprintf(open, "=%sz (zepto-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Gz (zepto-)\n", result);
+			printf("=%sz (zepto-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'C':
@@ -290,9 +311,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Ga (atto-)\n", result);
+		fprintf(open, "=%sa (atto-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Ga (atto-)\n", result);
+			printf("=%sa (atto-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'D':
@@ -300,9 +321,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gf (femto-)\n", result);
+		fprintf(open, "=%sf (femto-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Gf (femto-)\n", result);
+			printf("=%sf (femto-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'E':
@@ -310,9 +331,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gp (pico-)\n", result);
+		fprintf(open, "=%sp (pico-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Gp (pico-)\n", result);
+			printf("=%sp (pico-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'F':
@@ -320,9 +341,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gn (nano-)\n", result);
+		fprintf(open, "=%sn (nano-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Gn (nano-)\n", result);
+			printf("=%sn (nano-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'G':
@@ -330,9 +351,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gµ (micro-)\n", result);
+		fprintf(open, "=%sµ (micro-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%G%c (micro-)\n", result, 230);
+			printf("=%s%c (micro-)\n", convert2Exponential(result), 230);
 		}
 		break;
 	case 'H':
@@ -340,9 +361,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gm (milli-)\n", result);
+		fprintf(open, "=%sm (milli-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Gm (milli-)\n", result);
+			printf("=%sm (milli-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'I':
@@ -350,9 +371,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gc (centi-)\n", result);
+		fprintf(open, "=%sc (centi-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Gc (centi-)\n", result);
+			printf("=%sc (centi-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'J':
@@ -360,9 +381,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gd (deci-)\n", result);
+		fprintf(open, "=%sd (deci-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Gd (deci-)\n", result);
+			printf("=%sd (deci-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'K':
@@ -370,9 +391,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gda (deca-)\n", result);
+		fprintf(open, "=%sda (deca-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Gda (deca-)\n", result);
+			printf("=%sda (deca-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'L':
@@ -380,9 +401,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gh (hecto-)\n", result);
+		fprintf(open, "=%sh (hecto-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Gh (hecto-)\n", result);
+			printf("=%sh (hecto-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'M':
@@ -390,9 +411,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%Gk (kilo-)\n", result);
+		fprintf(open, "=%sk (kilo-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%Gk (kilo-)\n", result);
+			printf("=%sk (kilo-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'N':
@@ -400,9 +421,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%GM (mega-)\n", result);
+		fprintf(open, "=%sM (mega-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%GM (mega-)\n", result);
+			printf("=%sM (mega-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'O':
@@ -410,9 +431,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%GG (giga-)\n", result);
+		fprintf(open, "=%sG (giga-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%GG (giga-)\n", result);
+			printf("=%sG (giga-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'P':
@@ -420,9 +441,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%GT (tera-)\n", result);
+		fprintf(open, "=%sT (tera-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%GT (tera-)\n", result);
+			printf("=%sT (tera-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'Q':
@@ -430,9 +451,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%GP (peta-)\n", result);
+		fprintf(open, "=%sP (peta-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%GP (peta-)\n", result);
+			printf("=%sP (peta-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'R':
@@ -440,9 +461,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%GE (exa-)\n", result);
+		fprintf(open, "=%sE (exa-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%GE (exa-)\n", result);
+			printf("=%sE (exa-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'S':
@@ -450,9 +471,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%GZ (zetta-)\n", result);
+		fprintf(open, "=%sZ (zetta-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%GZ (zetta-)\n", result);
+			printf("=%sZ (zetta-)\n", convert2Exponential(result));
 		}
 		break;
 	case 'T':
@@ -460,9 +481,9 @@ void prefixDeterminator(double n, char path[DIM]) {
 		if (y == 1) {
 			result = result * -1;
 		}
-		fprintf(open, "=%GY (yotta-)\n", result);
+		fprintf(open, "=%sY (yotta-)\n", convert2Exponential(result));
 		if (a == 1) {
-			printf("=%GY (yotta-)\n", result);
+			printf("=%sY (yotta-)\n", convert2Exponential(result));
 		}
 		break;
 	default:
@@ -1063,7 +1084,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 		}
 	}
 	i = 0;
-	char saveSplitResult[200][dim];
+	char saveSplitResult[200][dime];
 	int initialCountSplits = 0;
 	if (countSplits > 0) {
 		initialCountSplits = countSplits;
@@ -1078,7 +1099,7 @@ void toMultiply(char expression[DIM], double result1, double result2) {
 	split("\n", vari);
 	i = 0;
 	j = 0;
-	char saveLines[200][dim];
+	char saveLines[200][dime];
 	while (i < countSplits) {
 		sprintf(saveLines[i], "%s", splitResult[i]);
 		i++;
@@ -2098,6 +2119,7 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 		}
 	}
+
 	needAst = 1;
 	replaceTimes = 1;
 	while (needAst == 1) {
@@ -2192,23 +2214,24 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 	while (needAst == 1) {
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& arithTrig[i + 1] != '1' && (verifyLetter(arithTrig[i + 1]) || verifyNumber(arithTrig[i + 1]))) {
-				j = i + 1;
+			if (verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) || verifyNumber(arithTrig[i + 1]) || arithTrig[i + 1] == '#')) {
+				j = i;
 				i = abs((int)strlen(arithTrig)) + 1;
 				while (i > j) {
 					arithTrig[i] = arithTrig[i - 2];
 					i--;
 				}
-				arithTrig[i] = '1'; arithTrig[i + 1] = '*';
+				arithTrig[i] = '1'; arithTrig[i + 1] = 'i'; arithTrig[i + 2] = '*';
 			}
 		}
 		needAst = 0;
 		for (i = 0; arithTrig[i] != '\0'; i++) {
-			if (verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& arithTrig[i + 1] != '1' && (verifyLetter(arithTrig[i + 1]) || verifyNumber(arithTrig[i + 1]))) {
+			if (verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) || verifyNumber(arithTrig[i + 1]) || arithTrig[i + 1] == '#')) {
 				needAst = 1;
 			}
 		}
 	}
+
 	needOne = 1;
 	while (needOne == 1) {
 		needOne = 0;
@@ -2227,6 +2250,130 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 		for (i = 0; arithTrig[i] != '\0'; i++) {
 			if ((verifyLetter(arithTrig[i - 1]) == 0 || arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i'&& verifyNumber(arithTrig[i + 1]) == 0 && (verifyLetter(arithTrig[i + 1]) == 0 || arithTrig[i + 1] == 'D' || arithTrig[i + 1] == 'b')) {
 				needOne = 1;
+			}
+		}
+	}
+	boolean imaginary = false;
+	for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
+		if (arithTrig[i - 1] == '/' && (verifyLetter(arithTrig[i]) || verifyNumber(arithTrig[i]) || arithTrig[i] == '#' || arithTrig[i] == '1'&&arithTrig[i + 1] == 'i')) {
+			int y = 0;
+			char express[DIM] = "";
+			if (arithTrig[i] == '1'&&arithTrig[i + 1] == 'i') {
+				express[y] = arithTrig[i]; imaginary = true;
+				i++; y++;
+				express[y] = arithTrig[i];
+				i++; y++;
+				express[y] = arithTrig[i];
+				i++; y++;
+			}
+			if (verifyNumber(arithTrig[i])) {
+				while (verifyNumber(arithTrig[i])) {
+					express[y] = arithTrig[i];
+					i++; y++;
+					if (arithTrig[i] == '*') {
+						int kl = 1, kr = 0;
+						express[y] = arithTrig[i];
+						i++; y++;
+						if (arithTrig[i] == '1'&&arithTrig[i + 1] == 'i') {
+							express[y] = arithTrig[i]; imaginary = true;
+							i++; y++;
+							express[y] = arithTrig[i];
+							i++; y++;
+
+						}
+					}
+
+				}
+			}
+
+			else {
+				if (arithTrig[i] == '#'&&verifyNumber(arithTrig[i + 1])) {
+					express[y] = arithTrig[i];
+					i++; y++;
+					while (verifyNumber(arithTrig[i])) {
+						express[y] = arithTrig[i];
+						i++; y++;
+						if (arithTrig[i] == '*') {
+							int kl = 1, kr = 0;
+							express[y] = arithTrig[i];
+							i++; y++;
+							if (arithTrig[i] == '1'&&arithTrig[i + 1] == 'i') {
+								express[y] = arithTrig[i]; imaginary = true;
+								i++; y++;
+								express[y] = arithTrig[i];
+								i++; y++;
+
+							}
+						}
+
+					}
+				}
+				else {
+					if (arithTrig[i] == 'B' || arithTrig[i] == 'O' || arithTrig[i] == 'H') {
+						express[y] = arithTrig[i];
+						i++; y++;
+						while (verifyNumber(arithTrig[i]) || verifyLetter(arithTrig[i])) {
+							express[y] = arithTrig[i];
+							i++; y++;
+							if (arithTrig[i] == '*') {
+								int kl = 1, kr = 0;
+								express[y] = arithTrig[i];
+								i++; y++;
+								if (arithTrig[i] == '1'&&arithTrig[i + 1] == 'i') {
+									express[y] = arithTrig[i]; imaginary = true;
+									i++; y++;
+									express[y] = arithTrig[i];
+									i++; y++;
+
+								}
+							}
+
+						}
+					}
+					else {
+						while (verifyLetter(arithTrig[i])) {
+							express[y] = arithTrig[i];
+							i++; y++;
+							if (arithTrig[i] == '(') {
+								int kl = 1, kr = 0;
+								express[y] = arithTrig[i];
+								i++; y++;
+								while (kl > kr)
+								{
+									if (arithTrig[i] == '(') {
+										kl++;
+									}
+									if (arithTrig[i] == ')') {
+										kr++;
+									}
+									express[y] = arithTrig[i];
+									i++; y++;
+								}
+
+							}
+							if (arithTrig[i] == '*'&&arithTrig[i + 1] == '1'&&arithTrig[i + 2] == 'i') {
+								express[y] = arithTrig[i]; imaginary = true;
+								i++; y++;
+								express[y] = arithTrig[i];
+								i++; y++;
+								express[y] = arithTrig[i];
+								i++; y++;
+
+							}
+						}
+					}
+				}
+			}
+			express[y] = '\0';
+			if (imaginary) {
+				replaceTimes = 1;
+				char exp2Replace[DIM] = "", expReplacement[DIM] = "";
+				sprintf(exp2Replace, "/%s%c", express, arithTrig[i]);
+				sprintf(expReplacement, "/(%s)%c", express, arithTrig[i]);
+				replace(exp2Replace, expReplacement, arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+				imaginary = false;
+				i = 0;
 			}
 		}
 	}
@@ -2719,6 +2866,8 @@ void manageExpression(char arithTrig[DIM], double result1, double result2, int v
 			}
 		}
 	}
+
+	replaceTimes = 0;
 }
 
 void openTxt() {
@@ -2897,7 +3046,7 @@ void getCharArray() {
 		sprintf(value, "x");
 	}
 	else {
-		sprintf(value, "%G", Value);
+		sprintf(value, "%s", convert2Exponential(Value));
 	}
 	if (isContained("-", value)) {
 		replace("-", "_", value);
@@ -3170,6 +3319,25 @@ void currentSettings() {
 		puts("Actual Time Response--------------------> Enabled DISABLED | Info: Enter \"actual time response\" to change.");
 	}
 	open = NULL;
+	sprintf(toOpen, "%s\\higherPrecision.txt", atcPath);
+	open = fopen(toOpen, "r");
+	if (open != NULL) {
+		fgets(info, 200, open);
+		fclose(open);
+		state = (int)calcNow(info, 0, 0);
+		switch (state) {
+		case 0:
+			puts("Higher Precision------------------------> Enabled DISABLED | Info: Enter \"higher precision\" to change.");
+			break;
+		case 1:
+			puts("Higher Precision------------------------> ENABLED Disabled | Info: Enter \"higher precision\" to change.");
+			break;
+		}
+	}
+	else {
+		puts("Higher Precision------------------------> Enabled DISABLED | Info: Enter \"higher precision\" to change.");
+	}
+	open = NULL;
 	sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
@@ -3269,6 +3437,11 @@ void currentSettings() {
 		puts("Dimensions------------------------------> Lines: 5000 - Columns: 167 | Info: Enter \"dimensions\" to change.");
 	}
 }
+void check4Update() {
+
+}
+
+
 
 void on_start() {
 	char Path[DIM] = "";
@@ -3298,9 +3471,19 @@ void on_start() {
 	if (open != NULL) {
 		fgets(onStart, 100, open);
 		fclose(open);
+		if (isContained("enableatcintro", onStart)) {
+			char toOpen[DIM] = "";
+			sprintf(toOpen, "/C \"del \"%s\\aboutDisabled.txt\" &del \"%s\\onStart.txt\"", atcPath, atcPath);
+			using namespace std;
+			std::string s = string(toOpen);
+			std::wstring stemp = std::wstring(s.begin(), s.end());
+			LPCWSTR sw = stemp.c_str();
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+			Sleep(1000);
+		}
 		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 'a'&&onStart[6] == 'l'&&onStart[7] == 'l'&&onStart[8] == '\0') {
 			char toOpen[DIM] = "";
-			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\graph.txt\"&del \"%s\\variables.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&rmdir /Q /S \"%s\\Strings\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"& del \"%s\\verboseResolution.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
+			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\graph.txt\"&del \"%s\\variables.txt\"&del \"%s\\higherPrecision.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&rmdir /Q /S \"%s\\Strings\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"& del \"%s\\verboseResolution.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"&del \"%s\\aboutDisabled.txt\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
 			using namespace std;
 			std::string s = string(toOpen);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -3313,7 +3496,7 @@ void on_start() {
 		}
 		if (onStart[0] == 'r'&&onStart[1] == 'e'&&onStart[2] == 's'&&onStart[3] == 'e'&&onStart[4] == 't'&&onStart[5] == 's'&&onStart[6] == 'e'&&onStart[7] == 't'&&onStart[8] == 't'&&onStart[9] == 'i'&&onStart[10] == 'n'&&onStart[11] == 'g'&&onStart[12] == 's'&&onStart[13] == '\0') {
 			char toOpen[DIM] = "";
-			sprintf(toOpen, "/C \"del \"%s\\numSystems.txt\"&del \"%s\\graph.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\verboseResolution.txt\"&del \"%s\\onStart.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
+			sprintf(toOpen, "/C \"del \"%s\\numSystems.txt\"&del \"%s\\graph.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\higherPrecision.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\verboseResolution.txt\"&del \"%s\\onStart.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
 			using namespace std;
 			std::string s = string(toOpen);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
@@ -3400,35 +3583,36 @@ void complexNumber(double a, double b) {
 		processingOK = -1;
 	}
 	verify = 0;
+	convertComplex2Exponential(a, b);
 	if (a > 0 && b > 0) {
-		printf("%G+%Gi\n", a, b);
+		printf("%s+%si\n", respR, respI);
 	}
 	else {
 		if (a > 0 && b < 0) {
-			printf("%G%Gi\n", a, b);
+			printf("%s%si\n", respR, respI);
 		}
 		else {
 			if (a < 0 && b > 0) {
-				printf("%G+%Gi\n", a, b);
+				printf("%s+%si\n", respR, respI);
 			}
 			else {
 				if (a < 0 && b < 0) {
-					printf("%G%Gi\n", a, b);
+					printf("%s%si\n", respR, respI);
 				}
 				else {
 					if (a == 0 && b == 0) {
-						printf("%G\n", a);
+						printf("%s\n", convert2Exponential(a));
 					}
 					else {
 						if (a == 0 && b != 0) {
-							printf("%Gi\n", b);
+							printf("%si\n", convert2Exponential(b));
 						}
 						else {
 							if (a != 0 && b == 0) {
-								printf("%G\n", a);
+								printf("%s\n", convert2Exponential(a));
 							}
 							else {
-								printf("%G+%Gi\n", a, b);
+								printf("%s+%si\n", respR, respI);
 							}
 						}
 					}
@@ -3659,15 +3843,20 @@ int variableValidator(char variable[DIM]) {
 		}
 	}
 	revariable[i] = '\0';
+	if (isEqual("atc", variable)) {
+		h = 2;
+	}
 	i = 0;
 	variable[abc] = '\0';
-	processVariable(variable);
-	variable[abc] = '\0';
-	arith = arithSolver(variable, 0);
+	processVariable(revariable);
+	char saveVariable[DIM] = "";
+	sprintf(saveVariable, "%s", variable);
+	arith = initialProcessor(variable, 0);
 	if ((variable[0] == 'E' || variable[0] == 'B' || variable[0] == 'O' || variable[0] == 'H' || variable[0] == 'P') && variable[1] == '=') {
 		arith = 10;
 	}
-	variable[abc] = '\0';
+	matrixMode = 0;
+	sprintf(matrixResult, "");
 	for (i = 0; variable[i] != '\0'; i++) {
 		variableT[i] = variable[i];
 	}
@@ -3687,8 +3876,7 @@ int variableValidator(char variable[DIM]) {
 		prefix = arithSolver(testPrefix, 0);
 	}
 	func = functionProcessor(variableT, 0.3, 1.0, 0, "");
-	variable[abc] = '\0';
-	processVariable(variable);
+	processVariable(revariable);
 	if (h == 1 && valid == 0 && arith == 0 && func == 0 && prefix == 0) {
 		i = 0;
 		char vari[DIM] = "";
@@ -3705,7 +3893,8 @@ int variableValidator(char variable[DIM]) {
 			sprintf(vari, "%s", saveUserFunctionsRenamedVariablesTextFile);
 		}
 		char line[DIM] = "";
-		sprintf(line, "%s %s\n", variable, revariable);
+
+		sprintf(line, "%s %s\n", saveVariable, revariable);
 		if (!(isContained(line, vari) && (strStart == 0 || vari[strStart - 1] == '\n'))) {
 			if (isEqual(context, "main")) {
 				sprintf(saveRenamedVariablesTextFile, "%s%s", saveRenamedVariablesTextFile, line);
@@ -3720,8 +3909,6 @@ int variableValidator(char variable[DIM]) {
 				sprintf(saveUserFunctionsRenamedVariablesTextFile, "%s%s", saveUserFunctionsRenamedVariablesTextFile, line);
 			}
 		}
-
-
 		i = 0;
 	}
 	else {
@@ -3735,83 +3922,83 @@ int variableValidator(char variable[DIM]) {
 double prefToNumber(char prefix) {
 	double result = 0;
 	if (prefix == 'Y') {
-		result = pow(10.0, 24.0);
+		result = pot(10.0, 24.0, 1);
 		return result;
 	}
 	if (prefix == 'Z') {
-		result = pow(10.0, 21.0);
+		result = pot(10.0, 21.0, 1);
 		return result;
 	}
 	if (prefix == 'E') {
-		result = pow(10.0, 18.0);
+		result = pot(10.0, 18.0, 1);
 		return result;
 	}
 	if (prefix == 'P') {
-		result = pow(10.0, 15.0);
+		result = pot(10.0, 15.0, 1);
 		return result;
 	}
 	if (prefix == 'T') {
-		result = pow(10.0, 12.0);
+		result = pot(10.0, 12.0, 1);
 		return result;
 	}
 	if (prefix == 'G') {
-		result = pow(10.0, 9.0);
+		result = pot(10.0, 9.0, 1);
 		return result;
 	}
 	if (prefix == 'M') {
-		result = pow(10.0, 6.0);
+		result = pot(10.0, 6.0, 1);
 		return result;
 	}
 	if (prefix == 'k') {
-		result = pow(10.0, 3.0);
+		result = pot(10.0, 3.0, 1);
 		return result;
 	}
 	if (prefix == 'h') {
-		result = pow(10.0, 2.0);
+		result = pot(10.0, 2.0, 1);
 		return result;
 	}
 	if (prefix == 'D') {
-		result = pow(10.0, 1.0);
+		result = pot(10.0, 1.0, 1);
 		return result;
 	}
 	if (prefix == 'd') {
-		result = pow(10.0, -1.0);
+		result = pot(10.0, -1.0, 1);
 		return result;
 	}
 	if (prefix == 'c') {
-		result = pow(10.0, -2.0);
+		result = pot(10.0, -2.0, 1);
 		return result;
 	}
 	if (prefix == 'm') {
-		result = pow(10.0, -3.0);
+		result = pot(10.0, -3.0, 1);
 		return result;
 	}
 	if (prefix == 'u') {
-		result = pow(10.0, -6.0);
+		result = pot(10.0, -6.0, 1);
 		return result;
 	}
 	if (prefix == 'n') {
-		result = pow(10.0, -9.0);
+		result = pot(10.0, -9.0, 1);
 		return result;
 	}
 	if (prefix == 'p') {
-		result = pow(10.0, -12.0);
+		result = pot(10.0, -12.0, 1);
 		return result;
 	}
 	if (prefix == 'f') {
-		result = pow(10.0, -15.0);
+		result = pot(10.0, -15.0, 1);
 		return result;
 	}
 	if (prefix == 'a') {
-		result = pow(10.0, -18.0);
+		result = pot(10.0, -18.0, 1);
 		return result;
 	}
 	if (prefix == 'z') {
-		result = pow(10.0, -21.0);
+		result = pot(10.0, -21.0, 1);
 		return result;
 	}
 	if (prefix == 'y') {
-		result = pow(10.0, -24.0);
+		result = pot(10.0, -24.0, 1);
 		return result;
 	}
 	return result;
@@ -4082,62 +4269,75 @@ double processVariable(char variable[DIM]) {
 }
 
 double convertToNumber(char number[DIM]) {
-	int i = 0, j = 0, num = 0, k = 0, l = 0, sig = 1, h = 0, m = 0, f = 0;
-	char nu[DIM] = "";
-	double result = 0, exp = 0;
-	for (h = 0; number[h] != '\0'; h++) {
-		if (number[h] == 'E') {
-			m = h;
-			h++;
-			f = 0;
-			if (number[h] == '-') {
-				sig = -1;
-				h++;
-			}
-			while (number[h] != '\0') {
-				nu[f] = number[h];
-				f++; h++;
-			}
-			nu[f] = '\0';
-			exp = convertToNumber(nu);
-			number[m] = '.';
-			number[m + 1] = '0';
-			number[m + 2] = '\0';
+	if (number[strlen(number) - 1] == '0'&&number[strlen(number) - 2] == '.') {
+		number[strlen(number) - 2] = '\0';
+	}
+	char beforeDot[DIM] = "";
+	char afterDot[DIM] = "";
+	char afterExponent[DIM] = "";
+	int i = 0;
+	while (number[i] != '.'&&number[i] != 'E'&&i < abs((int)strlen(number))) {
+		beforeDot[i] = number[i];
+		i++;
+	}
+	beforeDot[i] = '\0';
+	if (number[i] == '.') {
+		i++;
+		int j = 0;
+		while (number[i] != '\0'&&number[i] != 'E') {
+			afterDot[j] = number[i];
+			j++; i++;
+		}
+		afterDot[j] = '\0';
+	}
+	int k = 0;
+	if (number[i] == 'E') {
+		i++;
+		while (number[i] != '\0') {
+			afterExponent[k] = number[i];
+			i++; k++;
+		}
+		afterExponent[k] = '\0';
+	}
+	double beforeDotNum = 0;
+	int maxP = abs((int)strlen(beforeDot)) - 1;
+	if (maxP >= 0) {
+		int m = maxP, n = 0;
+		while (n < abs((int)strlen(beforeDot))) {
+			int d = beforeDot[n] - '0';
+			beforeDotNum = beforeDotNum + d * pot(10.0, (double)m, 1);
+			n++;
+			m--;
 		}
 	}
-	i = 0;
-	while (number[i] != '.'&&number[i] != '\0') {
-		i++;
+	double afterDotNum = 0;
+	int minP = abs((int)strlen(afterDot)) - 1;
+	if (minP >= 0) {
+		int m = minP, n = 0;
+		while (n < abs((int)strlen(afterDot))) {
+			int d = afterDot[n] - '0';
+			afterDotNum = afterDotNum + d * pot(10.0, (double)(n + 1)*-1.0, 1);
+			n++;
+			m--;
+		}
 	}
-	i--;
-	j = i;
-	k = i;
-	i++;
-	while (number[i] != '\0') {
-		i++;
+	double afterExponentNum = 0;
+	if (strlen(afterExponent) > 0) {
+		if (afterExponent[0] == '-') {
+			int h = 0;
+			while (afterExponent[h + 1] != '\0'&&h + 1 < abs((int)strlen(afterExponent))) {
+				afterExponent[h] = afterExponent[h + 1];
+				h++;
+			}
+			afterExponent[h] = '\0';
+			afterExponentNum = convertToNumber(afterExponent)*-1;
+		}
+		else {
+			afterExponentNum = convertToNumber(afterExponent);
+		}
 	}
-	l = abs((int)strlen(number)) - j - 4;
-	for (i = 0; j >= 0; i++) {
-		nu[0] = number[i];
-		nu[1] = '.';
-		nu[2] = '0';
-		nu[3] = '\0';
-		num = atoi(nu);
-		result = result + num * pot(10.0, j, 1);
-		j--;
-	}
-	k = k + 2;
-	i = 1;
-	for (k; i <= l && number[k] != '\0'&&k < abs((int)strlen(number)); k++) {
-		nu[0] = number[k];
-		nu[1] = '.';
-		nu[2] = '0';
-		nu[3] = '\0';
-		num = atoi(nu);
-		result = result + num * pot(10.0, i*-1, 1);
-		i++;
-	}
-	result = result * pot(10.0, exp*sig, 1);
+	double result = afterDotNum + beforeDotNum;
+	result = result * pot(10.0, afterExponentNum, 1);
 	return result;
 }
 
@@ -4223,7 +4423,16 @@ boolean verifyOperators(char operatorF) {
 	}
 	return false;
 }
-
+boolean verifyForNumbers(char number) {
+	char numbers[DIM] = "_0.123456789E^xi";
+	int i = 0;
+	for (i = 0; i < abs((int)strlen(numbers)); i++) {
+		if (number == numbers[i]) {
+			return true;
+		}
+	}
+	return false;
+}
 boolean verifyNumberExpression(char number) {
 	char numbers[DIM] = "_0.123456789Epiex(^)S";
 	int i = 0;
@@ -4263,6 +4472,7 @@ int countOccurrences(char to_find[DIM], char expression[DIM]) {
 	}
 	return numberOccurrences;
 }
+
 
 int deleteXOccurrences(char to_find[DIM], char expression[DIM], int x) {
 	char expressionR[DIM] = "";
@@ -4656,10 +4866,10 @@ boolean isContained(char to_find[DIM], char string[DIM]) {
 
 boolean isEqual(char to_find[DIM], char string[DIM]) {
 	int i = 0;
-	while (to_find[i] == string[i] && string[i] != '\0') {
+	while (to_find[i] == string[i] && string[i] != '\0'&&to_find[i] != '\0') {
 		i++;
 	}
-	if (to_find[i] == string[i] && to_find[i] == '\0') {
+	if (to_find[i] == string[i] && to_find[i] == '\0'&&string[i] == '\0') {
 		return true;
 	}
 	return false;
@@ -4897,6 +5107,53 @@ void show(HWND hwnd)
 	SetForegroundWindow(hwnd);
 }
 
+void autoAdjustWindow() {
+	char toOpen[DIM] = "";
+	int Window = 3, Dimensions = 2;
+	system("MODE con cols=4000 lines=4000");
+	int x = 0, y = 0, maxX = 0, maxY = 0;
+	HWND b;
+	b = GetConsoleWindow();
+	ShowWindow(b, SW_SHOWMAXIMIZED);
+	GetWindowPos(&x, &y, &maxX, &maxY);
+	HWND hwnd = GetConsoleWindow();
+	RECT rect;
+	getDimensions();
+	if (GetWindowRect(hwnd, &rect))
+	{
+		widthATC = rect.right - rect.left;
+		heightATC = rect.bottom - rect.top;
+		sprintf(toOpen, "%s\\window.txt", atcPath);
+		FILE *open = NULL;
+		while (open == NULL) {
+			open = fopen(toOpen, "w");
+			Sleep(10);
+		}
+		fprintf(open, "%d\n%d\n%d\n%d\n", x, y, widthATC, heightATC);
+		fclose(open);
+	}
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	int columns, rows;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+	columns = (int)((csbi.srWindow.Right - csbi.srWindow.Left));
+	if (columns < 0) {
+		columns = (int)((csbi.srWindow.Left + csbi.srWindow.Right));
+	}
+	rows = 5000;
+	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+	char setting[300] = "";
+	FILE *open = NULL;
+	while (open == NULL) {
+		open = fopen(toOpen, "w");
+		Sleep(10);
+	}
+	sprintf(setting, "MODE con cols=%d lines=%d", columns, rows);
+	system(setting);
+	sprintf(dimensionsTxt, "%s", setting);
+	fputs(setting, open);
+	fclose(open);
+}
+
 boolean isContainedInUserFunction(char variable[DIM]) {
 	FILE *file = NULL;
 	char option[30] = "", directory[DIM] = "";
@@ -4939,7 +5196,7 @@ void convert2Vector(char arithTrig[DIM]) {
 	if (isContained(":", arithTrig) && !isContained("*", arithTrig)) {
 		vectorType = 1;
 		int initialCountSplits = 0;
-		char saveSplitResult[200][dim];
+		char saveSplitResult[200][dime];
 		int i = 0;
 		if (countSplits > 0) {
 			initialCountSplits = countSplits;
@@ -4979,10 +5236,12 @@ void convert2Vector(char arithTrig[DIM]) {
 			resultI = strtod(imag, &pointer);
 			vectorR[0][i] = resultR; vectorI[0][i] = resultI;
 			if (i < countSplits) {
-				sprintf(vectorString, "%s%G %G:", vectorString, vectorR[0][i], vectorI[0][i]);
+				convertComplex2Exponential(vectorR[0][i], vectorI[0][i]);
+				sprintf(vectorString, "%s%s %s:", vectorString, respR, respI);
 			}
 			else {
-				sprintf(vectorString, "%s%G %G", vectorString, vectorR[0][i], vectorI[0][i]);
+				convertComplex2Exponential(vectorR[0][i], vectorI[0][i]);
+				sprintf(vectorString, "%s%s %s", vectorString, respR, respI);
 			}
 			i++;
 		}
@@ -4993,7 +5252,7 @@ void convert2Vector(char arithTrig[DIM]) {
 		if (!isContained(":", arithTrig) && isContained("*", arithTrig)) {
 			vectorType = 1;
 			int initialCountSplits = 0;
-			char saveSplitResult[200][dim];
+			char saveSplitResult[200][dime];
 			int i = 0;
 			if (countSplits > 0) {
 				initialCountSplits = countSplits;
@@ -5033,10 +5292,12 @@ void convert2Vector(char arithTrig[DIM]) {
 				resultI = strtod(imag, &pointer);
 				vectorR[i][0] = resultR; vectorI[i][0] = resultI;
 				if (i < countSplits) {
-					sprintf(vectorString, "%s%G %G*", vectorString, vectorR[i][0], vectorI[i][0]);
+					convertComplex2Exponential(vectorR[i][0], vectorI[i][0]);
+					sprintf(vectorString, "%s%s %s*", vectorString, respR, respI);
 				}
 				else {
-					sprintf(vectorString, "%s%G %G", vectorString, vectorR[i][0], vectorI[i][0]);
+					convertComplex2Exponential(vectorR[i][0], vectorI[i][0]);
+					sprintf(vectorString, "%s%s %s", vectorString, respR, respI);
 				}
 				i++;
 			}
@@ -5047,7 +5308,7 @@ void convert2Vector(char arithTrig[DIM]) {
 			if (isContained(":", arithTrig) && isContained("*", arithTrig)) {
 				vectorType = 2;
 				int initialCountSplits = 0;
-				char saveSplitResult[200][dim];
+				char saveSplitResult[200][dime];
 				int i = 0;
 				if (countSplits > 0) {
 					initialCountSplits = countSplits;
@@ -5113,10 +5374,12 @@ void convert2Vector(char arithTrig[DIM]) {
 						resultI = strtod(imag, &pointer);
 						vectorR[l][i] = resultR; vectorI[l][i] = resultI;
 						if (i < countSplits) {
-							sprintf(vectorString, "%s%G %G:", vectorString, vectorR[l][i], vectorI[l][i]);
+							convertComplex2Exponential(vectorR[l][i], vectorI[l][i]);
+							sprintf(vectorString, "%s%s %s:", vectorString, respR, respI);
 						}
 						else {
-							sprintf(vectorString, "%s%G %G", vectorString, vectorR[l][i], vectorI[l][i]);
+							convertComplex2Exponential(vectorR[l][i], vectorI[l][i]);
+							sprintf(vectorString, "%s%s %s", vectorString, respR, respI);
 						}
 						i++;
 					}
@@ -5137,16 +5400,18 @@ void convert2Vector(char arithTrig[DIM]) {
 	sprintf(arithTrig, "%s", saveArithTrig);
 }
 
-char* convertVector2String(double vectorR[dim][dim], double vectorI[dim][dim], int numLines, int numCols) {
+char* convertVector2String(double vectorR[dime][dime], double vectorI[dime][dime], int numLines, int numCols) {
 	char string[DIM] = "";
 	int i = 0, j = 0;
 	for (i = 0; i < numLines; i++) {
 		for (j = 0; j < numCols; j++) {
 			if (j < numCols - 1) {
-				sprintf(string, "%s%G %G:", string, vectorR[i][j], vectorI[i][j]);
+				convertComplex2Exponential(vectorR[i][j], vectorI[i][j]);
+				sprintf(string, "%s%s %s:", string, respR, respI);
 			}
 			else {
-				sprintf(string, "%s%G %G", string, vectorR[i][j], vectorI[i][j]);
+				convertComplex2Exponential(vectorR[i][j], vectorI[i][j]);
+				sprintf(string, "%s%s %s", string, respR, respI);
 			}
 		}
 		if (i < numLines - 1) {
@@ -5238,7 +5503,7 @@ void getCols(char data[DIM]) {
 				i++;
 			}
 			varName[i] = '\0';
-			char value[dim] = "";
+			char value[dime] = "";
 			i++;
 			int j = 0;
 			while (data[i] != '\\') {
@@ -5259,7 +5524,7 @@ void getCols(char data[DIM]) {
 			initialProcessor(varName, 0);
 			sprintf(matrixValue, "%s", matrixResult);
 			convert2Vector(matrixValue);
-			double vector_R[dim][dim], vector_I[dim][dim];
+			double vector_R[dime][dime], vector_I[dime][dime];
 			int n = 0;
 			int m = 0;
 			for (n = 0; n < numVectorLines; n++) {
@@ -5298,7 +5563,6 @@ void getLines(char data[DIM]) {
 			i++;
 		}
 		saveRestExpr[i] = '\0';
-		printf("\nsaveRestExpr-> %s", saveRestExpr);
 		initialProcessor(saveRestExpr, 0);
 		sprintf(matrixValue, "%s", matrixResult);
 	}
@@ -5313,7 +5577,7 @@ void getLines(char data[DIM]) {
 					i++;
 				}
 				varName[i] = '\0';
-				char value[dim] = "";
+				char value[dime] = "";
 				i++;
 				int j = 0;
 				while (data[i] != '\\') {
@@ -5334,7 +5598,7 @@ void getLines(char data[DIM]) {
 				initialProcessor(varName, 0);
 				sprintf(matrixValue, "%s", matrixResult);
 				convert2Vector(matrixValue);
-				double vector_R[dim][dim], vector_I[dim][dim];
+				double vector_R[dime][dime], vector_I[dime][dime];
 				int n = 0;
 				int m = 0;
 				for (n = 0; n < numVectorLines; n++) {
@@ -5359,5 +5623,74 @@ void getLines(char data[DIM]) {
 				}
 			}
 		}
+	}
+}
+
+char * convert2Exponential(double value) {
+	sprintf(resp, "%G", value);
+	if (higherPrecision == 1 && !notUseHigherPrecison) {
+		sprintf(resp, "%.15E", value);
+		if (isContained("E", resp)) {
+			int i = strStart + 1;
+			char exp[20] = "";
+			if (resp[i] == '+') {
+				i++;
+			}
+			int p = 0;
+			while (resp[i] != '\0') {
+				exp[p] = resp[i];
+				p++; i++;
+			}
+			exp[p] = '\0';
+
+			int exponent = atoi(exp);
+			char floatChar[40] = "";
+			p = 0;
+			while (resp[p] != 'E') {
+				floatChar[p] = resp[p];
+				p++;
+			}
+			floatChar[p] = '\0';
+
+			if (floatChar[abs((int)strlen(floatChar)) - 1] == '0') {
+				int h = abs((int)strlen(floatChar)) - 1;
+				while (floatChar[h] == '0') {
+					h--;
+				}
+				if (floatChar[h] == '.') {
+					floatChar[h] = '\0';
+				}
+				else {
+					floatChar[h + 1] = '\0';
+				}
+			}
+			if (exponent != 0) {
+				sprintf(resp, "%sE%d", floatChar, exponent);
+			}
+			else {
+				sprintf(resp, "%s", floatChar);
+			}
+
+			replaceTimes = 0;
+
+		}
+	}
+	return resp;
+}
+
+
+void convertComplex2Exponential(double valueR, double valueI) {
+	sprintf(respR, ""); sprintf(respI, "");
+	sprintf(respR, "%s", convert2Exponential(valueR));
+	sprintf(respI, "%s", convert2Exponential(valueI));
+}
+
+
+void roundSolution() {
+	if ((int)log10(abs(resultR)) == -16 || (int)log10(abs(resultR)) == -15) {
+		resultR = 0;
+	}
+	if ((int)log10(abs(resultI)) == -16 || (int)log10(abs(resultI)) == -15) {
+		resultI = 0;
 	}
 }

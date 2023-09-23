@@ -65,7 +65,7 @@ void designGraph(char functionF[DIM]) {
 			if (countBars == 3) {
 				x_scaleF = calcNow(value, 0, 0);
 				while (x_scaleF < (x_higher - x_lower) / 120) {
-					printf("Xscale? (minimum: %G)\n", abs(x_higher - x_lower) / 120);
+					printf("Xscale? (minimum: %s)\n", convert2Exponential(abs(x_higher - x_lower) / 120));
 					x_scaleF = getValue();
 				}
 			}
@@ -245,7 +245,7 @@ void designGraph(char functionF[DIM]) {
 	int r = 0, e = 0, count = 0;
 	char info[DIM] = "";
 	if (auto_x_axis == 1) {
-		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res,pi,e,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,";
+		char function[DIM] = "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det,abs,strlen,i,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,";
 		char func[50] = "";
 		boolean hasFunction = false;
 		for (int f = 0; f < abs((int)strlen(function)); f++) {
@@ -274,11 +274,14 @@ void designGraph(char functionF[DIM]) {
 		}
 		Xscale = -77777;
 		if (strlen(roots) > 0 && !hasFunction) {
-			if (isContained("1", roots) || isContained("2", roots) || isContained("3", roots) || isContained("4", roots) || isContained("5", roots) || isContained("6", roots) || isContained("7", roots) || isContained("8", roots) || isContained("9", roots)) {
-				maximum(roots);
+			if (isContained("1", roots) || isContained("2", roots) || isContained("3", roots) || isContained("4", roots) || isContained("5", roots) || isContained("6", roots) || isContained("7", roots) || isContained("8", roots) || isContained("9", roots) || isContained("0", roots)) {
+				char Roots[DIM] = "";
+				sprintf(Roots, "%s", roots);
+				maximum(Roots);
 				if (resultR != 0 && resultI != -DBL_MAX && abs(resultI) < 0.01) {
 					x_higher = resultR;
-					minimum(roots);
+					sprintf(Roots, "%s", roots);
+					minimum(Roots);
 					if (abs(resultI) < 0.01) {
 						x_lower = resultR;
 						x_lower = x_lower - 5;
@@ -593,7 +596,7 @@ void designGraph(char functionF[DIM]) {
 	solving = true;
 	int option = -1;
 	option = 1;
-	char keys[dim] = "";
+	char keys[dime] = "";
 
 	int index = 0;
 	int rf = 0;
@@ -740,16 +743,16 @@ void designGraph(char functionF[DIM]) {
 		double start = Xmin;
 		while (l < 121) {
 			k = 0;
-			printf("%c%G", 179, start);
-			sprintf(valueToText, "%c%G", 179, start);
+			printf("%c%s", 179, convert2Exponential(start));
+			sprintf(valueToText, "%c%s", 179, convert2Exponential(start));
 			g = (int)strlen(valueToText);
 			while (g < 13) {
 				printf(" ");
 				g++;
 			}
 			while (k < count) {
-				printf("%c%G", 179, yValuesAll[k][l]);
-				sprintf(valueToText, "%c%G", 179, yValuesAll[k][l]);
+				printf("%c%s", 179, convert2Exponential(yValuesAll[k][l]));
+				sprintf(valueToText, "%c%s", 179, convert2Exponential(yValuesAll[k][l]));
 				g = (int)strlen(valueToText);
 				while (g < 13) {
 					printf(" ");

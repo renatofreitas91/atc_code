@@ -33,7 +33,7 @@ void microeconomicsCalculations() {
 			puts("Quantity Point 2?");
 			double quantity_point_2 = getValue();
 			double ped = ((quantity_point_2 - quantity_point_1) / ((quantity_point_2 + quantity_point_1) / 2)) / ((price_point_2 - price_point_1) / ((price_point_2 + price_point_1) / 2));
-			printf("\nPrice Elasticity of Demand: %G\n", ped);
+			printf("\nPrice Elasticity of Demand: %s\n", convert2Exponential(ped));
 		}
 		if (op == 2) {
 			puts("Total Fixed cost?");
@@ -41,7 +41,7 @@ void microeconomicsCalculations() {
 			puts("Quantity of Output?");
 			double quantity_of_output = getValue();
 			double average_fixed_cost = total_fixed_cost / quantity_of_output;
-			printf("\nAverage Fixed cost: %G\n", average_fixed_cost);
+			printf("\nAverage Fixed cost: %s\n", convert2Exponential(average_fixed_cost));
 		}
 		if (op == 3) {
 			puts("Variable cost?");
@@ -49,7 +49,7 @@ void microeconomicsCalculations() {
 			puts("Quantity of the Ouput/Good?");
 			double quantity = getValue();
 			double average_variable_cost = variable_cost / quantity;
-			printf("\nAverage Variable cost: %G\n", average_variable_cost);
+			printf("\nAverage Variable cost: %s\n", convert2Exponential(average_variable_cost));
 		}
 		if (op == 4) {
 			puts("Fixed costs?");
@@ -59,7 +59,7 @@ void microeconomicsCalculations() {
 			puts("Quantity pf Output/Goods?");
 			double quantity_of_output = getValue();
 			double average_total_cost = fixed_costs / quantity_of_output + variable_costs / quantity_of_output;
-			printf("\nAverage Total cost: %G\n", average_total_cost);
+			printf("\nAverage Total cost: %s\n", convert2Exponential(average_total_cost));
 		}
 		if (op == 5) {
 			puts("Total costs?");
@@ -67,7 +67,7 @@ void microeconomicsCalculations() {
 			puts("Quantity of Goods?");
 			double quantity = getValue();
 			double unit_cost = total_costs / quantity;
-			printf("\nUnit cost (Average Total cost): %G\n", unit_cost);
+			printf("\nUnit cost (Average Total cost): %s\n", convert2Exponential(unit_cost));
 		}
 		if (op == 6) {
 			puts("Total Revenue?");
@@ -75,7 +75,7 @@ void microeconomicsCalculations() {
 			puts("Total Expenses?");
 			double total_expenses = getValue();
 			double profit = total_revenue - total_expenses;
-			printf("\nProfit: %G\n", profit);
+			printf("\nProfit: %s\n", convert2Exponential(profit));
 		}
 		if (op == 7) {
 			puts("Unit Price?");
@@ -85,7 +85,7 @@ void microeconomicsCalculations() {
 			puts("Quantity Produced?");
 			double quantity_produced = getValue();
 			double profit = (unit_price - unit_cost)*quantity_produced;
-			printf("\nProfit: %G\n", profit);
+			printf("\nProfit: %s\n", convert2Exponential(profit));
 		}
 		if (op == 8) {
 			puts("Total Revenue?");
@@ -95,7 +95,7 @@ void microeconomicsCalculations() {
 			puts("Implicit costs?");
 			double implicit_costs = getValue();
 			double economic_profit = total_revenue - (explicit_costs + implicit_costs);
-			printf("\nEconomic Profit: %G\n", economic_profit);
+			printf("\nEconomic Profit: %s\n", convert2Exponential(economic_profit));
 		}
 		if (op == 9) {
 			puts("Percentage change in quantity demanded of a certain Good A?");
@@ -103,7 +103,7 @@ void microeconomicsCalculations() {
 			puts("Percentage change in the price of a certain Good A?");
 			double cpb = getValue();
 			double cped = cda / cpb;
-			printf("\nCross-Price Elasticity of Demand: %G\n", cped);
+			printf("\nCross-Price Elasticity of Demand: %s\n", convert2Exponential(cped));
 		}
 		if (op == 10) {
 			puts("Percentage Change in Quantity Demand?");
@@ -111,7 +111,7 @@ void microeconomicsCalculations() {
 			puts("Percentage Change in Income?");
 			double pci = getValue();
 			double ied = pcqd / pci;
-			printf("\nIncome Elasticity of Demand: %G\n", ied);
+			printf("\nIncome Elasticity of Demand: %s\n", convert2Exponential(ied));
 		}
 		if (op == 11) {
 			puts("Change in Quantity Demanded?");
@@ -119,7 +119,7 @@ void microeconomicsCalculations() {
 			puts("Change in Price?");
 			double cp = getValue();
 			double ped = cqd / cp;
-			printf("\nPrice Elasticity of Demand: %G\n", ped);
+			printf("\nPrice Elasticity of Demand: %s\n", convert2Exponential(ped));
 		}
 		if (op == 12) {
 			puts("Value to Buyers?");
@@ -127,7 +127,7 @@ void microeconomicsCalculations() {
 			puts("Amount Paid by Buyers?");
 			double amount_paid_buyers = getValue();
 			double consumer_surplus = value_buyers - amount_paid_buyers;
-			printf("\nConsumer Surplus: %G\n", consumer_surplus);
+			printf("\nConsumer Surplus: %s\n", convert2Exponential(consumer_surplus));
 		}
 		if (op == 13) {
 			puts("Amount Received by the Seller?");
@@ -135,7 +135,7 @@ void microeconomicsCalculations() {
 			puts("Cost to the Seller?");
 			double cost_seller = getValue();
 			double consumer_surplus = amount_received_seller - cost_seller;
-			printf("\nProducer Surplus: %G\n", consumer_surplus);
+			printf("\nProducer Surplus: %s\n", convert2Exponential(consumer_surplus));
 		}
 		if (op == 14) {
 			puts("Change in Quantity of Supply?");
@@ -143,7 +143,7 @@ void microeconomicsCalculations() {
 			puts("Price Change?");
 			double price_change = getValue();
 			double price_elasticity_supply = change_quantity_supply / price_change;
-			printf("\nPrice Elasticity of Supply: %G\n", price_elasticity_supply);
+			printf("\nPrice Elasticity of Supply: %s\n", convert2Exponential(price_elasticity_supply));
 		}
 		if (op == 15) {
 			puts("Value to Buyers?");
@@ -155,7 +155,7 @@ void microeconomicsCalculations() {
 			puts("Cost to the Seller?");
 			double cost_seller = getValue();
 			double total_surplus = (value_buyers - amount_paid_buyers) + (amount_received_seller - cost_seller);
-			printf("\nTotal Surplus: %G\n", total_surplus);
+			printf("\nTotal Surplus: %s\n", convert2Exponential(total_surplus));
 		}
 		if (op == 16) {
 			puts("Total Revenue?");
@@ -163,7 +163,7 @@ void microeconomicsCalculations() {
 			puts("Total Explicit cost or Expenses?");
 			double expenses = getValue();
 			double accounting_profit = total_revenue - expenses;
-			printf("\nAccounting Profit: %G\n", accounting_profit);
+			printf("\nAccounting Profit: %s\n", convert2Exponential(accounting_profit));
 		}
 		if (op < 1 || op>16) {
 			puts("\n\nError: Incorrect option id.\n\n");

@@ -4,6 +4,8 @@
 boolean studyFunction = false;
 
 void functionStudy(char function[DIM]) {
+	ansRV = 0;
+	ansIV = 0;
 	processVariable("x");
 	double saveXR = resultR, saveXI = resultI;
 	replaceTimes = 0;
@@ -16,7 +18,7 @@ void functionStudy(char function[DIM]) {
 	}
 	else {
 		studyFunction = true;
-		double coDomain[dim];
+		double coDomain[dime];
 		int u = 0;
 		char saveFunctionF[DIM] = "";
 		sprintf(saveFunctionF, "%s", function);
@@ -32,7 +34,7 @@ void functionStudy(char function[DIM]) {
 			replaceTimes = 0;
 		}
 		sprintf(function, "");
-		double poleZerosR[dim], poleZerosI[dim];
+		double poleZerosR[dime], poleZerosI[dime];
 		double intersectYY = 0, horizontalAssimptote = 0;
 		int pl = 0;
 		char numerator[DIM] = "", denominator[DIM] = "";
@@ -104,8 +106,8 @@ void functionStudy(char function[DIM]) {
 			puts("\n==> Domain <==\n");
 			printf("\nDf=R\\{");
 			int i = 0, j = 0, z = 0;
-			double zeroR[dim], zeroI[dim];
-			char value[dim] = "";
+			double zeroR[dime], zeroI[dime];
+			char value[dime] = "";
 			replaceTimes = 0;
 			char saveExpF[DIM] = "";
 			sprintf(saveExpF, "%s", expressionF);
@@ -146,8 +148,8 @@ void functionStudy(char function[DIM]) {
 		printf("\n==> Zeros and intersection with yy-axis <==\n");
 		puts("\nIt intersects the xx-axis in the points below:");
 		int i = 0, j = 0, z = 0;
-		double zeroR[dim], zeroI[dim];
-		char value[dim] = "";
+		double zeroR[dime], zeroI[dime];
+		char value[dime] = "";
 		replaceTimes = 0;
 		char saveExpF[DIM] = "";
 		sprintf(saveExpF, "%s", expressionF);
@@ -171,7 +173,7 @@ void functionStudy(char function[DIM]) {
 			pl++;
 			z++;
 		}
-		double sortZeroR[dim], sortZeroI[dim];
+		double sortZeroR[dime], sortZeroI[dime];
 		double theSmallerR, theSmallerI = 0;
 		int  saveZ = z;
 		int o = 0, saveIndex = -1;
@@ -208,7 +210,7 @@ void functionStudy(char function[DIM]) {
 		if (strlen(denominator) > 0) {
 			equationSolver(denominator);
 			int i = 0, j = 0, z = 0;
-			char value[dim] = "";
+			char value[dime] = "";
 			replaceTimes = 0;
 			char saveExpF[DIM] = "";
 			sprintf(verticalAsymptotes, "%s", expressionF);
@@ -273,7 +275,7 @@ void functionStudy(char function[DIM]) {
 		printf("\n==> Symmetries <==\n");
 		char saveDenominator[DIM] = "";
 		sprintf(saveDenominator, "%s", denominator);
-		double  minusfx[dim], fxminusx[dim], fx[dim];
+		double  minusfx[dime], fxminusx[dime], fx[dime];
 		int y = 0, p = 0;
 		while (y < 10000) {
 			resultR = y - 5000;
@@ -495,7 +497,7 @@ void functionStudy(char function[DIM]) {
 			}
 		}
 		else {
-			double sortZeroR[dim], sortZeroI[dim];
+			double sortZeroR[dime], sortZeroI[dime];
 			double theSmallerR, theSmallerI = 0;
 			int  saveZ = pl;
 			int o = 0, saveIndex = -1;
@@ -665,11 +667,11 @@ void functionStudy(char function[DIM]) {
 				variableController("x", 0);
 				resultR = math_processor(numerator) / math_processor(denominator);
 				if (abs(resultR) > 1E4 || abs(resultI) > 1E4) {
-					resultR = pow(10, 400);
+					resultR = pot(10, 400, 1);
 					printf("%.2f\t", resultR);
 				}
 				else {
-					char expre[dim] = "";
+					char expre[dime] = "";
 					sprintf(expre, "%.2f\t", resultR);
 					if (isContained("ind", expre)) {
 						printf("ind\t");
@@ -925,8 +927,8 @@ void functionStudy(char function[DIM]) {
 			sprintf(new_numerator, "%s", expressionF);
 			equationSolver(new_numerator);
 			int i = 0, j = 0, z = 0;
-			double zeroR[dim], zeroI[dim];
-			char value[dim] = "";
+			double zeroR[dime], zeroI[dime];
+			char value[dime] = "";
 			replaceTimes = 0;
 			char saveExpF[DIM] = "";
 			sprintf(saveExpF, "%s", expressionF);
@@ -972,7 +974,7 @@ void functionStudy(char function[DIM]) {
 				pl++;
 				z++;
 			}
-			double sortZeroR[dim], sortZeroI[dim];
+			double sortZeroR[dime], sortZeroI[dime];
 			double theSmallerR, theSmallerI = 0;
 			int  saveZ = pl;
 			int o = 0, saveIndex = -1;
@@ -1033,11 +1035,11 @@ void functionStudy(char function[DIM]) {
 				variableController("x", 0);
 				resultR = math_processor(new_numerator) / math_processor(new_denominator);
 				if (abs(resultR) > 1E4 || abs(resultI) > 1E4) {
-					resultR = pow(10, 400);
+					resultR = pot(10, 400, 1);
 					printf("%.2f\t", resultR);
 				}
 				else {
-					char expre[dim] = "";
+					char expre[dime] = "";
 					sprintf(expre, "%.2f\t", resultR);
 					if (isContained("ind", expre)) {
 						printf("ind\t");
@@ -1092,7 +1094,7 @@ void functionStudy(char function[DIM]) {
 				variableController("x", 0);
 				resultR = math_processor(originalFunction);
 				if (abs(resultR) > 1E6 || abs(resultI) > 1E6) {
-					resultR = pow(10, 400);
+					resultR = pot(10, 400, 1);
 				}
 				printf("%.3f\t", resultR);
 				o++;
@@ -1161,7 +1163,7 @@ void functionStudy(char function[DIM]) {
 			o = 0;
 			double max = 0;
 			int indexMax = 0;
-			double min = 0;
+			double Min = 0;
 			int indexMin = 0;
 			o = 0;
 			while (o < saveZ) {
@@ -1183,8 +1185,8 @@ void functionStudy(char function[DIM]) {
 				sprintf(expressionF, "");
 				variableController("x", 0);
 				resultR = math_processor(saveFunction);
-				if (resultR < min) {
-					min = resultR;
+				if (resultR < Min) {
+					Min = resultR;
 					indexMin = o;
 				}
 				o++;
@@ -1192,8 +1194,8 @@ void functionStudy(char function[DIM]) {
 			if (max != 0) {
 				printf("\nMax: (%.3f,%.3f)\n", sortZeroR[indexMax], max);
 			}
-			if (min != 0) {
-				printf("\nMin: (%.3f,%.3f)\n", sortZeroR[indexMin], min);
+			if (Min != 0) {
+				printf("\nMin: (%.3f,%.3f)\n", sortZeroR[indexMin], Min);
 			}
 			puts("");
 		}
@@ -1265,8 +1267,8 @@ void functionStudy(char function[DIM]) {
 			sprintf(expressionF, "");
 			equationSolver(sec_new_numerator);
 			int i = 0, j = 0, z = 0;
-			double zeroR[dim], zeroI[dim];
-			char value[dim] = "";
+			double zeroR[dime], zeroI[dime];
+			char value[dime] = "";
 			replaceTimes = 0;
 			char saveExpF[DIM] = "";
 			sprintf(saveExpF, "%s", expressionF);
@@ -1319,7 +1321,7 @@ void functionStudy(char function[DIM]) {
 				pl++;
 				z++;
 			}
-			double sortZeroR[dim], sortZeroI[dim];
+			double sortZeroR[dime], sortZeroI[dime];
 			double theSmallerR, theSmallerI = 0;
 			int  saveZ = pl;
 			int o = 0, saveIndex = -1;
@@ -1376,11 +1378,11 @@ void functionStudy(char function[DIM]) {
 				variableController("x", 0);
 				resultR = math_processor(sec_new_derivate);
 				if (abs(resultR) > 1E4 || abs(resultI) > 1E4) {
-					resultR = pow(10, 400);
+					resultR = pot(10, 400, 1);
 					printf("%.2f\t", resultR);
 				}
 				else {
-					char expre[dim] = "";
+					char expre[dime] = "";
 					sprintf(expre, "%.2f\t", resultR);
 					if (isContained("ind", expre)) {
 						printf("ind\t");
@@ -1429,11 +1431,11 @@ void functionStudy(char function[DIM]) {
 				variableController("x", 0);
 				resultR = math_processor(originalFunction);
 				if (abs(resultR) > 1E4 || abs(resultI) > 1E4) {
-					resultR = pow(10, 400);
+					resultR = pot(10, 400, 1);
 					printf("%.2f\t", resultR);
 				}
 				else {
-					char expre[dim] = "";
+					char expre[dime] = "";
 					sprintf(expre, "%.2f\t", resultR);
 					if (isContained("ind", expre)) {
 						printf("ind\t");
@@ -1591,7 +1593,7 @@ void functionStudy(char function[DIM]) {
 			o = 0;
 			double max = 0;
 			int indexMax = 0;
-			double min = 0;
+			double Min = 0;
 			int indexMin = 0;
 			o = 0;
 			while (o < saveZ) {
@@ -1613,8 +1615,8 @@ void functionStudy(char function[DIM]) {
 				sprintf(expressionF, "");
 				variableController("x", 0);
 				resultR = math_processor(originalFunction);
-				if (resultR < min) {
-					min = resultR;
+				if (resultR < Min) {
+					Min = resultR;
 					indexMin = o;
 				}
 				o++;
@@ -1622,8 +1624,8 @@ void functionStudy(char function[DIM]) {
 			if (max != 0) {
 				printf("\nMax: (%.3f,%.3f)\n", sortZeroR[indexMax], max);
 			}
-			if (min != 0) {
-				printf("\nMin: (%.3f,%.3f)\n", sortZeroR[indexMin], min);
+			if (Min != 0) {
+				printf("\nMin: (%.3f,%.3f)\n", sortZeroR[indexMin], Min);
 			}
 			puts("");
 		}
@@ -1632,4 +1634,6 @@ void functionStudy(char function[DIM]) {
 	resultR = saveXR; resultI = saveXI;
 	sprintf(expressionF, "");
 	variableController("x", 0);
+	ansRV = ans[rf - 1];
+	ansIV = ansI[rf - 1];
 }
