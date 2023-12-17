@@ -14,7 +14,7 @@ void mParseUrl(char *mUrl, string &serverName, string &filepath, string &filenam
 SOCKET connectToServer(char *szServerName, WORD portNum);
 int getHeaderLength(char *content);
 char *readUrl2(char *szUrl, long &bytesReturnedOut, char **headerOut);
-char appVersion[100] = "2.1.4 of 2023-09-17";
+char appVersion[100] = "2.1.4 of 2023-12-17 (update)";
 
 void check4Updates()
 {

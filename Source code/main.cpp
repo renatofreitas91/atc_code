@@ -161,6 +161,7 @@ void main(int argc, char *argv[]) {
 			sprintf(atcPath, "%s", saveATCPath);
 			sprintf(renamedVariable, "");
 			resultR = 0; resultI = 0;
+			feedbackValidation = 0;
 			usRFunctions[0] = ','; usRFuncTrans[0] = ',';
 			usRFunctions[1] = '\0'; usRFuncTrans[1] = '\0';
 			fflush(NULL);
@@ -358,7 +359,10 @@ void main(int argc, char *argv[]) {
 			int Seconds = atoi(sec);
 			char toOpen[DIM] = "";
 			sprintf(toOpen, "%s\\history.txt", atcPath);
-			fout = fopen(toOpen, "a+");
+			fout = NULL;
+			while (fout == NULL) {
+				fout = fopen(toOpen, "a+");
+			}
 			char yea[5] = { tim[20], tim[21], tim[22], tim[23], '\0' };
 			int years = atoi(yea);
 			char da[3] = { tim[8], tim[9], '\0' };
@@ -404,6 +408,9 @@ void main(int argc, char *argv[]) {
 			convertComplex2Exponential(time_s, time_ms_final);
 			sprintf(state, "title Advanced Trigonometry Calculator v2.1.4       ==) Processed in %ss and %sms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", respR, respI, years, months, days, Hours, Minutes, Seconds);
 			system(state);
+			if (fout != NULL) {
+				fclose(fout);
+			}
 		} while (continu == 1);
 	}
 	exit(0);
@@ -666,6 +673,7 @@ boolean processTxt(char path[DIM], int re) {
 					matrixMode = 0;
 					sprintf(varRename, "");
 					sprintf(revariable, "");
+					feedbackValidation = 0;
 					validVar = 1;   processingOK = 1;
 					sprintf(varRename, "");
 					i = 0;

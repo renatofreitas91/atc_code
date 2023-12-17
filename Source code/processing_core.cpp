@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-char matrixResult[DIM], matrixValue[DIM] = "";
+char matrixResult[DIM], matrixValue[DIM] = "", expr[DIM] = "";
 
 double initialProcessor(char arithTrig[DIM], double result) {
 	if (isContained("+0+", arithTrig)) {
@@ -747,13 +747,16 @@ double initialProcessor(char arithTrig[DIM], double result) {
 					}
 				}
 				if (kl == 1) {
+					sprintf(expr, "%s", pas);
 					renamer(pas);
+
 					sprintf(pas, "%s", expressionF);
 					if (isContained("solver", op)) {
 						retrySolver = false; retrySolver_2 = false; retrySolver_3 = false; equation_solver = true;
 						poly = true;
 						replaceTimes = 0;
 						sprintf(roots, ""), sprintf(answers, "");
+						sprintf(expressionF, "%s", expr);
 						triArith[b] = solver(pas);
 						sprintf(roots, ""), sprintf(answers, "");
 						equation_solver = false;

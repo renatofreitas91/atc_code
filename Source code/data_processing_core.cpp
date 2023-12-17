@@ -1,5 +1,4 @@
 
-
 #include "stdafx.h"
 HANDLE hStdin;
 DWORD fdwSaveOldMode;

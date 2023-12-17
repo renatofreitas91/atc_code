@@ -483,12 +483,15 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 		if (arithTrig[0] != '\0') {
 			command = 1;
 			boolean toWrite = processTxt(arithTrig, rf);
+			fout = fopen(path, "a+");
 			if (toWrite) {
 				printf("\n==> Close the file with the answers to continue. <==\n\n");
-				fprintf(fout, "\n==> Close the file with the answers to continue. <==\n\n");
+				fputs("\n==> Close the file with the answers to continue. <==\n", fout);
 				openTxt();
 			}
-			arithTrig[0] = '\0';
+			if (strlen(arithTrig) >= 1) {
+				arithTrig[0] = '\0';
+			}
 		}
 	}
 	if (str == 1 || getString == 1) {
@@ -633,7 +636,9 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			sprintf(arithTrig, ""); sprintf(fTrig, ""); arithTrig[0] = '\0'; fTrig[0] = '\0';
 		}
 
-
+		if (fout != NULL) {
+			fclose(fout);
+		}
 	}
 	return result1;
 }

@@ -9,9 +9,10 @@ char saveSimplification[DIM] = "", saveSimplified[DIM] = "";
 
 double solver(char expression[DIM]) {
 	replaceTimes = 0;
-	char equation[DIM] = "", saveEquation[DIM] = "";
+	char equation[DIM] = "", saveEquation[DIM] = "", notSolvedEquation[DIM] = "";
 	sprintf(saveEquation, "%s", expression);
 	sprintf(equation, "%s", expression);
+	sprintf(notSolvedEquation, "%s", expr);
 	if (isContained("\\", expression)) {
 		int d = 0, check_integral = 0;;
 		for (d = 0; expression[d] != '\0'; d++) {
@@ -416,6 +417,10 @@ double solver(char expression[DIM]) {
 		sprintf(saveSimplification, "");
 		sprintf(expressionF, "");
 		sprintf(roots, "");
+		if (resultFR == -0.1) {
+			printf("\nCould not solve the expression: %s\n\n", notSolvedEquation);
+			feedbackValidation = 1;
+		}
 		return resultFR;
 	}
 	else {
