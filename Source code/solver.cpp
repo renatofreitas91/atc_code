@@ -500,7 +500,32 @@ void advancedSolver(char expression[DIM]) {
 		i++;
 	}
 	if (i != 150) {
-		resultR = solR; resultI = solI;
+		int mode = 1;
+		double saveResultR = solR, saveResultI = solI;
+		while (mode < 4) {
+			if (mode == 1) {
+				re_complex(saveResultR, saveResultI, 2 * M_PI, 0.0);
+			}
+			if (mode == 2) {
+				re_complex(saveResultR, saveResultI, 360, 0.0);
+			}
+			if (mode == 3) {
+				re_complex(saveResultR, saveResultI, 400, 0.0);
+			}
+			double savePossibleSolR = resultR, savePossibleSolI = resultI;
+			xValuesR = savePossibleSolR; xValuesI = savePossibleSolI;
+			initialProcessor(toSolve, 0);
+			double fxR = resultR, fxI = resultI;
+			if (abs(fxR) < 1E-6&&abs(fxI) < 1E-6) {
+				solR = savePossibleSolR; solI = savePossibleSolI;
+				resultR = solR; resultI = solI;
+				break;
+			}
+			mode++;
+		}
+		if (mode == 4) {
+			resultR = saveResultR; resultI = saveResultI;
+		}
 	}
 	else {
 		resultR = -765432; resultI = 234567;
