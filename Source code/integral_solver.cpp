@@ -13,15 +13,15 @@ double calculateIntegral(double a, double b, char function[DIM]) {
 	double deltaX = (b - a) / n;
 	double finalMultiplier = deltaX / 3;
 	xValuesR = a; xValuesI = 0;
-	calcNow(function, 0, 0);
+	solveMath(function);
 	double y_0 = resultR;
 	xValuesR = b; xValuesI = 0;
-	calcNow(function, 0, 0);
+	solveMath(function);
 	double y_n = resultR;
 	double summatory = y_n + y_0;
 	for (int i = 1; i < n; i++) {
 		xValuesR = deltaX * i + a; xValuesI = 0;
-		calcNow(function, 0, 0);
+		solveMath(function);
 		if (i % 2 == 1) {
 			summatory = summatory + resultR * 4;
 		}

@@ -509,7 +509,7 @@ void physicsCalculations() {
 				sprintf(acceleration, "%s", convert2Exponential(answer));
 			}
 			sprintf(equation, "%s*%s+(%s*%s^2)/2", initial_velocity, time, acceleration, time);
-			double displacement = calcNow(equation, 0, 0);
+			double displacement = solve(equation);
 			printf("\nDisplacement: %s m\n", convert2Exponential(displacement));
 		}
 		if (op == 17) {
@@ -640,7 +640,7 @@ void physicsCalculations() {
 			sprintf(angle_degree, expressionF);
 			char equation[dime] = "";
 			if (isEqual("x", angle_degree) == (boolean)false) {
-				double angle = calcNow(angle_degree, 0, 0);
+				double angle = solveMath(angle_degree);
 				sprintf(equation, "%s*%s-%s^2*degsin(%s)", range, acceleration_of_gravity, initial_velocity, convert2Exponential(angle * 2));
 			}
 			else {

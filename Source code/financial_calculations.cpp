@@ -220,7 +220,7 @@ void financialCalculations() {
 					b++; i++;
 				}
 				toValue[b] = '\0';
-				calcNow(toValue, 0, 0);
+				solveMath(toValue);
 				rates[members] = resultR / 100;
 				members--;
 				sprintf(toValue, "");
@@ -256,7 +256,7 @@ void financialCalculations() {
 					b++; i++;
 				}
 				toValue[b] = '\0';
-				calcNow(toValue, 0, 0);
+				solveMath(toValue);
 				rates[members] = resultR / 100;
 				members--;
 				sprintf(toValue, "");
@@ -308,7 +308,7 @@ void financialCalculations() {
 					b++; i++;
 				}
 				toValue[b] = '\0';
-				calcNow(toValue, 0, 0);
+				solveMath(toValue);
 				cashFlow[p] = resultR;
 				p++;
 				sprintf(toValue, "");
@@ -532,7 +532,7 @@ void financialCalculations() {
 					b++; i++;
 				}
 				toValue[b] = '\0';
-				calcNow(toValue, 0, 0);
+				solveMath(toValue);
 				w[members] = resultR / 100;
 				members--;
 				sprintf(toValue, "");
@@ -558,7 +558,7 @@ void financialCalculations() {
 					b++; i++;
 				}
 				toValue[b] = '\0';
-				calcNow(toValue, 0, 0);
+				solveMath(toValue);
 				x[members] = resultR;
 				members--;
 				sprintf(toValue, "");

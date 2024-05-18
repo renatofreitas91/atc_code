@@ -21,7 +21,7 @@ void ascendingOrder(char values[DIM]) {
 			b++; i++;
 		}
 		toValue[b] = '\0';
-		calcNow(toValue, 0, 0);
+		solveMath(toValue);
 		sValues[p] = resultR;
 		sValuesI[p] = resultI;
 		p++;
@@ -145,7 +145,7 @@ void descendingOrder(char values[DIM]) {
 			b++; i++;
 		}
 		toValue[b] = '\0';
-		calcNow(toValue, 0, 0);
+		solveMath(toValue);
 		sValues[p] = resultR;
 		sValuesI[p] = resultI;
 		p++;
@@ -297,7 +297,7 @@ void maximum(char values[DIM]) {
 				b++; i++;
 			}
 			toValue[b] = '\0';
-			calcNow(toValue, 0, 0);
+			solveMath(toValue);
 			sValues[p] = resultR;
 			sValuesI[p] = resultI;
 			p++;
@@ -426,7 +426,7 @@ void minimum(char values[DIM]) {
 				b++; i++;
 			}
 			toValue[b] = '\0';
-			calcNow(toValue, 0, 0);
+			solveMath(toValue);
 			sValues[p] = resultR;
 			sValuesI[p] = resultI;
 			p++;
@@ -547,7 +547,7 @@ void average(char values[DIM]) {
 				b++; i++;
 			}
 			toValue[b] = '\0';
-			calcNow(toValue, 0, 0);
+			solveMath(toValue);
 			sValues[p] = resultR;
 			sValuesI[p] = resultI;
 			p++;

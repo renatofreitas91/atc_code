@@ -53,18 +53,7 @@ double math_processor(char expression[DIM]) {
 		sprintf(bufText, "");
 		char arithTrig[DIM] = "";
 		char variable[DIM] = "";
-		char res = ' ';
 		sprintf(arithTrig, "%s", expression);
-		if (!solverRunning && !equationSolverRunning) {
-			res = arithTrig[0];
-			int i = 0;
-			if (res == '+' || res == '-' || res == '/' || res == '*' || res == '^') {
-				for (i = 0; arithTrig[i + 1] != '\0'; i++) {
-					arithTrig[i] = arithTrig[i + 1];
-				}
-				arithTrig[i] = '\0';
-			}
-		}
 		resultR = 0;
 		resultI = 0;
 		int var = 0;
@@ -128,7 +117,7 @@ double math_processor(char expression[DIM]) {
 				if (arithTrig[r] != '\0') {
 					if (isFromMainProcessor == 1) {
 						isFromMainProcessor = 0;
-						dp = (int)math_processor(dP);
+						dp = (int)solveMath(dP);
 						isFromMainProcessor = 1;
 					}
 					r = r + 2;
@@ -153,7 +142,7 @@ double math_processor(char expression[DIM]) {
 				if (arithTrig[r] != '\0') {
 					if (isFromMainProcessor == 1) {
 						isFromMainProcessor = 0;
-						bp = (int)math_processor(bP);
+						bp = (int)solveMath(bP);
 						isFromMainProcessor = 1;
 					}
 					r = r + 2;
@@ -176,10 +165,10 @@ double math_processor(char expression[DIM]) {
 				}
 				oP[r - 2] = '\0';
 				if (arithTrig[r] != '\0') {
-					op = (int)math_processor(oP);
+					op = (int)solveMath(oP);
 					if (isFromMainProcessor == 1) {
 						isFromMainProcessor = 0;
-						op = (int)math_processor(oP);
+						op = (int)solveMath(oP);
 						isFromMainProcessor = 1;
 					}
 					r = r + 2;
@@ -204,7 +193,7 @@ double math_processor(char expression[DIM]) {
 				if (arithTrig[r] != '\0') {
 					if (isFromMainProcessor == 1) {
 						isFromMainProcessor = 0;
-						hp = (int)math_processor(hP);
+						hp = (int)solveMath(hP);
 						isFromMainProcessor = 1;
 					}
 					r = r + 2;
@@ -254,21 +243,6 @@ double math_processor(char expression[DIM]) {
 				initialProcessor(arithTrig, resultR);
 			}
 			sprintf(arithTrig, "");
-			if (res == '+') {
-				sum(ansRV, ansIV, resultR, resultI);
-			}
-			if (res == '-') {
-				subtraction(ansRV, ansIV, resultR, resultI);
-			}
-			if (res == '/') {
-				division(ansRV, ansIV, resultR, resultI);
-			}
-			if (res == '*') {
-				multiplication(ansRV, ansIV, resultR, resultI);
-			}
-			if (res == '^') {
-				exponentiation(ansRV, ansIV, resultR, resultI, 1);
-			}
 			if (isFromMainProcessor == 1) {
 				if (dp == -1) {
 					convertComplex2Exponential(resultR, resultI);
@@ -492,6 +466,76 @@ double math_processor(char expression[DIM]) {
 		}
 		sprintf(expressionF, "%s", bufText);
 		return resultR;
+	}
+	resultR = -7777777;
+	return -7777777;
+}
+
+
+double solveMath(char expression[DIM]) {
+	if (abs((int)strlen(expression)) > 0) {
+		fflush(NULL);
+		varRename[0] = '\0';
+		revariable[0] = '\0';
+		validVar = 1;
+		processingOK = 1;
+		char arithTrig[DIM] = "";
+		char variable[DIM] = "";
+		sprintf(arithTrig, "%s", expression);
+		resultR = 0;
+		resultI = 0;
+		int var = 0;
+		int v = 0;
+		verified = 0;
+		rasf = 0;
+		valid = 1;
+		validVar = 1;
+		verify = 0;
+		sprintf(varRename, "");
+		sprintf(revariable, "");
+		validVar = 1;
+		processingOK = 1;
+		resultR = 0;
+		resultI = 0;
+		validVar = 1;
+		sprintf(expressionF, "");
+		synTest = 0;
+		if ((equationSolverRunning == false && solverRunning == false) || !isEqual(saveArithTrig, arithTrig)) {
+			sprintf(saveArithTrig, "%s", arithTrig);
+			manageExpression(arithTrig, 0, 0, 1);
+			sprintf(arithTrig, "%s", expressionF);
+			sprintf(saveExpressionFF, "%s", expressionF);
+			synTest = 0;
+			if (isContained("(*(", arithTrig)) {
+				replace("(*(", "((", arithTrig);
+				sprintf(arithTrig, "%s", expressionF);
+			}
+			verify = dataVerifier(arithTrig, 0, 0, 1, 1);
+		}
+		else {
+			if ((equationSolverRunning || solverRunning)) {
+				sprintf(arithTrig, "%s", saveExpressionFF);
+				verify = 1;
+			}
+		}
+		if (verify == 1) {
+			verified = 1;
+			resultR = 0;
+			resultI = 0;
+			initialProcessor(arithTrig, resultR);
+			if (resultR == 0 && solverRunning == false && equationSolverRunning == false) {
+				initialProcessor(arithTrig, resultR);
+			}
+			if (resultR == 0 && solverRunning == false && equationSolverRunning == false) {
+				initialProcessor(arithTrig, resultR);
+			}
+			if (resultR == 0 && solverRunning == false && equationSolverRunning == false) {
+				initialProcessor(arithTrig, resultR);
+			}
+			sprintf(arithTrig, "");
+
+			return resultR;
+		}
 	}
 	resultR = -7777777;
 	return -7777777;

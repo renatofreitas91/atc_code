@@ -45,7 +45,7 @@ void main(int argc, char *argv[]) {
 		}
 		on_start();
 		applySettings(Colors);
-		system("title Advanced Trigonometry Calculator v2.1.4");
+		system("title Advanced Trigonometry Calculator v2.1.5");
 		char commandF[400] = "";
 		sprintf(commandF, "%s\\aboutDisabled.txt", atcPath);
 		FILE * ab = NULL;
@@ -61,7 +61,7 @@ void main(int argc, char *argv[]) {
 		}
 	}
 	if (continu == 1) {
-		system("title Advanced Trigonometry Calculator v2.1.4       ==) ATC is ready to process data. (==");
+		system("title Advanced Trigonometry Calculator v2.1.5       ==) ATC is ready to process data. (==");
 		char toOpen[DIM] = "";
 		sprintf(toOpen, "%s\\temp.txt", atcPath);
 		FILE *open = fopen(toOpen, "r");
@@ -156,6 +156,40 @@ void main(int argc, char *argv[]) {
 			}
 		}
 		do {
+			int savePreviousAnsType = previousAnsType;
+			char savePreviousAns[DIM] = "";
+			sprintf(savePreviousAns, "%s", saveMatrixAns);
+
+			char boolVar[20] = "true";
+			resultR = 1; resultI = 0;
+			int hk = variableValidator(boolVar);
+			if (hk == 1) {
+				processVariable(revariable);
+				sprintf(boolVar, "%s", revariable);
+				resultR = 1; resultI = 0;
+				variableController(boolVar, 1);
+			}
+			if (hk == 2) {
+				sprintf(boolVar, "%s", revariable);
+				resultR = 1; resultI = 0;
+				variableController(boolVar, 1);
+			}
+			sprintf(boolVar, "false");
+			resultR = 0; resultI = 0;
+			hk = variableValidator(boolVar);
+			if (hk == 1) {
+				processVariable(revariable);
+				sprintf(boolVar, "%s", revariable);
+				resultR = 0; resultI = 0;
+				variableController(boolVar, 0);
+			}
+			if (hk == 2) {
+				sprintf(boolVar, "%s", revariable);
+				resultR = 0; resultI = 0;
+				variableController(boolVar, 0);
+			}
+			previousAnsType = savePreviousAnsType;
+			sprintf(saveMatrixAns, "%s", savePreviousAns);
 			sprintf(context, "main");
 			sprintf(savePathF, "");
 			sprintf(atcPath, "%s", saveATCPath);
@@ -167,6 +201,7 @@ void main(int argc, char *argv[]) {
 			fflush(NULL);
 			tD = 0;
 			toSolve(rf);
+			resultR = 0; resultI = 0;
 			if (argc < 2) {
 				sprintf(trigData, "");
 				Pressed = 0;
@@ -202,7 +237,7 @@ void main(int argc, char *argv[]) {
 					}
 				}
 				start_processing = clock();
-				system("title Advanced Trigonometry Calculator v2.1.4       ==) Processing... (==");
+				system("title Advanced Trigonometry Calculator v2.1.5       ==) Processing... (==");
 
 			}
 			else {
@@ -224,8 +259,10 @@ void main(int argc, char *argv[]) {
 				fout = fopen(path, "a+");
 			}
 			for (tD = 0; trigData[tD] != '\0'; tD++) {
+				replaceTimes = 0;
 				runningScript = false;
 				fflush(NULL);
+				useForVariables = false;
 				matrixMode = 0;
 				sprintf(varRename, "");
 				sprintf(revariable, "");
@@ -233,6 +270,7 @@ void main(int argc, char *argv[]) {
 				sprintf(varRename, "");
 				sprintf(fTrig, "");
 				sprintf(matrixValue, "");
+				sprintf(roots, "");
 				i = 0;
 				int fl = 1, fr = 0;
 				while (trigData[tD] != '\0'&&trigData[tD] != ','&&tD < abs((int)strlen(trigData))) {
@@ -257,6 +295,18 @@ void main(int argc, char *argv[]) {
 					}
 				}
 				arithTrig[i] = '\0';
+				if (isContained("maxprecision", arithTrig)) {
+					replaceTimes = 1;
+					useForVariables = true;
+					replace("maxprecision", "", arithTrig);
+					sprintf(arithTrig, "%s", expressionF);
+				}
+				if (isContained("maxprec", arithTrig)) {
+					replaceTimes = 1;
+					useForVariables = true;
+					replace("maxprec", "", arithTrig);
+					sprintf(arithTrig, "%s", expressionF);
+				}
 				if (variableControllersUsed || strlen(saveVariablesTextFile) == 0 || strlen(saveRenamedVariablesTextFile) == 0) {
 					sprintf(toOpen, "%s\\variables.txt", atcPath);
 					if (open != NULL) {
@@ -406,7 +456,7 @@ void main(int argc, char *argv[]) {
 			}
 			char toTitle[DIM] = "";
 			convertComplex2Exponential(time_s, time_ms_final);
-			sprintf(state, "title Advanced Trigonometry Calculator v2.1.4       ==) Processed in %ss and %sms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", respR, respI, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "title Advanced Trigonometry Calculator v2.1.5       ==) Processed in %ss and %sms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", respR, respI, years, months, days, Hours, Minutes, Seconds);
 			system(state);
 			if (fout != NULL) {
 				fclose(fout);
@@ -656,6 +706,40 @@ boolean processTxt(char path[DIM], int re) {
 			tD = 0;
 			char variable[DIM] = "";
 			for (k = 0; k < cP; k++) {
+				int savePreviousAnsType = previousAnsType;
+				char savePreviousAns[DIM] = "";
+				sprintf(savePreviousAns, "%s", saveMatrixAns);
+
+				char boolVar[20] = "true";
+				resultR = 1; resultI = 0;
+				int hk = variableValidator(boolVar);
+				if (hk == 1) {
+					processVariable(revariable);
+					sprintf(boolVar, "%s", revariable);
+					resultR = 1; resultI = 0;
+					variableController(boolVar, 1);
+				}
+				if (hk == 2) {
+					sprintf(boolVar, "%s", revariable);
+					resultR = 1; resultI = 0;
+					variableController(boolVar, 1);
+				}
+				sprintf(boolVar, "false");
+				resultR = 0; resultI = 0;
+				hk = variableValidator(boolVar);
+				if (hk == 1) {
+					processVariable(revariable);
+					sprintf(boolVar, "%s", revariable);
+					resultR = 0; resultI = 0;
+					variableController(boolVar, 0);
+				}
+				if (hk == 2) {
+					sprintf(boolVar, "%s", revariable);
+					resultR = 0; resultI = 0;
+					variableController(boolVar, 0);
+				}
+				previousAnsType = savePreviousAnsType;
+				sprintf(saveMatrixAns, "%s", savePreviousAns);
 				char trigData[DIM] = "";
 				tD = 0;
 				e = 0;
@@ -669,8 +753,10 @@ boolean processTxt(char path[DIM], int re) {
 				fflush(NULL);
 				tD = 0;
 				for (tD = 0; trigData[tD] != '\0'; tD++) {
+					replaceTimes = 0;
 					fflush(NULL);
 					matrixMode = 0;
+					useForVariables = false;
 					sprintf(varRename, "");
 					sprintf(revariable, "");
 					feedbackValidation = 0;
@@ -719,6 +805,7 @@ boolean processTxt(char path[DIM], int re) {
 						}
 						variableControllersUsed = false;
 					}
+
 					sprintf(matrixResult, "");
 					resultR = sqrt(DBL_MAX);
 					sprintf(expressionF, "");

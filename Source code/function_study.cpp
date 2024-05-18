@@ -130,7 +130,7 @@ void functionStudy(char function[DIM]) {
 					replace("-", "_", value);
 					sprintf(value, "%s", expressionF);
 				}
-				math_processor(value);
+				solveMath(value);
 				zeroR[z] = resultR; zeroI[z] = resultI;
 				poleZerosR[pl] = resultR; poleZerosI[pl] = resultI;
 				pl++;
@@ -167,7 +167,7 @@ void functionStudy(char function[DIM]) {
 				replace("-", "_", value);
 				sprintf(value, "%s", expressionF);
 			}
-			math_processor(value);
+			solveMath(value);
 			zeroR[z] = resultR; zeroI[z] = resultI;
 			poleZerosR[pl] = resultR; poleZerosI[pl] = resultI;
 			pl++;
@@ -199,7 +199,7 @@ void functionStudy(char function[DIM]) {
 		resultR = 0; resultI = 0;
 		sprintf(expressionF, "");
 		variableController("x", 0);
-		math_processor(originalFunction);
+		solveMath(originalFunction);
 		puts("\n\nIt intersects the yy-axis in the point below:\n");
 		printf("\n(0,%.3f)\n", resultR);
 		intersectYY = resultR;
@@ -238,14 +238,14 @@ void functionStudy(char function[DIM]) {
 		resultR = 1E50; resultI = 0;
 		sprintf(expressionF, "");
 		variableController("x", 0);
-		math_processor(originalFunction);
+		solveMath(originalFunction);
 		char valueF[500] = "";
 		sprintf(valueF, "%.3f", resultR);
 		if (isContained("-", valueF)) {
 			replace("-", "_", valueF);
 			sprintf(valueF, "%s", expressionF);
 		}
-		math_processor(valueF);
+		solveMath(valueF);
 		if (abs(resultR) < 1E50) {
 			printf("\nHas a horizontal asymptote when lim x-> +inf: %.3f\n", resultR);
 			horizontalAssimptote = resultR;
@@ -258,13 +258,13 @@ void functionStudy(char function[DIM]) {
 		resultR = -1E50; resultI = 0;
 		sprintf(expressionF, "");
 		variableController("x", 0);
-		math_processor(originalFunction);
+		solveMath(originalFunction);
 		sprintf(valueF, "%.3f", resultR);
 		if (isContained("-", valueF)) {
 			replace("-", "_", valueF);
 			sprintf(valueF, "%s", expressionF);
 		}
-		math_processor(valueF);
+		solveMath(valueF);
 		if (abs(resultR) < 1E50) {
 			printf("\nHas a horizontal asymptote when lim x-> -inf: %.3f\n", resultR);
 			horizontalAssimptote = resultR;
@@ -282,17 +282,17 @@ void functionStudy(char function[DIM]) {
 			resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			if (strlen(denominator) > 0 && (int)math_processor(denominator) == 0) {
+			if (strlen(denominator) > 0 && (int)solveMath(denominator) == 0) {
 				fx[p] = resultR;
 				fxminusx[p] = resultR;
 			}
 			else {
-				fx[p] = math_processor(saveFunction);
+				fx[p] = solveMath(saveFunction);
 				resultR = (y - 5000)*-1;
 				resultI = 0;
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				fxminusx[p] = math_processor(saveFunction);
+				fxminusx[p] = solveMath(saveFunction);
 			}
 			minusfx[p] = fx[p] * -1;
 			y = y + 1000;
@@ -354,11 +354,11 @@ void functionStudy(char function[DIM]) {
 			resultR = -1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			double negativeMax = math_processor(saveFunction);
+			double negativeMax = solveMath(saveFunction);
 			resultR = 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			double positiveMax = math_processor(saveFunction);
+			double positiveMax = solveMath(saveFunction);
 			if (negativeMax < 0 && positiveMax < 0) {
 				sprintf(yLessThanZero, "%s\n f(x) < 0 if x E ]-inf,%.3f[ U", yLessThanZero, sortZeroR[0]);
 				sprintf(yMoreThanZero, "%s f(x) > 0 if x E", yMoreThanZero);
@@ -543,7 +543,7 @@ void functionStudy(char function[DIM]) {
 			resultR = sortZeroR[0] - 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			math_processor(numerator);
+			solveMath(numerator);
 			if (resultR > 0) {
 				printf("+\t");
 			}
@@ -556,7 +556,7 @@ void functionStudy(char function[DIM]) {
 				resultR = sortZeroR[o]; resultI = 0;
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				math_processor(numerator);
+				solveMath(numerator);
 				if (abs(resultR) < 0.1) {
 					printf("0\t");
 				}
@@ -574,7 +574,7 @@ void functionStudy(char function[DIM]) {
 					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
 					sprintf(expressionF, "");
 					variableController("x", 0);
-					math_processor(numerator);
+					solveMath(numerator);
 					if (resultR > 0) {
 						printf("+\t");
 					}
@@ -587,7 +587,7 @@ void functionStudy(char function[DIM]) {
 			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			math_processor(numerator);
+			solveMath(numerator);
 			if (resultR > 0) {
 				printf("+\t");
 			}
@@ -598,7 +598,7 @@ void functionStudy(char function[DIM]) {
 			resultR = sortZeroR[0] - 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			math_processor(denominator);
+			solveMath(denominator);
 			if (resultR > 0) {
 				printf("+\t");
 			}
@@ -611,7 +611,7 @@ void functionStudy(char function[DIM]) {
 				resultR = sortZeroR[o]; resultI = 0;
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				math_processor(denominator);
+				solveMath(denominator);
 				if (abs(resultR) < 0.1) {
 					printf("0\t");
 				}
@@ -629,7 +629,7 @@ void functionStudy(char function[DIM]) {
 					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
 					sprintf(expressionF, "");
 					variableController("x", 0);
-					math_processor(denominator);
+					solveMath(denominator);
 					if (resultR > 0) {
 						printf("+\t");
 					}
@@ -641,7 +641,7 @@ void functionStudy(char function[DIM]) {
 			}
 			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
 			variableController("x", 0);
-			math_processor(denominator);
+			solveMath(denominator);
 			if (resultR > 0) {
 				printf("+\t");
 			}
@@ -652,7 +652,7 @@ void functionStudy(char function[DIM]) {
 			resultR = sortZeroR[0] - 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			resultR = math_processor(numerator) / math_processor(denominator);
+			resultR = solveMath(numerator) / solveMath(denominator);
 			if (resultR > 0) {
 				printf("+\t");
 			}
@@ -665,7 +665,7 @@ void functionStudy(char function[DIM]) {
 				resultR = sortZeroR[o]; resultI = 0;
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				resultR = math_processor(numerator) / math_processor(denominator);
+				resultR = solveMath(numerator) / solveMath(denominator);
 				if (abs(resultR) > 1E4 || abs(resultI) > 1E4) {
 					resultR = pot(10, 400, 1);
 					printf("%.2f\t", resultR);
@@ -686,7 +686,7 @@ void functionStudy(char function[DIM]) {
 					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
 					sprintf(expressionF, "");
 					variableController("x", 0);
-					resultR = math_processor(numerator) / math_processor(denominator);
+					resultR = solveMath(numerator) / solveMath(denominator);
 					if (resultR > 0) {
 						printf("+\t");
 					}
@@ -699,7 +699,7 @@ void functionStudy(char function[DIM]) {
 			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			resultR = math_processor(numerator) / math_processor(denominator);
+			resultR = solveMath(numerator) / solveMath(denominator);
 			if (resultR > 0) {
 				printf("+\t");
 			}
@@ -737,7 +737,7 @@ void functionStudy(char function[DIM]) {
 					replace("-", "_", value);
 					sprintf(value, "%s", expressionF);
 				}
-				math_processor(value);
+				solveMath(value);
 				zeroR[z] = resultR; zeroI[z] = resultI;
 				z++;
 			}
@@ -775,7 +775,7 @@ void functionStudy(char function[DIM]) {
 			resultR = sortZeroR[0] - 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			math_processor(data);
+			solveMath(data);
 			if (resultR > 0) {
 				printf("+\t");
 			}
@@ -792,7 +792,7 @@ void functionStudy(char function[DIM]) {
 					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
 					sprintf(expressionF, "");
 					variableController("x", 0);
-					math_processor(data);
+					solveMath(data);
 					if (resultR > 0) {
 						printf("+\t");
 					}
@@ -805,7 +805,7 @@ void functionStudy(char function[DIM]) {
 			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			math_processor(data);
+			solveMath(data);
 			if (resultR > 0) {
 				printf("+\t");
 			}
@@ -816,7 +816,7 @@ void functionStudy(char function[DIM]) {
 			resultR = sortZeroR[0] - 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			math_processor(data);
+			solveMath(data);
 			if (resultR > 0) {
 				printf("/^\t");
 			}
@@ -829,7 +829,7 @@ void functionStudy(char function[DIM]) {
 				resultR = sortZeroR[o]; resultI = 0;
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				math_processor(saveFunction);
+				solveMath(saveFunction);
 				printf("%.3f\t", resultR);
 				o++;
 				y++;
@@ -837,7 +837,7 @@ void functionStudy(char function[DIM]) {
 					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
 					sprintf(expressionF, "");
 					variableController("x", 0);
-					math_processor(data);
+					solveMath(data);
 					if (resultR > 0) {
 						printf("/^\t");
 					}
@@ -850,7 +850,7 @@ void functionStudy(char function[DIM]) {
 			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			math_processor(data);
+			solveMath(data);
 			if (resultR > 0) {
 				printf("/^\t");
 			}
@@ -945,7 +945,7 @@ void functionStudy(char function[DIM]) {
 					replace("-", "_", value);
 					sprintf(value, "%s", expressionF);
 				}
-				math_processor(value);
+				solveMath(value);
 				zeroR[z] = resultR; zeroI[z] = resultI;
 				poleZerosR[pl] = resultR; poleZerosI[pl] = resultI;
 				pl++;
@@ -968,7 +968,7 @@ void functionStudy(char function[DIM]) {
 					replace("-", "_", value);
 					sprintf(value, "%s", expressionF);
 				}
-				math_processor(value);
+				solveMath(value);
 				zeroR[z] = resultR; zeroI[z] = resultI;
 				poleZerosR[pl] = resultR; poleZerosI[pl] = resultI;
 				pl++;
@@ -1020,7 +1020,7 @@ void functionStudy(char function[DIM]) {
 			sprintf(new_numerator, "%s", expressionF);
 			removeDuplPars(new_denominator);
 			sprintf(new_denominator, "%s", expressionF);
-			resultR = math_processor(new_numerator) / math_processor(new_denominator);
+			resultR = solveMath(new_numerator) / solveMath(new_denominator);
 			if (resultR >= 0) {
 				printf("+\t");
 			}
@@ -1033,7 +1033,7 @@ void functionStudy(char function[DIM]) {
 				resultR = sortZeroR[o]; resultI = 0;
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				resultR = math_processor(new_numerator) / math_processor(new_denominator);
+				resultR = solveMath(new_numerator) / solveMath(new_denominator);
 				if (abs(resultR) > 1E4 || abs(resultI) > 1E4) {
 					resultR = pot(10, 400, 1);
 					printf("%.2f\t", resultR);
@@ -1054,7 +1054,7 @@ void functionStudy(char function[DIM]) {
 					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
 					sprintf(expressionF, "");
 					variableController("x", 0);
-					resultR = math_processor(new_numerator) / math_processor(new_denominator);
+					resultR = solveMath(new_numerator) / solveMath(new_denominator);
 					if (resultR >= 0) {
 						printf("+\t");
 					}
@@ -1067,7 +1067,7 @@ void functionStudy(char function[DIM]) {
 			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			resultR = math_processor(new_numerator) / math_processor(new_denominator);
+			resultR = solveMath(new_numerator) / solveMath(new_denominator);
 			if (resultR >= 0) {
 				printf("+\t");
 			}
@@ -1079,7 +1079,7 @@ void functionStudy(char function[DIM]) {
 			resultR = sortZeroR[0] - 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			resultR = math_processor(originalFunction);
+			resultR = solveMath(originalFunction);
 			if (resultR >= 0) {
 				printf("/^\t");
 			}
@@ -1092,7 +1092,7 @@ void functionStudy(char function[DIM]) {
 				resultR = sortZeroR[o]; resultI = 0;
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				resultR = math_processor(originalFunction);
+				resultR = solveMath(originalFunction);
 				if (abs(resultR) > 1E6 || abs(resultI) > 1E6) {
 					resultR = pot(10, 400, 1);
 				}
@@ -1101,11 +1101,11 @@ void functionStudy(char function[DIM]) {
 				y++;
 				if (o < saveZ) {
 					resultR = sortZeroR[o - 1] - 0.25; resultI = 0;
-					slopeHelper = math_processor(originalFunction);
+					slopeHelper = solveMath(originalFunction);
 					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
 					sprintf(expressionF, "");
 					variableController("x", 0);
-					resultR = math_processor(originalFunction);
+					resultR = solveMath(originalFunction);
 					if (resultR > slopeHelper) {
 						printf("/^\t");
 					}
@@ -1116,11 +1116,11 @@ void functionStudy(char function[DIM]) {
 				}
 			}
 			resultR = sortZeroR[o - 1] - 0.25; resultI = 0;
-			slopeHelper = math_processor(originalFunction);
+			slopeHelper = solveMath(originalFunction);
 			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			resultR = math_processor(originalFunction);
+			resultR = solveMath(originalFunction);
 			if (resultR > slopeHelper) {
 				printf("/^\t");
 			}
@@ -1143,7 +1143,7 @@ void functionStudy(char function[DIM]) {
 				resultI = sortZeroI[o];
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				resultR = math_processor(saveFunction);
+				resultR = solveMath(saveFunction);
 				if (saveZ == 1) {
 					printf(",%.3f]", resultR);
 				}
@@ -1171,7 +1171,7 @@ void functionStudy(char function[DIM]) {
 				resultI = sortZeroI[o];
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				resultR = math_processor(saveFunction);
+				resultR = solveMath(saveFunction);
 				if (resultR > max) {
 					max = resultR;
 					indexMax = o;
@@ -1184,7 +1184,7 @@ void functionStudy(char function[DIM]) {
 				resultI = sortZeroI[o];
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				resultR = math_processor(saveFunction);
+				resultR = solveMath(saveFunction);
 				if (resultR < Min) {
 					Min = resultR;
 					indexMin = o;
@@ -1285,7 +1285,7 @@ void functionStudy(char function[DIM]) {
 					replace("-", "_", value);
 					sprintf(value, "%s", expressionF);
 				}
-				math_processor(value);
+				solveMath(value);
 				zeroR[z] = resultR; zeroI[z] = resultI;
 				poleZerosR[pl] = resultR; poleZerosI[pl] = resultI;
 				pl++;
@@ -1308,14 +1308,14 @@ void functionStudy(char function[DIM]) {
 					replace("-", "_", value);
 					sprintf(value, "%s", expressionF);
 				}
-				math_processor(value);
+				solveMath(value);
 				char ValueR[DIM] = "";
 				sprintf(ValueR, convertToString("%.2f"), resultR);
 				for (int v = 0; v < abs((int)(strlen(ValueR))); v++) {
 					if (ValueR[v] == '-')
 						ValueR[v] = '_';
 				}
-				math_processor(ValueR);
+				solveMath(ValueR);
 				zeroR[z] = resultR; zeroI[z] = resultI;
 				poleZerosR[pl] = resultR; poleZerosI[pl] = resultI;
 				pl++;
@@ -1363,7 +1363,7 @@ void functionStudy(char function[DIM]) {
 			resultR = -1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			resultR = math_processor(sec_new_derivate);
+			resultR = solveMath(sec_new_derivate);
 			if (resultR >= 0) {
 				printf("+\t");
 			}
@@ -1376,7 +1376,7 @@ void functionStudy(char function[DIM]) {
 				resultR = sortZeroR[o]; resultI = 0;
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				resultR = math_processor(sec_new_derivate);
+				resultR = solveMath(sec_new_derivate);
 				if (abs(resultR) > 1E4 || abs(resultI) > 1E4) {
 					resultR = pot(10, 400, 1);
 					printf("%.2f\t", resultR);
@@ -1401,7 +1401,7 @@ void functionStudy(char function[DIM]) {
 					}
 					sprintf(expressionF, "");
 					variableController("x", 0);
-					resultR = math_processor(sec_new_derivate);
+					resultR = solveMath(sec_new_derivate);
 					if (resultR >= 0) {
 						printf("+\t");
 					}
@@ -1416,7 +1416,7 @@ void functionStudy(char function[DIM]) {
 			resultR = -1000; resultI = 0;
 			sprintf(expressionF, "");
 			variableController("x", 0);
-			resultR = math_processor(sec_new_derivate);
+			resultR = solveMath(sec_new_derivate);
 			if (resultR < 0) {
 				printf("/^\\\t");
 			}
@@ -1429,7 +1429,7 @@ void functionStudy(char function[DIM]) {
 				resultR = sortZeroR[o]; resultI = 0;
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				resultR = math_processor(originalFunction);
+				resultR = solveMath(originalFunction);
 				if (abs(resultR) > 1E4 || abs(resultI) > 1E4) {
 					resultR = pot(10, 400, 1);
 					printf("%.2f\t", resultR);
@@ -1454,7 +1454,7 @@ void functionStudy(char function[DIM]) {
 					}
 					sprintf(expressionF, "");
 					variableController("x", 0);
-					resultR = math_processor(sec_new_derivate);
+					resultR = solveMath(sec_new_derivate);
 					if (resultR < 0) {
 						printf("/^\\\t");
 					}
@@ -1558,7 +1558,7 @@ void functionStudy(char function[DIM]) {
 					replace("-", "_", value);
 					sprintf(value, "%s", expressionF);
 				}
-				math_processor(value);
+				solveMath(value);
 				zeroR[z] = resultR; zeroI[z] = resultI;
 				poleZerosR[pl] = resultR; poleZerosI[pl] = resultI;
 				pl++;
@@ -1601,7 +1601,7 @@ void functionStudy(char function[DIM]) {
 				resultI = sortZeroI[o];
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				resultR = math_processor(originalFunction);
+				resultR = solveMath(originalFunction);
 				if (resultR > max) {
 					max = resultR;
 					indexMax = o;
@@ -1614,7 +1614,7 @@ void functionStudy(char function[DIM]) {
 				resultI = sortZeroI[o];
 				sprintf(expressionF, "");
 				variableController("x", 0);
-				resultR = math_processor(originalFunction);
+				resultR = solveMath(originalFunction);
 				if (resultR < Min) {
 					Min = resultR;
 					indexMin = o;

@@ -1579,7 +1579,7 @@ void timeDifferenceCalculations() {
 		sprintf(report, "%s\nTime difference: %d minutes and %d seconds\n", report, diffHours * 60 + 1440 * days + diffMinutes, diffSeconds);
 		char toCalc[1000] = "";
 		sprintf(toCalc, "(%d*60+1440*%d+%d)*60+%d", diffHours, days, diffMinutes, diffSeconds);
-		math_processor(toCalc);
+		solveMath(toCalc);
 		sprintf(report, "%s\nTime difference: %.0f seconds\n", report, resultR);
 		sprintf(report, "%s\nTime difference: %d weeks and %d days, %d hours, %d minutes and %d seconds\n", report, days / 7, days % 7, diffHours, diffMinutes, diffSeconds);
 		if (bYear != aYear) {

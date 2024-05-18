@@ -44,7 +44,7 @@ void statisticsCalculations() {
 					b++; i++;
 				}
 				toValue[b] = '\0';
-				calcNow(toValue, 0, 0);
+				solveMath(toValue);
 				values[p] = resultR;
 				p++;
 				sprintf(toValue, "");
@@ -88,7 +88,7 @@ void statisticsCalculations() {
 					b++; i++;
 				}
 				toValue[b] = '\0';
-				calcNow(toValue, 0, 0);
+				solveMath(toValue);
 				values[p] = resultR;
 				p++;
 				sprintf(toValue, "");
@@ -305,7 +305,7 @@ void statisticsCalculations() {
 					b++; i++;
 				}
 				toValue[b] = '\0';
-				calcNow(toValue, 0, 0);
+				solveMath(toValue);
 				values[p] = resultR;
 				p++;
 				sprintf(toValue, "");

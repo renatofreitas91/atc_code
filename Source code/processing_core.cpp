@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-char matrixResult[DIM], matrixValue[DIM] = "", expr[DIM] = "";
+char matrixResult[DIM] = "", matrixValue[DIM] = "", expr[DIM] = "";
 
 double initialProcessor(char arithTrig[DIM], double result) {
 	if (isContained("+0+", arithTrig)) {
@@ -564,7 +564,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 											sprintf(pas, "%s", expressionF);
 											stringVariableToString(pas);
 											sprintf(pas, "%s", variableSTring);
-											calcNow(pas, 0, 0);
+											solveMath(pas);
 											triArith[b] = resultR;
 											triArithI[b] = resultI;
 										}
@@ -834,7 +834,7 @@ double initialProcessor(char arithTrig[DIM], double result) {
 												sprintf(pas, "%s", expressionF);
 												stringVariableToString(pas);
 												sprintf(pas, "%s", variableSTring);
-												calcNow(pas, 0, 0);
+												solveMath(pas);
 												triArith[b] = resultR;
 												triArithI[b] = resultI;;
 											}
@@ -1152,6 +1152,9 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				}
 				if ((int)triArith[so + 1] == -7654321) {
 					fmtranspose(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
+					int savenumVectorCols = numVectorCols;
+					numVectorCols = numVectorLines;
+					numVectorLines = savenumVectorCols;
 				}
 				if ((int)triArith[so + 1] == -1) {
 					fminverse(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
@@ -1382,6 +1385,9 @@ double initialProcessor(char arithTrig[DIM], double result) {
 				}
 				if ((int)triArith[j + 1] == -7654321) {
 					fmtranspose(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
+					int savenumVectorCols = numVectorCols;
+					numVectorCols = numVectorLines;
+					numVectorLines = savenumVectorCols;
 				}
 				if ((int)triArith[j + 1] == -1) {
 					fminverse(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
@@ -2904,7 +2910,7 @@ double functionProcessor(char trigon[DIM], double result, double amplitude, int 
 				y++; x++;
 			}
 			value[y] = '\0';
-			calcNow(value, 0, 0);
+			solveMath(value);
 			char variable[20] = "";
 			sprintf(variable, "Input%c", letters[entered]);
 			variableController(variable, resultR);

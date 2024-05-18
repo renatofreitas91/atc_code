@@ -149,7 +149,7 @@ void multi_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 		}
 		else {
 			if (strlen(roots) > 0) {
-				math_processor(roots);
+				solveMath(roots);
 				multiplication(-1, 0, resultR, resultI);
 				if (abs(LastDividerI) != 0 || abs(LastDividerR) != 0) {
 					multiplication(LastDividerR, LastDividerI, resultR, resultI);
@@ -262,7 +262,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 					i++;
 				}
 				rootChar[p] = '\0';
-				math_processor(rootChar);
+				solveMath(rootChar);
 				if (abs(resultR) < 1E-4) {
 					resultR = 0;
 				}
@@ -320,7 +320,7 @@ void div_polynomial(char polynomial_1[DIM], char polynomial_2[DIM]) {
 								i++;
 							}
 							rootChar[p] = '\0';
-							math_processor(rootChar);
+							solveMath(rootChar);
 							if (abs(resultR) < 1E-4) {
 								resultR = 0;
 							}

@@ -711,7 +711,7 @@ double getValue() {
 		sprintf(value, "%c", decision);
 		puts(value);
 		solving = false;
-		calcNow(value, 0, 0);
+		calcNow(value,0,0);
 		solving = true;
 		I_O = false;
 		return resultR;
@@ -722,7 +722,7 @@ double getValue() {
 			char value[DIM] = "";
 			gets_s(value);
 			solving = false;
-			calcNow(value, 0, 0);
+			calcNow(value,0,0);
 			sprintf(expressionF, value);
 			solving = true;
 		}
@@ -1071,7 +1071,7 @@ int atcProgramming(char script[DIM]) {
 							f++;
 						}
 						initial[p] = '\0';
-						calcNow(initial, 0, 0);
+						calcNow(initial,0,0);
 						char condition[DIM] = "";
 						f++; p = 0;
 						while (getLine[f] != ';'&&getLine[f] != '\0'&&countUseReturn == 0) {
@@ -1139,7 +1139,7 @@ int atcProgramming(char script[DIM]) {
 						sprintf(returnArgument, expressionF);
 						replace(" ", "", expressionF);
 						sprintf(returnArgument, expressionF);
-						calcNow(returnArgument, 0, 0);
+						calcNow(returnArgument,0,0);
 						returnedR = resultR; returnedI = resultI;
 					}
 					if (isEqual("cls", commandCandidate)) {

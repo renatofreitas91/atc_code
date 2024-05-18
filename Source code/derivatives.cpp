@@ -53,7 +53,7 @@ char* getDerivative(char expression[DIM]) {
 			j++; i++;
 		}
 		value[j] = '\0';
-		math_processor(value);
+		solveMath(value);
 		sprintf(to_replace, "%s", value);
 		sprintf(value, "");
 		coefficient[k] = resultR;
@@ -65,7 +65,7 @@ char* getDerivative(char expression[DIM]) {
 			j++; i++;
 		}
 		value[j] = '\0';
-		math_processor(value);
+		solveMath(value);
 		exponents[k] = resultR;
 		coefficient[k] = exponents[k] * coefficient[k];
 		k++;

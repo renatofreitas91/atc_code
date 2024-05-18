@@ -7,6 +7,10 @@ boolean solving = true;
 char saveArithTrig[DIM] = "", actualTime[DIM] = "", siPref[DIM] = "", verboseRes[DIM] = "", saveExpressionFF[DIM] = "", renamedVariable[DIM] = "", vectorString[DIM] = "", saveMatrixAns[DIM];
 
 double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM], double result1, double result2, int isFromMain) {
+	if (rf > 0) {
+		ansRV = ans[rf - 1];
+		ansIV = ansI[rf - 1];
+	}
 	fflush(NULL);
 	verbose = 0;
 	verified = 0;
@@ -107,7 +111,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 					j++; i++;
 				}
 				value[j] = '\0';
-				int times = (int)calcNow(value, 0, 0);
+				int times = (int)solveMath(value);
 				replaceTimes = 0;
 				deleteXOccurrences(to_find, string, times);
 				replaceTimes = 0;
@@ -193,14 +197,14 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 						j++; i++;
 					}
 					value[j] = '\0';
-					int index = (int)calcNow(value, 0, 0);
+					int index = (int)solveMath(value);
 					j = 0;
 					while (arithTrig[i] != ')'&&arithTrig[i] != '\0') {
 						value[j] = arithTrig[i];
 						j++; i++;
 					}
 					value[j] = '\0';
-					replaceTimes = (int)calcNow(value, 0, 0);
+					replaceTimes = (int)solveMath(value);
 					replaceByIndex(to_find, replacement, string, index);
 					replaceTimes = 0;
 					char stringObtained[DIM] = "";
@@ -284,7 +288,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 							j++; i++;
 						}
 						value[j] = '\0';
-						replaceTimes = (int)calcNow(value, 0, 0);
+						replaceTimes = (int)solveMath(value);
 						replace(to_find, replacement, string);
 						replaceTimes = 0;
 						char stringObtained[DIM] = "";
@@ -325,6 +329,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			}
 		}
 	}
+
 	for (i = 0; arithTrig[i] != '\0'; i++) {
 		if (arithTrig[i] == '='&&arithTrig[i + 1] == '"') {
 			str = 0;
@@ -383,6 +388,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 				var = 0;
 			}
 			puts(variableFeedback);
+			sprintf(variableString, "%s", revariable);
 			stringVariableController(variableString, string);
 		}
 	}
@@ -440,12 +446,13 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 		}
 	}
 	for (i = 0; arithTrig[i] != '\0'; i++) {
-		if (arithTrig[i] == '=') {
+		if (arithTrig[i] == '='&&arithTrig[i + 1] != '='&&arithTrig[i + 1] != '!') {
 			var = 1;
 			if (valGet == 1) {
 				puts(" ");
 			}
 		}
+
 		if (arithTrig[i] == '\"'&&arithTrig[strlen(arithTrig) - 1] == '\"'&&txt != 1) {
 			str = 1;
 		}
@@ -629,7 +636,7 @@ double main_core(char arithTrig[DIM], char fTrig[DIM], FILE *fout, char path[DIM
 			fprintf(fout, ">%s\n", savefTrig);
 		}
 
-		command = commands(arithTrig, path, result1, result2);
+		command = commands(arithTrig, path, result1, result2, fout);
 
 		if (command == (boolean)false && continu&&strlen(arithTrig) > 0) {
 			main_sub_core(arithTrig, fout, verify, path, txt, variable, v, j, result1, result2, isFromMain, var, valGet, command);
@@ -654,7 +661,7 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		}
 	}
 	int  g = 0, Dimensions = 2, Window = 3, r = 0, i = 0, s = 0;
-	char exit[DIM] = "", res, varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm", saveArithTr[DIM] = "";
+	char exit[DIM] = "", res = ' ', varLetters[DIM] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm", saveArithTr[DIM] = "";
 	if (!solverRunning && !equationSolverRunning) {
 		res = arithTrig[0];
 		if (res == '+' || res == '-' || res == '/' || res == '*' || res == '^') {
@@ -664,11 +671,14 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 		}
 	}
 	if (var == 1) {
-		if (isContained("==", arithTrig) == (boolean)false) {
+		if (isContained("==", arithTrig) == (boolean)false && isContained("!=", arithTrig) == (boolean)false) {
 			for (i = 0; arithTrig[i] != '='&&arithTrig[i] != '\0'; i++) {
 				variable[i] = arithTrig[i];
 			}
 			variable[i] = '\0';
+			if (feedbackValidation == 0) {
+				useForVariables = true;
+			}
 			g = i + 1;
 			for (i = 0; arithTrig[i] != '\0'; i++) {
 				arithTrig[i] = arithTrig[i + g];
@@ -886,6 +896,8 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 			}
 		}
 	}
+
+
 	char dP[DIM] = "", bP[DIM] = "", oP[DIM] = "", hP[DIM] = "";
 	int dp = -1, bp = -1, op = -1, hp = -1;
 	while ((arithTrig[0] == 'd' &&arithTrig[1] == 'p' || arithTrig[0] == 'b' &&arithTrig[1] == 'p' || arithTrig[0] == 'o' &&arithTrig[1] == 'p' || arithTrig[0] == 'h' &&arithTrig[1] == 'p') && arithTrig[i] != '\0'&&i < abs((int)strlen(arithTrig))) {
@@ -1067,6 +1079,9 @@ double main_sub_core(char arithTrig[DIM], FILE *fout, int verify, char path[DIM]
 							convert2Vector(saveMatrixAns);
 							if ((int)resultRM == -7654321 || (int)resultRM == -7654320) {
 								fmtranspose(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);
+								int savenumVectorCols = numVectorCols;
+								numVectorCols = numVectorLines;
+								numVectorLines = savenumVectorCols;
 							}
 							if ((int)resultRM == -1) {
 								fminverse(numVectorLines, numVectorCols, vectorR, vectorI, res_vectorR, res_vectorI);

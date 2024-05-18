@@ -51,10 +51,10 @@ void designGraph(char functionF[DIM]) {
 					value[va] = '\0';
 					countBars++;
 					if (countBars == 1) {
-						x_lower = calcNow(value, 0, 0);
+						x_lower = solveMath(value);
 					}
 					if (countBars == 2) {
-						x_higher = calcNow(value, 0, 0);
+						x_higher = solveMath(value);
 					}
 
 					va = 0;
@@ -63,7 +63,7 @@ void designGraph(char functionF[DIM]) {
 			value[va] = '\0';
 			countBars++;
 			if (countBars == 3) {
-				x_scaleF = calcNow(value, 0, 0);
+				x_scaleF = solveMath(value);
 				while (x_scaleF < (x_higher - x_lower) / 120) {
 					printf("Xscale? (minimum: %s)\n", convert2Exponential(abs(x_higher - x_lower) / 120));
 					x_scaleF = getValue();
@@ -142,7 +142,7 @@ void designGraph(char functionF[DIM]) {
 			}
 			value[j] = '\0';
 			if (x_lower == -77777) {
-				Xmin = calcNow(value, 0, 0);
+				Xmin = solveMath(value);
 			}
 			else {
 				Xmin = x_lower;
@@ -155,7 +155,7 @@ void designGraph(char functionF[DIM]) {
 			}
 			value[j] = '\0';
 			if (x_higher == -77777) {
-				Xmax = calcNow(value, 0, 0);
+				Xmax = solveMath(value);
 			}
 			else {
 				Xmax = x_higher;
@@ -168,7 +168,7 @@ void designGraph(char functionF[DIM]) {
 			}
 			value[j] = '\0';
 			if (x_scaleF == -77777) {
-				Xscale = calcNow(value, 0, 0);
+				Xscale = solveMath(value);
 			}
 			else {
 				Xscale = x_scaleF;
@@ -180,7 +180,7 @@ void designGraph(char functionF[DIM]) {
 				i++; j++;
 			}
 			value[j] = '\0';
-			Ymin = calcNow(value, 0, 0);
+			Ymin = solveMath(value);
 			i++;
 			j = 0;
 			while (data[i] != '\n'&&data[i] != '\0') {
@@ -188,7 +188,7 @@ void designGraph(char functionF[DIM]) {
 				i++; j++;
 			}
 			value[j] = '\0';
-			Ymax = calcNow(value, 0, 0);
+			Ymax = solveMath(value);
 			i++;
 			j = 0;
 			while (data[i] != '\n'&&data[i] != '\0') {
@@ -196,7 +196,7 @@ void designGraph(char functionF[DIM]) {
 				i++; j++;
 			}
 			value[j] = '\0';
-			Yscale = calcNow(value, 0, 0);
+			Yscale = solveMath(value);
 			i++;
 			j = 0;
 			while (data[i] != '\n'&&data[i] != '\0') {
@@ -204,7 +204,7 @@ void designGraph(char functionF[DIM]) {
 				i++; j++;
 			}
 			value[j] = '\0';
-			auto_y_axis = calcNow(value, 0, 0);
+			auto_y_axis = solveMath(value);
 			i++;
 			j = 0;
 			while (data[i] != '\n'&&data[i] != '\0') {
@@ -212,7 +212,7 @@ void designGraph(char functionF[DIM]) {
 				i++; j++;
 			}
 			value[j] = '\0';
-			auto_x_axis = calcNow(value, 0, 0);
+			auto_x_axis = solveMath(value);
 		}
 	}
 
@@ -335,7 +335,7 @@ void designGraph(char functionF[DIM]) {
 					}
 					value[j] = '\0';
 					if (x_lower == -77777) {
-						Xmin = calcNow(value, 0, 0);
+						Xmin = solveMath(value);
 					}
 					else {
 						Xmin = x_lower;
@@ -348,7 +348,7 @@ void designGraph(char functionF[DIM]) {
 					}
 					value[j] = '\0';
 					if (x_higher == -77777) {
-						Xmax = calcNow(value, 0, 0);
+						Xmax = solveMath(value);
 					}
 					else {
 						Xmax = x_higher;
@@ -361,7 +361,7 @@ void designGraph(char functionF[DIM]) {
 					}
 					value[j] = '\0';
 					if (x_scaleF == -77777) {
-						Xscale = calcNow(value, 0, 0);
+						Xscale = solveMath(value);
 					}
 					else {
 						Xscale = x_scaleF;
@@ -373,7 +373,7 @@ void designGraph(char functionF[DIM]) {
 						i++; j++;
 					}
 					value[j] = '\0';
-					Ymin = calcNow(value, 0, 0);
+					Ymin = solveMath(value);
 					i++;
 					j = 0;
 					while (data[i] != '\n'&&data[i] != '\0') {
@@ -381,7 +381,7 @@ void designGraph(char functionF[DIM]) {
 						i++; j++;
 					}
 					value[j] = '\0';
-					Ymax = calcNow(value, 0, 0);
+					Ymax = solveMath(value);
 					i++;
 					j = 0;
 					while (data[i] != '\n'&&data[i] != '\0') {
@@ -389,7 +389,7 @@ void designGraph(char functionF[DIM]) {
 						i++; j++;
 					}
 					value[j] = '\0';
-					Yscale = calcNow(value, 0, 0);
+					Yscale = solveMath(value);
 					i++;
 					j = 0;
 					while (data[i] != '\n'&&data[i] != '\0') {
@@ -397,7 +397,7 @@ void designGraph(char functionF[DIM]) {
 						i++; j++;
 					}
 					value[j] = '\0';
-					auto_y_axis = calcNow(value, 0, 0);
+					auto_y_axis = solveMath(value);
 
 				}
 			}

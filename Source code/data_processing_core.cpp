@@ -6,18 +6,18 @@ int strStart = 0, strEnd = 0, Pressed = 0;
 char dimensionsTxt[dime] = "", windowTxt[dime] = "";
 double vectorR[dime][dime], vectorI[dime][dime];
 using namespace std;
-char saveVariablesTextFile[DIM] = "";
-char saveRenamedVariablesTextFile[DIM] = "";
-char saveTxtVariablesTextFile[DIM] = "";
-char saveRenamedTxtVariablesTextFile[DIM] = "";
-char saveScriptRenamedVariablesTextFile[DIM] = "";
-char saveScriptVariablesTextFile[DIM] = "";
-char saveUserFunctionsRenamedVariablesTextFile[DIM] = "";
-char saveUserFunctionsVariablesTextFile[DIM] = "";
+char saveVariablesTextFile[DIME] = "";
+char saveRenamedVariablesTextFile[DIME] = "";
+char saveTxtVariablesTextFile[DIME] = "";
+char saveRenamedTxtVariablesTextFile[DIME] = "";
+char saveScriptRenamedVariablesTextFile[DIME] = "";
+char saveScriptVariablesTextFile[DIME] = "";
+char saveUserFunctionsRenamedVariablesTextFile[DIME] = "";
+char saveUserFunctionsVariablesTextFile[DIME] = "";
 char numSys[DIM] = "";
 char stringF[DIM] = "";
 char resp[DIM] = "", respR[DIM] = "", respI[DIM] = "";
-boolean variableControllersUsed = true, notUseHigherPrecison = false;
+boolean variableControllersUsed = true, notUseHigherPrecison = false, useForVariables = false;
 
 void higherPrecisionController() {
 	FILE *open;
@@ -143,7 +143,7 @@ void variableController(char variable[DIM], double result) {
 		sprintf(expressionF, "");
 	}
 	FILE *open = NULL;
-	char va[DIM] = "", vari[DIM] = "";
+	char va[DIME] = "", vari[DIME] = "";
 	int i = 0, f = 0;
 	vari[0] = '\0';
 	int y = 0, h = 0, k = 0, g = 0;
@@ -193,7 +193,7 @@ void variableController(char variable[DIM], double result) {
 			variableControllersUsed = true;
 			int i = strStart + 1;
 			int h = 0;
-			char variableData[DIM] = "";
+			char variableData[DIME] = "";
 			while (vari[i] != '\n'&&vari[i] != '\0') {
 				variableData[h] = vari[i];
 				h++;
@@ -209,7 +209,7 @@ void variableController(char variable[DIM], double result) {
 				variableControllersUsed = true;
 				int i = strStart;
 				int h = 0;
-				char variableData[DIM] = "";
+				char variableData[DIME] = "";
 				while (vari[i] != '\n'&&vari[i] != '\0') {
 					variableData[h] = vari[i];
 					h++;
@@ -620,7 +620,7 @@ void renamer(char expression[DIM]) {
 void variableRenamer(char variable[DIM]) {
 	valRenamedVar = 0;
 	sprintf(varRename, "");
-	char vari[DIM] = "";
+	char vari[DIME] = "";
 	int i = 0, j = 0;
 	boolean defaultVariable = false;
 	if (isEqual(context, "main")) {
@@ -3244,7 +3244,7 @@ void currentSettings() {
 	if (open != NULL) {
 		fgets(info, 200, open);
 		fclose(open);
-		state = (int)calcNow(info, 0, 0);
+		state = (int)solveMath(info);
 		switch (state) {
 		case 1:
 			puts("Mode------------------------------------> RADIAN Degree Gradian | Info: Enter \"mode\" to change.");
@@ -3266,7 +3266,7 @@ void currentSettings() {
 	if (open != NULL) {
 		fgets(info, 200, open);
 		fclose(open);
-		state = (int)calcNow(info, 0, 0);
+		state = (int)solveMath(info);
 		switch (state) {
 		case 0:
 			puts("Numerical Systems Response--------------> Enabled DISABLED | Info: Enter \"numerical systems\" to change.");
@@ -3285,7 +3285,7 @@ void currentSettings() {
 	if (open != NULL) {
 		fgets(info, 200, open);
 		fclose(open);
-		state = (int)calcNow(info, 0, 0);
+		state = (int)solveMath(info);
 		switch (state) {
 		case 0:
 			puts("SI Prefixes Response--------------------> Enabled DISABLED | Info: Enter \"si prefixes\" to change.");
@@ -3304,7 +3304,7 @@ void currentSettings() {
 	if (open != NULL) {
 		fgets(info, 200, open);
 		fclose(open);
-		state = (int)calcNow(info, 0, 0);
+		state = (int)solveMath(info);
 		switch (state) {
 		case 0:
 			puts("Actual Time Response--------------------> Enabled DISABLED | Info: Enter \"actual time response\" to change.");
@@ -3323,7 +3323,7 @@ void currentSettings() {
 	if (open != NULL) {
 		fgets(info, 200, open);
 		fclose(open);
-		state = (int)calcNow(info, 0, 0);
+		state = (int)solveMath(info);
 		switch (state) {
 		case 0:
 			puts("Higher Precision------------------------> Enabled DISABLED | Info: Enter \"higher precision\" to change.");
@@ -3342,7 +3342,7 @@ void currentSettings() {
 	if (open != NULL) {
 		fgets(info, 200, open);
 		fclose(open);
-		state = (int)calcNow(info, 0, 0);
+		state = (int)solveMath(info);
 		switch (state) {
 		case 0:
 			puts("Verbose Resolution----------------------> Enabled DISABLED | Info: Enter \"verbose resolution\" to change.");
@@ -4038,7 +4038,7 @@ double processVariable(char variable[DIM]) {
 	double varValue = 0;
 	FILE *open = NULL;
 	int i, g, h, y, l = 0, lth = 0, cou = 0;
-	char vari[DIM] = "", va[DIM] = "", value[DIM] = "";
+	char vari[DIME] = "", va[DIME] = "", value[DIME] = "";
 	char *pointer;
 	i = 0;
 	boolean defaultVariable = false;
@@ -4346,7 +4346,7 @@ double calcNow(char toCalc[DIM], double result1, double result2) {
 		sprintf(expression, "%s", toCalc);
 		feedbackValidation = 1;
 		resultR = 0; resultI = 0;
-		resultR = solveNow(expression, result1, result2);
+		solveNow(expression, 0, 0);
 		feedbackValidation = 0;
 		if (verified == 0) {
 			printf("Invalid expression: %s\n\n", toCalc);
@@ -4656,10 +4656,12 @@ boolean readyToSolve(char paTh[DIM]) {
 	FILE *open = NULL;
 	char pathToFile[DIM] = "", dataFromFile[DIM] = "";
 	int i = 0;
-	replace("\"", "", paTh);
+	replaceTimes = 0;
+	replace("\"", "\\", paTh);
 	replace("\\", "RASF", expressionF);
 	replace("RASF", "\\\\", expressionF);
 	sprintf(pathToFile, "%s", expressionF);
+
 	open = fopen(pathToFile, "r");
 	if (open != NULL) {
 		for (i = 0; (dataFromFile[i] = fgetc(open)) != EOF; i++);
@@ -5510,7 +5512,7 @@ void getCols(char data[DIM]) {
 				i++; j++;
 			}
 			value[j] = '\0';
-			startColIndex = (int)calcNow(value, 0, 0);
+			startColIndex = (int)solveMath(value);
 			i++;
 			j = 0;
 			while (data[i] != '\0') {
@@ -5518,7 +5520,7 @@ void getCols(char data[DIM]) {
 				i++; j++;
 			}
 			value[j] = '\0';
-			endColIndex = (int)calcNow(value, 0, 0);
+			endColIndex = (int)solveMath(value);
 			check4Vector = 1;
 			initialProcessor(varName, 0);
 			sprintf(matrixValue, "%s", matrixResult);
@@ -5584,7 +5586,7 @@ void getLines(char data[DIM]) {
 					i++; j++;
 				}
 				value[j] = '\0';
-				startLineIndex = (int)calcNow(value, 0, 0);
+				startLineIndex = (int)solveMath(value);
 				i++;
 				j = 0;
 				while (data[i] != '\0') {
@@ -5592,7 +5594,7 @@ void getLines(char data[DIM]) {
 					i++; j++;
 				}
 				value[j] = '\0';
-				endLineIndex = (int)calcNow(value, 0, 0);
+				endLineIndex = (int)solveMath(value);
 				check4Vector = 1;
 				initialProcessor(varName, 0);
 				sprintf(matrixValue, "%s", matrixResult);
@@ -5627,7 +5629,7 @@ void getLines(char data[DIM]) {
 
 char * convert2Exponential(double value) {
 	sprintf(resp, "%G", value);
-	if (higherPrecision == 1 && !notUseHigherPrecison) {
+	if ((higherPrecision == 1 && !notUseHigherPrecison) || useForVariables) {
 		sprintf(resp, "%.15E", value);
 		if (isContained("E", resp)) {
 			int i = strStart + 1;

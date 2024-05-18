@@ -7,7 +7,7 @@ char saveExpressionF[DIM] = "";
 
 
 
-boolean commands(char expression[DIM], char path[DIM], double result1, double result2) {
+boolean commands(char expression[DIM], char path[DIM], double result1, double result2, FILE* save) {
 	if (isContained("\\\\", expression)) {
 		printf("\nError inside argument of command. \n\n ==> ATC has detected \"\\\" followed by  \"\\\", i.e. \"\\\\\".\n\n");
 		return true;
@@ -339,20 +339,53 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 				tGet++; tDev++;
 			}
 			exprDev[tGet] = '\0';
-			returned = advancedEvaluator(exprDev);
-			if (runningScript == false) {
-				if (returned) {
-					printf("\nTrue\n");
+			boolean errorFound = false;
+			int kr = 0, kl = 0;
+			for (int i = 0; i < abs((int)strlen(exprDev)); i++) {
+				if (exprDev[i] == '(') {
+					kl++;
 				}
-				else {
-					printf("\nFalse\n");
+				if (exprDev[i] == ')') {
+					kr++;
+				}
+				if (kr > kl) {
+					printf("\n\nError: Seems that you have entered right parentheses before the corresponding left parentheses.\n\n");
+					errorFound = true;
+					fputs("\nError: Seems that you have entered right parentheses before the corresponding left parentheses.\n", save);
+
+					break;
 				}
 			}
-		}
-		if (runningScript == false) {
-			puts(" ");
+			if (kr != kl && !errorFound) {
+				printf("\n\nError: Seems that you entered parentheses are not matching correctly.\n\n");
+				errorFound = true;
+				fputs("\nError: Seems that you entered parentheses are not matching correctly.\n", save);
+
+			}
+			if (!errorFound) {
+				replaceTimes = 1;
+				returned = advancedEvaluator(exprDev);
+				if (runningScript == false) {
+					if (returned) {
+						printf("\nTrue\n");
+						fputs("\nTrue\n", save);
+					}
+					else {
+						printf("\nFalse\n");
+						fputs("\nFalse\n", save);
+					}
+				}
+
+			}
+
+			if (runningScript == false) {
+				puts(" ");
+			}
+			Clock(0);
 		}
 	}
+
+
 	if (isCommand(arithTrig, "donate")) {
 		command = true;
 		puts(" ");
@@ -1820,7 +1853,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.4  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.5  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(thours, tminutes, tseconds);
 									}
@@ -2019,7 +2052,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.4  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.5  ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(thours, tminutes, tseconds);
 									}
@@ -2233,7 +2266,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.4 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.5 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n  %02d:%02d:%02d                   \n", thours, tminutes, tseconds);
@@ -2441,7 +2474,7 @@ boolean commands(char expression[DIM], char path[DIM], double result1, double re
 											months = 12;
 										}
 										char toTitle[DIM] = "";
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.4 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.5 ==) %04d/%02d/%02d %02d:%02d:%02d (==", years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printBigTimer(Hours, Minutes, Seconds);
 										printf("\n\n    %02d:%02d:%02d                   \n\n", thours, tminutes, tseconds);

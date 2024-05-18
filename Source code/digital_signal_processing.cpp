@@ -47,7 +47,7 @@ void fft(char values[DIM]) {
 	}
 	i = 0;
 	while (i <= countSplits) {
-		math_processor(value[i]);
+		solveMath(value[i]);
 		xR[i] = resultR; xI[i] = resultI;
 		i++;
 	}
@@ -209,7 +209,7 @@ void ifft(char values[DIM]) {
 	}
 	i = 0;
 	while (i <= countSplits) {
-		math_processor(value[i]);
+		solveMath(value[i]);
 		XR[i] = resultR; XI[i] = resultI;
 		i++;
 	}

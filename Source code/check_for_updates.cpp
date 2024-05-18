@@ -14,17 +14,17 @@ void mParseUrl(char *mUrl, string &serverName, string &filepath, string &filenam
 SOCKET connectToServer(char *szServerName, WORD portNum);
 int getHeaderLength(char *content);
 char *readUrl2(char *szUrl, long &bytesReturnedOut, char **headerOut);
-char appVersion[100] = "2.1.4 of 2023-12-17 (update)";
+char appVersion[100] = "2.1.5 of 2024-05-18";
 
 void check4Updates()
 {
 	printf("\nChecking for updates...\n");
 	const int bufLen = 1024;
-	char *szUrl = "https://advantrigoncalcwebsite.on.drv.tw/atc_site/atc_version.html";
+	char *szUrl = "https://advantrigoncalc.sourceforge.io/atc_version.html";
 	long fileSize;
 	char *memBuffer, *headerBuffer;
 	char Url[128] = "";
-	strcat(Url, "https://advantrigoncalcwebsite.on.drv.tw/atc_site/atc_version.html");
+	strcat(Url, "https://advantrigoncalc.sourceforge.io/atc_version.html");
 	wchar_t wtext[20];
 	mbstowcs(wtext, Url, strlen(Url) + 1);//Plus null
 	LPWSTR ptr = wtext;
