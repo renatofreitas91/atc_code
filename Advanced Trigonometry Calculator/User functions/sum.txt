@@ -1,0 +1,4 @@
+valueA=InputA
+valueB=InputB
+valueC=InputC
+valueC+valueB+valueA

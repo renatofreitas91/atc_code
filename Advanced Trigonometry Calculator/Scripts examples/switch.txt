@@ -1,0 +1,22 @@
+script
+status=_1;
+while(status!=1){
+cls();
+print("\nPortuguese -> 1\nEnglish -> 2\nFrench -> 3\n");
+get(Option);
+switch(Option){
+	case 1:
+		print("Ola");
+		break;
+	case 2:
+		print("Hello");
+		break;
+	case 3:
+		print("Salut");
+		break;
+	default:
+		print("Adeus!");
+}
+print("Exit? (Yes-> 1)");
+get(status);
+}

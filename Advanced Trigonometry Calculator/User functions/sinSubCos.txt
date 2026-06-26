@@ -1,0 +1,2 @@
+valueB=Input
+sin(valueB)-cos(valueB)

@@ -1,0 +1,6 @@
+script
+conta=_100;
+while(conta<=100){
+	print("%d",conta);
+	conta=conta+1;
+}

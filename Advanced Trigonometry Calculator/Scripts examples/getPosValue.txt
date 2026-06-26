@@ -1,0 +1,5 @@
+script
+print("The expected is that the value will not be accepted.");
+print("Enter a value negative:");
+getposvalue(value);
+print("Value: %G",value);

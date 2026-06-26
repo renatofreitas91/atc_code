@@ -1,0 +1,3 @@
+reset all
+restart atc
+NO_ANSWERS_FILE

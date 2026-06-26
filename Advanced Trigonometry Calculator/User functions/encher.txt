@@ -1,0 +1,8 @@
+script
+if(isvariable(valueC)){
+valueC=valueC+10*InputA
+}
+else{
+valueC=0
+}
+return sin(valueC)

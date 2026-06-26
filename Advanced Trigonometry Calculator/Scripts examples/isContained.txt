@@ -1,0 +1,11 @@
+script
+print("Enter a expression:");
+get(totalData);
+print("Enter a bit of the expression:");
+get(data);
+if(iscontained(data\totalData)){
+	print("As expected! Thank you!");
+}
+else{
+	print("Oh no... you have forgotten the bit.);
+}

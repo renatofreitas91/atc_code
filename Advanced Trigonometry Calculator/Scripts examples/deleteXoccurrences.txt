@@ -1,0 +1,9 @@
+script
+print("Enter a expression:");
+get(TotalTxt);
+print("Enter the data to be deleted:);
+get(Txt);
+print("Enter the number of times to be deleted:");
+get(num);
+Text=deletexoccurrences(Txt\TotalTxt\num);
+print("Result: %s",Text);

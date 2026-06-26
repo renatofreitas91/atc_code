@@ -1,0 +1,6 @@
+script
+print("\nEnter the first number.\n");
+get(pp);
+print("\nEnter the second number.\n");
+get(pu);
+print("\nResult sum: %G\n",pp+pu);

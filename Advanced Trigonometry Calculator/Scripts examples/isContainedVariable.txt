@@ -1,0 +1,20 @@
+script
+print("First case is a present valid variable");
+value=12;
+value="value"
+data="value+7";
+if(iscontainedvariable(value\data)){
+	print("Great! Your variable has been found!");
+}
+else{
+ 	print("Ups... variable not found.");
+}
+print("Second case is an not present variable");
+value=12;
+data="sqrt(7)";
+if(iscontainedvariable(value\data)){
+	print("Great! Your variable has been found!");
+}
+else{
+ 	print("Ups... variable not found.");
+}

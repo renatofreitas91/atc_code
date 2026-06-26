@@ -1,0 +1,4 @@
+print("Enter the angle:")
+get(knglw)
+print("\nsin(%G)\t\t+\tcos(%G)\t\t=\t%G\n",knglw,knglw,sin(knglw)+cos(knglw))
+NO_ANSWERS_FILE

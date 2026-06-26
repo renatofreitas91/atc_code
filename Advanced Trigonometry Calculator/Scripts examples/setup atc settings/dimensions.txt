@@ -1,0 +1,1 @@
+MODE con cols=1.56E2 lines=2E3

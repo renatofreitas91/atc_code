@@ -1,0 +1,2 @@
+valueT=InputA
+cos(valueT)+sin(valueT)

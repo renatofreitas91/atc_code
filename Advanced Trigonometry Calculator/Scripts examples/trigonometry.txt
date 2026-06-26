@@ -1,0 +1,5 @@
+print("Enter the angle:")
+get(angle)
+sprint(expression,"\nsin(%G)=%G\ncos(%G)=%G\ntan(%G)=%G\nsec(%G)=%G\ncosec(%G)=%G\ncotan(%G)=%G\n",angle,sin(angle),angle,cos(angle),angle,tan(angle),angle,sec(angle),angle,cosec(angle),angle,cotan(angle))
+print(expression)
+NO_ANSWERS_FILE

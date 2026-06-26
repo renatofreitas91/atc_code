@@ -1,0 +1,5 @@
+script
+print("Enter a expression:");
+get(data);
+size=strlen(data);
+print("Length of expression: %G",size);

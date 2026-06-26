@@ -1,0 +1,10 @@
+script
+print("Enter a day");
+get(day);
+print("Enter a month (1-12)");
+get(month);
+print("Enter a year");
+get(year);
+wxprwssZonTayofWwwk="";
+sprint(wxprwssZonTayofWwwk,"dayofweek(d%dm%dy%d)",day,month,year);
+composecommand(wxprwssZonTayofWwwk);

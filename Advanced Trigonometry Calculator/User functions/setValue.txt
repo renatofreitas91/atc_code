@@ -1,0 +1,2 @@
+valueC=InputA
+atc_encher(valueC)

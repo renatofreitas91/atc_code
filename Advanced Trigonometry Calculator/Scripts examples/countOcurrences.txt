@@ -1,0 +1,7 @@
+script
+print("Enter a expression:");
+get(totalata);
+print("Enter the data to count the occurrences in the expression:);
+get(ata);
+value=countoccurrences(ata\totalata);
+print("Data has been found %d times in the expression.",value);

@@ -1,0 +1,17 @@
+script
+print("First case is valid variable");
+data=12;
+data="data";
+if(isvariable(data)){
+	print("Great! That is a variable!");
+}
+else{
+ 	print("Ups... not a variable.");
+}
+print("Second case is an invalid variable");
+if(isvariable(daTa)){
+	print("Great! That is a variable!");
+}
+else{
+ 	print("Ups... not a variable.");
+}

@@ -1,0 +1,46 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.VC.opendb
+ipch/
+
+# Build outputs
+Debug/
+Release/
+x64/
+x86/
+Win32/
+*.obj
+*.pdb
+*.ilk
+*.idb
+*.pch
+*.tlog/
+*.lastbuildstate
+*.log
+*.exe
+*.dll
+*.lib
+*.exp
+*.res
+*.xdc
+*.xml
+
+# ATC local runtime state
+atc_path.txt
+higherPrecision.txt
+history.txt
+renamedVar.txt
+sendCommand.txt
+temp.txt
+variables.txt
+verboseResolution.txt
+
+# Test-generated temporary files
+tests/tmp-*.txt
+tests/memory-stress-reports/
+tests/user-guide-extracted.txt
+tests/sourceforge_solver_raw.cpp
+tests/icon_corner_preview.png

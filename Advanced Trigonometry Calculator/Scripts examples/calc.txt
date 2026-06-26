@@ -1,0 +1,10 @@
+script
+proceed=1;
+while(proceed==1){
+print("Enter a expression:");
+get(Kata);
+Result=calc(Kata);
+print("Result: %G",Result);
+print("Continue? (Yes-> 1/No-> any value)");
+get(proceed);
+}

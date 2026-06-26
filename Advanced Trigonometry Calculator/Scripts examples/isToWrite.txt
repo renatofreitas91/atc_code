@@ -1,0 +1,19 @@
+script
+print("First case:");
+Tata="NO_ANSWERS_FILE";
+print("%s",Tata);
+if(istowrite(Tata)){
+	print("ATC will create a file with answers.");
+}
+else{
+ 	print("ATC will not create a file with answers.");
+}
+print("Second case:");
+Tata="ANSWERS_FILE";
+print("%s",Tata);
+if(istowrite(Tata)){
+	print("ATC will create a file with answers.");
+}
+else{
+	print("ATC will not create a file with answers.");
+}

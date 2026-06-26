@@ -1,0 +1,10 @@
+script
+x=0;
+result=0;
+for(x=0;x<1000;x=x+1){
+    result=x!;
+    if(result>1E6){
+	return x;
+   }
+}
+print("%G",x);

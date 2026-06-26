@@ -1,0 +1,5 @@
+mode
+colors
+window
+dimensions
+NO_ANSWERS_FILE

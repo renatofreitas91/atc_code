@@ -1,0 +1,14 @@
+script
+print("Enter a expression:");
+get(totalData);
+print("Enter a bit of the expression:");
+get(data);
+print("Enter the index:");
+get(index);
+index="index"
+if(iscontainedbyindex(data\totalData\index)){
+	print("As expected! Thank you!");
+}
+else{
+	print("Oh no... you have forgotten the bit or provide wrong index number.);
+}

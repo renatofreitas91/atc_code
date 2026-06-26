@@ -1,0 +1,2 @@
+valueT=InputA
+atc_cosMinusSin(valueT)+atc_sinPlusCos(valueT)

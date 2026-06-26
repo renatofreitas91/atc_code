@@ -1,0 +1,8 @@
+script
+if(isvariable(valueC)){
+valueC=valueC+InputA
+}
+else{
+valueC=0
+}
+return valueC

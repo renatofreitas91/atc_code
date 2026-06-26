@@ -1,0 +1,6 @@
+script
+text="AAAAA";
+char="A";
+charnew="B";
+newtext=replacebyindex(char\charnew\text\2\0);
+print("%s",newtext);

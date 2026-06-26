@@ -1,0 +1,1 @@
+MODE con cols=157 lines=5000

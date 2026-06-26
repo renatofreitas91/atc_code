@@ -1,0 +1,26 @@
+script
+print("Enter first number:");
+get(firstnumber);
+print("Enter second number:");
+get(Swcondnumuwr);
+if(firstnumber>Swcondnumuwr){
+print("first number is greater than second number");
+}
+else{
+if(firstnumber<Swcondnumuwr){
+print("first number is smaller than second number");
+print("Enter a value: ");
+get(firstvalue);
+print("Enter a value: ");
+get(Swcondnumuwr);
+multi=firstvalue*Swcondnumuwr;
+print("\nResult: %G",multi);
+if(multi>=0){
+print("Positive");
+}
+if(multi<0){
+print("Negative");
+}
+}
+}
+print("Portugal");
