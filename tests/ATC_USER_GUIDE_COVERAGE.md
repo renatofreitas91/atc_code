@@ -39,6 +39,7 @@ These areas have direct automated regression tests in
 | Interactive menus / Menus interativos | invalid-choice retry and persistence for `mode`, `numerical systems`, `si prefixes`, `verbose resolution`, `actual time response`, plus `higher precision` interactive and inline forms |
 | App environment / Ambiente UI | `enable atc intro`, `disable atc intro`, `clean`, `clean history`, `exit` and the `exit.txt` marker |
 | Windows 11 console behavior | static coverage for Windows 11 intro default-disable logic, `RtlGetVersion` detection, Windows Terminal color mapping and `new tab` / `new instance` fallback |
+| Interactive prompt | Tab autocomplete vocabulary, repeated-Tab cycling, dynamic user-function suggestions and Up/Down history navigation |
 | Precision mode | `higherprecision(1)`, `higherprecision(0)`, persistent `double`/`mp_float`, temporary `maxprec` prefix and post-`maxprec` double fallback |
 | Automatic multiplication | constants, functions, parentheses, imaginary unit, variables, variable-constant adjacency and variable-function adjacency |
 | Variable names | relaxed variable-name handling, function/reserved-prefix names and composite-variable priority |
@@ -54,10 +55,10 @@ system. Most command branches below are verified by
 
 | Guide area | Commands/features | Reason |
 | --- | --- | --- |
-| App environment | `auto adjust window`, `about`, `history`, `user guide`, `run atc`, `restart atc` | Manual/isolated checklist documented; opens windows, changes the console/window, or launches external UI |
-| Updates and links | `check for updates`, `update`, `update x64`, `update portable`, `donate`, `atc facebook`, `atc sourceforge` | Network/external browser/update side effects |
-| Reset/settings screens | `reset all`, `reset all now`, `reset settings`, `reset settings now`, interactive `colors` mutation | Broad configuration reset, restart side effects, or `_getch()`-based interactive input |
-| File/folder helpers | Runtime opening of `atc folder`, `source code`, `scripts examples`, `user functions`, `strings`, `to solve`, `auto solve txt`, and existing-file `open txt` | Opens folders/files, waits for file watcher flags, or launches Notepad/Explorer |
+| App environment | `auto adjust window`, `about`, `history`, `user guide`, `run atc`, `restart atc` | Isolated source-level coverage verifies command exposure, expected file/process targets and setting writes; full runtime interaction remains manual because these commands open windows, change the console/window, or launch external UI |
+| Updates and links | `check for updates`, `update`, `update x64`, `update portable`, `donate`, `atc facebook`, `atc sourceforge` | Isolated source-level coverage verifies autocomplete exposure, update-check endpoint, SourceForge installer/ZIP targets and external link URLs; full runtime execution remains manual because these commands use network/download/browser side effects |
+| Reset/settings screens | `reset all`, `reset all now`, `reset settings`, `reset settings now`, interactive `colors` mutation | Isolated source-level coverage verifies autocomplete exposure, `onStart.txt` markers, relaunch behavior for `now` commands, reset file groups and `colors.txt` persistence; full runtime execution remains manual because reset commands delete user settings/data and `colors` uses `_getch()` |
+| File/folder helpers | Runtime opening of `atc folder`, `source code`, `scripts examples`, `user functions`, `strings`, `to solve`, `auto solve txt`, and existing-file `open txt` | Isolated source-level coverage verifies autocomplete exposure, Explorer targets, `auto solve txt` watcher flow, quote/space normalization for `open txt`, and the guard that only opens Notepad when the file exists; full runtime execution remains manual because these commands open Explorer/Notepad or wait for file flags |
 | Strings cleanup | `eliminate strings` | Mutates `stringVariable.txt` and the `Strings` folder through shell commands |
 | TXT detector and command bridge | `enable txt detector`, `atc from cmd`, `to solve`, full `solve txt` processing with opened answer file | Requires shell windows, user PATH mutation, or a multi-process/file-watcher scenario |
 | Interactive solvers | `solver()`, `triangles rectangles solver`, `arithmetic matrix solver`, `financial calculations`, `geometry calculations`, `statistics calculations`, `physics calculations`, `unit conversions`, `microeconomics calculations` | Menu-driven modules |

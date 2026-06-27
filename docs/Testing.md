@@ -29,6 +29,10 @@ Current validated result for both Release x64 and Release x86:
 Summary: 338 passed, 0 failed
 ```
 
+Latest Release x86 validation used `Release\atc.exe` and passed the same
+regression suite. The build completed with existing warnings in `dirent.h` and
+one signed/unsigned comparison warning in `scripting.cpp`, with no errors.
+
 ## Memory Stress Runner
 
 The memory stress runner is:
@@ -57,6 +61,12 @@ tests\run-atc-isolated-coverage.ps1
 Use it when a specific area needs focused validation outside the full
 regression run.
 
+Current isolated coverage result:
+
+```text
+Summary: 61 passed, 0 failed
+```
+
 ## Current Automated Coverage
 
 The regression suite currently covers:
@@ -83,6 +93,8 @@ The regression suite currently covers:
 - variable/result management commands;
 - persistent settings and menu retry behavior;
 - verbose-resolution behavior;
+- interactive prompt behavior, including Tab autocomplete vocabulary,
+  ambiguous-match cycling and Up/Down history navigation;
 - `double` and Boost `mp_float` precision mode persistence.
 
 The detailed test matrix is maintained in:

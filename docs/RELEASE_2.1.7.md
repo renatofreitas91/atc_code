@@ -31,6 +31,9 @@ Last updated: 2026-06-27
   longer enabled during startup internals.
 - Added exact rational-cancellation fast-path coverage for solver/equation
   paths using real roots, `pi`, `e` and complex `pii` constants.
+- Added interactive prompt improvements: Tab completion, repeated-Tab cycling
+  for ambiguous matches, broader command/function suggestions, dynamic user
+  function suggestions and Up/Down history navigation.
 - Rewrote and published the repository README to the GitHub `main` branch in
   commit `f71e507 Improve project README`.
 
@@ -211,6 +214,21 @@ are hidden, evaluated function arguments are labelled directly, function results
 are printed without the old interactor wording, and internal menu prompts keep
 their evaluation quiet even when verbose resolution is enabled.
 
+## Interactive prompt and autocomplete
+
+The main ATC prompt now supports line editing and autocomplete while the user
+is writing an expression. Pressing `Tab` completes the closest documented
+command, mathematical function, alias or user function. When several matches
+are possible, repeated `Tab` presses cycle through them.
+
+Autocomplete suggestions are ordered by shortest closest match first and then
+case-insensitively. The same expression can receive multiple completions, which
+is useful for longer mathematical input.
+
+The prompt also supports `Up` and `Down` history navigation and normal cursor
+editing keys. The completion list is cached per input line to avoid rebuilding
+the vocabulary repeatedly while the user cycles suggestions.
+
 ## Memory and allocation fixes
 
 Several 2.1.7 code paths no longer reserve large global buffers when the input
@@ -292,6 +310,12 @@ Current result for both Release x64 and Release x86:
 Summary: 338 passed, 0 failed
 ```
 
+Current isolated coverage result:
+
+```text
+Summary: 61 passed, 0 failed
+```
+
 Memory stress run:
 
 ```powershell
@@ -339,6 +363,8 @@ Covered areas:
 - TXT detector / command bridge commands, including `atc over cmd`
 - file/folder command existence checks
 - persistent settings and interactive menu retry behavior
+- interactive prompt autocomplete vocabulary, repeated-Tab cycling and
+  Up/Down history navigation
 - verbose-resolution persisted setting, cleaned verbose output behavior, and
   suppression of verbose traces for internal menu inputs
 - Windows 11 console source-level behavior checks
@@ -357,6 +383,10 @@ Release Win32/x86 builds are also supported by the solution and remain a
 compatibility target for older Windows versions. The current regression suite
 has been validated against both `x64\Release\atc.exe` and `Release\atc.exe`.
 
+The latest Release x86 build completed successfully. It reports existing
+warnings in `dirent.h` and one signed/unsigned comparison warning in
+`scripting.cpp`; no build errors were introduced.
+
 ## Known limitations
 
 The automatic suite intentionally avoids:
@@ -374,6 +404,7 @@ Important code areas:
 
 ```text
 Advanced Trigonometry Calculator\main.cpp
+Advanced Trigonometry Calculator\auto_complete.cpp
 Advanced Trigonometry Calculator\commands.cpp
 Advanced Trigonometry Calculator\main_aux_processor.cpp
 Advanced Trigonometry Calculator\processing_core.cpp
@@ -419,6 +450,8 @@ Principais pontos em portugues:
   varios caminhos;
 - suite automatizada atual com `338 passed, 0 failed` em Release x64 e
   Release x86;
+- cobertura isolada atual com `61 passed, 0 failed`, incluindo autocomplete e
+  navegacao por historico;
 - README publico reescrito e publicado no GitHub em `main` no commit
   `f71e507 Improve project README`;
 - a documentacao futura deve ser mantida em portugues e ingles, enquanto os

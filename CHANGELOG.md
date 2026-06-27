@@ -17,6 +17,10 @@ Dates and version details should be kept aligned with `docs/RELEASE_2.1.7.md`.
 - Added broader regression coverage for automatic multiplication deduction.
 - Added coverage for matrix-variable use with `min`, `max`, and `avg`.
 - Added Windows 11 console behavior checks.
+- Added Linux-style Tab completion for the interactive prompt, including
+  documented commands, mathematical functions, dynamic user functions and
+  repeated-Tab cycling through ambiguous matches.
+- Added Up/Down command history navigation while typing expressions.
 
 ### Changed
 
@@ -28,6 +32,8 @@ Dates and version details should be kept aligned with `docs/RELEASE_2.1.7.md`.
 - Improved Windows 11 console behavior, including default intro handling and
   color mapping under Windows Terminal.
 - Improved Release heap reserve/commit settings for x64 and x86 builds.
+- Improved autocomplete ordering so the shortest closest match is inserted
+  first and subsequent Tab presses can cycle alternatives.
 
 ### Fixed
 
@@ -48,6 +54,12 @@ Dates and version details should be kept aligned with `docs/RELEASE_2.1.7.md`.
 
 ```text
 Summary: 338 passed, 0 failed
+```
+
+- Current isolated coverage result:
+
+```text
+Summary: 61 passed, 0 failed
 ```
 
 See `docs/Testing.md` and `tests/ATC_AUTOMATED_TEST_CASES.md` for more detail.

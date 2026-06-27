@@ -16,6 +16,32 @@ Windows 11 console behavior, and reducing unnecessary dynamic allocation in
 common numeric paths. It also relaxes previous variable-name restrictions while
 preserving exact reserved names.
 
+## Interactive prompt and autocomplete
+
+The ATC interactive prompt now uses a custom line editor that supports
+Linux-style Tab completion and history navigation while preserving the existing
+command-processing architecture.
+
+Current behavior:
+
+- `Tab` completes documented commands, mathematical functions, aliases and
+  user functions available in the ATC `User functions` folder;
+- if there is more than one possible completion, repeated `Tab` presses cycle
+  through the alternatives;
+- matches are ordered by shortest closest match first, then by
+  case-insensitive alphabetical order;
+- completions insert the useful call prefix, for example `sin(`, `solver(` or
+  `solve equation(`, so the user can continue typing the argument;
+- `Up` and `Down` navigate previous expressions from `history.txt`;
+- `Left`, `Right`, `Home`, `End`, `Delete` and `Backspace` provide normal line
+  editing;
+- completion suggestions are cached for the current input line to avoid
+  rebuilding the full vocabulary on every repeated `Tab` press.
+
+This feature is implemented before the expression reaches `main_core<T>()`.
+It helps input ergonomics only; mathematical interpretation remains in the
+existing parser and command-processing modules.
+
 ## Documentation policy
 
 Project documentation should be maintained in Portuguese and English from this
@@ -364,6 +390,12 @@ Current validated result for both Release x64 and Release x86:
 Summary: 338 passed, 0 failed
 ```
 
+The isolated coverage helper currently validates:
+
+```text
+Summary: 61 passed, 0 failed
+```
+
 Coverage includes:
 
 - arithmetic basics
@@ -400,6 +432,8 @@ Coverage includes:
 - TXT detector / command bridge commands, including `atc over cmd`
 - file/folder command existence checks
 - persistent settings and interactive menu retry behavior
+- interactive prompt autocomplete vocabulary, repeated-Tab cycling and
+  Up/Down history navigation
 - verbose-resolution persisted setting, cleaned verbose output behavior, and
   suppression of verbose traces for internal menu inputs
 - Windows 11 console source-level behavior checks
@@ -476,6 +510,10 @@ green:
 Summary: 338 passed, 0 failed
 ```
 
+Release x86 was also rebuilt successfully with MSBuild. The build reports
+existing warnings in `dirent.h` and one signed/unsigned comparison warning in
+`scripting.cpp`, with no errors.
+
 ## Build command
 
 Release x64 build:
@@ -542,5 +580,7 @@ Pontos principais:
   constantes simbolicas `pi`, `e` e casos complexos com `pii`;
 - a suite automatizada valida atualmente `338 passed, 0 failed` em Release x64
   e Release x86;
+- a cobertura isolada valida atualmente `61 passed, 0 failed`, incluindo
+  autocomplete, navegacao por historico e ramos de comandos interativos;
 - x64 e Win32/x86 continuam a ser alvos de build, mantendo compatibilidade com
   Windows antigo e Windows 11.

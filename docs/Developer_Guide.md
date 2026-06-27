@@ -27,6 +27,8 @@ Advanced Trigonometry Calculator/
 Important source areas include:
 
 - `main.cpp`: startup, precision-mode dispatch, top-level console flow;
+- `auto_complete.cpp`: interactive line editing, Tab completion vocabulary,
+  history navigation and command/function suggestions;
 - `main_aux_processor.cpp` and `main_processor.cpp`: command and expression
   routing around the main calculation flow;
 - `processing_core.cpp`: expression processing, arithmetic solving, and
@@ -81,6 +83,23 @@ The processing core handles:
 
 ATC also uses documented syntax conventions such as `_` for negative values in
 some internal/output forms.
+
+## Interactive Prompt and Autocomplete
+
+The interactive prompt uses a custom console line editor instead of plain
+`gets_s(...)`. It supports:
+
+- Tab completion while the user is typing;
+- repeated Tab cycling when more than one completion is possible;
+- shortest closest-match ordering for command/function suggestions;
+- Up/Down history navigation using `history.txt`;
+- Left/Right, Home, End, Delete and Backspace editing;
+- suggestions for documented mathematical functions, commands, aliases and
+  user functions stored under the ATC `User functions` folder.
+
+The autocomplete path should remain lightweight because it runs during normal
+typing. Suggestions are cached for the current line so repeated Tab presses do
+not rebuild the full list unnecessarily.
 
 ## Equation Solver Overview
 
@@ -145,6 +164,12 @@ Current validated regression result for Release x64 and Release x86:
 
 ```text
 Summary: 338 passed, 0 failed
+```
+
+Current isolated coverage result:
+
+```text
+Summary: 61 passed, 0 failed
 ```
 
 See `docs/Testing.md` for commands and coverage details.

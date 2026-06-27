@@ -22,7 +22,7 @@ numbers, and configurable numerical precision.
 
 Version 2.1.7 focuses on precision-mode persistence, equation and polynomial
 fixes, broader regression coverage, Windows console behavior, memory
-improvements, and clearer verbose-resolution output.
+improvements, command-line editing, and clearer verbose-resolution output.
 
 ## Features
 
@@ -41,6 +41,9 @@ improvements, and clearer verbose-resolution output.
 - Equation solving and systems of equations
 - `double` and Boost `mp_float` precision modes
 - Command-line automation for selected report-exporting commands
+- Tab completion for documented commands, mathematical functions, and user
+  functions while typing expressions
+- Up/Down history navigation in the interactive prompt
 
 ## Example Commands
 
@@ -53,6 +56,7 @@ simplify polynomial((x-2)*(x-3))
 solve equation(x^2-5*x+6)
 roots to polynomial(2\3)
 create matrix(foo\2\2\3)
+solver(sin(x)-0.5)
 ```
 
 Example output:
@@ -107,6 +111,9 @@ Current validated result for both Release x64 and Release x86:
 Summary: 338 passed, 0 failed
 ```
 
+The isolated coverage helper currently validates 61 source-level and safe
+smoke checks, including command exposure and autocomplete behavior.
+
 Run the regression suite after building ATC:
 
 ```powershell
@@ -154,6 +161,10 @@ Release\atc.exe
 
 Adjust the MSBuild path and platform values according to your installed
 Visual Studio/C++ environment.
+
+The latest Release x86 build completed successfully. It still reports existing
+compiler warnings in `dirent.h` and one signed/unsigned comparison warning in
+`scripting.cpp`; no new build errors were introduced.
 
 ## Documentation
 

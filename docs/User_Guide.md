@@ -37,6 +37,21 @@ Example output:
 #3=2
 ```
 
+## Interactive Prompt
+
+The ATC prompt supports command-line editing while typing:
+
+- press `Tab` to complete documented commands, mathematical functions and user
+  functions;
+- press `Tab` again to cycle through alternative matches when more than one
+  completion is possible;
+- use the `Up` and `Down` arrows to reuse previous expressions;
+- use `Left`, `Right`, `Home`, `End`, `Delete` and `Backspace` for normal line
+  editing.
+
+Autocomplete inserts the closest available match first and can be used more
+than once in the same expression.
+
 ## Angle Mode
 
 ATC supports configurable angle modes through the `mode` command:

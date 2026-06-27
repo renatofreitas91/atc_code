@@ -18,6 +18,8 @@ changing the PC state, or requiring user interaction.
   approximation while higher precision is enabled.
 - Keep the runner safe: no shutdown, restart, timer, alarm, calendar GUI or PC
   control commands.
+- Track source-level coverage for interactive prompt ergonomics such as Tab
+  completion and history navigation without requiring a live console session.
 
 ## Automated coverage
 
@@ -261,6 +263,10 @@ before reaching the solver.
 | Windows 11 console behavior | intro default-disable branch | source check | confirms `RtlGetVersion`, build `>= 22000` and `shouldDisableATCIntroByDefault()` are present |
 | Windows 11 console behavior | ANSI color mapping | source check | confirms Win32 color order maps aqua/cyan correctly instead of ANSI yellow |
 | Windows 11 console behavior | new ATC instance commands | source check | confirms `new tab`, `new instance`, `new atc tab`, `new atc instance`, `wt.exe new-tab` and `cmd.exe` fallback |
+| Interactive prompt | Tab autocomplete vocabulary | source check | confirms mathematical functions, solver commands, settings commands and command aliases are exposed to completion |
+| Interactive prompt | dynamic user functions | source check | confirms `User functions` entries can be suggested as `atc_<name>(` completions |
+| Interactive prompt | ambiguous completion cycling | source check | confirms repeated Tab can cycle possible matches instead of only printing a list |
+| Interactive prompt | history navigation | source check | confirms Up/Down arrow handling and draft restoration while editing |
 | App environment / Ambiente UI | clean history | `clean history` | removes previous history entries and records the cleanup command |
 | App environment / Ambiente UI | clean | `clean` | exits successfully after clearing console |
 | App environment / Ambiente UI | exit | `exit` | exits successfully and leaves an empty `exit.txt` marker |
@@ -314,15 +320,39 @@ It currently covers:
 
 - app environment branches: `auto adjust window`, `about`, `history`,
   `user guide`, `run atc`, `restart atc`
+- app environment command targets: `auto adjust window` writes window and
+  dimensions settings, `about` reads the about execution text, `history` opens
+  `history.txt`, `user guide` opens the local PDF, and `run atc` /
+  `restart atc` launch `atc.exe` with `restart atc` ending the current loop
 - update/link branches: `check for updates`, `update`, `update x64`,
   `update portable`, `donate`, `atc facebook`, `atc sourceforge`
+- update/link command targets: update checking reads
+  `advantrigoncalc.sourceforge.io/atc_version.html`, update commands point to
+  SourceForge x86/x64/ZIP downloads, and external link commands point to the
+  SourceForge donation page, ATC Facebook page and ATC SourceForge project page
 - reset/settings branches and `colors` persistence logic
+- reset/settings command targets: reset commands write the expected
+  `onStart.txt` markers, `now` variants relaunch `atc.exe`, startup reset
+  branches delete the documented settings/data file groups, and `colors`
+  persists a `color XY` command to `colors.txt`
 - folder helpers and `open txt` guard logic
+- folder/open-file command targets: folder commands point to the expected ATC
+  data subfolders, `auto solve txt` waits for `SOLVE_NOW` before processing,
+  and `open txt` normalizes quotes/spaces and only launches Notepad when the
+  target file exists
 - `eliminate strings` branch and duplicate-`fclose` regression guard
 - TXT detector/command bridge branches and startup detector guard
 - menu-driven calculation module branches
 - graph key-buffer branch logic
 - long-running time command branches plus a short `stopwatch(1)` smoke
+- interactive prompt autocomplete vocabulary, ambiguous-match cycling, dynamic
+  user function suggestions, and Up/Down history navigation
+
+Latest isolated coverage result:
+
+```text
+Summary: 61 passed, 0 failed
+```
 
 ## Runner
 

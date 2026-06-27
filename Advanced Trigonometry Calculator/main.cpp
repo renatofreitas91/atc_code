@@ -404,33 +404,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 					executedSolver = 0;
 					cls();
 				}
-				char car = 'a';
-				while (car != '\r') {
-					if (car == '\t') {
-						car = 'a';
-						int comp = autoComplete(trigData);
-					}
-					else {
-						if (car == '\r') {
-							break;
-						}
-						else {
-							printf(">");
-							gets_s(trigData, DIM);
-							if (abs((int)strlen(trigData)) > 0) {
-								car = trigData[abs((int)strlen(trigData)) - 1];
-								if (car == '\t') {
-									trigData[abs((int)strlen(trigData)) - 1] = '\0';
-								}
-								else {
-									car = '\r';
-								}
-
-							}
-
-						}
-					}
-				}
+				readConsoleInputWithTabCompletion(trigData, DIM);
 				start_processing = clock();
 				sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)       ==) Processing... (==", memFactor);
 				applyConsoleTitleSafe(forsprintf);

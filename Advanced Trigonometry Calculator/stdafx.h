@@ -241,6 +241,7 @@ template<typename T>
 bool tryEvaluateSolverFastPath(char* expression, T& solution);
 PrecisionValue** getDynamic2DDoubleArray();
 int autoComplete(char* query);
+void readConsoleInputWithTabCompletion(char* line, int capacity);
 template<typename T>
 int variableValidator(char* variableFF);
 template<typename T>

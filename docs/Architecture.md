@@ -21,6 +21,10 @@ Startup responsibilities include:
 - choosing the typed runtime path for `double` or Boost `mp_float`;
 - handling command-line arguments and interactive console flow.
 
+Interactive line input is delegated to `auto_complete.cpp`, which handles
+line editing, history navigation and Tab completion before the command string
+is passed into the normal processing flow.
+
 ## Command Dispatcher
 
 Command routing is spread across the main processor files and command modules:
@@ -33,6 +37,10 @@ Command routing is spread across the main processor files and command modules:
 These files coordinate whether input is treated as a direct expression, a
 special ATC command, a variable assignment, a matrix operation, a file/TXT
 workflow, or an interactive menu action.
+
+Autocomplete is intentionally kept outside the mathematical processors. It
+helps the user complete command/function names and previous expressions, but
+does not decide calculation semantics.
 
 ## Processing Core
 
