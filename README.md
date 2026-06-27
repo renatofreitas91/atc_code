@@ -1,217 +1,309 @@
 # Advanced Trigonometry Calculator (ATC)
 
-![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)
+![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)
 ![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
 ![Language: C++](https://img.shields.io/badge/Language-C%2B%2B-blue.svg)
 ![Status: Open Source](https://img.shields.io/badge/Status-Open%20Source-brightgreen.svg)
 
-Advanced Trigonometry Calculator (ATC) is an open-source command-line scientific and mathematical calculator developed by **Renato Alexandre dos Santos Freitas**.
+Advanced Trigonometry Calculator (ATC) is a free, open-source command-line
+mathematical application developed by **Renato Alexandre dos Santos Freitas**.
 
-ATC is designed to evaluate text-based mathematical expressions and support advanced numerical calculations in a console environment. It is intended to be useful for students, engineers, scientists, developers, and mathematics enthusiasts who prefer a direct command-line workflow.
-
-## Table of Contents
-
-- [Project Overview](#project-overview)
-- [Why ATC?](#why-atc)
-- [Features](#features)
-- [Example Usage](#example-usage)
-- [Getting Started](#getting-started)
-- [Build / Requirements](#build--requirements)
-- [Documentation](#documentation)
-- [Project Structure](#project-structure)
-- [Design Principles](#design-principles)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Author](#author)
+ATC is designed for text-based scientific and mathematical calculations in a
+console environment. It supports direct expression evaluation, reusable
+variables, matrices, equation-solving commands, polynomial tools, complex
+numbers, and configurable numerical precision.
 
 ## Project Overview
 
-Advanced Trigonometry Calculator provides a text-based calculation environment for scientific and mathematical work. It supports direct expression evaluation, command-based workflows, reusable variables, matrix operations, equation solving, and high-precision numerical calculations.
+ATC provides a practical command-line calculation environment for students,
+engineers, developers, and open-source users who prefer plain-text mathematical
+input.
 
-The project focuses on practical console usage: users enter commands or mathematical expressions, ATC evaluates them, and results are returned in the terminal. This makes the tool suitable for repeatable calculations, learning, experimentation, and technical workflows where plain-text input is valuable.
+The project focuses on numerical calculation workflows rather than presenting
+itself as a full computer algebra system. Users enter expressions or documented
+ATC commands, and results are returned directly in the terminal.
 
-## Why ATC?
+ATC 2.1.7 focuses on:
 
-ATC follows a command-line driven philosophy:
-
-- mathematical expressions are written as text;
-- calculations can be repeated and documented more easily;
-- users can inspect and learn from the syntax they enter;
-- the project remains transparent through open-source development;
-- the console workflow keeps interaction direct and script-friendly;
-- the project has evolved over the long term since 2011.
-
-The goal is not to replace every specialized mathematical platform, but to provide a capable, transparent, and maintainable command-line calculator for a broad range of numerical and educational use cases.
+- predictable switching between `double` and Boost `mp_float` precision modes;
+- improved high-precision formatting;
+- stronger equation solver, polynomial simplifier, and solver behavior;
+- broader automated regression coverage based on the user guide;
+- improved Windows console behavior;
+- reduced unnecessary dynamic allocation in several numeric paths.
 
 ## Features
 
-| Category | Capabilities |
-| --- | --- |
-| Trigonometry | Circular and hyperbolic functions |
-| Algebra | Expressions, equations, systems of equations |
-| Complex Numbers | Arithmetic and expressions with complex values |
-| Matrices | Matrix creation and manipulation |
-| Statistics | Statistical calculations |
-| Numerical Computing | High-precision numerical calculations |
-| User Workflow | Variables, reusable expressions, command-line usage |
+ATC includes support for:
 
-Main capabilities include:
-
-- trigonometric calculations;
-- hyperbolic functions;
+- arithmetic expressions;
+- trigonometry and inverse trigonometry;
+- hyperbolic and inverse hyperbolic functions;
+- logarithms and custom logarithm syntax;
 - complex numbers;
-- logarithms;
-- statistics;
-- matrices;
-- equation solving;
-- systems of equations;
 - variables and reusable expressions;
-- high-precision numerical calculations;
-- scientific and engineering-style calculations;
-- text-based command interface.
+- automatic multiplication deduction, such as `2pi`, `2(3+4)`, `(x+1)y`,
+  and `2sin(pi/2)`;
+- matrices and matrix-related helper commands;
+- statistics and probability functions;
+- DSP functions such as `sinc`, `fft`, and `ifft`;
+- polynomial simplification;
+- equation solving, including coefficient-form and supported textual
+  polynomial forms;
+- systems of equations;
+- `double` and Boost `mp_float` precision modes;
+- command-line automation for selected report-exporting commands.
 
-## Example Usage
+ATC also includes documented commands for settings, file/folder workflows,
+TXT command bridging, graph settings, date/time calculations, and other
+console-based utilities.
 
-Examples below show typical ATC commands. Output formatting may depend on the current ATC configuration, such as angle mode, precision settings, or selected numerical mode.
+## Example Commands
+
+Examples below use ATC syntax. Output may vary depending on angle mode,
+precision mode, and persisted settings.
+
+```text
+2+3*4
+```
+
+```text
+#0=14
+```
 
 ```text
 sin(pi/2)
 ```
 
-Illustrative output:
-
 ```text
-#0=1
+#1=1
 ```
 
 ```text
 log(100)
 ```
 
-Illustrative output:
-
-```text
-#1=2
-```
-
-```text
-solver(x-2)
-```
-
-Illustrative output:
-
 ```text
 #2=2
 ```
 
 ```text
-solve equation(x^2-4=0)
+sqrt(9)
 ```
-
-Depending on the accepted equation syntax and current parser path, equation-solving commands may also be written in ATC's documented polynomial forms.
 
 ```text
-create matrix(A\2\2\1)
+#3=3
 ```
 
-Matrix commands and exact output formats depend on the matrix operation being used.
+```text
+2pi
+```
 
-## Getting Started
+```text
+#4=6.28319
+```
 
-1. Download or build ATC.
-2. Run the executable in a command-line environment.
-3. Enter mathematical expressions or ATC commands.
-4. Read the calculated result in the console.
-5. Explore the available commands and documentation.
+```text
+simplify polynomial((x-2)*(x-3))
+```
 
-## Build / Requirements
+```text
+(1+0i)x^2+(_5+0i)x^1+(6+0i)
+```
 
-ATC is primarily a C++ command-line application. Windows is the primary platform.
+```text
+solve equation(x^2-5*x+6)
+```
 
-The repository contains a Visual Studio solution:
+```text
+x1=3
+x2=2
+```
+
+```text
+roots to polynomial(2\3)
+```
+
+```text
+(1+0i)x^2+(_5+0i)x^1+(6+0i)
+```
+
+```text
+create matrix(foo\2\2\3)
+```
+
+This creates a documented matrix value using ATC's matrix command syntax.
+
+## High Precision Mode
+
+ATC 2.1.7 supports persistent switching between:
+
+- `double`
+- Boost `mp_float`
+
+The selected mode is stored in:
+
+```text
+%USERPROFILE%\Pictures\Advanced Trigonometry Calculator\higherPrecision.txt
+```
+
+Accepted values:
+
+- `0`: use `double`
+- `1`: use Boost `mp_float`
+
+Users can switch modes with:
+
+```text
+higherprecision(1)
+higherprecision(0)
+```
+
+The setting is applied after restarting ATC.
+
+Validated high-precision examples include:
+
+```text
+dp50dppi
+```
+
+```text
+3.14159265358979323846264338327950288419716939937511
+```
+
+```text
+dp50dpe
+```
+
+```text
+2.71828182845904523536028747135266249775724709369996
+```
+
+ATC also supports temporary high-precision evaluation through the documented
+`maxprec` prefix without permanently changing the persisted precision mode.
+
+## Automated Testing
+
+ATC 2.1.7 includes an automated regression suite based on the documented user
+guide behavior.
+
+Current validated result for both Release x64 and Release x86:
+
+```text
+Summary: 338 passed, 0 failed
+```
+
+Regression coverage includes arithmetic, constants, trigonometry, inverse
+trigonometry, hyperbolic functions, logarithms, matrices, variable names,
+automatic multiplication, polynomial simplification, equation solving, solver
+paths, function study, graph settings, date/time commands, TXT command bridge
+commands, persistent settings, interactive menu behavior, and precision mode
+persistence.
+
+Run the regression suite after building ATC:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe .\x64\Release\atc.exe
+```
+
+The test runner temporarily touches ATC user-setting files under:
+
+```text
+%USERPROFILE%\Pictures\Advanced Trigonometry Calculator
+```
+
+It backs up and restores the settings it modifies.
+
+## Build Requirements
+
+ATC is a C++ Windows console application. The repository includes a Visual
+Studio solution:
 
 ```text
 Advanced Trigonometry Calculator.sln
 ```
 
-Build instructions may vary depending on the Visual Studio/C++ environment used. Users should inspect the repository files and project configuration for exact build steps, target platforms, and release/debug settings.
+Build instructions may vary depending on the Visual Studio/MSBuild environment,
+installed Windows SDK, compiler toolset, and target platform.
 
-Typical build workflows may involve opening the solution in Visual Studio or invoking MSBuild with the desired configuration and platform. Exact compiler and toolset requirements should be confirmed from the project configuration available in the repository.
+The project has been built and validated with Release x64 and Release x86
+targets. The x86 target remains relevant for compatibility with older Windows
+versions.
+
+## Building from Source
+
+Typical workflows are:
+
+- open `Advanced Trigonometry Calculator.sln` in Visual Studio and build the
+  desired Release configuration;
+- or run MSBuild from a Visual Studio Developer PowerShell / Developer Command
+  Prompt environment.
+
+Example Release x64 build command:
+
+```powershell
+& 'C:\Program Files\Microsoft Visual Studio\18\Insiders\MSBuild\Current\Bin\MSBuild.exe' '.\Advanced Trigonometry Calculator.sln' /p:Configuration=Release /p:Platform=x64 /m:1
+```
+
+Expected Release x64 executable:
+
+```text
+x64\Release\atc.exe
+```
+
+Expected Release x86 executable:
+
+```text
+Release\atc.exe
+```
+
+Adjust the MSBuild path and platform values according to your installed Visual
+Studio/C++ environment.
 
 ## Documentation
 
-Documentation and release information may be found in the repository, including:
+The current 2.1.7 documentation and release notes are maintained in:
 
-- `docs/ATC_2.1.7_DOCUMENTATION.md`;
-- `docs/RELEASE_2.1.7.md`;
-- `tests/ATC_AUTOMATED_TEST_CASES.md`;
-- `tests/ATC_USER_GUIDE_COVERAGE.md`;
-- user guide files included with ATC distributions or project assets;
-- project pages associated with the ATC open-source project.
+- `docs/ATC_2.1.7_DOCUMENTATION.md`
+- `docs/RELEASE_2.1.7.md`
+- `tests/ATC_AUTOMATED_TEST_CASES.md`
+- `tests/ATC_USER_GUIDE_COVERAGE.md`
 
-If documentation locations change, the repository files should be considered the authoritative source for the current version.
+The technical documentation is the source of truth for current behavior,
+validated examples, regression coverage, known limitations, and release notes.
 
-## Project Structure
-
-The repository contains the source code and supporting files required to build and maintain ATC. The exact structure may evolve as the project continues to be developed.
-
-Current high-level areas include:
-
-| Path | Purpose |
-| --- | --- |
-| `Advanced Trigonometry Calculator/` | Main C++ source code and project files |
-| `docs/` | Technical documentation and release notes |
-| `tests/` | Automated regression tests and coverage notes |
-| `icons/` | Icon assets used by the project |
-| `tools/` | Supporting development utilities, when present |
-| `Advanced Trigonometry Calculator.sln` | Visual Studio solution file |
-
-## Design Principles
-
-ATC development is guided by practical engineering and educational goals:
-
-- correctness in mathematical behavior;
-- reproducibility of text-based calculations;
-- transparency through open-source code;
-- maintainability over long-term project evolution;
-- educational value for users learning mathematical syntax and numerical methods;
-- practical command-line usage for day-to-day calculation workflows.
-
-## Roadmap
-
-Future work may include:
-
-- improving mathematical capabilities;
-- expanding automated test coverage;
-- improving documentation;
-- improving command-line usability;
-- continuing code maintenance and refactoring;
-- improving examples and user guidance.
-
-No specific release dates are promised in this roadmap.
-
-## Contributing
-
-Contributions are welcome. Useful ways to help include:
-
-- reporting bugs;
-- suggesting features;
-- improving documentation;
-- submitting pull requests;
-- testing mathematical commands and edge cases;
-- reviewing examples and user guidance.
-
-When contributing, keep changes focused, explain the behavior being changed, and include tests or validation notes when possible.
+Project documentation should be maintained in Portuguese and English. Code
+comments, when present, should be written in English.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0.
+Advanced Trigonometry Calculator is licensed under the **GNU General Public
+License v3.0 (GPL-3.0)**.
 
-See `Advanced Trigonometry Calculator/License.txt` for details.
+See:
+
+```text
+Advanced Trigonometry Calculator/License.txt
+```
 
 ## Author
 
-Developed and maintained by **Renato Alexandre dos Santos Freitas**.
+Advanced Trigonometry Calculator is developed and maintained by:
 
-Advanced Trigonometry Calculator is an open-source project with long-term development history dating back to 2011.
+**Renato Alexandre dos Santos Freitas**
+
+The project is open source and has a long-term development history dating back
+to 2011.
+
+## Contributing
+
+Contributions are welcome. Useful contributions include:
+
+- bug reports with reproducible commands;
+- documentation improvements;
+- additional regression tests;
+- careful fixes for parser, solver, precision, matrix, or memory behavior;
+- validation on supported Windows environments.
+
+When contributing, keep changes focused, avoid unsupported claims, and include
+tests or validation notes whenever possible.
