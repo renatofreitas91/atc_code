@@ -70,6 +70,68 @@ static void normalizeMainCoreBooleanInfinityConstants(char* expression) {
 	sprintf(expression, "%s", normalized.c_str());
 }
 
+static void normalizeMainCoreScientificNotation(char* expression) {
+	if (expression == nullptr || abs((int)strlen(expression)) == 0) {
+		return;
+	}
+	std::string source(expression);
+	std::string normalized;
+	normalized.reserve(source.size());
+	for (size_t i = 0; i < source.size();) {
+		size_t start = i;
+		bool startsNumber = std::isdigit((unsigned char)source[i]) || source[i] == '.' ||
+			(source[i] == '_' && i + 1 < source.size() && (std::isdigit((unsigned char)source[i + 1]) || source[i + 1] == '.'));
+		if (!startsNumber) {
+			normalized += source[i++];
+			continue;
+		}
+		size_t mantissaStart = i;
+		if (source[i] == '_') {
+			i++;
+		}
+		bool hasMantissaDigit = false;
+		while (i < source.size() && (std::isdigit((unsigned char)source[i]) || source[i] == '.')) {
+			if (std::isdigit((unsigned char)source[i])) {
+				hasMantissaDigit = true;
+			}
+			i++;
+		}
+		if (!hasMantissaDigit || i >= source.size() || source[i] != 'E') {
+			normalized.append(source, start, i - start);
+			continue;
+		}
+		size_t exponentMarker = i++;
+		size_t exponentStart = i;
+		if (i < source.size() && (source[i] == '+' || source[i] == '-' || source[i] == '_')) {
+			i++;
+		}
+		size_t exponentDigitsStart = i;
+		while (i < source.size() && std::isdigit((unsigned char)source[i])) {
+			i++;
+		}
+		if (exponentDigitsStart == i) {
+			normalized.append(source, start, exponentMarker - start + 1);
+			i = exponentStart;
+			continue;
+		}
+		std::string mantissa = source.substr(mantissaStart, exponentMarker - mantissaStart);
+		std::string exponent = source.substr(exponentStart, i - exponentStart);
+		if (!exponent.empty() && exponent[0] == '+') {
+			exponent.erase(0, 1);
+		}
+		if (!exponent.empty() && exponent[0] == '_') {
+			exponent[0] = '-';
+		}
+		if (!exponent.empty() && exponent[0] == '-') {
+			exponent[0] = '_';
+		}
+		normalized += "(" + mantissa + "*10^(" + exponent + "))";
+	}
+	if (normalized.size() < (size_t)DIM) {
+		sprintf(expression, "%s", normalized.c_str());
+	}
+}
+
 static std::string compactAtcExpression(const char* expression) {
 	std::string compactExpression;
 	if (expression == nullptr) {
@@ -123,6 +185,105 @@ static bool handleDirectInfinityExpression(const char* expression, FILE* fout, i
 }
 
 char* saveArithTrig = getDynamicCharArray("", "saveArithTrig"), * actualTime = getDynamicCharArray("", "actualTime"), * siPref = getDynamicCharArray("", "siPref"), * verboseRes = getDynamicCharArray("", "verboseRes"), * saveExpressionFF = getDynamicCharArray("", "saveExpressionFF"), * renamedVariable = getDynamicCharArray("", "renamedVariable"), * vectorString = getDynamicCharArray("", "vectorString"), * saveMatrixAns = getDynamicCharArray("", "saveMatrixAns"), * matrixVariable = getDynamicCharArray("", "matrixVariable");
+
+static bool extractSolverArgumentForFastPath(const char* expression, std::string& argument) {
+	if (expression == nullptr) {
+		return false;
+	}
+	std::string text(expression);
+	const std::string prefix = "solver(";
+	if (text.compare(0, prefix.size(), prefix) != 0 || text.size() <= prefix.size()) {
+		return false;
+	}
+	int level = 0;
+	for (size_t i = prefix.size() - 1; i < text.size(); i++) {
+		if (text[i] == '(') {
+			level++;
+		}
+		else if (text[i] == ')') {
+			level--;
+			if (level == 0) {
+				if (i != text.size() - 1) {
+					return false;
+				}
+				argument = text.substr(prefix.size(), i - prefix.size());
+				return true;
+			}
+			if (level < 0) {
+				return false;
+			}
+		}
+	}
+	return false;
+}
+
+static std::string stripSolverFastPathOuterParentheses(const std::string& source) {
+	std::string text = source;
+	bool changed = true;
+	while (changed && text.size() >= 2 && text[0] == '(' && text[text.size() - 1] == ')') {
+		changed = false;
+		int level = 0;
+		bool wrapsWholeExpression = true;
+		for (size_t i = 0; i < text.size(); i++) {
+			if (text[i] == '(') {
+				level++;
+			}
+			else if (text[i] == ')') {
+				level--;
+				if (level == 0 && i != text.size() - 1) {
+					wrapsWholeExpression = false;
+					break;
+				}
+			}
+			if (level < 0) {
+				wrapsWholeExpression = false;
+				break;
+			}
+		}
+		if (wrapsWholeExpression && level == 0) {
+			text = text.substr(1, text.size() - 2);
+			changed = true;
+		}
+	}
+	return text;
+}
+
+static bool selectFirstLinearSolverFactor(const std::string& expression, std::string& factor) {
+	std::string text = stripSolverFastPathOuterParentheses(expression);
+	if (text.empty()) {
+		return false;
+	}
+	if (text[0] != '(') {
+		if (text.find('x') != std::string::npos && text.find('/') == std::string::npos) {
+			factor = text;
+			return true;
+		}
+		return false;
+	}
+	int level = 0;
+	for (size_t i = 0; i < text.size(); i++) {
+		if (text[i] == '(') {
+			level++;
+		}
+		else if (text[i] == ')') {
+			level--;
+			if (level == 0) {
+				std::string candidate = stripSolverFastPathOuterParentheses(text.substr(1, i - 1));
+				if (candidate.find('x') != std::string::npos && candidate.find('/') == std::string::npos &&
+					candidate.find('(') == std::string::npos && candidate.find(')') == std::string::npos) {
+					factor = candidate;
+					return true;
+				}
+				return false;
+			}
+			if (level < 0) {
+				return false;
+			}
+		}
+	}
+	return false;
+}
+
 template<typename T>
 T main_core(char* arithTrig, char* fTrig, FILE* fout, char* path, T result1, T result2, int isFromMain) {
 	if (rf > 0) {
@@ -133,7 +294,7 @@ T main_core(char* arithTrig, char* fTrig, FILE* fout, char* path, T result1, T r
 	verbose = 0;
 	verified = 0;
 	rasf = 0;
-	resultR = 0; resultI;
+	resultR = 0; resultI = 0;
 	int txt = 0, var = 0, str = 0, s = 0, i = 0, space = 0, v = 0, j = 0, valGet = 0, h = 0, run_del_space = 1, strIndex = 0, StringManual = 0;
 	char* variable = getDynamicCharArray("", "variable");  char* getVar = getDynamicCharArray("", "getVar"); char* savefTrig = getDynamicCharArray(" ", "savefTrig");
 	bool command = 0, cleanhistory = 0;
@@ -153,6 +314,53 @@ T main_core(char* arithTrig, char* fTrig, FILE* fout, char* path, T result1, T r
 	}
 	else {
 		sprintf(withoutSpaces, "%s", arithTrig);
+	}
+	T solverFastPathResult = 0;
+	if (!solverRunning && !equationSolverRunning && tryEvaluateSolverFastPath(withoutSpaces, solverFastPathResult)) {
+		convertComplex2Exponential(resultR, resultI);
+		if (abs(precisionValueTo<double>(resultI)) < 1E-18) {
+			sprintf(arithTrig, "%s", respR);
+		}
+		else if (resultI > 0) {
+			sprintf(arithTrig, "(%s+%si)", respR, respI);
+		}
+		else {
+			sprintf(arithTrig, "(%s%si)", respR, respI);
+		}
+		sprintf(fTrig, "%s", arithTrig);
+		sprintf(withoutSpaces, "%s", arithTrig);
+	}
+	std::string solverArgumentForFastPath;
+	if (extractSolverArgumentForFastPath(withoutSpaces, solverArgumentForFastPath)) {
+		std::string reducedSolverArgument;
+		std::string linearSolverFactor;
+		std::string solverFactorSource = solverArgumentForFastPath;
+		if (reduceExactRationalProductExpression(solverArgumentForFastPath.c_str(), reducedSolverArgument)) {
+			solverFactorSource = reducedSolverArgument;
+		}
+		if (selectFirstLinearSolverFactor(solverFactorSource, linearSolverFactor)) {
+			std::string normalizedSolver = "solver(" + linearSolverFactor + ")";
+			if (normalizedSolver.size() < (size_t)DIM) {
+				sprintf(arithTrig, "%s", normalizedSolver.c_str());
+				sprintf(fTrig, "%s", normalizedSolver.c_str());
+				sprintf(withoutSpaces, "%s", normalizedSolver.c_str());
+				T selectedSolverFastPathResult = 0;
+				if (tryEvaluateSolverFastPath(withoutSpaces, selectedSolverFastPathResult)) {
+					convertComplex2Exponential(resultR, resultI);
+					if (abs(precisionValueTo<double>(resultI)) < 1E-18) {
+						sprintf(arithTrig, "%s", respR);
+					}
+					else if (resultI > 0) {
+						sprintf(arithTrig, "(%s+%si)", respR, respI);
+					}
+					else {
+						sprintf(arithTrig, "(%s%si)", respR, respI);
+					}
+					sprintf(fTrig, "%s", arithTrig);
+					sprintf(withoutSpaces, "%s", arithTrig);
+				}
+			}
+		}
 	}
 	int getString = 0;
 	if (arithTrig[0] == 'g' && arithTrig[1] == 'e' && arithTrig[2] == 't' && arithTrig[3] == '(') {
@@ -1366,6 +1574,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 		}
 	}
 	normalizeMainCoreBooleanInfinityConstants(arithTrig);
+	normalizeMainCoreScientificNotation(arithTrig);
 	for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
 		if (arithTrig[i] == 'a' && arithTrig[i + 1] == 'n' && arithTrig[i + 2] == 's') {
 			arithTrig[i] = 'r'; arithTrig[i + 1] = 'e'; arithTrig[i + 2] = 's';
@@ -1374,6 +1583,20 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 	}
 	s = 0;
 
+	T solverFastPathSolution = 0;
+	if (!solverRunning && !equationSolverRunning && tryEvaluateSolverFastPath(arithTrig, solverFastPathSolution)) {
+		convertComplex2Exponential(resultR, resultI);
+		if (abs(precisionValueTo<double>(resultI)) < 1E-18) {
+			sprintf(arithTrig, "%s", respR);
+		}
+		else if (resultI > 0) {
+			sprintf(arithTrig, "(%s+%si)", respR, respI);
+		}
+		else {
+			sprintf(arithTrig, "(%s%si)", respR, respI);
+		}
+		sprintf(saveExpressionFF, "%s", arithTrig);
+	}
 
 	bool foundMatrixVariable = false;
 	if (verify == 1 && !isContained("\\", arithTrig)) {
@@ -1419,6 +1642,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 	if (verify == 1 && !isContained("\\", arithTrig)) {
 		if ((equationSolverRunning == false && solverRunning == false) && isContained("==", arithTrig) == (bool)false && isContained("!=", arithTrig) == (bool)false && !foundCustomValueMatrixAndChanged && !foundCustomValueMatrix && !foundMatrixVariable || isContained("]i", arithTrig)) {
 			sprintf(saveArithTrig, "%s", arithTrig);
+			sprintf(expressionF, "");
 			manageExpression<T>(arithTrig, (T)0, (T)0, 1);
 			sprintf(arithTrig, "%s", expressionF);
 			sprintf(saveArithTrig, "%s", arithTrig);

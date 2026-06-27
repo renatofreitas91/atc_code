@@ -237,6 +237,8 @@ template <typename T>
 T solve(char* equation);
 template<typename T>
 T solver(char* expression);
+template<typename T>
+bool tryEvaluateSolverFastPath(char* expression, T& solution);
 PrecisionValue** getDynamic2DDoubleArray();
 int autoComplete(char* query);
 template<typename T>
@@ -271,6 +273,18 @@ void asciiOrder();
 void CheckForNotDeleted();
 void inverseAsciiOrder();
 void autoAdjustWindow();
+bool applyConsoleCommandDimensions(const char* setting);
+bool applyConsoleDimensionsSafe(int columns, int lines);
+bool applyConsoleWindowSafe(int x, int y, int width, int height);
+void applyConsoleTitleSafe(const char* title);
+void applyConsoleColorSafe(const char* colorCommand);
+void repaintConsoleViewportSafe();
+void maximizeConsoleWindowSafe();
+void applyStartupConsoleLayoutSafe();
+bool shouldUseLegacyConsoleWindowManagement();
+void openNewATCInstance();
+bool reduceExactRationalProductExpression(const char* expression, std::string& reducedExpression);
+bool normalizeSolverCommandExpression(char* expression);
 template <typename T>
 void showSolutions(FILE* fout, int correct, T** valInd, T** valuesS, T** valuesSI, T** values, T** valuesI, T** valuesF, T** valuesFI);
 void getDimensions();
@@ -365,6 +379,8 @@ void getLines(char* data);
 void average(char* values);
 void advancedSolver(char* expression);
 void force_legacy_console_mode();
+bool IsWindows11OrGreater();
+bool shouldDisableATCIntroByDefault();
 template<typename T>
 void getRoots(T* expressionR, T* expressionI, T* rootsR, T* rootsI, int maxExponent, int rootIndex);
 template<typename T>

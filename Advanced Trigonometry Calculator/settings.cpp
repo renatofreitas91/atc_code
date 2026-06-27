@@ -20,6 +20,7 @@ void colors() {
 	express[6] = bGround;
 	express[7] = cTxt;
 	printf("\n");
+	applyConsoleColorSafe(express);
 	system(express);
 	char* toOpen = getDynamicCharArray("", "toOpen");
 	sprintf(toOpen, "%s\\colors.txt", atcPath);
@@ -79,7 +80,9 @@ void window() {
 		height = (int)getValue<T>();
 	}
 	printf("\n");
-	MoveWindow(w, x, y, width, height, FALSE);
+	if (shouldUseLegacyConsoleWindowManagement() && !applyConsoleWindowSafe(x, y, width, height)) {
+		MoveWindow(w, x, y, width, height, FALSE);
+	}
 	char* toOpen = getDynamicCharArray("", "toOpen");
 	sprintf(toOpen, "%s\\window.txt", atcPath);
 	open = fopen(toOpen, "w");
@@ -113,9 +116,11 @@ void mode() {
 }
 
 void about2() {
-	sprintf(forsprintf, "title Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)", memFactor);
-	system(forsprintf);
-	system("MODE con cols=90 lines=15");
+	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)", memFactor);
+	applyConsoleTitleSafe(forsprintf);
+	if (!applyConsoleDimensionsSafe(90, 15)) {
+		system("MODE con cols=90 lines=15");
+	}
 	cls();
 	FILE* open = NULL;
 	char* about = getDynamicCharArray("", "about");
@@ -131,8 +136,8 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	sprintf(forsprintf, "title Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)                                                            ==) Enter data (==              ", memFactor);
-	system(forsprintf);
+	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)                                                            ==) Enter data (==              ", memFactor);
+	applyConsoleTitleSafe(forsprintf);
 	_delete(about, "about"); about = nullptr;
 }
 template<typename T>
@@ -328,12 +333,14 @@ void graphSettings() {
 		char* toOpen = getDynamicCharArray("", "toOpen");
 		sprintf(toOpen, "%s\\colors.txt", atcPath);
 		if (fopen(toOpen, "r") == NULL) {
+			applyConsoleColorSafe("color 73");
 			system("color 73");
 		}
 		else {
 			open = fopen(toOpen, "r");
 			fgets(setting, 9, open);
 			fclose(open);
+			applyConsoleColorSafe(setting);
 			system(setting);
 		}
 		if (toOpen != nullptr) {
@@ -346,9 +353,7 @@ void graphSettings() {
 		sprintf(forsprintf, "%s\\dimensions.txt", atcPath);
 		char* toOpen = getDynamicCharArray(forsprintf, "toOpen");
 		if (fopen(toOpen, "r") == NULL) {
-			HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-			COORD initialSize = { 160, 300 };
-			SetConsoleScreenBufferSize(hOut, initialSize);
+			applyConsoleDimensionsSafe(160, 300);
 		}
 		else {
 			open = NULL;
@@ -361,7 +366,9 @@ void graphSettings() {
 				for (i = 0; (setting[i] = fgetc(open)) != EOF; i++);
 				setting[i] = '\0';
 				fclose(open);
-				system(setting);
+				if (!applyConsoleCommandDimensions(setting)) {
+					system(setting);
+				}
 				sprintf(forsprintf, "%s", setting);
 				sprintf(dimensionsTxt, "%s", forsprintf);
 				getDimensions();
@@ -384,7 +391,9 @@ void graphSettings() {
 		}
 		HWND b;
 		b = GetConsoleWindow();
-		ShowWindow(b, SW_SHOWMAXIMIZED);
+		if (shouldUseLegacyConsoleWindowManagement()) {
+			ShowWindow(b, SW_SHOWMAXIMIZED);
+		}
 		if (setting != nullptr) {
 			_delete(setting, "setting"); setting = nullptr;
 		}
@@ -402,11 +411,13 @@ void graphSettings() {
 		char* toOpen = getDynamicCharArray(forsprintf, "toOpen");
 
 		if (fopen(toOpen, "r") == NULL) {
-			system("MODE con cols=4000 lines=4000");
+			applyConsoleDimensionsSafe(160, 2000);
 			int x = 0, y = 0, maxX = 0, maxY = 0;
 			HWND b;
 			b = GetConsoleWindow();
+			if (shouldUseLegacyConsoleWindowManagement()) {
 			ShowWindow(b, SW_SHOWMAXIMIZED);
+		}
 			int width, height;
 			HWND hwnd = GetConsoleWindow();
 			RECT rect;
@@ -441,7 +452,7 @@ void graphSettings() {
 			if (columns < 0) {
 				columns = (int)((csbi.srWindow.Left + csbi.srWindow.Right));
 			}
-			rows = 5000;
+			rows = 2000;
 			sprintf(toOpen, "%s\\dimensions.txt", atcPath);
 			sprintf(setting, "");
 			open = NULL;
@@ -450,12 +461,16 @@ void graphSettings() {
 				Sleep(10);
 			}
 			sprintf(setting, "MODE con cols=%d lines=%d", columns, rows);
-			system(setting);
+			if (!applyConsoleCommandDimensions(setting)) {
+				system(setting);
+			}
 			sprintf(dimensionsTxt, "%s", setting);
 			fputs(setting, open);
 			fclose(open);
 			b = GetConsoleWindow();
+			if (shouldUseLegacyConsoleWindowManagement()) {
 			ShowWindow(b, SW_SHOWMAXIMIZED);
+		}
 		}
 		else {
 			open = NULL;
@@ -493,13 +508,17 @@ void graphSettings() {
 				setting[i] = '\0';
 				HWND w;
 				w = GetConsoleWindow();
-				MoveWindow(w, (int)x, (int)y, (int)width, (int)height, FALSE);
+				if (shouldUseLegacyConsoleWindowManagement() && !applyConsoleWindowSafe((int)x, (int)y, (int)width, (int)height)) {
+					MoveWindow(w, (int)x, (int)y, (int)width, (int)height, FALSE);
+				}
 				sprintf(windowTxt, "%s", setting);
 			}
 		}
 		HWND b;
 		b = GetConsoleWindow();
-		ShowWindow(b, SW_SHOWMAXIMIZED);
+		if (shouldUseLegacyConsoleWindowManagement()) {
+			ShowWindow(b, SW_SHOWMAXIMIZED);
+		}
 		_delete(toOpen, "toOpen"); toOpen = nullptr;
 		_delete(value, "value"); value = nullptr;
 		_delete(setting, "setting"); setting = nullptr;
@@ -535,13 +554,18 @@ void graphSettings() {
 
 bool about() {
 	ShowConsoleCursor(FALSE);
-	sprintf(forsprintf, "title Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)", memFactor);
-	system(forsprintf);
+	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)", memFactor);
+	applyConsoleTitleSafe(forsprintf);
 
 	HWND a;
 	a = GetConsoleWindow();
-	MoveWindow(a, 0, 0, 760, 760, FALSE);
-	system("MODE con cols=84 lines=37");
+	if (shouldUseLegacyConsoleWindowManagement() && !applyConsoleWindowSafe(0, 0, 760, 760)) {
+		MoveWindow(a, 0, 0, 760, 760, FALSE);
+	}
+	if (!applyConsoleDimensionsSafe(84, 37)) {
+		system("MODE con cols=84 lines=37");
+	}
+	repaintConsoleViewportSafe();
 	_flushall();
 	bool continu = true;
 	puts("\n\n\n");
@@ -627,7 +651,9 @@ void getDimensions() {
 	char* setting = getDynamicCharArray("", "setting");
 	FILE* open = NULL;
 	if ((open = fopen(toOpen, "r")) == NULL) {
-		system("MODE con cols=160 lines=300");
+		if (!applyConsoleDimensionsSafe(160, 300)) {
+			system("MODE con cols=160 lines=300");
+		}
 	}
 	else {
 

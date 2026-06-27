@@ -31,6 +31,8 @@ template<typename T>
 int toSolve(int re);
 void ShowConsoleCursor(BOOL bShow);
 void GetWindowPos(int *x, int *y, int *maxX, int *maxY);
+template <typename T>
+void verboseResolutionController(int requestedState);
 void verboseResolutionController();
 template <typename T> void complexNumber(T a, T b);
 void idColorToName(char color);

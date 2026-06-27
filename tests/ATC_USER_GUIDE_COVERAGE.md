@@ -25,7 +25,7 @@ These areas have direct automated regression tests in
 | Digital signal processing | `sinc()`, `fft()`, `ifft()` |
 | Logarithms | `log()`, `ln()`, `logb b()` |
 | Statistics / probability functions | `gerror()`, `gerrorinv()`, `gerrorc()`, `gerrorcinv()`, `qfunc()`, `qfuncinv()` |
-| Lists and matrix variables / Matrizes | `create matrix()`, `min()`, `max()`, `avg()`, `linsnum()`, `colsnum()`, `getlins()`, `getcols()`, matrix `+`, `-`, `*`, `^2`, `^T`, `^R` |
+| Lists and matrix variables / Matrizes | `create matrix()`, `min()`, `max()`, `avg()`, `linsnum()`, `colsnum()`, `getlins()`, `getcols()`, row/column range extraction, matrix `+`, `-`, `*`, `^2`, `^T`, `^R` |
 | Sorting / Ordenacao | `ascending order()`, `descending order()`, `ascii order()`, `inverse ascii order()` |
 | Polynomial tools | `roots to polynomial()`, `simplify polynomial()` |
 | Equation tools | `solve quadratic equation()`, `solve equations system()`, `solve equation()` |
@@ -38,6 +38,7 @@ These areas have direct automated regression tests in
 | Persistent settings / Configuracoes persistentes | `current settings`, `mode`, `numerical systems`, `si prefixes`, `verbose resolution`, `higher precision`, `actual time response`, `dimensions`, `window`, persisted `colors.txt` readback |
 | Interactive menus / Menus interativos | invalid-choice retry and persistence for `mode`, `numerical systems`, `si prefixes`, `verbose resolution`, `actual time response`, plus `higher precision` interactive and inline forms |
 | App environment / Ambiente UI | `enable atc intro`, `disable atc intro`, `clean`, `clean history`, `exit` and the `exit.txt` marker |
+| Windows 11 console behavior | static coverage for Windows 11 intro default-disable logic, `RtlGetVersion` detection, Windows Terminal color mapping and `new tab` / `new instance` fallback |
 | Precision mode | `higherprecision(1)`, `higherprecision(0)`, persistent `double`/`mp_float`, temporary `maxprec` prefix and post-`maxprec` double fallback |
 | Automatic multiplication | constants, functions, parentheses, imaginary unit, variables, variable-constant adjacency and variable-function adjacency |
 | Variable names | relaxed variable-name handling, function/reserved-prefix names and composite-variable priority |
@@ -48,7 +49,8 @@ These areas have direct automated regression tests in
 These commands are documented, but should not be run blindly in the default
 smoke runner because they open windows, mutate user settings, require a custom
 interactive session, depend on external services, or control the operating
-system.
+system. Most command branches below are verified by
+`tests/run-atc-isolated-coverage.ps1`; full human interaction is still manual.
 
 | Guide area | Commands/features | Reason |
 | --- | --- | --- |
@@ -57,12 +59,12 @@ system.
 | Reset/settings screens | `reset all`, `reset all now`, `reset settings`, `reset settings now`, interactive `colors` mutation | Broad configuration reset, restart side effects, or `_getch()`-based interactive input |
 | File/folder helpers | Runtime opening of `atc folder`, `source code`, `scripts examples`, `user functions`, `strings`, `to solve`, `auto solve txt`, and existing-file `open txt` | Opens folders/files, waits for file watcher flags, or launches Notepad/Explorer |
 | Strings cleanup | `eliminate strings` | Mutates `stringVariable.txt` and the `Strings` folder through shell commands |
-| TXT detector and command bridge | `enable txt detector`, `atc from cmd`, `to solve`, full `solve txt` processing with opened answer file | Requires admin PATH mutation, shell windows, or a multi-process/file-watcher scenario |
+| TXT detector and command bridge | `enable txt detector`, `atc from cmd`, `to solve`, full `solve txt` processing with opened answer file | Requires shell windows, user PATH mutation, or a multi-process/file-watcher scenario |
 | Interactive solvers | `solver()`, `triangles rectangles solver`, `arithmetic matrix solver`, `financial calculations`, `geometry calculations`, `statistics calculations`, `physics calculations`, `unit conversions`, `microeconomics calculations` | Menu-driven modules |
 | Graphing | Full manual console rendering and live key-buffer behavior | Core settings mutation and left/right navigation logic are covered through automated non-interactive fixtures |
 | Long-running time tools | `stopwatch()`, `run stopwatch()`, `timer()`, `run timer()`, `run big timer()`, `clock()`, `run clock()`, `big clock()`, `run big clock()` | Long-running/interactive time features |
 | PC control | `shutdown`, `shutdown now`, `restart pc`, `restart pc now`, `hibernate`, `log off`, `sleep`, `lock` | Unsafe for automation |
-| Matrix return/update workflows | Returning and updating matrix values from general expressions | Partially covered by matrix arithmetic variable fixtures; indexed update workflows still need dedicated tests |
+| Matrix update workflows | Direct mutation of individual matrix cells | Range extraction is automated; direct indexed mutation syntax still needs confirmation from the guide/source before automation |
 
 ## Source Extraction Note
 

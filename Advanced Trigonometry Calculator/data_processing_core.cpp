@@ -50,11 +50,8 @@ void restoreWindowPosition() {
 
 	HWND hwnd = GetConsoleWindow();
 
-	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	COORD bufferSize = { (SHORT)width / 8, 5000 };
-	SetConsoleScreenBufferSize(hOut, bufferSize);
-
-	MoveWindow(hwnd, x, y, width, height, TRUE);
+	applyConsoleDimensionsSafe(width / 8, 2000);
+	applyConsoleWindowSafe(x, y, width, height);
 	Sleep(100);
 
 	_delete(path, "path");
@@ -166,9 +163,9 @@ void numSystemsController() {
 	return memFactor;
 }
  template <typename T>
-void verboseResolutionController() {
+void verboseResolutionController(int requestedState) {
 	FILE* open;
-	int state = -1;
+	int state = requestedState;
 	while (state != 1 && state != 0) {
 		I_O = true;
 		printf("Enable -> 1\nDisable -> 0\n");
@@ -182,6 +179,7 @@ void verboseResolutionController() {
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
 	sprintf(verboseRes, "%d", state);
+	verbose = 0;
 	fclose(open);
 	_delete(toOpen, "toOpen");
 	toOpen = nullptr;
@@ -4509,6 +4507,31 @@ bool IsPreviousToWindowsVista()
 	}
 	return previousToVista;
 }
+bool IsWindows11OrGreater()
+{
+	typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
+	HMODULE ntdll = GetModuleHandleA("ntdll.dll");
+	if (ntdll == NULL) {
+		return false;
+	}
+	RtlGetVersionPtr rtlGetVersion = (RtlGetVersionPtr)GetProcAddress(ntdll, "RtlGetVersion");
+	if (rtlGetVersion == NULL) {
+		return false;
+	}
+	RTL_OSVERSIONINFOW versionInfo;
+	ZeroMemory(&versionInfo, sizeof(versionInfo));
+	versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+	if (rtlGetVersion(&versionInfo) != 0) {
+		return false;
+	}
+	return versionInfo.dwMajorVersion > 10 ||
+		(versionInfo.dwMajorVersion == 10 && versionInfo.dwBuildNumber >= 22000);
+}
+
+bool shouldDisableATCIntroByDefault()
+{
+	return IsWindows11OrGreater();
+}
 template<typename T>
 char character_to_prefDet(T n) {
 	if (n < 1E-21)
@@ -5219,7 +5242,7 @@ T convertToNumber(char* number) {
 		}
 	}
 	T result = afterDotNum + beforeDotNum;
-	result = result * pot<T>(1.0, afterExponentNum, 1);
+	result = result * pot<T>(10.0, afterExponentNum, 1);
 	_delete(beforeDot, "beforeDot");
 	beforeDot = nullptr;
 	_delete(afterDot, "afterDot");
@@ -5912,7 +5935,265 @@ int trackMouse() {
 	return 0;
 }
 
+static int clampConsoleValue(int value, int minimum, int maximum) {
+	if (value < minimum) {
+		return minimum;
+	}
+	if (value > maximum) {
+		return maximum;
+	}
+	return value;
+}
 
+static bool hasConsoleHandle(HANDLE handle) {
+	DWORD mode = 0;
+	return handle != INVALID_HANDLE_VALUE && handle != NULL && GetConsoleMode(handle, &mode);
+}
+
+static bool isWindowsTerminalHost() {
+	char value[8] = "";
+	return GetEnvironmentVariableA("WT_SESSION", value, sizeof(value)) > 0 ||
+		GetEnvironmentVariableA("TERM_PROGRAM", value, sizeof(value)) > 0;
+}
+
+static bool enableWindowsTerminalVirtualSequences() {
+	if (!isWindowsTerminalHost()) {
+		return false;
+	}
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	DWORD outMode = 0;
+	if (!hasConsoleHandle(hOut) || !GetConsoleMode(hOut, &outMode)) {
+		return false;
+	}
+	outMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+	return SetConsoleMode(hOut, outMode) != 0;
+}
+
+static int ansiColorFromConsoleColor(int color, bool background) {
+	static const int ansiOrder[8] = { 0, 4, 2, 6, 1, 5, 3, 7 };
+	int normalized = color & 0x07;
+	int ansiColor = ansiOrder[normalized];
+	if (color >= 8) {
+		return (background ? 100 : 90) + ansiColor;
+	}
+	return (background ? 40 : 30) + ansiColor;
+}
+
+static const char* terminalRgbFromConsoleColor(int color) {
+	static const char* rgb[16] = {
+		"#000000", "#000080", "#008000", "#008080",
+		"#800000", "#800080", "#808000", "#C0C0C0",
+		"#808080", "#0000FF", "#00FF00", "#00FFFF",
+		"#FF0000", "#FF00FF", "#FFFF00", "#FFFFFF"
+	};
+	return rgb[color & 0x0F];
+}
+
+void repaintConsoleViewportSafe() {
+	if (!enableWindowsTerminalVirtualSequences()) {
+		return;
+	}
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if (!GetConsoleScreenBufferInfo(hOut, &csbi)) {
+		return;
+	}
+	int fg = csbi.wAttributes & 0x0F;
+	int bg = (csbi.wAttributes >> 4) & 0x0F;
+	printf("\x1b]10;%s\x07\x1b]11;%s\x07", terminalRgbFromConsoleColor(fg), terminalRgbFromConsoleColor(bg));
+	printf("\x1b[%d;%dm\x1b[2J\x1b[H", ansiColorFromConsoleColor(fg, false), ansiColorFromConsoleColor(bg, true));
+	fflush(stdout);
+}
+
+bool applyConsoleDimensionsSafe(int columns, int lines) {
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	if (!hasConsoleHandle(hOut)) {
+		return false;
+	}
+
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if (!GetConsoleScreenBufferInfo(hOut, &csbi)) {
+		return false;
+	}
+
+	COORD largest = GetLargestConsoleWindowSize(hOut);
+	if (largest.X <= 0) {
+		largest.X = 160;
+	}
+	if (largest.Y <= 0) {
+		largest.Y = 60;
+	}
+
+	SHORT currentColumns = (SHORT)(csbi.srWindow.Right - csbi.srWindow.Left + 1);
+	SHORT currentRows = (SHORT)(csbi.srWindow.Bottom - csbi.srWindow.Top + 1);
+	int targetColumns = clampConsoleValue(columns, 40, largest.X);
+	int targetVisibleRows = lines <= 120 ? lines : largest.Y;
+	targetVisibleRows = clampConsoleValue(targetVisibleRows, 20, largest.Y);
+	if (isWindowsTerminalHost()) {
+		targetColumns = clampConsoleValue(max(targetColumns, (int)currentColumns), 40, largest.X);
+		targetVisibleRows = clampConsoleValue(max(targetVisibleRows, (int)currentRows), 20, largest.Y);
+	}
+
+	int targetBufferRows = lines;
+	if (targetBufferRows < targetVisibleRows) {
+		targetBufferRows = targetVisibleRows;
+	}
+	targetBufferRows = clampConsoleValue(targetBufferRows, targetVisibleRows, 2000);
+
+	SMALL_RECT safeWindow = {
+		0,
+		0,
+		(SHORT)(clampConsoleValue(currentColumns, 1, targetColumns) - 1),
+		(SHORT)(clampConsoleValue(currentRows, 1, targetBufferRows) - 1)
+	};
+	SetConsoleWindowInfo(hOut, TRUE, &safeWindow);
+
+	COORD bufferSize = { (SHORT)targetColumns, (SHORT)targetBufferRows };
+	if (!SetConsoleScreenBufferSize(hOut, bufferSize)) {
+		return false;
+	}
+
+	SMALL_RECT targetWindow = { 0, 0, (SHORT)(targetColumns - 1), (SHORT)(targetVisibleRows - 1) };
+	SetConsoleWindowInfo(hOut, TRUE, &targetWindow);
+	colsATC = targetColumns;
+	linesATC = targetBufferRows;
+	return true;
+}
+
+bool applyConsoleCommandDimensions(const char* setting) {
+	if (setting == nullptr) {
+		return false;
+	}
+
+	double parsedColumns = 0.0, parsedLines = 0.0;
+	if (sscanf(setting, "MODE con cols=%lf lines=%lf", &parsedColumns, &parsedLines) != 2) {
+		return false;
+	}
+
+	return applyConsoleDimensionsSafe((int)parsedColumns, (int)parsedLines);
+}
+
+bool applyConsoleWindowSafe(int x, int y, int width, int height) {
+	HWND hwnd = GetConsoleWindow();
+	if (hwnd == NULL || isWindowsTerminalHost()) {
+		return false;
+	}
+	return MoveWindow(hwnd, x, y, width, height, FALSE) != 0;
+}
+
+void maximizeConsoleWindowSafe() {
+	if (isWindowsTerminalHost()) {
+		return;
+	}
+	HWND hwnd = GetConsoleWindow();
+	if (hwnd == NULL) {
+		return;
+	}
+	RECT workArea = { 0, 0, 0, 0 };
+	int targetWidth = 1200;
+	int targetHeight = 800;
+	if (SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0)) {
+		int workWidth = workArea.right - workArea.left;
+		int workHeight = workArea.bottom - workArea.top;
+		if (workWidth > 0 && targetWidth > workWidth - 80) {
+			targetWidth = workWidth - 80;
+		}
+		if (workHeight > 0 && targetHeight > workHeight - 80) {
+			targetHeight = workHeight - 80;
+		}
+	}
+	if (targetWidth < 760) {
+		targetWidth = 760;
+	}
+	if (targetHeight < 600) {
+		targetHeight = 600;
+	}
+	ShowWindow(hwnd, SW_SHOWNORMAL);
+	MoveWindow(hwnd, 0, 0, targetWidth, targetHeight, TRUE);
+}
+
+void applyStartupConsoleLayoutSafe() {
+	if (isWindowsTerminalHost() || shouldDisableATCIntroByDefault()) {
+		maximizeConsoleWindowSafe();
+		repaintConsoleViewportSafe();
+		return;
+	}
+	int Window = 3, Dimensions = 2;
+	applySettings(Window);
+	applySettings(Dimensions);
+}
+
+bool shouldUseLegacyConsoleWindowManagement() {
+	return !isWindowsTerminalHost();
+}
+
+void applyConsoleTitleSafe(const char* title) {
+	if (title == nullptr) {
+		return;
+	}
+	SetConsoleTitleA(title);
+}
+
+void applyConsoleColorSafe(const char* colorCommand) {
+	if (colorCommand == nullptr || strlen(colorCommand) < 8) {
+		return;
+	}
+
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	if (!hasConsoleHandle(hOut)) {
+		return;
+	}
+
+	char background = colorCommand[6];
+	char foreground = colorCommand[7];
+	int bg = isdigit((unsigned char)background) ? background - '0' : 10 + tolower((unsigned char)background) - 'a';
+	int fg = isdigit((unsigned char)foreground) ? foreground - '0' : 10 + tolower((unsigned char)foreground) - 'a';
+	if (bg < 0 || bg > 15 || fg < 0 || fg > 15) {
+		return;
+	}
+	WORD attributes = (WORD)((bg << 4) | fg);
+	SetConsoleTextAttribute(hOut, attributes);
+
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if (GetConsoleScreenBufferInfo(hOut, &csbi)) {
+		DWORD cells = (DWORD)csbi.dwSize.X * (DWORD)csbi.dwSize.Y;
+		DWORD written = 0;
+		COORD home = { 0, 0 };
+		FillConsoleOutputAttribute(hOut, attributes, cells, home, &written);
+	}
+	repaintConsoleViewportSafe();
+}
+
+void openNewATCInstance() {
+	char executablePath[4096];
+	char wtPath[MAX_PATH];
+	char wtParameters[4096];
+	char cmdParameters[4096];
+	executablePath[0] = '\0';
+	wtPath[0] = '\0';
+	wtParameters[0] = '\0';
+	cmdParameters[0] = '\0';
+	snprintf(executablePath, sizeof(executablePath), "%s\\atc.exe", atcPath);
+
+	DWORD wtFound = SearchPathA(NULL, "wt.exe", NULL, MAX_PATH, wtPath, NULL);
+	if (wtFound > 0 && wtFound < MAX_PATH) {
+		snprintf(wtParameters, sizeof(wtParameters), "new-tab --title \"Advanced Trigonometry Calculator\" --startingDirectory \"%s\" \"%s\"", atcPath, executablePath);
+		HINSTANCE result = ShellExecuteA(NULL, "open", wtPath, wtParameters, atcPath, SW_SHOWNORMAL);
+		if ((INT_PTR)result > 32) {
+			printf("\x0A==> New ATC tab opened. <==\x0A");
+			return;
+		}
+	}
+
+	snprintf(cmdParameters, sizeof(cmdParameters), "/K \"\"%s\"\"", executablePath);
+	HINSTANCE result = ShellExecuteA(NULL, "open", "C:\\WINDOWS\\system32\\cmd.exe", cmdParameters, atcPath, SW_SHOWNORMAL);
+	if ((INT_PTR)result > 32) {
+		printf("\x0A==> New ATC window opened. <==\x0A");
+	}
+	else {
+		printf("\x0AError: Unable to open a new ATC instance.\x0A");
+	}
+}
 void force_legacy_console_mode() {
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
@@ -5920,8 +6201,13 @@ void force_legacy_console_mode() {
 
 
 	if (GetConsoleMode(hOut, &outMode)) {
-		outMode &= ~ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-		outMode &= ~DISABLE_NEWLINE_AUTO_RETURN;
+		if (isWindowsTerminalHost()) {
+			outMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+		}
+		else {
+			outMode &= ~ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+			outMode &= ~DISABLE_NEWLINE_AUTO_RETURN;
+		}
 		SetConsoleMode(hOut, outMode);
 	}
 
@@ -5932,6 +6218,13 @@ void force_legacy_console_mode() {
 
 	SetConsoleOutputCP(GetOEMCP());
 	SetConsoleCP(GetOEMCP());
+
+	if (isWindowsTerminalHost()) {
+		maximizeConsoleWindowSafe();
+		repaintConsoleViewportSafe();
+		return;
+	}
+	applyConsoleDimensionsSafe(84, 37);
 }
 
 
@@ -6174,7 +6467,7 @@ void show(HWND hwnd)
 void autoAdjustWindow() {
 	char* toOpen = getDynamicCharArray("", "toOpen");
 	int Window = 3, Dimensions = 2;
-	system("MODE con cols=4000 lines=4000");
+	applyConsoleDimensionsSafe(160, 2000);
 	int x = 0, y = 0, maxX = 0, maxY = 0;
 	HWND b;
 	b = GetConsoleWindow();
@@ -6203,7 +6496,7 @@ void autoAdjustWindow() {
 	if (columns < 0) {
 		columns = (int)ceil((csbi.srWindow.Left + csbi.srWindow.Right));
 	}
-	rows = 5000;
+	rows = 2000;
 	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
 	char* setting = getDynamicCharArray("", "setting");
 	FILE* open = NULL;
@@ -6212,7 +6505,9 @@ void autoAdjustWindow() {
 		Sleep(10);
 	}
 	sprintf(setting, "MODE con cols=%d lines=%d", columns, rows);
-	system(setting);
+	if (!applyConsoleCommandDimensions(setting)) {
+		system(setting);
+	}
 	sprintf(dimensionsTxt, "%s", setting);
 	fputs(setting, open);
 	fclose(open);
@@ -6973,6 +7268,8 @@ PrecisionValue calcNow<PrecisionValue>(char* toCalc, PrecisionValue result1, Pre
 
 template void higherPrecisionController<double>(int);
 template void higherPrecisionController<mp_float>(int);
+template void verboseResolutionController<double>(int);
+template void verboseResolutionController<mp_float>(int);
 template void numSystemsController<double>();
 template void numSystemsController<mp_float>();
 template void manageExpression<double>(char*, double, double, int);
@@ -6999,6 +7296,6 @@ template const char* createMatrix<double>(char*, int, int, char*);
 void simplifyExpression(char* data) { manageExpression<double>(data, 0.0, 0.0, 1); }
 void roundSolution() { roundSolution<double>(); }
 void currentSettings() { currentSettings<double>(); }
-void verboseResolutionController() { verboseResolutionController<double>(); }
+void verboseResolutionController() { verboseResolutionController<double>(-1); }
 void siPrefixController() { siPrefixController<double>(); }
 void actualTimeController() { actualTimeController<double>(); }

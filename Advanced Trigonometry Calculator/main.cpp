@@ -221,26 +221,27 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 		}
 		on_start();
 		applySettings(Colors);
-		sprintf(forsprintf, "title Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)", memFactor);
-		system(forsprintf);
+		sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)", memFactor);
+		applyConsoleTitleSafe(forsprintf);
 
 		sprintf(commandF, "%s\\aboutDisabled.txt", atcPath);
 		FILE* ab = NULL;
 		ab = fopen(commandF, "r");
-		if (ab == NULL) {
+		if (ab != NULL) {
+			fclose(ab);
+		}
+		if (ab == NULL && !shouldDisableATCIntroByDefault()) {
 			continu = about();
 		}
 		else {
 			continu = 1;
-			int Window = 3, Dimensions = 2;
-			applySettings(Window);
-			applySettings(Dimensions);
+			applyStartupConsoleLayoutSafe();
 		}
 
 	}
 	if (continu == 1) {
-		sprintf(forsprintf, "title Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)        ==) ATC is ready to process data. (==", memFactor);
-		system(forsprintf);
+		sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)        ==) ATC is ready to process data. (==", memFactor);
+		applyConsoleTitleSafe(forsprintf);
 		sprintf(forsprintf, "%s\\temp.txt", atcPath);
 		sprintf(toOpen, "%s", forsprintf);
 
@@ -282,7 +283,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 		open = fopen(toOpen, "r");
 		if (open != NULL) {
 			fgets(verboseRes, 10, open);
-			verbose = atoi(verboseRes);
+			verbose = 0;
 			fclose(open);
 		}
 		else {
@@ -431,8 +432,8 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 					}
 				}
 				start_processing = clock();
-				sprintf(forsprintf, "title Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)       ==) Processing... (==", memFactor);
-				system(forsprintf);
+				sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)       ==) Processing... (==", memFactor);
+				applyConsoleTitleSafe(forsprintf);
 			}
 			else {
 				arG = 1;
@@ -575,6 +576,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 				}
 				processVariable<T>("R");
 				variableController("R");
+				normalizeSolverCommandExpression(arithTrig);
 				sprintf(fTrig, "%s", arithTrig); verbose = 0;
 				if (useMaxPrecisionForCommand) {
 					int previousHigherPrecision = higherPrecision;
@@ -687,8 +689,8 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 			}
 
 			convertComplex2Exponential(time_s, time_ms_final);
-			sprintf(state, "title Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)       ==) Processed in %ss and %sms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, respR, respI, years, months, days, Hours, Minutes, Seconds);
-			system(state);
+			sprintf(state, "Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)       ==) Processed in %ss and %sms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, respR, respI, years, months, days, Hours, Minutes, Seconds);
+			applyConsoleTitleSafe(state);
 
 			if (fout != NULL) {
 				fclose(fout);
@@ -1352,6 +1354,30 @@ bool dataVerifier(char* data, T result1, T result2, int comment, int verify) {
 			return decision;
 		}
 		else {
+			if (data[0] == 's' && data[1] == 'o' && data[2] == 'l' && data[3] == 'v' && data[4] == 'e' && data[5] == 'r' && data[6] == '(') {
+				int solverDepth = 0;
+				bool fullSolverExpression = true;
+				for (int solverIndex = 6; solverIndex < abs((int)strlen(data)); solverIndex++) {
+					if (data[solverIndex] == '(') {
+						solverDepth++;
+					}
+					else if (data[solverIndex] == ')') {
+						solverDepth--;
+						if (solverDepth == 0 && solverIndex != abs((int)strlen(data)) - 1) {
+							fullSolverExpression = false;
+							break;
+						}
+					}
+					if (solverDepth < 0) {
+						fullSolverExpression = false;
+						break;
+					}
+				}
+				if (fullSolverExpression && solverDepth == 0) {
+					_delete(variable, "variable");
+					return true;
+				}
+			}
 			int cp = 0, mark = 0;
 			int c = 0, d = 0, k = 0, l = 0, h = 0, s = 0;
 			int* parent = getDynamicIntArray();

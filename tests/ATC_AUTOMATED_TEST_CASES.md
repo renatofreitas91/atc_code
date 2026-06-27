@@ -125,6 +125,8 @@ before reaching the solver.
 | Matrices / lists | column count, 3x2 matrix | `colsnum(bar)` with `bar = 1 0:2 0*3 0:4 0*5 0:6 0` | `#n=2` |
 | Matrices / lists | get matrix rows | `getlins(foo)` | prints the 2x3 matrix values |
 | Matrices / lists | get matrix columns | `getcols(bar)` | prints the 3x2 matrix values |
+| Matrices / lists | get matrix row range | `getlins(foo\0\0)` | prints the first row of `foo` |
+| Matrices / lists | get matrix column range | `getcols(foo\1\2)` | prints the second and third columns of `foo` |
 | Matrices / lists | non-square matrix minimum | `min(bar)` | `#n=1` |
 | Matrices / lists | non-square matrix maximum | `max(bar)` | `#n=6` |
 | Matrices / lists | non-square matrix average | `avg(bar)` | `#n=3.5` |
@@ -255,6 +257,9 @@ before reaching the solver.
 | Interactive menus / Menus interativos | higher precision invalid retry | `higher precision`, then `9`, `1` | rejects invalid option and writes `higherPrecision.txt = 1` |
 | App environment / Ambiente UI | enable ATC intro | `enable atc intro` | writes `onStart.txt = enableatcintro` |
 | App environment / Ambiente UI | disable ATC intro | `disable atc intro` | creates `aboutDisabled.txt` |
+| Windows 11 console behavior | intro default-disable branch | source check | confirms `RtlGetVersion`, build `>= 22000` and `shouldDisableATCIntroByDefault()` are present |
+| Windows 11 console behavior | ANSI color mapping | source check | confirms Win32 color order maps aqua/cyan correctly instead of ANSI yellow |
+| Windows 11 console behavior | new ATC instance commands | source check | confirms `new tab`, `new instance`, `new atc tab`, `new atc instance`, `wt.exe new-tab` and `cmd.exe` fallback |
 | App environment / Ambiente UI | clean history | `clean history` | removes previous history entries and records the cleanup command |
 | App environment / Ambiente UI | clean | `clean` | exits successfully after clearing console |
 | App environment / Ambiente UI | exit | `exit` | exits successfully and leaves an empty `exit.txt` marker |
@@ -298,6 +303,25 @@ and that `auto adjust window` changes the console layout without corrupting
   module screens.
 - Full `.txt` processing that opens the generated answer file, because it should
   use isolated fixture folders rather than the user's personal ATC folders.
+
+## Isolated Coverage
+
+Some high-side-effect commands are checked by
+`tests/run-atc-isolated-coverage.ps1`. That script verifies command branches and
+guard logic by source inspection, and executes only short safe smoke checks.
+It currently covers:
+
+- app environment branches: `auto adjust window`, `about`, `history`,
+  `user guide`, `run atc`, `restart atc`
+- update/link branches: `check for updates`, `update`, `update x64`,
+  `update portable`, `donate`, `atc facebook`, `atc sourceforge`
+- reset/settings branches and `colors` persistence logic
+- folder helpers and `open txt` guard logic
+- `eliminate strings` branch and duplicate-`fclose` regression guard
+- TXT detector/command bridge branches and startup detector guard
+- menu-driven calculation module branches
+- graph key-buffer branch logic
+- long-running time command branches plus a short `stopwatch(1)` smoke
 
 ## Runner
 

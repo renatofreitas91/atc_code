@@ -315,6 +315,8 @@ $doubleTests = @(
     @{ Name = "negative marker"; Expression = "_6+2"; Expected = "^#\d+=-4$" },
     @{ Name = "sqrt"; Expression = "sqrt(9)"; Expected = "^#\d+=3$" },
     @{ Name = "cbrt"; Expression = "cbrt(27)"; Expected = "^#\d+=3$" },
+    @{ Name = "scientific notation positive exponent"; Expression = "1E3"; Expected = "^#\d+=1000$" },
+    @{ Name = "scientific notation negative exponent"; Expression = "1E-3"; Expected = "^#\d+=0\.001$" },
     @{ Name = "pi constant"; Expression = "pi"; Expected = "^#\d+=3\.14159" },
     @{ Name = "true constant"; Expression = "true"; Expected = "^#\d+=1$" },
     @{ Name = "false constant"; Expression = "false"; Expected = "^#\d+=0$" },
@@ -424,6 +426,8 @@ $matrixGuideFunctionTests = @(
     @{ Name = "matrix columns count 3x2"; Expression = "colsnum(bar)"; Expected = "^#\d+=2$" },
     @{ Name = "matrix get rows"; Expression = "getlins(foo)"; Expected = "#\d+=\s+1\+0i\s+2\+0i\s+3\+0i\s+4\+0i\s+5\+0i\s+6\+0i" },
     @{ Name = "matrix get columns"; Expression = "getcols(bar)"; Expected = "#\d+=\s+1\+0i\s+2\+0i\s+3\+0i\s+4\+0i\s+5\+0i\s+6\+0i" },
+    @{ Name = "matrix get first row range"; Expression = "getlins(foo\0\0)"; Expected = "#\d+=\s+1\+0i\s+2\+0i\s+3\+0i" },
+    @{ Name = "matrix get second and third columns range"; Expression = "getcols(foo\1\2)"; Expected = "#\d+=\s+2\+0i\s+3\+0i\s+5\+0i\s+6\+0i" },
     @{ Name = "non-square matrix minimum"; Expression = "min(bar)"; Expected = "^#\d+=1$" },
     @{ Name = "non-square matrix maximum"; Expression = "max(bar)"; Expected = "^#\d+=6$" },
     @{ Name = "non-square matrix average"; Expression = "avg(bar)"; Expected = "^#\d+=3\.5$" }
@@ -589,7 +593,9 @@ $polynomialSimplifyTests = @(
     @{ Name = "scaled binomial product with positive middle term"; Expression = "simplify polynomial((3*x-2)*(2*x+5))"; Expected = "\(6\+0i\)x\^2\+\(11\+0i\)x\^1\+\(_10\+0i\)" },
     @{ Name = "complex roots written as subtracted groups"; Expression = "simplify polynomial((x-(1+2i))*(x-(1-2i)))"; Expected = "\(1\+0i\)x\^2\+\(_2\+0i\)x\^1\+\(5\+0i\)" },
     @{ Name = "complex conjugate product"; Expression = "simplify polynomial((x-1)(x+6.5i)(x-6.5i))"; Expected = "\(1\+0i\)x\^3\+\(_1\+0i\)x\^2\+\(42\.25\+0i\)x\^1\+\(_42\.25\+0i\)" },
-    @{ Name = "complex product with zero root"; Expression = "simplify polynomial((x-1)(x-0)(x-0.5i)(x-2))"; Expected = "\(1\+0i\)x\^4\+\(_3\+_0\.5i\)x\^3\+\(2\+1\.5i\)x\^2\+\(0\+_1i\)x\^1\+\(0\+0i\)" }
+    @{ Name = "complex product with zero root"; Expression = "simplify polynomial((x-1)(x-0)(x-0.5i)(x-2))"; Expected = "\(1\+0i\)x\^4\+\(_3\+_0\.5i\)x\^3\+\(2\+1\.5i\)x\^2\+\(0\+_1i\)x\^1\+\(0\+0i\)" },
+    @{ Name = "rational product cancels common factor"; Expression = "simplify polynomial(((x-5)(x+2))/(x-5))"; Expected = "\(1\+0i\)x\^1\+\(2\+0i\)" },
+    @{ Name = "nested rational product cancels common factor"; Expression = "simplify polynomial((((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5)))"; Expected = "\(1\+0i\)x\^2\+\(4\+0i\)x\^1\+\(4\+0i\)" }
 )
 
 $equationSolverTests = @(
@@ -618,6 +624,14 @@ $solverFunctionTests = @(
     @{ Name = "qfunc target"; Expression = "solver(qfunc(x)-qfunc(0.34233))"; Expected = "^#\d+=0\.34233$"; ModeValue = "1" },
     @{ Name = "mirrored qfunc target"; Expression = "solver(qfunc(0.34233)-qfunc(x))"; Expected = "^#\d+=0\.34233$"; ModeValue = "1" },
     @{ Name = "polynomial Newton equation"; Expression = "solver(x^2-12x-9)"; Expected = "^#\d+=-0\.708204$"; ModeValue = "1" },
+    @{ Name = "linear polynomial fast path"; Expression = "solver(x+2)"; Expected = "^#\d+=-2$"; ModeValue = "1" },
+    @{ Name = "complex linear symbolic constant solver fast path"; Expression = "solver(x-e+pii)"; Expected = "^#\d+=2\.71828-3\.14159i$"; ModeValue = "1" },
+    @{ Name = "complex product symbolic constant solver fast path"; Expression = "solver((x-e+pii)(x-e-pii))"; Expected = "^#\d+=2\.71828-3\.14159i$"; ModeValue = "1" },
+    @{ Name = "rational product linear fast path"; Expression = "solver(((x-5)(x+2))/(x-5))"; Expected = "^#\d+=-2$"; ModeValue = "1" },
+    @{ Name = "nested rational product linear fast path"; Expression = "solver((((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5)))"; Expected = "^#\d+=-2$"; ModeValue = "1" },
+    @{ Name = "triple nested rational product linear fast path"; Expression = "solver((((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5)))"; Expected = "^#\d+=-2$"; ModeValue = "1" },
+    @{ Name = "quartic nested rational product linear fast path"; Expression = "solver((((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5)))"; Expected = "^#\d+=-2$"; ModeValue = "1" },
+    @{ Name = "complex mixed rational product solver fast path"; Expression = "solver((((x-e+pii)(x-e-pii))/(x-e+pii))*(((x-e+pii)(x-e-pii))/(x-e-pii))*(((x-e+pii)(x-e-pii))/(x-e+pii)))"; Expected = "^#\d+=2\.71828\+3\.14159i$"; ModeValue = "1" },
     @{ Name = "complex hyperbolic cosh target radian mode"; Expression = "solver(cosh(x)-cosh(2+2i))"; Expected = "^#\d+=2\+2i"; ModeValue = "1" },
     @{ Name = "mirrored hyperbolic cosh target radian mode"; Expression = "solver(cosh(12)-cosh(x))"; Expected = "^#\d+=12$"; ModeValue = "1" },
     @{ Name = "mirrored complex hyperbolic cosh target radian mode"; Expression = "solver(cosh(2+2i)-cosh(x))"; Expected = "^#\d+=2\+2i"; ModeValue = "1" },
@@ -656,9 +670,54 @@ $equationFastPathTests = @(
         Expected = "x1=5"
     },
     @{
+        Name = "rational product cancels common factor"
+        Expression = "solve equation(((x-5)(x+2))/(x-5))"
+        Expected = "x1=-2"
+    },
+    @{
+        Name = "nested rational product cancels common factor"
+        Expression = "solve equation((((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5)))"
+        Expected = "x1=-2\s+x2=-2"
+    },
+    @{
+        Name = "quartic nested rational product cancels common factor"
+        Expression = "solve equation((((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5)))"
+        Expected = "x1=-2\s+x2=-2\s+x3=-2\s+x4=-2"
+    },
+    @{
+        Name = "quintic nested rational product cancels common factor"
+        Expression = "solve equation((((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5)))"
+        Expected = "x1=-2\s+x2=-2\s+x3=-2\s+x4=-2\s+x5=-2"
+    },
+    @{
+        Name = "nested rational product with pi factor"
+        Expression = "solve equation((((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5))*(((x-5)(x+pi))/(x-5)))"
+        Expected = "x1=-2\s+x2=-2\s+x3=-2\s+x4=-2\s+x5=-2\s+x6=-3\.14159"
+    },
+    @{
+        Name = "nested rational product with pi and e factors"
+        Expression = "solve equation((((x-5)(x+2))/(x-5))*(((x-5)(x+pi))/(x-5))*(((x-5)(x+e))/(x-5)))"
+        Expected = "x1=-2\s+x2=-2\.71828\s+x3=-3\.14159"
+    },
+    @{
         Name = "single parenthesized complex linear factor"
         Expression = "solve equation((x-0.5i))"
         Expected = "x1=0\+0\.5i"
+    },
+    @{
+        Name = "implicit product with complex linear factor"
+        Expression = "solve equation((x+2)(x+3i))"
+        Expected = "x1=0-3i\s+x2=-2"
+    },
+    @{
+        Name = "rational product cancels symbolic complex factor"
+        Expression = "solve equation(((x-e+pii)(x-e-pii))/(x-e-pii))"
+        Expected = "x1=2\.71828-3\.14159i"
+    },
+    @{
+        Name = "linear symbolic complex factor"
+        Expression = "solve equation((x-e+2pii))"
+        Expected = "x1=2\.71828-6\.28319i"
     },
     @{
         Name = "implicit product three real roots"
@@ -683,7 +742,7 @@ $equationFastPathTests = @(
     @{
         Name = "implicit product complex roots"
         Expression = "solve equation((x-1)(x+6.5i)(x-6.5i))"
-        Expected = "x1=1\s+x2=0-6\.5i\s+x3=0\+6\.5i"
+        Expected = "x1=1\s+x2=0\+6\.5i\s+x3=0-6\.5i"
     },
     @{
         Name = "implicit product one complex root"
@@ -909,6 +968,12 @@ $txtCommandBridgeTests = @(
         Expression = "atc over cmd"
         Expected = "ATC is ready to process data[\s\S]*Processing[\s\S]*#\d+=4[\s\S]*Processed in"
         InputLines = @("2+2", "exit")
+    },
+    @{
+        Name = "atc over cmd nested rational solver"
+        Expression = "atc over cmd"
+        Expected = "ATC is ready to process data[\s\S]*Processing[\s\S]*#\d+=-2[\s\S]*Processed in"
+        InputLines = @("solver((((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5)))", "exit")
     }
 )
 
@@ -1050,6 +1115,14 @@ $persistentSettingsTests = @(
         Expression = "verbose resolution"
         Expected = "Configuration of verbose resolution[\s\S]*Enable -> 1[\s\S]*Disable -> 0"
         InputLines = @("1")
+        Path = $verboseResolutionPath
+        FileExpected = "1"
+    },
+    @{
+        Name = "verbose resolution inline enable"
+        Expression = "verbose resolution(1)"
+        Expected = "Configuration of verbose resolution"
+        InputLines = @()
         Path = $verboseResolutionPath
         FileExpected = "1"
     },
@@ -1197,6 +1270,16 @@ $mpFloatTests = @(
     @{ Name = "mp_float e 50dp"; Expression = "dp50dpe"; Expected = "^#\d+=2\.71828182845904523536028747135266249775724709369996$" },
     @{ Name = "mp_float fixed zero padding"; Expression = "dp50dp1+1"; Expected = "^#\d+=2\.00000000000000000000000000000000000000000000000000$" },
     @{ Name = "mp_float sin identity"; Expression = "sin(pi/2)"; Expected = "^#\d+=1$" }
+)
+
+$verboseResolutionBehaviorTests = @(
+    @{
+        Name = "verbose output explains arithmetic expression"
+        Expression = "2+3*4"
+        Expected = "initialProcessor[\s\S]*Expression: 2\+3\*4[\s\S]*arithSolver[\s\S]*Simplified expression by arithSolver[\s\S]*#\d+=(14|1\.4E1)"
+        FixturePath = $verboseResolutionPath
+        FixtureContent = "1"
+    }
 )
 
 $results = New-Object System.Collections.Generic.List[object]
@@ -1369,6 +1452,10 @@ try {
         foreach ($test in $interactiveMenuTests) {
             $results.Add((Test-AtcExpressionAndFileValue "interactive menu: $($test.Name)" $test.Expression $test.Expected $test.Path $test.FileExpected $test.InputLines))
         }
+        foreach ($test in $verboseResolutionBehaviorTests) {
+            $results.Add((Test-AtcExpressionWithFixtureFile "verbose resolution: $($test.Name)" $test.Expression $test.Expected $test.FixturePath $test.FixtureContent))
+        }
+        Set-Content -Path $verboseResolutionPath -Value "0" -NoNewline
         Set-Content -Path $modePath -Value "3" -NoNewline
         Set-Content -Path $numSystemsPath -Value "1" -NoNewline
         Set-Content -Path $siPrefixesPath -Value "1" -NoNewline

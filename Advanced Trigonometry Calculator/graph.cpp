@@ -51,7 +51,9 @@ void designGraph(char* functionF) {
     if (fopen(toOpen, "r") == NULL) {
 #ifdef _WIN32
         if (graphInteractiveConsole) {
-            system("MODE con cols=160 lines=300");
+            if (!applyConsoleDimensionsSafe(160, 300)) {
+                system("MODE con cols=160 lines=300");
+            }
         }
 #endif
         numberCols = 160;

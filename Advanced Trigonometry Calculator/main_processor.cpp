@@ -71,6 +71,126 @@ static void normalizeBooleanInfinityConstants(char* expression) {
 	sprintf(expression, "%s", normalized.c_str());
 }
 
+static bool extractMainProcessorSolverArgument(const char* expression, std::string& argument) {
+	if (expression == nullptr) {
+		return false;
+	}
+	std::string text(expression);
+	const std::string prefix = "solver(";
+	if (text.compare(0, prefix.size(), prefix) != 0 || text.size() <= prefix.size()) {
+		return false;
+	}
+	int level = 0;
+	for (size_t i = prefix.size() - 1; i < text.size(); i++) {
+		if (text[i] == '(') {
+			level++;
+		}
+		else if (text[i] == ')') {
+			level--;
+			if (level == 0) {
+				if (i != text.size() - 1) {
+					return false;
+				}
+				argument = text.substr(prefix.size(), i - prefix.size());
+				return true;
+			}
+			if (level < 0) {
+				return false;
+			}
+		}
+	}
+	return false;
+}
+
+static std::string stripMainProcessorSolverOuterParentheses(const std::string& source) {
+	std::string text = source;
+	bool changed = true;
+	while (changed && text.size() >= 2 && text[0] == '(' && text[text.size() - 1] == ')') {
+		changed = false;
+		int level = 0;
+		bool wrapsWholeExpression = true;
+		for (size_t i = 0; i < text.size(); i++) {
+			if (text[i] == '(') {
+				level++;
+			}
+			else if (text[i] == ')') {
+				level--;
+				if (level == 0 && i != text.size() - 1) {
+					wrapsWholeExpression = false;
+					break;
+				}
+			}
+			if (level < 0) {
+				wrapsWholeExpression = false;
+				break;
+			}
+		}
+		if (wrapsWholeExpression && level == 0) {
+			text = text.substr(1, text.size() - 2);
+			changed = true;
+		}
+	}
+	return text;
+}
+
+static bool selectMainProcessorFirstLinearSolverFactor(const std::string& expression, std::string& factor) {
+	std::string text = stripMainProcessorSolverOuterParentheses(expression);
+	if (text.empty()) {
+		return false;
+	}
+	if (text[0] != '(') {
+		if (text.find('x') != std::string::npos && text.find('/') == std::string::npos) {
+			factor = text;
+			return true;
+		}
+		return false;
+	}
+	int level = 0;
+	for (size_t i = 0; i < text.size(); i++) {
+		if (text[i] == '(') {
+			level++;
+		}
+		else if (text[i] == ')') {
+			level--;
+			if (level == 0) {
+				std::string candidate = stripMainProcessorSolverOuterParentheses(text.substr(1, i - 1));
+				if (candidate.find('x') != std::string::npos && candidate.find('/') == std::string::npos &&
+					candidate.find('(') == std::string::npos && candidate.find(')') == std::string::npos) {
+					factor = candidate;
+					return true;
+				}
+				return false;
+			}
+			if (level < 0) {
+				return false;
+			}
+		}
+	}
+	return false;
+}
+
+static void normalizeMainProcessorSolverFastPath(char* expression) {
+	if (expression == nullptr) {
+		return;
+	}
+	std::string solverArgument;
+	if (!extractMainProcessorSolverArgument(expression, solverArgument)) {
+		return;
+	}
+	std::string reducedSolverArgument;
+	std::string linearSolverFactor;
+	std::string solverFactorSource = solverArgument;
+	if (reduceExactRationalProductExpression(solverArgument.c_str(), reducedSolverArgument)) {
+		solverFactorSource = reducedSolverArgument;
+	}
+	if (selectMainProcessorFirstLinearSolverFactor(solverFactorSource, linearSolverFactor)) {
+		std::string normalizedSolver = "solver(" + linearSolverFactor + ")";
+		if (normalizedSolver.size() < (size_t)DIM) {
+			sprintf(expression, "%s", normalizedSolver.c_str());
+		}
+	}
+}
+
 template<typename T>
 void main_processor(char* math_expression) {
 	buf = (char*)malloc(300);
@@ -283,6 +403,7 @@ T math_processor(char* expression) {
 			}
 		}
 		normalizeBooleanInfinityConstants(arithTrig);
+		normalizeMainProcessorSolverFastPath(arithTrig);
 		synTest = 0;
 		if ((equationSolverRunning == false && solverRunning == false) || !isEqual(saveArithTrig, arithTrig)) {
 			sprintf(saveArithTrig, "%s", arithTrig);

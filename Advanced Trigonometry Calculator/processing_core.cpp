@@ -73,14 +73,452 @@ static bool getTopLevelFunctionArgument(const char* expression, const char* func
 	return false;
 }
 
+static bool parseCoreLinearNumber(const std::string& text, long double& value) {
+	if (text.empty()) {
+		return false;
+	}
+	std::string normalized = text;
+	for (size_t i = 0; i < normalized.size(); i++) {
+		if (normalized[i] == '_') {
+			normalized[i] = '-';
+		}
+	}
+	if (normalized == "pi" || normalized == "+pi") {
+		value = acosl(-1.0L);
+		return true;
+	}
+	if (normalized == "-pi") {
+		value = -acosl(-1.0L);
+		return true;
+	}
+	if (normalized == "e" || normalized == "+e") {
+		value = expl(1.0L);
+		return true;
+	}
+	if (normalized == "-e") {
+		value = -expl(1.0L);
+		return true;
+	}
+	char* end = nullptr;
+	value = std::strtold(normalized.c_str(), &end);
+	return end != normalized.c_str() && *end == '\0';
+}
+
+static bool parseUnsignedCoreConstantProduct(const std::string& text, long double& value) {
+	if (text.empty()) {
+		return false;
+	}
+	value = 1.0L;
+	size_t index = 0;
+	bool consumedFactor = false;
+	while (index < text.size()) {
+		if (text.compare(index, 2, "pi") == 0) {
+			value *= acosl(-1.0L);
+			index += 2;
+			consumedFactor = true;
+		}
+		else if (text[index] == 'e') {
+			value *= expl(1.0L);
+			index++;
+			consumedFactor = true;
+		}
+		else {
+			char* end = nullptr;
+			long double factor = std::strtold(text.c_str() + index, &end);
+			if (end == text.c_str() + index) {
+				return false;
+			}
+			value *= factor;
+			index = (size_t)(end - text.c_str());
+			consumedFactor = true;
+		}
+	}
+	return consumedFactor;
+}
+
+static bool parseCoreConstantProduct(const std::string& text, long double& value) {
+	if (text.empty()) {
+		return false;
+	}
+	std::string normalized = text;
+	for (size_t i = 0; i < normalized.size(); i++) {
+		if (normalized[i] == '_') {
+			normalized[i] = '-';
+		}
+	}
+	long double sign = 1.0L;
+	if (normalized[0] == '+') {
+		normalized.erase(0, 1);
+	}
+	else if (normalized[0] == '-') {
+		sign = -1.0L;
+		normalized.erase(0, 1);
+	}
+	long double unsignedValue = 0.0L;
+	if (!parseUnsignedCoreConstantProduct(normalized, unsignedValue)) {
+		return false;
+	}
+	value = sign * unsignedValue;
+	return true;
+}
+
+static bool parseCoreLinearComplexNumber(const std::string& text, std::complex<long double>& value) {
+	if (text.empty()) {
+		return false;
+	}
+	std::string normalized = text;
+	for (size_t i = 0; i < normalized.size(); i++) {
+		if (normalized[i] == '_') {
+			normalized[i] = '-';
+		}
+	}
+	long double realValue = 0.0L;
+	if (parseCoreLinearNumber(normalized, realValue) || parseCoreConstantProduct(normalized, realValue)) {
+		value = std::complex<long double>(realValue, 0.0L);
+		return true;
+	}
+	if (normalized == "i" || normalized == "+i") {
+		value = std::complex<long double>(0.0L, 1.0L);
+		return true;
+	}
+	if (normalized == "-i") {
+		value = std::complex<long double>(0.0L, -1.0L);
+		return true;
+	}
+	if (normalized[normalized.size() - 1] == 'i') {
+		std::string imaginaryText = normalized.substr(0, normalized.size() - 1);
+		if (imaginaryText.empty() || imaginaryText == "+") {
+			value = std::complex<long double>(0.0L, 1.0L);
+			return true;
+		}
+		if (imaginaryText == "-") {
+			value = std::complex<long double>(0.0L, -1.0L);
+			return true;
+		}
+		long double imaginaryValue = 0.0L;
+		if (parseCoreLinearNumber(imaginaryText, imaginaryValue) || parseCoreConstantProduct(imaginaryText, imaginaryValue)) {
+			value = std::complex<long double>(0.0L, imaginaryValue);
+			return true;
+		}
+	}
+	return false;
+}
+
+static bool trySolveCoreLinearExpressionComplex(const std::string& expression, std::complex<long double>& solution) {
+	std::string text;
+	text.reserve(expression.size());
+	for (size_t i = 0; i < expression.size(); i++) {
+		if (!std::isspace((unsigned char)expression[i])) {
+			text.push_back(expression[i]);
+		}
+	}
+	if (text.empty() || text.find('(') != std::string::npos || text.find(')') != std::string::npos ||
+		text.find('/') != std::string::npos || text.find('\\') != std::string::npos) {
+		return false;
+	}
+	std::complex<long double> coefficient(0.0L, 0.0L);
+	std::complex<long double> constant(0.0L, 0.0L);
+	bool hasX = false;
+	size_t start = 0;
+	while (start < text.size()) {
+		size_t end = start + 1;
+		while (end < text.size() && text[end] != '+' && text[end] != '-') {
+			end++;
+		}
+		std::string term = text.substr(start, end - start);
+		size_t xPos = term.find('x');
+		if (xPos != std::string::npos) {
+			if (term.find('x', xPos + 1) != std::string::npos) {
+				return false;
+			}
+			std::string suffixText = term.substr(xPos + 1);
+			if (!suffixText.empty() && suffixText != "^1") {
+				return false;
+			}
+			std::string coeffText = term.substr(0, xPos);
+			if (coeffText.empty() || coeffText == "+") {
+				coefficient += std::complex<long double>(1.0L, 0.0L);
+			}
+			else if (coeffText == "-" || coeffText == "_") {
+				coefficient -= std::complex<long double>(1.0L, 0.0L);
+			}
+			else {
+				std::complex<long double> termCoefficient(0.0L, 0.0L);
+				if (!parseCoreLinearComplexNumber(coeffText, termCoefficient)) {
+					return false;
+				}
+				coefficient += termCoefficient;
+			}
+			hasX = true;
+		}
+		else {
+			std::complex<long double> termConstant(0.0L, 0.0L);
+			if (!parseCoreLinearComplexNumber(term, termConstant)) {
+				return false;
+			}
+			constant += termConstant;
+		}
+		start = end;
+	}
+	if (!hasX || std::abs(coefficient) < 1E-30L) {
+		return false;
+	}
+	solution = -constant / coefficient;
+	return true;
+}
+
+static bool trySolveCoreLinearExpression(const std::string& expression, long double& solution) {
+	std::string text;
+	text.reserve(expression.size());
+	for (size_t i = 0; i < expression.size(); i++) {
+		if (!std::isspace((unsigned char)expression[i])) {
+			text.push_back(expression[i]);
+		}
+	}
+	if (text.empty() || text.find('(') != std::string::npos || text.find(')') != std::string::npos ||
+		text.find('/') != std::string::npos || text.find('\\') != std::string::npos) {
+		return false;
+	}
+	long double coefficient = 0.0L;
+	long double constant = 0.0L;
+	bool hasX = false;
+	size_t start = 0;
+	while (start < text.size()) {
+		size_t end = start + 1;
+		while (end < text.size() && text[end] != '+' && text[end] != '-') {
+			end++;
+		}
+		std::string term = text.substr(start, end - start);
+		size_t xPos = term.find('x');
+		if (xPos != std::string::npos) {
+			if (term.find('x', xPos + 1) != std::string::npos) {
+				return false;
+			}
+			std::string suffixText = term.substr(xPos + 1);
+			if (!suffixText.empty() && suffixText != "^1") {
+				return false;
+			}
+			std::string coeffText = term.substr(0, xPos);
+			if (coeffText.empty() || coeffText == "+") {
+				coefficient += 1.0L;
+			}
+			else if (coeffText == "-" || coeffText == "_") {
+				coefficient -= 1.0L;
+			}
+			else {
+				long double termCoefficient = 0.0L;
+				if (!parseCoreLinearNumber(coeffText, termCoefficient)) {
+					return false;
+				}
+				coefficient += termCoefficient;
+			}
+			hasX = true;
+		}
+		else {
+			long double termConstant = 0.0L;
+			if (!parseCoreLinearNumber(term, termConstant)) {
+				return false;
+			}
+			constant += termConstant;
+		}
+		start = end;
+	}
+	if (!hasX || std::fabsl(coefficient) < 1E-30L) {
+		return false;
+	}
+	solution = -constant / coefficient;
+	return true;
+}
+
+static std::string stripCoreBalancedOuterParentheses(const std::string& source) {
+	std::string text = source;
+	bool changed = true;
+	while (changed && text.size() >= 2 && text[0] == '(' && text[text.size() - 1] == ')') {
+		changed = false;
+		int level = 0;
+		bool wrapsWholeExpression = true;
+		for (size_t i = 0; i < text.size(); i++) {
+			if (text[i] == '(') {
+				level++;
+			}
+			else if (text[i] == ')') {
+				level--;
+				if (level == 0 && i != text.size() - 1) {
+					wrapsWholeExpression = false;
+					break;
+				}
+			}
+			if (level < 0) {
+				wrapsWholeExpression = false;
+				break;
+			}
+		}
+		if (wrapsWholeExpression && level == 0) {
+			text = text.substr(1, text.size() - 2);
+			changed = true;
+		}
+	}
+	return text;
+}
+
+static bool trySolveCoreLinearProductExpression(const std::string& expression, long double& solution) {
+	std::string text;
+	text.reserve(expression.size());
+	for (size_t i = 0; i < expression.size(); i++) {
+		if (!std::isspace((unsigned char)expression[i])) {
+			text.push_back(expression[i]);
+		}
+	}
+	text = stripCoreBalancedOuterParentheses(text);
+	if (text.empty() || text[0] != '(') {
+		return false;
+	}
+	size_t i = 0;
+	while (i < text.size()) {
+		if (text[i] != '(') {
+			return false;
+		}
+		int level = 0;
+		size_t start = i;
+		for (; i < text.size(); i++) {
+			if (text[i] == '(') {
+				level++;
+			}
+			else if (text[i] == ')') {
+				level--;
+				if (level == 0) {
+					break;
+				}
+			}
+			if (level < 0) {
+				return false;
+			}
+		}
+		if (i >= text.size()) {
+			return false;
+		}
+		std::string factor = stripCoreBalancedOuterParentheses(text.substr(start + 1, i - start - 1));
+		if (trySolveCoreLinearExpression(factor, solution)) {
+			return true;
+		}
+		std::string reducedFactor;
+		if (reduceExactRationalProductExpression(factor.c_str(), reducedFactor) && reducedFactor != factor &&
+			(trySolveCoreLinearExpression(reducedFactor, solution) ||
+				trySolveCoreLinearProductExpression(reducedFactor, solution))) {
+			return true;
+		}
+		i++;
+		if (i < text.size() && text[i] == '*') {
+			i++;
+		}
+	}
+	return false;
+}
+
+static bool trySolveCoreLinearProductExpressionComplex(const std::string& expression, std::complex<long double>& solution) {
+	std::string text;
+	text.reserve(expression.size());
+	for (size_t i = 0; i < expression.size(); i++) {
+		if (!std::isspace((unsigned char)expression[i])) {
+			text.push_back(expression[i]);
+		}
+	}
+	text = stripCoreBalancedOuterParentheses(text);
+	if (text.empty() || text[0] != '(') {
+		return false;
+	}
+	size_t i = 0;
+	while (i < text.size()) {
+		if (text[i] != '(') {
+			return false;
+		}
+		int level = 0;
+		size_t start = i;
+		for (; i < text.size(); i++) {
+			if (text[i] == '(') {
+				level++;
+			}
+			else if (text[i] == ')') {
+				level--;
+				if (level == 0) {
+					break;
+				}
+			}
+			if (level < 0) {
+				return false;
+			}
+		}
+		if (i >= text.size()) {
+			return false;
+		}
+		std::string factor = stripCoreBalancedOuterParentheses(text.substr(start + 1, i - start - 1));
+		if (trySolveCoreLinearExpressionComplex(factor, solution)) {
+			return true;
+		}
+		std::string reducedFactor;
+		if (reduceExactRationalProductExpression(factor.c_str(), reducedFactor) && reducedFactor != factor &&
+			(trySolveCoreLinearExpressionComplex(reducedFactor, solution) ||
+				trySolveCoreLinearProductExpressionComplex(reducedFactor, solution))) {
+			return true;
+		}
+		i++;
+		if (i < text.size() && text[i] == '*') {
+			i++;
+		}
+	}
+	return false;
+}
+
 template double initialProcessor<double>(char* arithTrig, double result);
 template mp_float initialProcessor<mp_float>(char* arithTrig, mp_float result);
+template bool tryEvaluateSolverFastPath<double>(char* expression, double& solution);
+template bool tryEvaluateSolverFastPath<mp_float>(char* expression, mp_float& solution);
+
+template<typename T>
+bool tryEvaluateSolverFastPath(char* expression, T& solution) {
+	std::string solverArgument;
+	if (!getTopLevelFunctionArgument(expression, "solver", solverArgument)) {
+		return false;
+	}
+	std::string reducedRationalProduct;
+	if (reduceExactRationalProductExpression(solverArgument.c_str(), reducedRationalProduct)) {
+		solverArgument = reducedRationalProduct;
+	}
+	std::complex<long double> complexSolution(0.0L, 0.0L);
+	if (!trySolveCoreLinearExpressionComplex(solverArgument, complexSolution) &&
+		!trySolveCoreLinearProductExpressionComplex(solverArgument, complexSolution)) {
+		return false;
+	}
+	solution = (T)complexSolution.real();
+	resultR = solution;
+	resultI = (T)complexSolution.imag();
+	verified = 1;
+	return true;
+}
+
 template<typename T>
 T initialProcessor(char* arithTrig, T result) {
 	normalizeCoreBooleanInfinityConstants(arithTrig);
 	replaceTimes = 0;
+	T fastPathSolution = 0;
+	if (tryEvaluateSolverFastPath(arithTrig, fastPathSolution)) {
+		return fastPathSolution;
+	}
 	std::string solverArgument;
 	if (getTopLevelFunctionArgument(arithTrig, "solver", solverArgument)) {
+		std::string reducedSolverArgument;
+		std::string solverFastArgument = solverArgument;
+		if (reduceExactRationalProductExpression(solverArgument.c_str(), reducedSolverArgument)) {
+			solverFastArgument = reducedSolverArgument;
+		}
+		std::complex<long double> complexSolution(0.0L, 0.0L);
+		if (trySolveCoreLinearExpressionComplex(solverFastArgument, complexSolution) ||
+			trySolveCoreLinearProductExpressionComplex(solverFastArgument, complexSolution)) {
+			resultR = (T)complexSolution.real();
+			resultI = (T)complexSolution.imag();
+			verified = 1;
+			return (T)complexSolution.real();
+		}
 		char* solverExpression = getDynamicCharArray(const_cast<char*>(solverArgument.c_str()), "solverExpression");
 		T solverResult = solver<T>(solverExpression);
 		_delete(solverExpression, "solverExpression");
@@ -975,6 +1413,7 @@ T initialProcessor(char* arithTrig, T result) {
 
 				if (kl == 1) {
 					sprintf(expr, "%s", pas);
+					std::string solverOriginalExpression(expr);
 					renamer(pas);
 
 					sprintf(pas, "%s", expressionF);
@@ -984,7 +1423,35 @@ T initialProcessor(char* arithTrig, T result) {
 						replaceTimes = 0;
 						sprintf(roots, ""), sprintf(answers, "");
 						sprintf(expressionF, "%s", expr);
-						triArith[b] = solver<T>(expr);
+						std::string solverExpression(expr);
+						std::string solverFastExpression = solverExpression;
+						std::string originalSolverArgument = solverOriginalExpression;
+						if (solverFastExpression.find('x') == std::string::npos) {
+							std::string topLevelSolverArgument;
+							if (getTopLevelFunctionArgument(arithTrig, "solver", topLevelSolverArgument) &&
+								topLevelSolverArgument.find('x') != std::string::npos) {
+								originalSolverArgument = topLevelSolverArgument;
+							}
+						}
+						if (solverFastExpression.find('x') == std::string::npos &&
+							originalSolverArgument.find('x') != std::string::npos) {
+							solverFastExpression = originalSolverArgument;
+						}
+						std::string reducedRationalProduct;
+						if (reduceExactRationalProductExpression(solverFastExpression.c_str(), reducedRationalProduct)) {
+							solverFastExpression = reducedRationalProduct;
+						}
+						long double linearSolution = 0.0L;
+						if (trySolveCoreLinearExpression(solverFastExpression, linearSolution) ||
+							trySolveCoreLinearProductExpression(solverFastExpression, linearSolution)) {
+							resultR = (T)linearSolution;
+							resultI = 0;
+							verified = 1;
+							triArith[b] = (T)linearSolution;
+						}
+						else {
+							triArith[b] = solver<T>(expr);
+						}
 						sprintf(roots, ""), sprintf(answers, "");
 						equation_solver = false;
 						triArithI[b] = resultI;
