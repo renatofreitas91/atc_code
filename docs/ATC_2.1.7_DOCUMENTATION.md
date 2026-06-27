@@ -303,6 +303,11 @@ calculation explanation phase. This avoids internal startup noise while still
 showing useful resolution steps such as `initialProcessor`, `arithSolver`,
 simplified expressions and the final result for the user's expression.
 
+The verbose trace was also cleaned so display-only trailing `+0` terms are not
+printed for user expressions, function arguments are shown as evaluated
+arguments, and internal menu input evaluation remains quiet even when verbose
+resolution is enabled.
+
 ## Automatic multiplication
 
 ATC continues to infer multiplication from adjacent values in common calculator
@@ -353,10 +358,10 @@ Run after building Release x64:
 powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe .\x64\Release\atc.exe
 ```
 
-Current validated result:
+Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 329 passed, 0 failed
+Summary: 338 passed, 0 failed
 ```
 
 Coverage includes:
@@ -395,7 +400,8 @@ Coverage includes:
 - TXT detector / command bridge commands, including `atc over cmd`
 - file/folder command existence checks
 - persistent settings and interactive menu retry behavior
-- verbose-resolution persisted setting and verbose output behavior
+- verbose-resolution persisted setting, cleaned verbose output behavior, and
+  suppression of verbose traces for internal menu inputs
 - Windows 11 console source-level behavior checks
 - `double` mode precision formatting
 - Boost `mp_float` mode precision formatting
@@ -467,7 +473,7 @@ These changes were build-verified and the command-line regression suite remains
 green:
 
 ```text
-Summary: 329 passed, 0 failed
+Summary: 338 passed, 0 failed
 ```
 
 ## Build command
@@ -485,7 +491,8 @@ x64\Release\atc.exe
 ```
 
 Release Win32/x86 builds are also supported by the solution and are used as a
-compatibility target for older Windows versions.
+compatibility target for older Windows versions. The current regression suite
+has been validated against both `x64\Release\atc.exe` and `Release\atc.exe`.
 
 ## Known remaining validation gaps
 
@@ -533,7 +540,7 @@ Pontos principais:
   suportados, sem ativar logs verbosos durante o arranque interno;
 - os caminhos rapidos de solver/equation cobrem cancelamentos racionais exatos,
   constantes simbolicas `pi`, `e` e casos complexos com `pii`;
-- a suite automatizada valida atualmente `329 passed, 0 failed` em modo
-  `Double`;
+- a suite automatizada valida atualmente `338 passed, 0 failed` em Release x64
+  e Release x86;
 - x64 e Win32/x86 continuam a ser alvos de build, mantendo compatibilidade com
   Windows antigo e Windows 11.

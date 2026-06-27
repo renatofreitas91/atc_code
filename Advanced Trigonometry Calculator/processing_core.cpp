@@ -4,6 +4,44 @@
 char* matrixResult = getDynamicCharArray("", "matrixResult"), * matrixValue = getDynamicCharArray(" ", "matrixValue"), * expr = getDynamicCharArray("", "expr");
 bool checkMatrixIndex = false;
 
+static std::string verboseDisplayExpression(const char* expression) {
+	if (expression == nullptr) {
+		return "";
+	}
+	std::string text(expression);
+	if (text.size() > 2 && text.compare(text.size() - 2, 2, "+0") == 0) {
+		text.erase(text.size() - 2);
+	}
+	return text;
+}
+
+template <typename T>
+static void printVerboseComplexValue(const char* label, T realValue, T imaginaryValue) {
+	convertComplex2Exponential(realValue, imaginaryValue);
+	printf("%s: ", label);
+	if (realValue > 0 && imaginaryValue > 0) {
+		printf("%s+%si\n", respR, respI);
+	}
+	else if (realValue > 0 && imaginaryValue < 0) {
+		printf("%s%si\n", respR, respI);
+	}
+	else if (realValue < 0 && imaginaryValue > 0) {
+		printf("%s+%si\n", respR, respI);
+	}
+	else if (realValue < 0 && imaginaryValue < 0) {
+		printf("%s%si\n", respR, respI);
+	}
+	else if (realValue == 0 && imaginaryValue == 0) {
+		printf("%s\n", convert2Exponential(realValue));
+	}
+	else if (realValue == 0 && imaginaryValue != 0) {
+		printf("%si\n", convert2Exponential(imaginaryValue));
+	}
+	else {
+		printf("%s\n", convert2Exponential(realValue));
+	}
+}
+
 static void normalizeCoreBooleanInfinityConstants(char* expression) {
 	if (expression == nullptr || abs((int)strlen(expression)) == 0) {
 		return;
@@ -536,7 +574,7 @@ T initialProcessor(char* arithTrig, T result) {
 	check4Vector = 1;
 
 	if (verbose == 1 && solving) {
-		printf("\n\n==> initialProcessor <==\n\nExpression: %s", arithTrig);
+		printf("\n\n==> initialProcessor <==\n\nExpression: %s\n", verboseDisplayExpression(arithTrig).c_str());
 	}
 	if (abs((int)strlen(arithTrig)) == 0 || isEqual("0", arithTrig)) {
 		resultR = 0;
@@ -1854,7 +1892,7 @@ T initialProcessor(char* arithTrig, T result) {
 		simplified[rasf - 1] = '\0';
 	}
 	if (verbose == 1 && solving) {
-		printf("\nSimplified expression by initialProcessor: %s\n\n", simplified);
+		printf("\nSimplified expression by initialProcessor: %s\n\n", verboseDisplayExpression(simplified).c_str());
 	}
 
 	for (so = 0; so < c; so++) {
@@ -2401,7 +2439,7 @@ T arithSolver(char* trigon1, T result) {
 	int rasf = abs((int)strlen(trigon1));
 
 	if (verbose == 1 && solving) {
-		printf("\n\n==> arithSolver <==\n\nExpression: %s", trigon1);
+		printf("\n\n==> arithSolver <==\n\nExpression: %s\n", verboseDisplayExpression(trigon1).c_str());
 	}
 	resultR = 0; resultI = 0;
 	int i = 0, negImag = 0, j = 0, e = 0, f = 0, h = 0, so = 0, sa = 0, n = 0, c = 0, *sig = getDynamicIntArray(), sign = 0, s = 0, facto = 0, y = 0, sif = 0, res = 0, v = 0;
@@ -3151,7 +3189,7 @@ T arithSolver(char* trigon1, T result) {
 	replace("=", "", simplified);
 	sprintf(simplified, "%s", expressionF);
 	if (verbose == 1 && solving) {
-		printf("\nSimplified expression by arithSolver: %s\n\n", simplified);
+		printf("\nSimplified expression by arithSolver: %s\n\n", verboseDisplayExpression(simplified).c_str());
 	}
 	for (so = 0; so < n; so++) {
 		int sa = so;
@@ -3226,7 +3264,7 @@ template <typename T>
 T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitude, int res, char* argNotNumber) {
 	char* saveArgument = getDynamicCharArray(expressionF, "saveArgument");
 	if (verbose == 1 && solving) {
-		printf("\n\n==> functionProcessor <==\n\nFunction: %s", trigon);
+		printf("\n\n==> functionProcessor <==\n\nFunction: %s\n", trigon);
 	}
 	int i = 0, var = 0, j = 0, n = 0, count = 0, opt = 0, l = 0, p = 0, cn = 0, s, rad = 1, jg = 1, gon = 0, tri = 0, co = 0, trigono = 0, paren = 1, pare = 0, parent = 0, e = 0, f = 0, kl = 0, ar = 0, deg = 0, type = 0, g = 0;
 	char* trig = getDynamicCharArray("0", "trig"); char* base = getDynamicCharArray("", "base"); char* number = getDynamicCharArray("0", "number");
@@ -3330,83 +3368,8 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 	vI[0] = resultR;
 	vI[1] = resultI;
 	if (verbose == 1 && solving) {
-		puts("\nFunction arguments:\n1st interactor: \n");
-		convertComplex2Exponential(v[0], vI[0]);
-		
-		if (precisionValueTo<T>(v[0]) > 0 && precisionValueTo<T>(vI[0]) > 0) {
-			printf("=%s+%si\n", respR, respI);
-		}
-		else {
-			if (precisionValueTo<T>(v[0]) > 0 && precisionValueTo<T>(vI[0]) < 0) {
-				printf("=%s%si\n", respR, respI);
-			}
-			else {
-				if (precisionValueTo<T>(v[0]) < 0 && precisionValueTo<T>(vI[0]) > 0) {
-					printf("=%s+%si\n", respR, respI);
-				}
-				else {
-					if (precisionValueTo<T>(v[0]) < 0 && precisionValueTo<T>(vI[0]) < 0) {
-						printf("=%s%si\n", respR, respI);
-					}
-					else {
-						if (precisionValueTo<T>(v[0]) == 0 && precisionValueTo<T>(vI[0] )== 0) {
-							printf("=%s\n", convert2Exponential(v[0]));
-						}
-						else {
-							if (precisionValueTo<T>(v[0]) == 0 && precisionValueTo<T>(vI[0]) != 0) {
-								printf("=%si\n", convert2Exponential(vI[0]));
-							}
-							else {
-								if (precisionValueTo<T>(v[0]) != 0 && precisionValueTo<T>(vI[0]) == 0) {
-									printf("=%s\n", convert2Exponential(v[0]));
-								}
-								else {
-									printf("=%s+%si\n", respR, respI);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		puts("\n\n2nd interactor: \n");
-		convertComplex2Exponential(v[1], vI[1]);
-		if (precisionValueTo<T>(v[1]) > 0 && precisionValueTo<T>(vI[1]) > 0) {
-			printf("=%s+%si\n", respR, respI);
-		}
-		else {
-			if (precisionValueTo<T>(v[1]) > 0 && precisionValueTo<T>(vI[1]) < 0) {
-				printf("=%s%si\n", respR, respI);
-			}
-			else {
-				if (precisionValueTo<T>(v[1]) < 0 && precisionValueTo<T>(vI[1] )> 0) {
-					printf("=%s+%si\n", respR, respI);
-				}
-				else {
-					if (precisionValueTo<T>(v[1]) < 0 && precisionValueTo<T>(vI[1]) < 0) {
-						printf("=%s%si\n", respR, respI);
-					}
-					else {
-						if (precisionValueTo<T>(v[1]) == 0 && precisionValueTo<T>(vI[1]) == 0) {
-							printf("=%s\n", convert2Exponential(v[1]));
-						}
-						else {
-							if (precisionValueTo<T>(v[1]) == 0 && precisionValueTo<T>(vI[1]) != 0) {
-								printf("=%si\n", convert2Exponential(vI[1]));
-							}
-							else {
-								if (precisionValueTo<T>(v[1]) != 0 && precisionValueTo<T>(vI[1]) == 0) {
-									printf("=%s\n", convert2Exponential(v[1]));
-								}
-								else {
-									printf("=%s+%si\n", respR, respI);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		puts("\nFunction arguments:");
+		printVerboseComplexValue<T>("Evaluated argument", precisionValueTo<T>(v[1]), precisionValueTo<T>(vI[1]));
 	}
 	result = 0;
 	if (trigon[0] == 'r' && trigon[1] == 'a' && trigon[2] == 'd') {
@@ -3989,44 +3952,8 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 	resultR = result1;
 	resultI = result2;
 	if (verbose == 1 && solving) {
-		puts("\nResult of function processing:\n");
-		convertComplex2Exponential(result1, result2);
-		if (result1 > 0 && result2 > 0) {
-			printf("=%s+%si\n", respR, respI);
-		}
-		else {
-			if (result1 > 0 && result2 < 0) {
-				printf("=%s%si\n", respR, respI);
-			}
-			else {
-				if (result1 < 0 && result2 > 0) {
-					printf("=%s+%si\n", respR, respI);
-				}
-				else {
-					if (result1 < 0 && result2 < 0) {
-						printf("=%s%si\n", respR, respI);
-					}
-					else {
-						if (result1 == 0 && result2 == 0) {
-							printf("=%s\n", convert2Exponential(result1));
-						}
-						else {
-							if (result1 == 0 && result2 != 0) {
-								printf("=%si\n", convert2Exponential(result2));
-							}
-							else {
-								if (result1 != 0 && result2 == 0) {
-									printf("=%s\n", convert2Exponential(result1));
-								}
-								else {
-									printf("=%s+%si\n", respR, respI);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		puts("\nFunction processing result:");
+		printVerboseComplexValue<T>("Function result", result1, result2);
 	}
 	_delete(v, "v"); v = nullptr;
 	_delete(vI, "vI"); vI = nullptr;

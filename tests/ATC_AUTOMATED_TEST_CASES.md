@@ -242,6 +242,7 @@ before reaching the solver.
 | Persistent settings / Configuracoes | numerical systems | `numerical systems`, then `1` | writes `numSystems.txt = 1` |
 | Persistent settings / Configuracoes | SI prefixes | `si prefixes`, then `1` | writes `siPrefixes.txt = 1` |
 | Persistent settings / Configuracoes | verbose resolution | `verbose resolution`, then `1` | writes `verboseResolution.txt = 1` |
+| Persistent settings / Configuracoes | cleaned verbose calculation trace | `2+3*4` with `verboseResolution.txt = 1` | prints user-facing processor steps without internal menu/input noise |
 | Persistent settings / Configuracoes | actual time response | `actual time response`, then `1` | writes `actualTime.txt = 1` |
 | Persistent settings / Configuracoes | dimensions | `dimensions`, then `40`, `120` | writes `MODE con cols=120 lines=40` |
 | Persistent settings / Configuracoes | window | `window`, then `10`, `20`, `500`, `600` | writes window position and size |

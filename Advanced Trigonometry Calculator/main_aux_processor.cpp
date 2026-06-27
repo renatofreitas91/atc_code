@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 int rasf = 0, maxLength = 0, vectorType = 0, check4Vector = 0, numVectorLines = 0, numVectorCols = 0, matrixMode = 0, previousAnsType = 0;
-bool solving = true;
+bool solving = true, suppressVerboseResolution = false;
 
 template<typename T>
 std::string formatCoreFixedPrecisionValue(const T& value, int places) {
@@ -1677,7 +1677,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 				char* verboseRes = getDynamicCharArray("", "verboseRes");
 				if (open != NULL) {
 					fgets(verboseRes, 10, open);
-					verbose = atoi(verboseRes);
+					verbose = (solving && !suppressVerboseResolution) ? atoi(verboseRes) : 0;
 					fclose(open);
 				}
 				else {

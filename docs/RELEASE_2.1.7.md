@@ -206,6 +206,11 @@ The setting is persisted in `verboseResolution.txt`, but it is no longer applied
 globally during startup. This prevents verbose traces from internal startup
 work while preserving useful calculation traces for user expressions.
 
+Verbose output was also made easier to read: display-only trailing `+0` terms
+are hidden, evaluated function arguments are labelled directly, function results
+are printed without the old interactor wording, and internal menu prompts keep
+their evaluation quiet even when verbose resolution is enabled.
+
 ## Memory and allocation fixes
 
 Several 2.1.7 code paths no longer reserve large global buffers when the input
@@ -281,10 +286,10 @@ Run:
 powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe .\x64\Release\atc.exe
 ```
 
-Current result:
+Current result for both Release x64 and Release x86:
 
 ```text
-Summary: 329 passed, 0 failed
+Summary: 338 passed, 0 failed
 ```
 
 Memory stress run:
@@ -334,7 +339,8 @@ Covered areas:
 - TXT detector / command bridge commands, including `atc over cmd`
 - file/folder command existence checks
 - persistent settings and interactive menu retry behavior
-- verbose-resolution persisted setting and verbose output behavior
+- verbose-resolution persisted setting, cleaned verbose output behavior, and
+  suppression of verbose traces for internal menu inputs
 - Windows 11 console source-level behavior checks
 - `double` and Boost `mp_float` precision behavior
 - restart persistence of precision mode
@@ -348,7 +354,8 @@ Release x64 build succeeds with MSBuild:
 ```
 
 Release Win32/x86 builds are also supported by the solution and remain a
-compatibility target for older Windows versions.
+compatibility target for older Windows versions. The current regression suite
+has been validated against both `x64\Release\atc.exe` and `Release\atc.exe`.
 
 ## Known limitations
 
@@ -410,7 +417,8 @@ Principais pontos em portugues:
   instancias/abas quando o Windows Terminal esta disponivel;
 - reducao de alocacoes desnecessarias e melhoria de libertacao de memoria em
   varios caminhos;
-- suite automatizada atual com `329 passed, 0 failed` em modo `Double`;
+- suite automatizada atual com `338 passed, 0 failed` em Release x64 e
+  Release x86;
 - README publico reescrito e publicado no GitHub em `main` no commit
   `f71e507 Improve project README`;
 - a documentacao futura deve ser mantida em portugues e ingles, enquanto os

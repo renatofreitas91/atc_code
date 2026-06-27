@@ -760,9 +760,12 @@ T getValue() {
 		char* value = getDynamicCharArray("", "value");
 		sprintf(value, "%c", decision);
 		puts(value);
+		bool previousSuppressVerboseResolution = suppressVerboseResolution;
+		suppressVerboseResolution = true;
 		solving = false;
 		calcNow<T>(value, (T)0, (T)0);
 		solving = true;
+		suppressVerboseResolution = previousSuppressVerboseResolution;
 		I_O = false;
 		_delete(value, "value"); value = nullptr;
 		return precisionValueTo<T>(resultR);
@@ -772,10 +775,13 @@ T getValue() {
 		while (verified == 0) {
 			char* value = getDynamicCharArray("", "value");
 			gets_s(value, DIM);
+			bool previousSuppressVerboseResolution = suppressVerboseResolution;
+			suppressVerboseResolution = true;
 			solving = false;
 			calcNow<T>(value, (T)0, (T)0);
 			sprintf(expressionF, value);
 			solving = true;
+			suppressVerboseResolution = previousSuppressVerboseResolution;
 			_delete(value, "value"); value = nullptr;
 		}
 		return precisionValueTo<T>(resultR);
