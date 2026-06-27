@@ -1,6 +1,7 @@
 # Advanced Trigonometry Calculator 2.1.7 release notes
 
 Release date: 2026-06-09
+Last updated: 2026-06-27
 
 ## Highlights
 
@@ -21,6 +22,22 @@ Release date: 2026-06-09
 - Relaxed user variable-name restrictions while preserving exact reserved
   function, constant and numeric-prefix names.
 - Added regression coverage for automatic multiplication deduction.
+- Improved Windows 11 console behavior: the ATC intro is disabled by default on
+  Windows 11, console colors are mapped correctly when Windows Terminal uses
+  ANSI/VT sequences, and ATC can open new instances as Windows Terminal tabs
+  when `wt.exe` is available.
+- Improved `verbose resolution`: direct `verbose resolution(1)` and
+  `verbose resolution(0)` commands are supported, and verbose output is no
+  longer enabled during startup internals.
+- Added exact rational-cancellation fast-path coverage for solver/equation
+  paths using real roots, `pi`, `e` and complex `pii` constants.
+- Rewrote and published the repository README to the GitHub `main` branch in
+  commit `f71e507 Improve project README`.
+
+## Documentation policy
+
+Project documentation should be maintained in Portuguese and English from this
+point forward. Code comments, when present, should be written in English only.
 
 ## Precision mode persistence
 
@@ -102,6 +119,16 @@ x1=3
 x2=2
 ```
 
+Additional validated rational and symbolic-constant cases include:
+
+```text
+solve equation(((x-5)(x+2))/(x-5))
+solve equation((((x-5)(x+2))/(x-5))*(((x-5)(x+pi))/(x-5))*(((x-5)(x+e))/(x-5)))
+solve equation(((x-e+pii)(x-e-pii))/(x-e-pii))
+solver(((x-5)(x+2))/(x-5))
+solver((x-e+pii)(x-e-pii))
+```
+
 For:
 
 ```text
@@ -157,6 +184,27 @@ Example:
 simplify polynomial((x-2)*(x-3))
 (1+0i)x^2+(_5+0i)x^1+(6+0i)
 ```
+
+Exact cancellable rational products are also covered, including:
+
+```text
+simplify polynomial(((x-5)(x+2))/(x-5))
+simplify polynomial((((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5)))
+```
+
+## Verbose resolution
+
+`verbose resolution` remains available as an interactive menu. ATC 2.1.7 also
+supports:
+
+```text
+verbose resolution(1)
+verbose resolution(0)
+```
+
+The setting is persisted in `verboseResolution.txt`, but it is no longer applied
+globally during startup. This prevents verbose traces from internal startup
+work while preserving useful calculation traces for user expressions.
 
 ## Memory and allocation fixes
 
@@ -236,7 +284,7 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current result:
 
 ```text
-Summary: 122 passed, 0 failed
+Summary: 329 passed, 0 failed
 ```
 
 Memory stress run:
@@ -271,12 +319,23 @@ Covered areas:
 - digital signal processing: `sinc`, `fft`, `ifft`
 - probability/statistics inline functions
 - sorting with `.txt` report export
+- ASCII and inverse ASCII sorting interactive flows
 - roots-to-polynomial report export
 - textual polynomial simplification
+- exact rational polynomial cancellation in simplifier, solver and equation
+  solver paths
 - quadratic equation solver
 - 2x2 equations system solver
 - textual polynomial equation solver
 - coefficient-form cubic equation solver
+- high-degree coefficient equations and internal expanded polynomial forms
+- graph settings display, graph settings mutation, graph smoke tests and
+  deterministic graph navigation simulation
+- TXT detector / command bridge commands, including `atc over cmd`
+- file/folder command existence checks
+- persistent settings and interactive menu retry behavior
+- verbose-resolution persisted setting and verbose output behavior
+- Windows 11 console source-level behavior checks
 - `double` and Boost `mp_float` precision behavior
 - restart persistence of precision mode
 
@@ -288,16 +347,19 @@ Release x64 build succeeds with MSBuild:
 & 'C:\Program Files\Microsoft Visual Studio\18\Insiders\MSBuild\Current\Bin\MSBuild.exe' '.\Advanced Trigonometry Calculator.sln' /p:Configuration=Release /p:Platform=x64 /m:1
 ```
 
+Release Win32/x86 builds are also supported by the solution and remain a
+compatibility target for older Windows versions.
+
 ## Known limitations
 
 The automatic suite intentionally avoids:
 
 - shutdown, restart, hibernate, sleep and lock commands
 - clock, stopwatch and timer views
-- commands that open folders, browsers or editors
-- ASCII sorting custom interactive mode
-- deeply interactive modules such as conversions, finance, physics,
-  microeconomics, matrix and statistics menus
+- commands that open external browsers or editors
+- full live manual graph rendering and live key-buffer behavior
+- deeply interactive modules such as triangles, arithmetic matrix solver,
+  conversions, finance, physics, microeconomics and statistics menus
 
 ## Files touched in this release work
 
@@ -316,6 +378,7 @@ Advanced Trigonometry Calculator\sorting.cpp
 Advanced Trigonometry Calculator\statistics_calculations.cpp
 Advanced Trigonometry Calculator\check_for_updates.cpp
 Advanced Trigonometry Calculator\versioninfo.rc
+README.md
 ```
 
 Documentation and tests:
@@ -324,5 +387,31 @@ Documentation and tests:
 docs\ATC_2.1.7_DOCUMENTATION.md
 docs\RELEASE_2.1.7.md
 tests\ATC_AUTOMATED_TEST_CASES.md
+tests\ATC_USER_GUIDE_COVERAGE.md
 tests\run-atc-regression.ps1
+tests\run-atc-isolated-coverage.ps1
 ```
+
+## Resumo de release em portugues
+
+Esta release 2.1.7 reforca a estabilidade tecnica do ATC e prepara o projeto
+para uma distribuicao mais clara como projeto open-source.
+
+Principais pontos em portugues:
+
+- alternancia persistente entre `double` e Boost `mp_float`;
+- correcao da formatacao de alta precisao, incluindo `dp50dppi` e `dp50dpe`;
+- melhorias em `solve equation`, `solver` e `simplify polynomial`, incluindo
+  produtos racionais com fatores cancelaveis e constantes simbolicas como
+  `pi`, `e` e `pii`;
+- melhoria de `verbose resolution`, agora com `verbose resolution(1)` e
+  `verbose resolution(0)`, evitando logs internos durante o arranque;
+- melhorias no comportamento da consola no Windows 11 e suporte para novas
+  instancias/abas quando o Windows Terminal esta disponivel;
+- reducao de alocacoes desnecessarias e melhoria de libertacao de memoria em
+  varios caminhos;
+- suite automatizada atual com `329 passed, 0 failed` em modo `Double`;
+- README publico reescrito e publicado no GitHub em `main` no commit
+  `f71e507 Improve project README`;
+- a documentacao futura deve ser mantida em portugues e ingles, enquanto os
+  comentarios no codigo devem permanecer apenas em ingles.
