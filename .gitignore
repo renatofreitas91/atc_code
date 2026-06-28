@@ -44,3 +44,6 @@ tests/memory-stress-reports/
 tests/user-guide-extracted.txt
 tests/sourceforge_solver_raw.cpp
 tests/icon_corner_preview.png
+
+# Documentation tooling
+.venv-docs/

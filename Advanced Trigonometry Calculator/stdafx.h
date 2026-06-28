@@ -200,7 +200,7 @@ extern PrecisionValue* ans,* ansI;
 extern PrecisionValue lastElement, lastElementI, LastDividerR, LastDividerI, lastDividerR, lastDividerI, natureValue;
 extern PrecisionValue returnedR, returnedI, xValuesR,xValuesI, mINF, INF, ansRV, ansIV, resultR, resultI, resultFI;
 extern int countDeleteorGetDynamic;
-extern bool solvingExpression, haveCreatedDynamicMatrix, manageDynamicAllocations, toIntegrateOnCalculus, mainRoutine, checkMatrixIndex, useForVariables, notUseHigherPrecison, notSolved, variableControllersUsed, product, fromEquationSolver, progress, starting, studyFunction, I_O, isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, suppressVerboseResolution, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver, poly;
+extern bool solvingExpression, haveCreatedDynamicMatrix, manageDynamicAllocations, processingTxtFile, toIntegrateOnCalculus, mainRoutine, checkMatrixIndex, useForVariables, notUseHigherPrecison, notSolved, variableControllersUsed, product, fromEquationSolver, progress, starting, studyFunction, I_O, isDivisible, solveMultiPoly, polySimplifier, physics, equationSolverRunning, solverRunning, solving, suppressVerboseResolution, retrySolver, retrySolver_2, retrySolver_3, returned, runningScript, equation_solver, poly;
 template <typename T> T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitude, int res, char* argNotNumber);
 template <typename T> T initialProcessor(char* arithTrig, T result);
 template<typename T>

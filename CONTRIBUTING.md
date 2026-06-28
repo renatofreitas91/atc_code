@@ -63,9 +63,12 @@ If tests cannot be run, explain why and include manual validation steps.
 - Update `README.md` only for project-level entry-point information.
 - Put technical details in `docs/`.
 - Update `CHANGELOG.md` for notable user-facing or maintenance changes.
-- Keep public documentation in English.
-- Portuguese summaries may remain where they already provide useful project
-  context.
+- English is the reference language for open-source/community-facing
+  documentation.
+- Portuguese documentation is maintained to support the Portuguese-speaking
+  community.
+- When a document changes in one language, check whether the corresponding
+  document in the other language and generated PDF files also need updates.
 - Do not claim unsupported symbolic-algebra features.
 
 ## Pull Request Checklist

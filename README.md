@@ -24,6 +24,21 @@ Version 2.1.7 focuses on precision-mode persistence, equation and polynomial
 fixes, broader regression coverage, Windows console behavior, memory
 improvements, command-line editing, and clearer verbose-resolution output.
 
+## What ATC is not
+
+ATC deliberately focuses on practical command-driven mathematical computation
+instead of trying to be a universal CAS.
+
+- ATC is not a full general-purpose CAS like Mathematica, Maple, SageMath, or
+  SymPy.
+- ATC is not designed to symbolically prove arbitrary mathematical theorems.
+- ATC is not intended to replace domain-specific professional engineering
+  validation tools.
+- ATC focuses on numeric computation, command-driven workflows, educational
+  use, implemented symbolic/numeric hybrid features, and fast local execution.
+- Some symbolic behavior exists, but only where explicitly supported and
+  tested.
+
 ## Features
 
 - Arithmetic expressions
@@ -166,8 +181,18 @@ Visual Studio/C++ environment.
 The latest Release x86 and Release x64 builds completed successfully with
 `0 Warning(s), 0 Error(s)`.
 
-## Documentation
+## Documentation / Documentacao
 
+English is the reference language for open-source and community-facing
+documents. Portuguese is maintained to support the Portuguese-speaking
+community.
+
+- [Documentation index](docs/README.md)
+- [English documentation](docs/en/)
+- [Documentacao em portugues](docs/pt-PT/)
+- [PDF downloads](docs/pdf/)
+- [Full User Guide EN](docs/en/User_Guide_Full.md)
+- [Guia Completo PT-PT](docs/pt-PT/User_Guide_Full.md)
 - [User Guide](docs/User_Guide.md)
 - [Developer Guide](docs/Developer_Guide.md)
 - [Architecture](docs/Architecture.md)
@@ -178,9 +203,9 @@ The latest Release x86 and Release x64 builds completed successfully with
 - [User Guide Coverage Notes](tests/ATC_USER_GUIDE_COVERAGE.md)
 - [Changelog](CHANGELOG.md)
 
-Public documentation should be maintained in English. Portuguese summaries may
-remain where they already provide useful project context. Code comments, when
-present, should be written in English.
+When a Markdown document changes in one language, the corresponding document in
+the other language should be reviewed. PDF files should be regenerated after
+relevant Markdown changes.
 
 ## License
 

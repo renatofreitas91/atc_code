@@ -2656,7 +2656,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 				sprintf(report, "");
 				sprintf(report, "\n%s\n", expressionF);
 				puts(report);
-				int option = -1;
+				int option = processingTxtFile ? 0 : -1;
 				while (option != 0 && option != 1) {
 					I_O = true;
 					puts("\nExport result? (Yes -> 1 \\ No -> 0)");
@@ -3053,7 +3053,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 				if (solvedByBinomialFastPath || solvedByCoefficientFastPath || solvedBySimplePolynomialFastPath) {
 					sprintf(report, "\n%s\n", answers);
 					puts(report);
-					int option = -1;
+					int option = processingTxtFile ? 0 : -1;
 					while (option != 0 && option != 1) {
 						I_O = true;
 						puts("\nExport result? (Yes -> 1 \\ No -> 0)");
@@ -3122,7 +3122,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 							sprintf(report, "\n%s\n", answers);
 							if (!isContained("IND", report)) {
 								puts(report);
-								int option = -1;
+								int option = processingTxtFile ? 0 : -1;
 								while (option != 0 && option != 1) {
 									I_O = true;
 									puts("\nExport result? (Yes -> 1 \\ No -> 0)");
@@ -3183,7 +3183,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 						progress = false;
 						sprintf(report, "\n%s\n", answers);
 						puts(report);
-						int option = -1;
+						int option = processingTxtFile ? 0 : -1;
 						while (option != 0 && option != 1) {
 
 							I_O = true;
@@ -3248,7 +3248,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			char* reportF = getDynamicCharArray("", "reportF");
 			sprintf(reportF, "");
 			sprintf(reportF, "%s", expressionF);
-			int option = -1;
+			int option = processingTxtFile ? 0 : -1;
 			while (option != 0 && option != 1) {
 				I_O = true;
 				puts("\nExport result? (Yes -> 1 \\ No -> 0)");

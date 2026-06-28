@@ -251,7 +251,7 @@ void rootsToPolynomial(char* rootsF) {
 		int members = 0;
 		i = 0;
 
-		while (members < numberRoots && i < lenRootsF) {
+		while (members < numberRoots && i <= lenRootsF) {
 			int b = 0;
 			while (i < lenRootsF && rootsF[i] != '\\') {
 				toValue[b] = rootsF[i];
@@ -259,13 +259,22 @@ void rootsToPolynomial(char* rootsF) {
 				i++;
 			}
 			toValue[b] = '\0';
+			if (b == 0 && i >= lenRootsF) {
+				break;
+			}
 			calcNow<double>(toValue, 0.0, 0.0);
 			valuesRootsR[members] = precisionValueTo<T>(resultR);
 			valuesRootsI[members] = precisionValueTo<T>(resultI);
 			members++;
 			sprintf(toValue, "");
-			i++;
+			if (i < lenRootsF && rootsF[i] == '\\') {
+				i++;
+			}
+			else if (i >= lenRootsF) {
+				break;
+			}
 		}
+		numberRoots = members;
 
 		// Filtragem e Rearranjo direto (Otimizado sem conversões string redundantes)
 		int g = 0;

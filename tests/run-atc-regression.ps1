@@ -321,6 +321,8 @@ function Test-TxtProcessingFlow {
         "2+2",
         "sqrt(9)",
         "solver(x-2)",
+        "solve equation((x-1)(x-2))",
+        "simplify polynomial((x+1)(x-1))",
         "2++",
         "2+3"
     ) -join "`r`n"
@@ -342,8 +344,9 @@ function Test-TxtProcessingFlow {
         $log = (Get-Content -Raw -Path $logPath) -replace "`r", ""
     }
 
-    $expectedAnswerRegex = "#\d+=4[\s\S]*#\d+=3[\s\S]*#\d+=2[\s\S]*Error in syntax[\s\S]*#\d+=5"
-    $passed = $predefine.Passed -and $solve.Passed -and (Test-Path $answerPath) -and ($answer -match $expectedAnswerRegex) -and ($log -match "openTxt\|.*input_answers\.txt")
+    $expectedAnswerRegex = "#\d+=4[\s\S]*#\d+=3[\s\S]*#\d+=2[\s\S]*>solve equation\(\(x-1\)\(x-2\)\)[\s\S]*>simplify polynomial\(\(x\+1\)\(x-1\)\)[\s\S]*Error in syntax[\s\S]*#\d+=5"
+    $expectedSolveOutputRegex = "x1=2[\s\S]*x2=1[\s\S]*\(1\+0i\)x\^2[\s\S]*\(_1\+0i\)"
+    $passed = $predefine.Passed -and $solve.Passed -and (Test-Path $answerPath) -and ($answer -match $expectedAnswerRegex) -and ($solve.Output -match $expectedSolveOutputRegex) -and ($log -match "openTxt\|.*input_answers\.txt")
 
     [pscustomobject]@{
         Passed = $passed

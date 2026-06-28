@@ -249,7 +249,7 @@ before reaching the solver.
 | TXT / command bridge | atc from cmd mocked PATH update | `atc from cmd` with external-open mock enabled | validates the command without mutating the real Windows PATH |
 | TXT / command bridge | to solve mocked folder open | `to solve` with external-open mock enabled | validates the folder-open command without launching Explorer |
 | TXT / command bridge | enable txt detector mocked flag removal | `enable txt detector` with external-open mock enabled | removes `disable_txt_detector.txt` and records the mocked action |
-| TXT / command bridge | full solve txt flow | `predefine txt` -> `solve txt` using a real fixture file | creates an `_answers.txt` file, keeps processing after an invalid line, and records the mocked answer-file open |
+| TXT / command bridge | full solve txt flow | `predefine txt` -> `solve txt` using a real fixture file | creates an `_answers.txt` file, runs arithmetic, `solver`, `solve equation`, `simplify polynomial`, keeps processing after an invalid line, and records the mocked answer-file open |
 | TXT / command bridge | eliminate strings mocked folder cleanup | `eliminate strings` with a temporary `Strings` folder | clears only the temporary fixture folder and preserves the user's real `Strings` folder |
 | Variables/results / Gestao | see variables | `see variables` with fixture `variables.txt` | prints stored variables |
 | Variables/results / Gestao | renamed variables | `renamed variables` with fixture `renamedVar.txt` | prints variable renaming data |
@@ -314,9 +314,10 @@ defined:
 - Auto TXT detector watcher scenarios that require live file-system polling or
   dragged-file `SOLVE_NOW` workflows. The direct `predefine txt` -> `solve txt`
   flow is covered with a real fixture file and mocked answer-file opening.
-- Export-prompt commands inside `solve txt` files, such as `solve equation` and
-  `simplify polynomial`, still need a prompt-safe TXT-processing path before
-  they should be included in the default non-interactive runner.
+- `roots to polynomial` inside `solve txt` files still needs a dedicated
+  prompt/pre-processing fix before it should be included in the default
+  non-interactive runner. Direct `roots to polynomial` execution and export
+  decline behavior are already covered.
 - Interactive `colors` mutation, because it uses `_getch()` rather than normal
   redirected input. `colors.txt` readback is covered through `current settings`.
 - UI commands that open windows or files, such as `history`, `user guide`,

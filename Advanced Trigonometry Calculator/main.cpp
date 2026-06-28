@@ -17,7 +17,7 @@ char* savePathF = getDynamicCharArray("", "savePathF"), * validChars = getDynami
 int runningUserFunction = 0, creatingMatrix = 0, toSendCommand = 0, indexI = -1, indexJ = -1, fromCalcNow = 0;
 PrecisionValue **saveResultR = nullptr, **saveResultI = nullptr;
 DynamicAllocation dynamicAllocation;
-bool manageDynamicAllocations = false;
+bool manageDynamicAllocations = false, processingTxtFile = false;
 float memFactor = 1.0f;
 extern char* appVersion;
 extern char* polyNo;
@@ -726,6 +726,8 @@ template bool processTxt<mp_float>(char* path, int re);
 
 template<typename T>
 bool processTxt(char* path, int re) {
+	bool previousProcessingTxtFile = processingTxtFile;
+	processingTxtFile = true;
 	char* toOpen = getDynamicCharArray("", "toOpen");
 	FILE* open;
 	char* folder = getDynamicCharArray("", "folder");
@@ -1262,6 +1264,7 @@ bool processTxt(char* path, int re) {
 	varLetters = nullptr;
 	_delete(saveSendFunc, "saveSendFunc");
 	saveSendFunc = nullptr;
+	processingTxtFile = previousProcessingTxtFile;
 	rf = re;
 	return toWrite;
 }
