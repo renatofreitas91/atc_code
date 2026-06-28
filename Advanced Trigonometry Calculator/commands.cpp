@@ -2867,11 +2867,16 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		char* comm = getDynamicCharArray("", "comm");
 		sprintf(comm, "");
 		sprintf(comm, "/C \"setx PATH \"%%PATH%%;%s\"", atcPath);
-		using namespace std;
-		std::string s = string(comm);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+		if (atcTestDisableExternalOpen()) {
+			recordExternalOpen("atcFromCmd", comm);
+		}
+		else {
+			using namespace std;
+			std::string s = string(comm);
+			std::wstring stemp = std::wstring(s.begin(), s.end());
+			LPCWSTR sw = stemp.c_str();
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+		}
 		puts("\n==> You can now run cmd.exe and enter e.g. \"atc time\" <==\n");
 		puts("");
 		_delete(comm, "comm");
@@ -3412,8 +3417,18 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 	}
 	if (isCommand(arithTrig, "enabletxtdetector")) {
 		command = true;
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del disable_txt_detector.txt\""), NULL, SW_SHOW);
-		Sleep(200);
+		if (atcTestDisableExternalOpen()) {
+			char* toOpen = getDynamicCharArray("", "toOpen");
+			sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
+			remove(toOpen);
+			recordExternalOpen("enableTxtDetector", toOpen);
+			_delete(toOpen, "toOpen");
+			toOpen = nullptr;
+		}
+		else {
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del disable_txt_detector.txt\""), NULL, SW_SHOW);
+			Sleep(200);
+		}
 		puts(" ");
 	}
 	if (isCommand(arithTrig, "enableatcintro")) {
@@ -3589,11 +3604,16 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		char* comm = getDynamicCharArray("", "comm");
 		sprintf(comm, "");
 		sprintf(comm, "/C \"explorer %s\\To solve\\\"", atcPath);
-		using namespace std;
-		std::string s = string(comm);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+		if (atcTestDisableExternalOpen()) {
+			recordExternalOpen("toSolve", comm);
+		}
+		else {
+			using namespace std;
+			std::string s = string(comm);
+			std::wstring stemp = std::wstring(s.begin(), s.end());
+			LPCWSTR sw = stemp.c_str();
+			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+		}
 		puts("");
 		_delete(comm, "comm");
 		comm = nullptr;
@@ -3855,8 +3875,38 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		if (r < 100) {
 			command = true;
 			fclose(open);
-			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"rmdir /Q /S Strings\""), NULL, SW_SHOW);
-			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"mkdir Strings\""), NULL, SW_SHOW);
+			if (atcTestDisableExternalOpen()) {
+				char* stringsPath = getDynamicCharArray("", "stringsPath");
+				const char* testStringsPath = getenv("ATC_TEST_STRINGS_DIR");
+				if (testStringsPath != nullptr && testStringsPath[0] != '\0') {
+					sprintf(stringsPath, "%s", testStringsPath);
+				}
+				else {
+					sprintf(stringsPath, "%s\\Strings", atcPath);
+				}
+				DIR* directory = opendir(stringsPath);
+				if (directory != NULL) {
+					struct dirent* entry;
+					while ((entry = readdir(directory)) != NULL) {
+						if (entry->d_type == DT_REG) {
+							char* filePath = getDynamicCharArray("", "filePath");
+							sprintf(filePath, "%s\\%s", stringsPath, entry->d_name);
+							remove(filePath);
+							_delete(filePath, "filePath");
+							filePath = nullptr;
+						}
+					}
+					closedir(directory);
+				}
+				CreateDirectoryA(stringsPath, NULL);
+				recordExternalOpen("eliminateStrings", stringsPath);
+				_delete(stringsPath, "stringsPath");
+				stringsPath = nullptr;
+			}
+			else {
+				ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"rmdir /Q /S Strings\""), NULL, SW_SHOW);
+				ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"mkdir Strings\""), NULL, SW_SHOW);
+			}
 			printf("\n==> The strings were eliminated sucessfully. <==\n\n");
 			fprintf(fout, "\n==> The strings were eliminated sucessfully. <==\n\n");
 			arithTrig[0] = '\0';

@@ -163,13 +163,13 @@ Main scripts:
 Current validated regression result for Release x64 and Release x86:
 
 ```text
-Summary: 338 passed, 0 failed
+Summary: 359 passed, 0 failed
 ```
 
 Current isolated coverage result:
 
 ```text
-Summary: 61 passed, 0 failed
+Summary: 65 passed, 0 failed
 ```
 
 See `docs/Testing.md` for commands and coverage details.

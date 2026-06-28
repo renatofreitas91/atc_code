@@ -1296,12 +1296,12 @@ void sprintfFixedSize(char*& charArrayPointer, const char* format, int size, ...
 	int result = vsnprintf(forsprintf, DIM, format, arg);
 	va_end(arg);
 
-	if (result < 0 || static_cast<size_t>(result) >= DIM) {
+	if (result < 0 || static_cast<size_t>(result) >= static_cast<size_t>(DIM)) {
 		charArrayPointer = nullptr;
 		return;
 	}
 
-	if (charArrayPointer != nullptr&&abs((int)strlen(forsprintf)) >= 0) {
+	if (charArrayPointer != nullptr) {
 		charArrayPointer = getRenewDynamicCharArrayFixedLength(forsprintf, &charArrayPointer, size);
 	}
 }

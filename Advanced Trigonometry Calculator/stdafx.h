@@ -408,6 +408,8 @@ bool atcFunctions(char* functionName);
 bool isToWrite(char* arith);
 bool isCommand(char* forTesting, char* command);
 bool readyToSolve(char* paTh);
+bool atcTestDisableExternalOpen();
+void recordExternalOpen(const char* action, const char* target);
 bool isEqual(char* to_find, char* string);
 bool isContained(char* to_find, char* string);
 bool isVariable(char* variable);

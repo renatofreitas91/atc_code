@@ -29,6 +29,7 @@ $windowPath = Join-Path $AtcDataDir "window.txt"
 $onStartPath = Join-Path $AtcDataDir "onStart.txt"
 $historyPath = Join-Path $AtcDataDir "history.txt"
 $exitPath = Join-Path $AtcDataDir "exit.txt"
+$disableTxtDetectorPath = Join-Path $AtcDataDir "disable_txt_detector.txt"
 $scriptsExamplesDir = Join-Path $AtcDataDir "Scripts examples"
 $sourceCodeDir = Join-Path $AtcDataDir "Source code"
 $stringsDir = Join-Path $AtcDataDir "Strings"
@@ -72,6 +73,7 @@ $originalWindow = Get-OptionalFileContent $windowPath
 $originalOnStart = Get-OptionalFileContent $onStartPath
 $originalHistory = Get-OptionalFileContent $historyPath
 $originalExit = Get-OptionalFileContent $exitPath
+$originalDisableTxtDetector = Get-OptionalFileContent $disableTxtDetectorPath
 $hadHigherPrecision = Test-Path $higherPrecisionPath
 $hadAboutDisabled = Test-Path $aboutDisabledPath
 $hadVariables = Test-Path $variablesPath
@@ -91,6 +93,7 @@ $hadWindow = Test-Path $windowPath
 $hadOnStart = Test-Path $onStartPath
 $hadHistory = Test-Path $historyPath
 $hadExit = Test-Path $exitPath
+$hadDisableTxtDetector = Test-Path $disableTxtDetectorPath
 
 function Set-HigherPrecision([string]$Value) {
     Set-Content -Path $higherPrecisionPath -Value $Value -NoNewline
@@ -107,6 +110,8 @@ function Invoke-AtcCommand([string]$Expression, [string[]]$InputLines = @()) {
     $processInfo.UseShellExecute = $false
 
     $process = [System.Diagnostics.Process]::Start($processInfo)
+    $stdoutTask = $process.StandardOutput.ReadToEndAsync()
+    $stderrTask = $process.StandardError.ReadToEndAsync()
     foreach ($line in $InputLines) {
         $process.StandardInput.WriteLine($line)
     }
@@ -119,11 +124,12 @@ function Invoke-AtcCommand([string]$Expression, [string[]]$InputLines = @()) {
         }
         throw "Timed out after $TimeoutSeconds seconds: $Expression"
     }
+    $process.WaitForExit()
 
     [pscustomobject]@{
         ExitCode = $process.ExitCode
-        StdOut = $process.StandardOutput.ReadToEnd()
-        StdErr = $process.StandardError.ReadToEnd()
+        StdOut = $stdoutTask.Result
+        StdErr = $stderrTask.Result
     }
 }
 
@@ -229,6 +235,25 @@ function Test-AtcExpressionAndFileValue([string]$Name, [string]$Expression, [str
     $result
 }
 
+function Test-AtcExpressionAndFileRegex([string]$Name, [string]$Expression, [string]$ExpectedRegex, [string]$Path, [string]$ExpectedFileRegex, [string[]]$InputLines = @()) {
+    $result = Test-AtcExpression $Name $Expression $ExpectedRegex $InputLines
+    $actual = ""
+    if (Test-Path $Path) {
+        $content = Get-Content -Raw -Path $Path
+        if ($null -ne $content) {
+            $actual = ($content -replace "`r", "").Trim()
+        }
+    }
+
+    if ($actual -notmatch $ExpectedFileRegex) {
+        $result.Passed = $false
+        $result.Output = ($result.Output + "`nfile:$Path`n" + $actual).Trim()
+        $result.Expected = $result.Expected + " and file regex " + $ExpectedFileRegex
+    }
+
+    $result
+}
+
 function Test-AtcExpressionWithEnvironment([string]$Name, [string]$Expression, [string]$ExpectedRegex, [hashtable]$Environment, [string[]]$InputLines = @()) {
     $previousValues = @{}
     $hadValues = @{}
@@ -251,6 +276,110 @@ function Test-AtcExpressionWithEnvironment([string]$Name, [string]$Expression, [
             }
         }
     }
+}
+
+function Test-MockedExternalCommand([string]$Name, [string]$Expression, [string]$ExpectedRegex, [string]$ExpectedLogRegex, [scriptblock]$BeforeRun = $null, [scriptblock]$AfterRun = $null) {
+    $flowDir = Join-Path $PSScriptRoot "temp\txt-flow"
+    New-Item -ItemType Directory -Path $flowDir -Force | Out-Null
+    $logPath = Join-Path $flowDir ("external-" + (($Name -replace "[^A-Za-z0-9]+", "-").Trim("-")) + ".log")
+    Remove-Item -Path $logPath -Force -ErrorAction SilentlyContinue
+    if ($null -ne $BeforeRun) {
+        & $BeforeRun
+    }
+
+    $environment = @{
+        ATC_TEST_DISABLE_EXTERNAL_OPEN = "1"
+        ATC_TEST_EXTERNAL_OPEN_LOG = $logPath
+    }
+    $result = Test-AtcExpressionWithEnvironment $Name $Expression $ExpectedRegex $environment
+
+    $log = ""
+    if (Test-Path $logPath) {
+        $log = (Get-Content -Raw -Path $logPath) -replace "`r", ""
+    }
+    if ($log -notmatch $ExpectedLogRegex) {
+        $result.Passed = $false
+        $result.Output = ($result.Output + "`nexternal-open-log:`n" + $log).Trim()
+        $result.Expected = $result.Expected + " and external open log " + $ExpectedLogRegex
+    }
+    if ($null -ne $AfterRun) {
+        & $AfterRun $result
+    }
+    $result
+}
+
+function Test-TxtProcessingFlow {
+    $flowDir = Join-Path $PSScriptRoot "temp\txt-flow"
+    New-Item -ItemType Directory -Path $flowDir -Force | Out-Null
+    $inputPath = Join-Path $flowDir "input.txt"
+    $answerPath = Join-Path $flowDir "input_answers.txt"
+    $logPath = Join-Path $flowDir "solve-txt-open.log"
+    Remove-Item -Path $answerPath -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $logPath -Force -ErrorAction SilentlyContinue
+
+    $inputContent = @(
+        "2+2",
+        "sqrt(9)",
+        "solver(x-2)",
+        "2++",
+        "2+3"
+    ) -join "`r`n"
+    Set-Content -Path $inputPath -Value $inputContent
+
+    $environment = @{
+        ATC_TEST_DISABLE_EXTERNAL_OPEN = "1"
+        ATC_TEST_EXTERNAL_OPEN_LOG = $logPath
+    }
+    $predefine = Test-AtcExpressionWithEnvironment "txt/command bridge: predefine real txt path" "predefine txt" "Drag to here the file to predefine" $environment @($inputPath)
+    $solve = Test-AtcExpressionWithEnvironment "txt/command bridge: solve real txt file with mocked open" "solve txt" "Close the file with the answers to continue" $environment
+
+    $answer = ""
+    if (Test-Path $answerPath) {
+        $answer = (Get-Content -Raw -Path $answerPath) -replace "`r", ""
+    }
+    $log = ""
+    if (Test-Path $logPath) {
+        $log = (Get-Content -Raw -Path $logPath) -replace "`r", ""
+    }
+
+    $expectedAnswerRegex = "#\d+=4[\s\S]*#\d+=3[\s\S]*#\d+=2[\s\S]*Error in syntax[\s\S]*#\d+=5"
+    $passed = $predefine.Passed -and $solve.Passed -and (Test-Path $answerPath) -and ($answer -match $expectedAnswerRegex) -and ($log -match "openTxt\|.*input_answers\.txt")
+
+    [pscustomobject]@{
+        Passed = $passed
+        Name = "txt/command bridge: full solve txt flow"
+        Expression = "predefine txt -> solve txt"
+        ExitCode = if ($predefine.ExitCode -ne 0) { $predefine.ExitCode } else { $solve.ExitCode }
+        Output = ("predefine:`n" + $predefine.Output + "`nsolve:`n" + $solve.Output + "`nanswers:`n" + $answer + "`nexternal-open-log:`n" + $log).Trim()
+        Expected = "predefined txt path, answer file with expected results, invalid line error, and mocked openTxt"
+    }
+}
+
+function Test-EliminateStringsMock {
+    $flowDir = Join-Path $PSScriptRoot "temp\txt-flow"
+    $testStringsDir = Join-Path $flowDir "Strings"
+    New-Item -ItemType Directory -Path $testStringsDir -Force | Out-Null
+    $markerPath = Join-Path $testStringsDir "temporary-string.txt"
+    Set-Content -Path $markerPath -Value "temporary" -NoNewline
+
+    $environment = @{
+        ATC_TEST_DISABLE_EXTERNAL_OPEN = "1"
+        ATC_TEST_EXTERNAL_OPEN_LOG = (Join-Path $flowDir "eliminate-strings-open.log")
+        ATC_TEST_STRINGS_DIR = $testStringsDir
+    }
+    Remove-Item -Path $environment.ATC_TEST_EXTERNAL_OPEN_LOG -Force -ErrorAction SilentlyContinue
+    $result = Test-AtcExpressionWithEnvironment "txt/command bridge: eliminate strings with temporary folder" "eliminate strings" "strings were eliminated sucessfully" $environment
+
+    $log = ""
+    if (Test-Path $environment.ATC_TEST_EXTERNAL_OPEN_LOG) {
+        $log = (Get-Content -Raw -Path $environment.ATC_TEST_EXTERNAL_OPEN_LOG) -replace "`r", ""
+    }
+    if ((Test-Path $markerPath) -or ($log -notmatch "eliminateStrings\|.*Strings")) {
+        $result.Passed = $false
+        $result.Output = ($result.Output + "`nexternal-open-log:`n" + $log + "`nmarker-exists:" + (Test-Path $markerPath)).Trim()
+        $result.Expected = $result.Expected + " and temporary string file removed with mocked log"
+    }
+    $result
 }
 
 function Test-AtcExpressionAndFileValues([string]$Name, [string]$Expression, [string]$ExpectedRegex, [hashtable]$PathValues, [string[]]$InputLines = @()) {
@@ -466,6 +595,17 @@ $matrixScalarTests = @(
 $complexMatrixContent = "cmat 1 2:3 0*_4 0:5 0`n"
 $complexMatrixTests = @(
     @{ Name = "complex matrix average"; Expression = "avg(cmat)"; Expected = "^#\d+=2\.25\+0\.5i$" }
+)
+
+$matrixIndexSessionContent = "foo 1 0:2 0:3 0*4 0:5 0:6 0`n"
+$matrixIndexSessionTests = @(
+    @{
+        Name = "matrix index read and persisted cell update"
+        Expression = "atc over cmd"
+        Expected = "ATC is ready to process data[\s\S]*#\d+=2[\s\S]*#\d+=99[\s\S]*#\d+=99[\s\S]*#\d+=\s+1\+0i\s+2\+0i\s+3\+0i\s+4\+0i\s+5\+0i\s+99\+0i"
+        VariablesExpected = "foo 1 0:2 0:3 0\*4 0:5 0:99 0"
+        InputLines = @("foo[0][1]", "foo[1][2]=99", "foo=foo[1][2]=99", "foo", "exit")
+    }
 )
 
 $createMatrixTests = @(
@@ -874,6 +1014,29 @@ $graphTests = @(
         InputLines = @("0")
         GraphContent = "_5`n7`n1`n_3`n3`n1`n0`n0"
         Environment = @{ ATC_GRAPH_NAVIGATION_TEST = "RRRLLR" }
+    },
+    @{
+        Name = "navigation clamps at left edge"
+        Expression = "graph(x)"
+        Expected = "Graph navigation test[\s\S]*Index: 0[\s\S]*x = -5\.000000[\s\S]*x \[X\]: -5\.000000"
+        InputLines = @("0")
+        GraphContent = "_5`n7`n1`n_3`n3`n1`n0`n0"
+        Environment = @{ ATC_GRAPH_NAVIGATION_TEST = "LLLL" }
+    },
+    @{
+        Name = "navigation clamps at right edge"
+        Expression = "graph(x)"
+        Expected = "Graph navigation test[\s\S]*Index: 120[\s\S]*x = 7\.000000[\s\S]*x \[X\]: 7\.000000"
+        InputLines = @("0")
+        GraphContent = "_5`n7`n1`n_3`n3`n1`n0`n0"
+        Environment = @{ ATC_GRAPH_NAVIGATION_TEST = ("R" * 160) }
+    },
+    @{
+        Name = "explicit graph range navigation"
+        Expression = "graph(x;_2\2\1)"
+        Expected = "Graph navigation test[\s\S]*Index: 60[\s\S]*x = 0\.000000[\s\S]*x \[X\]: 0\.000000"
+        InputLines = @("0")
+        Environment = @{ ATC_GRAPH_NAVIGATION_TEST = ("R" * 60) }
     }
 )
 
@@ -927,6 +1090,57 @@ $actualTimeResponseTests = @(
     }
 )
 
+$deepInteractiveModuleTests = @(
+    @{
+        Name = "unit conversions length"
+        Expression = "unit conversions"
+        Expected = "What to convert\\?[\s\S]*Length -> 1[\s\S]*Meter: 1[\s\S]*Kilometer: 0\.001[\s\S]*Continue\\?"
+        InputLines = @("1", "1", "1", "0", "0")
+    },
+    @{
+        Name = "microeconomics profit"
+        Expression = "microeconomics calculations"
+        Expected = "What to calculate\\?[\s\S]*Profit -> 6[\s\S]*Total Revenue\\?[\s\S]*Total Expenses\\?[\s\S]*Profit: 6[\s\S]*Continue\\?"
+        InputLines = @("6", "10", "4", "0")
+    },
+    @{
+        Name = "physics acceleration"
+        Expression = "physics calculations"
+        Expected = "What to calculate\?[\s\S]*Acceleration -> 1[\s\S]*Initial Speed[\s\S]*Final Speed[\s\S]*Time[\s\S]*Acceleration[\s\S]*Acceleration: 5"
+        InputLines = @("1", "0", "10", "2", "x", "0")
+    },
+    @{
+        Name = "statistics population measures"
+        Expression = "statistics calculations"
+        Expected = "Population Measures[\s\S]*Mean: 4[\s\S]*Variance: 2\.66667[\s\S]*Standard Deviation: 1\.63299"
+        InputLines = @("1", "2\4\6", "0")
+    },
+    @{
+        Name = "geometry square"
+        Expression = "geometry calculations"
+        Expected = "Square -> 1[\s\S]*Side\\?[\s\S]*Area: 4[\s\S]*Perimeter: 8"
+        InputLines = @("1", "2", "0")
+    },
+    @{
+        Name = "financial simple interest"
+        Expression = "financial calculations"
+        Expected = 'Simple Interest -> 3[\s\S]*Principal\?[\s\S]*Rate \(%\)\?[\s\S]*Time\?[\s\S]*Simple Interest: \$10\.00'
+        InputLines = @("3", "100", "5", "2", "0")
+    },
+    @{
+        Name = "triangles rectangles solver"
+        Expression = "triangles rectangles solver"
+        Expected = "Report of results[\s\S]*The opposite is equal to 2\.5[\s\S]*The hypotenuse is equal to 5[\s\S]*Do you want to export the report\\?"
+        InputLines = @("5", "30", "0", "0")
+    },
+    @{
+        Name = "arithmetic matrix solver sum"
+        Expression = "arithmetic matrix solver"
+        Expected = "What to do\?[\s\S]*Sum of Matrices -> 1[\s\S]*Matrix sum:[\s\S]*3\+0i[\s\S]*Export result\?"
+        InputLines = @("1", "1", "2", "0", "0")
+    }
+)
+
 $txtCommandBridgeTests = @(
     @{
         Name = "solve txt without predefined file"
@@ -968,6 +1182,18 @@ $txtCommandBridgeTests = @(
         Expression = "atc over cmd"
         Expected = "ATC is ready to process data[\s\S]*Processing[\s\S]*#\d+=4[\s\S]*Processed in"
         InputLines = @("2+2", "exit")
+    },
+    @{
+        Name = "atc over cmd invalid expression"
+        Expression = "atc over cmd"
+        Expected = "ATC is ready to process data[\s\S]*Processing[\s\S]*consecutive arithmetic symbols[\s\S]*Error in syntax[\s\S]*Processed in"
+        InputLines = @("2++22", "exit")
+    },
+    @{
+        Name = "atc over cmd multiple lines"
+        Expression = "atc over cmd"
+        Expected = "ATC is ready to process data[\s\S]*#\d+=4[\s\S]*#\d+=3[\s\S]*Processed in"
+        InputLines = @("2+2", "sqrt(9)", "exit")
     },
     @{
         Name = "atc over cmd nested rational solver"
@@ -1229,6 +1455,19 @@ $interactiveMenuTests = @(
 
 $appEnvironmentTests = @(
     @{
+        Name = "about screen exits after Enter"
+        Expression = "about"
+        Expected = "PRESS THE BUTTON `"Enter`" TO ACCESS THE ENVIRONMENT-RESOLUTION CALCULATIONS"
+        InputLines = @("")
+    },
+    @{
+        Name = "auto adjust window persists dimensions"
+        Expression = "auto adjust window"
+        Expected = "^$"
+        Path = $dimensionsPath
+        FileRegex = "^MODE con cols=\d+ lines=2000$"
+    },
+    @{
         Name = "enable ATC intro writes startup flag"
         Expression = "enable atc intro"
         Expected = "Restart the application to apply changes"
@@ -1328,6 +1567,9 @@ try {
         foreach ($test in $complexMatrixTests) {
             $results.Add((Test-AtcExpressionWithVariables "matrix arithmetic: $($test.Name)" $test.Expression $test.Expected $complexMatrixContent))
         }
+        foreach ($test in $matrixIndexSessionTests) {
+            $results.Add((Test-AtcExpressionWithVariablesFile "matrix indexing: $($test.Name)" $test.Expression $test.Expected $matrixIndexSessionContent $test.VariablesExpected $test.InputLines))
+        }
         foreach ($test in $createMatrixTests) {
             $results.Add((Test-AtcExpressionWithVariablesFile "matrix creation: $($test.Name)" $test.Expression $test.Expected $test.VariablesContent $test.VariablesExpected))
         }
@@ -1403,6 +1645,9 @@ try {
         foreach ($test in $actualTimeResponseTests) {
             $results.Add((Test-AtcExpressionAndFileValue "date/time command: $($test.Name)" $test.Expression $test.Expected $actualTimePath $test.FileExpected $test.InputLines))
         }
+        foreach ($test in $deepInteractiveModuleTests) {
+            $results.Add((Test-AtcExpression "deep interactive module: $($test.Name)" $test.Expression $test.Expected $test.InputLines))
+        }
         foreach ($test in $txtCommandBridgeTests) {
             if ($test.ContainsKey("ClearPredefined") -and $test.ClearPredefined) {
                 Remove-Item -Path $predefinedTxtPath -Force -ErrorAction SilentlyContinue
@@ -1417,6 +1662,11 @@ try {
                 $results.Add((Test-AtcExpression "txt/command bridge: $($test.Name)" $test.Expression $test.Expected $test.InputLines))
             }
         }
+        $results.Add((Test-MockedExternalCommand "txt/command bridge: atc from cmd mocked PATH update" "atc from cmd" "You can now run cmd\.exe" "atcFromCmd\|/C"))
+        $results.Add((Test-MockedExternalCommand "txt/command bridge: to solve mocked folder open" "to solve" "^$" "toSolve\|/C ""explorer"))
+        $results.Add((Test-MockedExternalCommand "txt/command bridge: enable txt detector removes disable flag" "enable txt detector" "^$" "enableTxtDetector\|.*disable_txt_detector\.txt" { Set-Content -Path $disableTxtDetectorPath -Value "1" -NoNewline } { param($result) if (Test-Path $disableTxtDetectorPath) { $result.Passed = $false; $result.Output = ($result.Output + "`ndisable_txt_detector still exists").Trim(); $result.Expected = $result.Expected + " and disable flag removed" } }))
+        $results.Add((Test-TxtProcessingFlow))
+        $results.Add((Test-EliminateStringsMock))
         foreach ($test in $fileFolderPathTests) {
             $results.Add((Test-DirectoryExists "file/folder command: $($test.Name)" $test.Path))
         }
@@ -1474,11 +1724,15 @@ try {
             if ($test.ContainsKey("InitialContent")) {
                 Set-Content -Path $test.Path -Value $test.InitialContent -NoNewline
             }
-            if ($test.ContainsKey("Path")) {
-                $results.Add((Test-AtcExpressionAndFileValue "app environment: $($test.Name)" $test.Expression $test.Expected $test.Path $test.FileExpected))
+            $inputLines = if ($test.ContainsKey("InputLines")) { $test.InputLines } else { @() }
+            if ($test.ContainsKey("FileRegex")) {
+                $results.Add((Test-AtcExpressionAndFileRegex "app environment: $($test.Name)" $test.Expression $test.Expected $test.Path $test.FileRegex $inputLines))
+            }
+            elseif ($test.ContainsKey("Path")) {
+                $results.Add((Test-AtcExpressionAndFileValue "app environment: $($test.Name)" $test.Expression $test.Expected $test.Path $test.FileExpected $inputLines))
             }
             else {
-                $results.Add((Test-AtcExpression "app environment: $($test.Name)" $test.Expression $test.Expected))
+                $results.Add((Test-AtcExpression "app environment: $($test.Name)" $test.Expression $test.Expected $inputLines))
             }
         }
     }
@@ -1639,6 +1893,12 @@ finally {
     }
     else {
         Remove-Item -Path $exitPath -Force -ErrorAction SilentlyContinue
+    }
+    if ($hadDisableTxtDetector) {
+        Set-Content -Path $disableTxtDetectorPath -Value $originalDisableTxtDetector -NoNewline
+    }
+    else {
+        Remove-Item -Path $disableTxtDetectorPath -Force -ErrorAction SilentlyContinue
     }
 }
 

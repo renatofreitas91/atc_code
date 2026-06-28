@@ -387,13 +387,13 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 338 passed, 0 failed
+Summary: 359 passed, 0 failed
 ```
 
 The isolated coverage helper currently validates:
 
 ```text
-Summary: 61 passed, 0 failed
+Summary: 65 passed, 0 failed
 ```
 
 Coverage includes:
@@ -409,6 +409,8 @@ Coverage includes:
 - matrix/list functions: `min`, `max`, `avg`, both with direct lists and with
   matrix variable names
 - matrix guide helpers: `linsnum`, `colsnum`, `getlins`, `getcols`
+- direct matrix/vector indexing and persisted indexed matrix updates, for
+  example `foo[0][1]`, `foo[1][2]=99` and `foo=foo[1][2]=99` in one session
 - relaxed variable names, including names that start with or contain letters
   previously reserved by parser shortcuts
 - automatic multiplication with constants, functions, parentheses, imaginary
@@ -427,13 +429,23 @@ Coverage includes:
 - textual polynomial equation solver
 - coefficient-form cubic equation solver
 - high-degree coefficient equations and internal expanded polynomial forms
-- graph settings display, graph settings mutation, graph smoke tests and
-  deterministic graph navigation simulation
-- TXT detector / command bridge commands, including `atc over cmd`
+- graph settings display, graph settings mutation, graph smoke tests,
+  deterministic graph navigation simulation, navigation edge clamping and
+  explicit graph-range navigation
+- TXT detector / command bridge commands, including `atc over cmd`, mocked
+  `atc from cmd`, mocked `to solve`, mocked `enable txt detector`, safe
+  `eliminate strings`, and real-file `solve txt` response generation
 - file/folder command existence checks
+- safe app-environment runtime paths, including `about` and
+  `auto adjust window`
+- safe runtime smoke coverage for deep interactive modules: unit conversions,
+  microeconomics, physics, statistics, geometry, financial calculations,
+  triangles rectangles solver and arithmetic matrix solver
 - persistent settings and interactive menu retry behavior
 - interactive prompt autocomplete vocabulary, repeated-Tab cycling and
   Up/Down history navigation
+- long-running time command branches, plus safe smoke checks for
+  `stopwatch(1)`, `clock(0:0:0)`, `big clock(0:0:0)` and timer syntax guards
 - verbose-resolution persisted setting, cleaned verbose output behavior, and
   suppression of verbose traces for internal menu inputs
 - Windows 11 console source-level behavior checks
@@ -507,12 +519,11 @@ These changes were build-verified and the command-line regression suite remains
 green:
 
 ```text
-Summary: 338 passed, 0 failed
+Summary: 359 passed, 0 failed
 ```
 
-Release x86 was also rebuilt successfully with MSBuild. The build reports
-existing warnings in `dirent.h` and one signed/unsigned comparison warning in
-`scripting.cpp`, with no errors.
+Release x86 and Release x64 were rebuilt successfully with MSBuild. Both
+builds report `0 Warning(s), 0 Error(s)`.
 
 ## Build command
 
@@ -538,11 +549,12 @@ The following areas from the user guide are intentionally not part of the
 automatic suite yet:
 
 - PC control commands such as shutdown, restart, hibernate, lock
-- time features that run continuously or open clock/timer views
+- full-duration time features that run continuously or open clock/timer views
 - commands that open external browsers or editors
 - full live manual graph rendering and live key-buffer behavior
-- deeply interactive modules such as triangles, arithmetic matrix solver,
-  finance, physics, conversions, statistics menus and microeconomics
+- remaining branches inside deeply interactive modules such as triangles,
+  arithmetic matrix solver, finance, physics, conversions, statistics menus and
+  microeconomics
 
 ## Operational notes
 
@@ -578,9 +590,9 @@ Pontos principais:
   suportados, sem ativar logs verbosos durante o arranque interno;
 - os caminhos rapidos de solver/equation cobrem cancelamentos racionais exatos,
   constantes simbolicas `pi`, `e` e casos complexos com `pii`;
-- a suite automatizada valida atualmente `338 passed, 0 failed` em Release x64
+- a suite automatizada valida atualmente `359 passed, 0 failed` em Release x64
   e Release x86;
-- a cobertura isolada valida atualmente `61 passed, 0 failed`, incluindo
+- a cobertura isolada valida atualmente `65 passed, 0 failed`, incluindo
   autocomplete, navegacao por historico e ramos de comandos interativos;
 - x64 e Win32/x86 continuam a ser alvos de build, mantendo compatibilidade com
   Windows antigo e Windows 11.

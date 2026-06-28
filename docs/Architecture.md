@@ -118,8 +118,9 @@ Tests are PowerShell-based and live in `tests/`.
 
 The main regression runner executes ATC commands against built executables and
 checks output patterns. The suite covers a broad set of documented behavior but
-intentionally avoids unsafe PC-control commands and deeply interactive flows
-that need manual validation.
+intentionally avoids unsafe PC-control commands. Deeply interactive modules have
+safe runtime smoke coverage, while exhaustive per-option validation remains
+manual or future automated work.
 
 ## Build Files
 

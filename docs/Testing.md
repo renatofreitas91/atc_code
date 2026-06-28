@@ -26,12 +26,12 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 338 passed, 0 failed
+Summary: 359 passed, 0 failed
 ```
 
-Latest Release x86 validation used `Release\atc.exe` and passed the same
-regression suite. The build completed with existing warnings in `dirent.h` and
-one signed/unsigned comparison warning in `scripting.cpp`, with no errors.
+Latest Release x86 and Release x64 builds completed successfully with
+`0 Warning(s), 0 Error(s)`, and both executables passed the same regression
+suite.
 
 ## Memory Stress Runner
 
@@ -64,7 +64,7 @@ regression run.
 Current isolated coverage result:
 
 ```text
-Summary: 61 passed, 0 failed
+Summary: 65 passed, 0 failed
 ```
 
 ## Current Automated Coverage
@@ -77,7 +77,8 @@ The regression suite currently covers:
 - hyperbolic and inverse hyperbolic functions;
 - logarithms and custom guide syntax;
 - complex-number paths used by documented commands;
-- matrix/list functions and matrix helper commands;
+- matrix/list functions, matrix helper commands, direct matrix/vector indexing
+  and persisted indexed matrix updates;
 - variable names and implicit multiplication;
 - sorting and ASCII sorting flows;
 - roots-to-polynomial report export;
@@ -86,12 +87,20 @@ The regression suite currently covers:
 - solver paths including selected trigonometric, hyperbolic, polynomial, and
   rational-cancellation cases;
 - function study examples;
-- graph settings and deterministic graph navigation simulation;
+- graph settings, deterministic graph navigation simulation, navigation edge
+  clamping and explicit graph-range navigation;
 - date/time commands that can be automated safely;
-- TXT detector / command bridge commands;
+- TXT detector / command bridge commands, including redirected CMD input,
+  mocked shell/window side effects, and real-file `solve txt` processing with
+  mocked answer-file opening;
 - file/folder command existence checks;
+- app environment commands that can run safely under redirected input,
+  including `about` and `auto adjust window`;
 - variable/result management commands;
 - persistent settings and menu retry behavior;
+- one safe runtime smoke path for each deep interactive module: unit
+  conversions, microeconomics, physics, statistics, geometry, financial
+  calculations, triangles rectangles solver, and arithmetic matrix solver;
 - verbose-resolution behavior;
 - interactive prompt behavior, including Tab autocomplete vocabulary,
   ambiguous-match cycling and Up/Down history navigation;
@@ -108,14 +117,30 @@ tests\ATC_AUTOMATED_TEST_CASES.md
 The automated suite intentionally avoids or only partially covers:
 
 - shutdown, restart, hibernate, sleep, lock, and similar PC-control commands;
-- clock, stopwatch, timer, and continuously running views;
-- commands that open external browsers or editors;
+- full-duration clock, stopwatch, timer, and continuously running views;
+- commands that open external browsers or editors, except for TXT/file flows
+  that now have explicit mock coverage;
 - full live manual graph rendering and key-buffer behavior;
-- deeply interactive modules such as triangles, arithmetic matrix solver,
-  conversions, finance, physics, microeconomics, and statistics menus.
+- remaining branches inside deeply interactive modules such as triangles,
+  arithmetic matrix solver, conversions, finance, physics, microeconomics, and
+  statistics menus.
 
-These areas should be validated manually or covered later with safe,
-non-destructive automation.
+Long-running time command branches, short stopwatch marking, zero-duration
+clock rendering, and timer syntax guards are covered by the isolated helper.
+Full-duration countdowns, alarms, and continuously running views should still
+be validated manually or covered later with safe, non-destructive automation.
+
+The direct TXT workflow is covered with temporary fixtures:
+`predefine txt` writes a real input path, `solve txt` generates the
+`_answers.txt` response file, invalid lines are kept isolated from later lines,
+and the answer-file open is recorded through the test mock instead of launching
+Notepad. Live `auto solve txt` watcher behavior remains an isolated/source-level
+check until it has a deterministic multi-process fixture.
+
+Commands that ask their own export prompt while they are being processed from a
+TXT file, for example `solve equation` and `simplify polynomial`, still need a
+prompt-safe TXT-processing path before they should be included in the default
+regression runner.
 
 ## Settings Modified by Tests
 

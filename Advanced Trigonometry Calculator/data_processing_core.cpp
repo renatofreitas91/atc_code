@@ -30,6 +30,23 @@ void putsAndPause(char* text) {
 	//puts(text);
 //	system("pause");
 }
+
+bool atcTestDisableExternalOpen() {
+	const char* value = getenv("ATC_TEST_DISABLE_EXTERNAL_OPEN");
+	return value != nullptr && (strcmp(value, "1") == 0 || _stricmp(value, "true") == 0);
+}
+
+void recordExternalOpen(const char* action, const char* target) {
+	const char* logPath = getenv("ATC_TEST_EXTERNAL_OPEN_LOG");
+	if (logPath == nullptr || logPath[0] == '\0') {
+		return;
+	}
+	FILE* log = fopen(logPath, "a");
+	if (log != nullptr) {
+		fprintf(log, "%s|%s\n", action != nullptr ? action : "", target != nullptr ? target : "");
+		fclose(log);
+	}
+}
 void restoreWindowPosition() {
 	char* path = getDynamicCharArray("", "path");
 	sprintf(path, "%s\\window.txt", atcPath);
@@ -3643,6 +3660,12 @@ void openTxt() {
 	char* openFile = getDynamicCharArray("", "openFile");
 	if (open != NULL) {
 		fclose(open);
+		if (atcTestDisableExternalOpen()) {
+			recordExternalOpen("openTxt", expressionF);
+			_delete(openFile, "openFile");
+			openFile = nullptr;
+			return;
+		}
 		sprintf(openFile, "notepad.exe %s", expressionF);
 		system(openFile);
 	}

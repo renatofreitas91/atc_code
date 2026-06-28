@@ -138,6 +138,7 @@ before reaching the solver.
 | Matrices / Matrizes | matrix power | `foo^2` | matrix square |
 | Matrices / Matrizes | matrix transpose shortcut | `foo^T` | transposed matrix |
 | Matrices / Matrizes | matrix rank shortcut | `foo^R` | `#n=3` |
+| Matrices / Matrizes | indexed matrix read and persisted update | `foo[0][1]`, `foo[1][2]=99`, `foo=foo[1][2]=99` in one `atc over cmd` session | reads `2`, updates the session matrix value to `99`, and persists `foo 1 0:2 0:3 0*4 0:5 0:99 0` |
 | Matrices / Matrizes | create constant 2x2 matrix | `create matrix(foo\2\2\3)` | prints a 2x2 matrix and stores `foo 3 0:3 0*3 0:3 0` |
 | Matrices / Matrizes | create expression 2x3 matrix | `create matrix(bar\2\3\1+2)` | prints a 2x3 matrix and stores `bar 3 0:3 0:3 0*3 0:3 0:3 0` |
 | Variables | starts with previously restricted `d` | `data+1` with `data = 7` | `#n=8` |
@@ -207,6 +208,9 @@ before reaching the solver.
 | Graphing | graph settings display | `graph settings` then `0` | prints current graph settings without mutating them |
 | Graphing | non-interactive linear graph smoke | `graph(x)` with redirected input/output | prints graph non-interactive summary and current settings, then exits |
 | Graphing | graph left/right navigation simulation | `graph(x)` with `ATC_GRAPH_NAVIGATION_TEST=RRRLLR` | prints deterministic navigation index and x value |
+| Graphing | graph navigation left clamp | `graph(x)` with `ATC_GRAPH_NAVIGATION_TEST=LLLL` | remains at index `0` and prints the left-bound x value |
+| Graphing | graph navigation right clamp | `graph(x)` with repeated right navigation | clamps at index `120` and prints the right-bound x value |
+| Graphing | explicit graph range navigation | `graph(x;_2\2\1)` with deterministic navigation | uses explicit x-range parameters and prints the expected midpoint |
 | Graphing | graph settings mutation | `graph settings` with manual X/Y values | writes the expected `graph.txt` contents |
 | Date/time / Tempo | current time format | `time` | prints weekday, month, day, year and `hh mm ss` format |
 | Date/time | day of week regression date | `day of week(y2026m6d20)` | `Saturday` |
@@ -217,6 +221,14 @@ before reaching the solver.
 | Date/time / Tempo | fixed time difference | `time difference calculations` with two fixed timestamps | `1 days, 1 hours, 2 minutes and 3 seconds`, `90123 seconds` |
 | Date/time / Tempo | enable actual time response | `actual time response`, then `1` | writes `actualTime.txt = 1` |
 | Date/time / Tempo | disable actual time response | `actual time response`, then `0` | writes `actualTime.txt = 0` |
+| Deep interactive modules | unit conversions length | `unit conversions`, length/meter path | prints converted meter, kilometer and related units, then exits |
+| Deep interactive modules | microeconomics profit | `microeconomics calculations`, profit path | calculates `Profit: 6` and exits |
+| Deep interactive modules | physics acceleration | `physics calculations`, acceleration path | solves unknown acceleration as `5 (m/s^2)` and exits |
+| Deep interactive modules | statistics population measures | `statistics calculations`, population measures path | prints mean, variance and standard deviation for `2\4\6` |
+| Deep interactive modules | geometry square | `geometry calculations`, square path | prints area `4` and perimeter `8` |
+| Deep interactive modules | financial simple interest | `financial calculations`, simple-interest path | prints `Simple Interest: $10.00` |
+| Deep interactive modules | triangles rectangles solver | `triangles rectangles solver`, hypotenuse/angle path | computes the opposite side, hypotenuse and angles, then declines report export |
+| Deep interactive modules | arithmetic matrix solver sum | `arithmetic matrix solver`, 1x1 matrix sum path | prints matrix sum `3+0i`, declines export, then exits |
 | TXT / command bridge | solve txt without predefined file | `solve txt` with no `predefinedTxt.txt` | prints `The file was not yet predefined` |
 | TXT / command bridge | predefine txt path | `predefine txt`, then a fixture path | writes that path to `predefinedTxt.txt` |
 | File/folder commands / Ficheiros-pastas | predefine txt quoted dragged path | `predefine txt`, then `"C:\Temp\atc fixture with spaces.txt"` | strips quotes and writes the normalized path |
@@ -232,6 +244,13 @@ before reaching the solver.
 | File/folder commands / Ficheiros-pastas | installed license/about files | filesystem fixture check | confirms `License.txt` and `About execution of application.txt` exist |
 | File/folder commands / Ficheiros-pastas | installed examples/source snapshots | filesystem fixture check | confirms a script example and source-code snapshot exist |
 | TXT / command bridge | atc over cmd smoke | `atc over cmd`, then `2+2`, `exit` | processes the redirected command and prints `#n=4` |
+| TXT / command bridge | atc over cmd invalid input | `atc over cmd`, then `2++22`, `exit` | reports the syntax error without breaking the redirected session |
+| TXT / command bridge | atc over cmd multiple lines | `atc over cmd`, then `2+2`, `sqrt(9)`, `exit` | processes multiple redirected lines in order |
+| TXT / command bridge | atc from cmd mocked PATH update | `atc from cmd` with external-open mock enabled | validates the command without mutating the real Windows PATH |
+| TXT / command bridge | to solve mocked folder open | `to solve` with external-open mock enabled | validates the folder-open command without launching Explorer |
+| TXT / command bridge | enable txt detector mocked flag removal | `enable txt detector` with external-open mock enabled | removes `disable_txt_detector.txt` and records the mocked action |
+| TXT / command bridge | full solve txt flow | `predefine txt` -> `solve txt` using a real fixture file | creates an `_answers.txt` file, keeps processing after an invalid line, and records the mocked answer-file open |
+| TXT / command bridge | eliminate strings mocked folder cleanup | `eliminate strings` with a temporary `Strings` folder | clears only the temporary fixture folder and preserves the user's real `Strings` folder |
 | Variables/results / Gestao | see variables | `see variables` with fixture `variables.txt` | prints stored variables |
 | Variables/results / Gestao | renamed variables | `renamed variables` with fixture `renamedVar.txt` | prints variable renaming data |
 | Variables/results / Gestao | see strings | `see strings` with fixture `stringVariable.txt` | prints stored string names |
@@ -267,6 +286,8 @@ before reaching the solver.
 | Interactive prompt | dynamic user functions | source check | confirms `User functions` entries can be suggested as `atc_<name>(` completions |
 | Interactive prompt | ambiguous completion cycling | source check | confirms repeated Tab can cycle possible matches instead of only printing a list |
 | Interactive prompt | history navigation | source check | confirms Up/Down arrow handling and draft restoration while editing |
+| App environment / Ambiente UI | about screen | `about`, then Enter | opens the about text in redirected mode and returns to calculation environment |
+| App environment / Ambiente UI | auto adjust window | `auto adjust window` | exits successfully and persists `dimensions.txt` as `MODE con cols=<n> lines=2000` |
 | App environment / Ambiente UI | clean history | `clean history` | removes previous history entries and records the cleanup command |
 | App environment / Ambiente UI | clean | `clean` | exits successfully after clearing console |
 | App environment / Ambiente UI | exit | `exit` | exits successfully and leaves an empty `exit.txt` marker |
@@ -288,26 +309,31 @@ the automated smoke runner until stable non-interactive command forms are
 defined:
 
 - App folder commands that open Explorer or editors.
-- Long-running time features such as clock, timer, stopwatch and alarms.
+- Full-duration time features such as clock, timer, stopwatch and alarms.
 - PC control commands such as shutdown, restart, suspend or lock.
-- TXT detector / bridge commands that open shell windows, mutate the system
-  PATH, or require a file-watcher scenario.
-- `eliminate strings`, because it mutates the `Strings` folder through shell
-  commands.
+- Auto TXT detector watcher scenarios that require live file-system polling or
+  dragged-file `SOLVE_NOW` workflows. The direct `predefine txt` -> `solve txt`
+  flow is covered with a real fixture file and mocked answer-file opening.
+- Export-prompt commands inside `solve txt` files, such as `solve equation` and
+  `simplify polynomial`, still need a prompt-safe TXT-processing path before
+  they should be included in the default non-interactive runner.
 - Interactive `colors` mutation, because it uses `_getch()` rather than normal
   redirected input. `colors.txt` readback is covered through `current settings`.
-- UI commands that open windows or files, such as `about`, `history`,
-  `user guide`, `run atc`, `restart atc` and `auto adjust window`.
+- UI commands that open windows or files, such as `history`, `user guide`,
+  `run atc` and `restart atc`. `about` and `auto adjust window` have safe
+  redirected runtime coverage.
 
-Manual/isolated app-environment coverage should verify that `about`, `history`
-and `user guide` open the expected local files/windows, that `run atc` starts a
-new ATC process, that `restart atc` restarts without losing persisted settings,
-and that `auto adjust window` changes the console layout without corrupting
-`window.txt` or `dimensions.txt`.
-- Full interactive graph navigation with arrow keys, because it requires a real
-  console input buffer.
-- Interactive menus for statistics, arithmetic matrix solver, finance, physics and other
-  module screens.
+Manual/isolated app-environment coverage should verify that `history` and
+`user guide` open the expected local files/windows, that `run atc` starts a new
+ATC process, and that `restart atc` restarts without losing persisted settings.
+`about` and `auto adjust window` are covered by safe redirected runtime tests.
+- Full manual graph navigation with physical arrow-key input, because it
+  requires a real console input buffer. Deterministic navigation, edge clamping
+  and explicit range movement are covered automatically.
+- Additional branches inside the deep interactive modules. The default runner now
+  covers one safe smoke path for unit conversions, microeconomics, physics,
+  statistics, geometry, financial calculations, triangles rectangles solver and
+  arithmetic matrix solver, but not every menu option in those modules.
 - Full `.txt` processing that opens the generated answer file, because it should
   use isolated fixture folders rather than the user's personal ATC folders.
 
@@ -344,14 +370,15 @@ It currently covers:
 - TXT detector/command bridge branches and startup detector guard
 - menu-driven calculation module branches
 - graph key-buffer branch logic
-- long-running time command branches plus a short `stopwatch(1)` smoke
+- long-running time command branches plus short `stopwatch(1)`,
+  `clock(0:0:0)`, `big clock(0:0:0)` and timer syntax-guard smokes
 - interactive prompt autocomplete vocabulary, ambiguous-match cycling, dynamic
   user function suggestions, and Up/Down history navigation
 
 Latest isolated coverage result:
 
 ```text
-Summary: 61 passed, 0 failed
+Summary: 65 passed, 0 failed
 ```
 
 ## Runner
@@ -391,5 +418,5 @@ memory to CSV files under:
 tests\memory-stress-reports
 ```
 
-It also backs up and restores `variables.txt` for the matrix-variable and
-relaxed-variable-name tests.
+It also backs up and restores `variables.txt` for the matrix-variable,
+matrix-indexing and relaxed-variable-name tests.

@@ -307,13 +307,13 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current result for both Release x64 and Release x86:
 
 ```text
-Summary: 338 passed, 0 failed
+Summary: 359 passed, 0 failed
 ```
 
 Current isolated coverage result:
 
 ```text
-Summary: 61 passed, 0 failed
+Summary: 65 passed, 0 failed
 ```
 
 Memory stress run:
@@ -343,6 +343,7 @@ Covered areas:
   `logb...b`, `afact`
 - matrix/list guide syntax: `min`, `max`, `avg`, including matrix variables
 - matrix guide helpers: `linsnum`, `colsnum`, `getlins`, `getcols`
+- direct matrix/vector indexing and persisted indexed matrix updates
 - relaxed variable names persisted through `variables.txt`
 - automatic multiplication deduction
 - digital signal processing: `sinc`, `fft`, `ifft`
@@ -358,13 +359,23 @@ Covered areas:
 - textual polynomial equation solver
 - coefficient-form cubic equation solver
 - high-degree coefficient equations and internal expanded polynomial forms
-- graph settings display, graph settings mutation, graph smoke tests and
-  deterministic graph navigation simulation
-- TXT detector / command bridge commands, including `atc over cmd`
+- graph settings display, graph settings mutation, graph smoke tests,
+  deterministic graph navigation simulation, navigation edge clamping and
+  explicit graph-range navigation
+- TXT detector / command bridge commands, including `atc over cmd`, mocked
+  `atc from cmd`, mocked `to solve`, mocked `enable txt detector`, safe
+  `eliminate strings`, and real-file `solve txt` response generation
 - file/folder command existence checks
+- safe app-environment runtime paths, including `about` and
+  `auto adjust window`
+- safe runtime smoke coverage for deep interactive modules: unit conversions,
+  microeconomics, physics, statistics, geometry, financial calculations,
+  triangles rectangles solver and arithmetic matrix solver
 - persistent settings and interactive menu retry behavior
 - interactive prompt autocomplete vocabulary, repeated-Tab cycling and
   Up/Down history navigation
+- long-running time command branches, short stopwatch marking, zero-duration
+  clock checks and timer syntax guards
 - verbose-resolution persisted setting, cleaned verbose output behavior, and
   suppression of verbose traces for internal menu inputs
 - Windows 11 console source-level behavior checks
@@ -383,20 +394,21 @@ Release Win32/x86 builds are also supported by the solution and remain a
 compatibility target for older Windows versions. The current regression suite
 has been validated against both `x64\Release\atc.exe` and `Release\atc.exe`.
 
-The latest Release x86 build completed successfully. It reports existing
-warnings in `dirent.h` and one signed/unsigned comparison warning in
-`scripting.cpp`; no build errors were introduced.
+The latest Release x86 and Release x64 builds completed successfully with
+`0 Warning(s), 0 Error(s)`.
 
 ## Known limitations
 
 The automatic suite intentionally avoids:
 
 - shutdown, restart, hibernate, sleep and lock commands
-- clock, stopwatch and timer views
-- commands that open external browsers or editors
+- full-duration clock, stopwatch and timer views
+- commands that open external browsers or editors, except for TXT/file flows
+  covered through explicit test mocks
 - full live manual graph rendering and live key-buffer behavior
-- deeply interactive modules such as triangles, arithmetic matrix solver,
-  conversions, finance, physics, microeconomics and statistics menus
+- remaining branches inside deeply interactive modules such as triangles,
+  arithmetic matrix solver, conversions, finance, physics, microeconomics and
+  statistics menus
 
 ## Files touched in this release work
 
@@ -406,6 +418,7 @@ Important code areas:
 Advanced Trigonometry Calculator\main.cpp
 Advanced Trigonometry Calculator\auto_complete.cpp
 Advanced Trigonometry Calculator\commands.cpp
+Advanced Trigonometry Calculator\dirent.h
 Advanced Trigonometry Calculator\main_aux_processor.cpp
 Advanced Trigonometry Calculator\processing_core.cpp
 Advanced Trigonometry Calculator\scripting.cpp
@@ -448,9 +461,9 @@ Principais pontos em portugues:
   instancias/abas quando o Windows Terminal esta disponivel;
 - reducao de alocacoes desnecessarias e melhoria de libertacao de memoria em
   varios caminhos;
-- suite automatizada atual com `338 passed, 0 failed` em Release x64 e
+- suite automatizada atual com `359 passed, 0 failed` em Release x64 e
   Release x86;
-- cobertura isolada atual com `61 passed, 0 failed`, incluindo autocomplete e
+- cobertura isolada atual com `65 passed, 0 failed`, incluindo autocomplete e
   navegacao por historico;
 - README publico reescrito e publicado no GitHub em `main` no commit
   `f71e507 Improve project README`;

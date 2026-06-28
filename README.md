@@ -108,11 +108,12 @@ behavior.
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 338 passed, 0 failed
+Summary: 359 passed, 0 failed
 ```
 
-The isolated coverage helper currently validates 61 source-level and safe
-smoke checks, including command exposure and autocomplete behavior.
+The isolated coverage helper currently validates 65 source-level and safe
+smoke checks, including command exposure, autocomplete behavior and selected
+long-running time command guards.
 
 Run the regression suite after building ATC:
 
@@ -162,9 +163,8 @@ Release\atc.exe
 Adjust the MSBuild path and platform values according to your installed
 Visual Studio/C++ environment.
 
-The latest Release x86 build completed successfully. It still reports existing
-compiler warnings in `dirent.h` and one signed/unsigned comparison warning in
-`scripting.cpp`; no new build errors were introduced.
+The latest Release x86 and Release x64 builds completed successfully with
+`0 Warning(s), 0 Error(s)`.
 
 ## Documentation
 

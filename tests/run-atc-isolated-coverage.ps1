@@ -423,6 +423,10 @@ Test-SourcePatterns "long-running time command branches" $commandsPath @(
 
 # Short smoke checks for long-running commands that can terminate immediately.
 Test-AtcSmoke "stopwatch one-mark smoke" "stopwatch(1)" "Press ""Enter"" button to mark time[\s\S]*t1=" @("")
+Test-AtcSmoke "clock zero-duration smoke" "clock(0:0:0)" "^$"
+Test-AtcSmoke "big clock zero-duration smoke" "big clock(0:0:0)" "^$"
+Test-AtcSmoke "timer syntax guard smoke" "timer(0)" "Your expression has syntax errors"
+Test-AtcSmoke "big timer syntax guard smoke" "big timer(0)" "Your expression has syntax errors"
 
 $failed = @($results | Where-Object { -not $_.Passed })
 
