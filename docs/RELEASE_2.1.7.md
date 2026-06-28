@@ -1,4 +1,4 @@
-# Advanced Trigonometry Calculator 2.1.7 release notes
+﻿# Advanced Trigonometry Calculator 2.1.7 release notes
 
 Release date: 2026-06-09
 Last updated: 2026-06-27
@@ -321,13 +321,19 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current result for both Release x64 and Release x86:
 
 ```text
-Summary: 359 passed, 0 failed
+Summary: 360 passed, 0 failed
 ```
 
 Current isolated coverage result:
 
 ```text
-Summary: 65 passed, 0 failed
+Summary: 68 passed, 0 failed
+```
+
+Current SourceForge package validation result:
+
+```text
+Summary: 44 passed, 0 failed
 ```
 
 Memory stress run:

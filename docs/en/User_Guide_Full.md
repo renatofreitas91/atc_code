@@ -972,7 +972,7 @@ tests/ATC_USER_GUIDE_COVERAGE.md
 Current validated regression result:
 
 ```text
-Summary: 359 passed, 0 failed
+Summary: 360 passed, 0 failed
 ```
 
 This guide should evolve with the tests and the documented behavior of ATC

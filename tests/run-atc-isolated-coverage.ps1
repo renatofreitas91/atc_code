@@ -392,6 +392,41 @@ Test-SourcePatterns "Windows console to ANSI color mapping preserves aqua text" 
     'return \(background \? 40 : 30\) \+ ansiColor',
     'return \(background \? 100 : 90\) \+ ansiColor'
 )
+Test-SourcePatterns "PC-control command branches are present but isolated from runtime tests" $commandsPath @(
+    'isCommand\(arithTrig, "shutdown"\)',
+    'isCommand\(arithTrig, "shutdownnow"\)',
+    'isCommand\(arithTrig, "restartpc"\)',
+    'isCommand\(arithTrig, "restartpcnow"\)',
+    'isCommand\(arithTrig, "hibernate"\)',
+    'isCommand\(arithTrig, "logoff"\)',
+    'isCommand\(arithTrig, "sleep"\)',
+    'isCommand\(arithTrig, "lock"\)'
+)
+Test-SourcePatterns "PC-control commands are exposed by autocomplete" $autoCompletePath @(
+    'shutdown',
+    'shutdown now',
+    'restart pc',
+    'restart pc now',
+    'hibernate',
+    'log off',
+    'sleep',
+    'lock'
+)
+Test-SourcePatterns "PC-control commands target Windows system actions" $commandsPath @(
+    'shutdown -s',
+    'shutdown /s',
+    'shutdown -s -t 0',
+    'shutdown /s /t 0',
+    'shutdown -r',
+    'shutdown /r',
+    'shutdown -r -t 0',
+    'shutdown /r /t 0',
+    'shutdown -l',
+    'shutdown /l',
+    'SetSuspendState Sleep',
+    'SetSuspendState Hibernate',
+    'LockWorkStation'
+)
 Test-SourcePatterns "txt detector startup processing" $dataCorePath @(
     'disable_txt_detector\.txt',
     'To solve',

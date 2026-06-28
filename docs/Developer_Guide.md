@@ -1,4 +1,4 @@
-# Advanced Trigonometry Calculator Developer Guide
+﻿# Advanced Trigonometry Calculator Developer Guide
 
 This guide gives a high-level view of the Advanced Trigonometry Calculator
 (ATC) codebase. It is intentionally factual and cautious; source code remains
@@ -6,6 +6,9 @@ the authority for exact behavior.
 
 For contribution recipes, checklists and practical "how to add" notes, see
 `docs/en/Developer_Reference.md`.
+
+For formal project requirements, acceptance criteria and traceability, see
+`docs/SOFTWARE_REQUIREMENTS_SPECIFICATION.md`.
 
 ## Project Purpose
 
@@ -169,13 +172,13 @@ Main scripts:
 Current validated regression result for Release x64 and Release x86:
 
 ```text
-Summary: 359 passed, 0 failed
+Summary: 360 passed, 0 failed
 ```
 
 Current isolated coverage result:
 
 ```text
-Summary: 65 passed, 0 failed
+Summary: 68 passed, 0 failed
 ```
 
 See `docs/Testing.md` for commands and coverage details.

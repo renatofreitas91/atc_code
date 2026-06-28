@@ -1,4 +1,4 @@
-# Testes do Advanced Trigonometry Calculator
+﻿# Testes do Advanced Trigonometry Calculator
 
 Este documento resume a infraestrutura de testes do ATC 2.1.7.
 
@@ -13,7 +13,19 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Resultado validado atual em Release x64 e Release x86:
 
 ```text
-Summary: 359 passed, 0 failed
+Summary: 360 passed, 0 failed
+```
+
+Cobertura isolada atual:
+
+```text
+Summary: 68 passed, 0 failed
+```
+
+Validacao atual do package SourceForge:
+
+```text
+Summary: 44 passed, 0 failed
 ```
 
 ## Cobertura automatizada
@@ -41,9 +53,11 @@ O fluxo direto `predefine txt` -> `solve txt` usa fixtures temporarias. A suite
 cobre aritmetica, `solver`, `solve equation`, `simplify polynomial`, recuperacao
 apos linha invalida e abertura mockada do ficheiro de respostas.
 
-O watcher vivo de `auto solve txt` ainda requer fixture multi-processo
-deterministica. `roots to polynomial` dentro de `solve txt` tambem deve ser
-tratado separadamente antes de entrar na regressao padrao.
+O watcher `auto solve txt` tem agora fixture runtime deterministica: usa um
+ficheiro TXT real com `SOLVE_NOW`, valida que a flag e consumida, confirma o
+ficheiro `_answers.txt` e regista a abertura do ficheiro por mock. `roots to
+polynomial` dentro de `solve txt` ainda deve ser tratado separadamente antes de
+entrar na regressao padrao.
 
 ## Stress de memoria
 
@@ -58,6 +72,26 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-memory-stress.ps1 -Iter
 Comandos que desligam/reiniciam o PC, abrem janelas externas ou esperam tempo
 real longo devem continuar fora da suite automatica padrao ate existirem mocks
 seguros.
+
+## Validacao do package SourceForge
+
+O runner de validacao do package e:
+
+```text
+tests\run-atc-package-validation.ps1
+```
+
+Valida a estrutura preparada para SourceForge sem reconstruir o ZIP. A cobertura
+inclui ficheiros raiz, executaveis e launchers x64/x86, PDFs de documentacao,
+ausencia de pastas `Source code` duplicadas, ausencia de ficheiros `_answers.txt`
+gerados, referencias GitHub/source e consistencia SHA256 de todos os ficheiros
+empacotados.
+
+Exemplo:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-package-validation.ps1
+```
 
 ## Ligacao entre documentacao e testes
 

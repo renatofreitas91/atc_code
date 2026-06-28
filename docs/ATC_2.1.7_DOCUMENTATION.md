@@ -1,4 +1,4 @@
-# Advanced Trigonometry Calculator 2.1.7 - current technical documentation
+﻿# Advanced Trigonometry Calculator 2.1.7 - current technical documentation
 
 Date: 2026-06-09
 Last updated: 2026-06-27
@@ -27,6 +27,8 @@ Use these documents together:
 - `docs/en/Developer_Guide.md`: high-level source overview;
 - `docs/en/Developer_Reference.md`: contribution checklists and practical
   development notes;
+- `docs/SOFTWARE_REQUIREMENTS_SPECIFICATION.md`: formal requirements,
+  acceptance criteria and traceability reference;
 - `docs/en/Testing.md`: regression, isolated coverage and manual gaps.
 
 ## What ATC is not
@@ -475,13 +477,19 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 359 passed, 0 failed
+Summary: 360 passed, 0 failed
 ```
 
 The isolated coverage helper currently validates:
 
 ```text
-Summary: 65 passed, 0 failed
+Summary: 68 passed, 0 failed
+```
+
+The SourceForge package validation helper currently validates:
+
+```text
+Summary: 44 passed, 0 failed
 ```
 
 Coverage includes:
@@ -607,7 +615,7 @@ These changes were build-verified and the command-line regression suite remains
 green:
 
 ```text
-Summary: 359 passed, 0 failed
+Summary: 360 passed, 0 failed
 ```
 
 Release x86 and Release x64 were rebuilt successfully with MSBuild. Both

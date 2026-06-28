@@ -59,6 +59,7 @@ English:
 - [Developer Guide](en/Developer_Guide.md)
 - [Developer Reference](en/Developer_Reference.md)
 - [Architecture](en/Architecture.md)
+- [Software Requirements Specification](SOFTWARE_REQUIREMENTS_SPECIFICATION.md)
 - [Testing](en/Testing.md)
 - [Release Notes 2.1.7](en/RELEASE_2.1.7.md)
 - [Technical Documentation 2.1.7](en/ATC_2.1.7_DOCUMENTATION.md)

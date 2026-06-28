@@ -254,6 +254,7 @@ before reaching the solver.
 | TXT / command bridge | to solve mocked folder open | `to solve` with external-open mock enabled | validates the folder-open command without launching Explorer |
 | TXT / command bridge | enable txt detector mocked flag removal | `enable txt detector` with external-open mock enabled | removes `disable_txt_detector.txt` and records the mocked action |
 | TXT / command bridge | full solve txt flow | `predefine txt` -> `solve txt` using a real fixture file | creates an `_answers.txt` file, runs arithmetic, `solver`, `solve equation`, `simplify polynomial`, keeps processing after an invalid line, and records the mocked answer-file open |
+| TXT / command bridge | auto solve txt watcher flow | `auto solve txt` using a real fixture file containing `SOLVE_NOW` | consumes the `SOLVE_NOW` flag, creates `_answers.txt`, runs arithmetic, `solver`, `solve equation`, and records the mocked answer-file open |
 | TXT / command bridge | eliminate strings mocked folder cleanup | `eliminate strings` with a temporary `Strings` folder | clears only the temporary fixture folder and preserves the user's real `Strings` folder |
 | Variables/results / Gestao | see variables | `see variables` with fixture `variables.txt` | prints stored variables |
 | Variables/results / Gestao | renamed variables | `renamed variables` with fixture `renamedVar.txt` | prints variable renaming data |
@@ -315,9 +316,10 @@ defined:
 - App folder commands that open Explorer or editors.
 - Full-duration time features such as clock, timer, stopwatch and alarms.
 - PC control commands such as shutdown, restart, suspend or lock.
-- Auto TXT detector watcher scenarios that require live file-system polling or
-  dragged-file `SOLVE_NOW` workflows. The direct `predefine txt` -> `solve txt`
-  flow is covered with a real fixture file and mocked answer-file opening.
+- Remaining live Auto TXT detector scenarios that require long-running polling
+  or real dragged-file workflows. The direct `predefine txt` -> `solve txt`
+  flow and a deterministic `auto solve txt` `SOLVE_NOW` fixture are covered
+  with real fixture files and mocked answer-file opening.
 - `roots to polynomial` inside `solve txt` files still needs a dedicated
   prompt/pre-processing fix before it should be included in the default
   non-interactive runner. Direct `roots to polynomial` execution and export
@@ -383,7 +385,21 @@ It currently covers:
 Latest isolated coverage result:
 
 ```text
-Summary: 65 passed, 0 failed
+Summary: 68 passed, 0 failed
+```
+
+## SourceForge Package Validation
+
+The staged SourceForge package is validated by:
+
+```text
+tests\run-atc-package-validation.ps1
+```
+
+Current package validation result:
+
+```text
+Summary: 44 passed, 0 failed
 ```
 
 ## Runner

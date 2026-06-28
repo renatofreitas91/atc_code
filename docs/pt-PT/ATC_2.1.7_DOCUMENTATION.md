@@ -1,4 +1,4 @@
-# Documentacao tecnica do Advanced Trigonometry Calculator 2.1.7
+﻿# Documentacao tecnica do Advanced Trigonometry Calculator 2.1.7
 
 Este documento resume o estado tecnico do ATC 2.1.7.
 
@@ -18,6 +18,8 @@ Usar estes documentos em conjunto:
 - `docs/pt-PT/Architecture.md`: arquitetura e fluxo de execucao;
 - `docs/pt-PT/Developer_Guide.md`: visao geral do codigo;
 - `docs/pt-PT/Developer_Reference.md`: checklists e notas praticas;
+- `docs/SOFTWARE_REQUIREMENTS_SPECIFICATION.md`: requisitos formais,
+  criterios de aceitacao e rastreabilidade;
 - `docs/pt-PT/Testing.md`: regressao, cobertura isolada e lacunas manuais.
 
 ## O que o ATC nao e
@@ -99,5 +101,17 @@ simbolicas como `pi`, `e` e `pii`.
 Resultado atual:
 
 ```text
-Summary: 359 passed, 0 failed
+Summary: 360 passed, 0 failed
+```
+
+Cobertura isolada atual:
+
+```text
+Summary: 68 passed, 0 failed
+```
+
+Validacao atual do package SourceForge:
+
+```text
+Summary: 44 passed, 0 failed
 ```

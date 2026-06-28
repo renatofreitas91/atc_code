@@ -1,4 +1,4 @@
-# Advanced Trigonometry Calculator (ATC)
+﻿# Advanced Trigonometry Calculator (ATC)
 
 ![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)
 ![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
@@ -138,10 +138,10 @@ behavior.
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 359 passed, 0 failed
+Summary: 360 passed, 0 failed
 ```
 
-The isolated coverage helper currently validates 65 source-level and safe
+The isolated coverage helper currently validates 68 source-level and safe
 smoke checks, including command exposure, autocomplete behavior and selected
 long-running time command guards.
 
@@ -216,6 +216,7 @@ community.
 - [Developer Guide](docs/Developer_Guide.md)
 - [Developer Reference](docs/en/Developer_Reference.md)
 - [Architecture](docs/Architecture.md)
+- [Software Requirements Specification](docs/SOFTWARE_REQUIREMENTS_SPECIFICATION.md)
 - [Testing](docs/Testing.md)
 - [ATC 2.1.7 Technical Documentation](docs/ATC_2.1.7_DOCUMENTATION.md)
 - [ATC 2.1.7 Release Notes](docs/RELEASE_2.1.7.md)

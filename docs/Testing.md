@@ -1,4 +1,4 @@
-# Advanced Trigonometry Calculator Testing
+﻿# Advanced Trigonometry Calculator Testing
 
 This document explains the current test infrastructure for Advanced
 Trigonometry Calculator (ATC).
@@ -26,7 +26,7 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 359 passed, 0 failed
+Summary: 360 passed, 0 failed
 ```
 
 Latest Release x86 and Release x64 builds completed successfully with
@@ -64,7 +64,13 @@ regression run.
 Current isolated coverage result:
 
 ```text
-Summary: 65 passed, 0 failed
+Summary: 68 passed, 0 failed
+```
+
+Current SourceForge package validation result:
+
+```text
+Summary: 44 passed, 0 failed
 ```
 
 ## Current Automated Coverage
@@ -158,8 +164,29 @@ The direct TXT workflow is covered with temporary fixtures:
 and the answer-file open is recorded through the test mock instead of launching
 Notepad. The fixture also covers `solve equation` and `simplify polynomial`
 inside the TXT input, including their export-prompt-safe non-interactive path.
-Live `auto solve txt` watcher behavior remains an isolated/source-level check
-until it has a deterministic multi-process fixture.
+`auto solve txt` now has a deterministic runtime fixture that uses a real TXT
+file containing `SOLVE_NOW`, verifies that the flag is consumed, validates the
+generated answer file, and records the answer-file open through the test mock.
+
+## SourceForge Package Validation
+
+The package validation runner is:
+
+```text
+tests\run-atc-package-validation.ps1
+```
+
+It validates the staged SourceForge package structure without rebuilding the
+ZIP. Current checks include root files, x64/x86 runtime executables, generated
+PDF documentation, absence of duplicated source folders, absence of generated
+answer files, GitHub source notices, and SHA256 checksum consistency for every
+packaged file.
+
+Example:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-package-validation.ps1
+```
 
 ## Settings Modified by Tests
 

@@ -358,6 +358,54 @@ function Test-TxtProcessingFlow {
     }
 }
 
+function Test-AutoSolveTxtWatcherFlow {
+    $flowDir = Join-Path $PSScriptRoot "temp\txt-flow"
+    New-Item -ItemType Directory -Path $flowDir -Force | Out-Null
+    $inputPath = Join-Path $flowDir "auto-watch.txt"
+    $answerPath = Join-Path $flowDir "auto-watch_answers.txt"
+    $logPath = Join-Path $flowDir "auto-solve-txt-open.log"
+    Remove-Item -Path $answerPath -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $logPath -Force -ErrorAction SilentlyContinue
+
+    $inputContent = @(
+        "2+2",
+        "solver(x-3)",
+        "solve equation((x-1)(x-2))",
+        "SOLVE_NOW"
+    ) -join "`r`n"
+    Set-Content -Path $inputPath -Value $inputContent
+
+    $environment = @{
+        ATC_TEST_DISABLE_EXTERNAL_OPEN = "1"
+        ATC_TEST_EXTERNAL_OPEN_LOG = $logPath
+    }
+    $result = Test-AtcExpressionWithEnvironment "txt/command bridge: auto solve txt watcher real file" "auto solve txt" "Waiting for the flag `"SOLVE_NOW`"[\s\S]*Close the file with the answers to continue" $environment @($inputPath)
+
+    $answer = ""
+    if (Test-Path $answerPath) {
+        $answer = (Get-Content -Raw -Path $answerPath) -replace "`r", ""
+    }
+    $inputAfter = ""
+    if (Test-Path $inputPath) {
+        $inputAfter = (Get-Content -Raw -Path $inputPath) -replace "`r", ""
+    }
+    $log = ""
+    if (Test-Path $logPath) {
+        $log = (Get-Content -Raw -Path $logPath) -replace "`r", ""
+    }
+
+    if (-not (Test-Path $answerPath) -or
+        ($answer -notmatch "#\d+=4[\s\S]*#\d+=3[\s\S]*>solve equation\(\(x-1\)\(x-2\)\)") -or
+        ($result.Output -notmatch "x1=2[\s\S]*x2=1") -or
+        ($inputAfter -match "SOLVE_NOW") -or
+        ($log -notmatch "openTxt\|.*auto-watch_answers\.txt")) {
+        $result.Passed = $false
+        $result.Output = ($result.Output + "`nanswers:`n" + $answer + "`ninput-after:`n" + $inputAfter + "`nexternal-open-log:`n" + $log).Trim()
+        $result.Expected = $result.Expected + " and answer file, consumed SOLVE_NOW flag, expected results, mocked openTxt"
+    }
+    $result
+}
+
 function Test-EliminateStringsMock {
     $flowDir = Join-Path $PSScriptRoot "temp\txt-flow"
     $testStringsDir = Join-Path $flowDir "Strings"
@@ -1669,6 +1717,7 @@ try {
         $results.Add((Test-MockedExternalCommand "txt/command bridge: to solve mocked folder open" "to solve" "^$" "toSolve\|/C ""explorer"))
         $results.Add((Test-MockedExternalCommand "txt/command bridge: enable txt detector removes disable flag" "enable txt detector" "^$" "enableTxtDetector\|.*disable_txt_detector\.txt" { Set-Content -Path $disableTxtDetectorPath -Value "1" -NoNewline } { param($result) if (Test-Path $disableTxtDetectorPath) { $result.Passed = $false; $result.Output = ($result.Output + "`ndisable_txt_detector still exists").Trim(); $result.Expected = $result.Expected + " and disable flag removed" } }))
         $results.Add((Test-TxtProcessingFlow))
+        $results.Add((Test-AutoSolveTxtWatcherFlow))
         $results.Add((Test-EliminateStringsMock))
         foreach ($test in $fileFolderPathTests) {
             $results.Add((Test-DirectoryExists "file/folder command: $($test.Name)" $test.Path))

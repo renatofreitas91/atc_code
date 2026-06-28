@@ -1,4 +1,4 @@
-# Guia de Developer do Advanced Trigonometry Calculator
+﻿# Guia de Developer do Advanced Trigonometry Calculator
 
 Este guia da uma visao tecnica de alto nivel do codigo do ATC. O codigo-fonte
 continua a ser a referencia final para comportamento exato.
@@ -83,7 +83,7 @@ Scripts principais:
 Resultado validado atual:
 
 ```text
-Summary: 359 passed, 0 failed
+Summary: 360 passed, 0 failed
 ```
 
 ## Referencia pratica de developer
