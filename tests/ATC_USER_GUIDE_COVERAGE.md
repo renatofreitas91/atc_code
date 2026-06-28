@@ -50,6 +50,7 @@ These areas have direct automated regression tests in
 | SourceForge package | `run-atc-package-validation.ps1` checks staged package root files, x64/x86 runtime folders, generated PDFs, absence of duplicated source folders/generated answers, GitHub source notices and SHA256 checksums |
 | Precision mode | `higherprecision(1)`, `higherprecision(0)`, persistent `double`/`mp_float`, temporary `maxprec` prefix and post-`maxprec` double fallback |
 | Automatic multiplication | constants, functions, parentheses, imaginary unit, variables, variable-constant adjacency and variable-function adjacency |
+| Parser syntax guards | malformed parentheses, empty function arguments, consecutive operators and invalid operator placement return controlled errors without crashing |
 | Variable names | relaxed variable-name handling, function/reserved-prefix names and composite-variable priority |
 | Export prompts | text-file export path and declined export path for equation/sorting/polynomial reports |
 

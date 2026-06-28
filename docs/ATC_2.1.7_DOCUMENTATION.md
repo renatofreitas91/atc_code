@@ -1,4 +1,4 @@
-﻿# Advanced Trigonometry Calculator 2.1.7 - current technical documentation
+# Advanced Trigonometry Calculator 2.1.7 - current technical documentation
 
 Date: 2026-06-09
 Last updated: 2026-06-27
@@ -477,7 +477,7 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 360 passed, 0 failed
+Summary: 374 passed, 0 failed
 ```
 
 The isolated coverage helper currently validates:
@@ -615,7 +615,7 @@ These changes were build-verified and the command-line regression suite remains
 green:
 
 ```text
-Summary: 360 passed, 0 failed
+Summary: 374 passed, 0 failed
 ```
 
 Release x86 and Release x64 were rebuilt successfully with MSBuild. Both

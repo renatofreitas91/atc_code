@@ -1,4 +1,4 @@
-﻿# Advanced Trigonometry Calculator (ATC)
+# Advanced Trigonometry Calculator (ATC)
 
 ![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)
 ![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
@@ -138,7 +138,7 @@ behavior.
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 360 passed, 0 failed
+Summary: 374 passed, 0 failed
 ```
 
 The isolated coverage helper currently validates 68 source-level and safe

@@ -1,4 +1,4 @@
-﻿# Guia Completo de Utilizador do Advanced Trigonometry Calculator
+# Guia Completo de Utilizador do Advanced Trigonometry Calculator
 
 Versao: ATC 2.1.7  
 Idioma: Portugues de Portugal  
@@ -869,7 +869,7 @@ tests/ATC_USER_GUIDE_COVERAGE.md
 Resultado atual validado:
 
 ```text
-Summary: 360 passed, 0 failed
+Summary: 374 passed, 0 failed
 ```
 
 Este guia deve evoluir com os testes e com o comportamento documentado do ATC

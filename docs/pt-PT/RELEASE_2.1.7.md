@@ -1,4 +1,4 @@
-﻿# Notas de Release do Advanced Trigonometry Calculator 2.1.7
+# Notas de Release do Advanced Trigonometry Calculator 2.1.7
 
 Data: 2026-06-09
 
@@ -43,7 +43,7 @@ aprender, testar e desenvolver:
 Resultado validado:
 
 ```text
-Summary: 360 passed, 0 failed
+Summary: 374 passed, 0 failed
 ```
 
 Cobertura isolada:

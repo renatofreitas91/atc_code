@@ -1,4 +1,4 @@
-﻿# Advanced Trigonometry Calculator Testing
+# Advanced Trigonometry Calculator Testing
 
 This document explains the current test infrastructure for Advanced
 Trigonometry Calculator (ATC).
@@ -26,7 +26,7 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 360 passed, 0 failed
+Summary: 374 passed, 0 failed
 ```
 
 Latest Release x86 and Release x64 builds completed successfully with
@@ -115,6 +115,8 @@ Summary: 44 passed, 0 failed
 The regression suite currently covers:
 
 - arithmetic basics and precedence;
+- parser syntax guards for malformed parentheses, empty function arguments,
+  consecutive operators and invalid operator placement;
 - constants and precision formatting;
 - trigonometry and inverse trigonometry;
 - hyperbolic and inverse hyperbolic functions;

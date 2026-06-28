@@ -1,4 +1,4 @@
-﻿# Testes do Advanced Trigonometry Calculator
+# Testes do Advanced Trigonometry Calculator
 
 Este documento resume a infraestrutura de testes do ATC 2.1.7.
 
@@ -13,7 +13,7 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Resultado validado atual em Release x64 e Release x86:
 
 ```text
-Summary: 360 passed, 0 failed
+Summary: 374 passed, 0 failed
 ```
 
 Cobertura isolada atual:
@@ -33,6 +33,8 @@ Summary: 44 passed, 0 failed
 A suite cobre, entre outros:
 
 - aritmetica;
+- syntax guards do parser para parenteses invalidos, argumentos vazios,
+  operadores consecutivos e operadores mal posicionados;
 - trigonometria e funcoes hiperbolicas;
 - logaritmos;
 - numeros complexos;

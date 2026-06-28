@@ -82,6 +82,7 @@ before reaching the solver.
 | Arithmetic | absolute value | `abs(_7)` | `#n=7` |
 | Arithmetic | remainder | `100rest(3)` | `#n=1` |
 | Arithmetic | integer quotient | `100quotient(3)` | `#n=33` |
+| Parser / syntax guard | malformed arithmetic and parentheses | `2++22`, `((3+3)`, `sqrt()`, `2(3+)` and related cases | controlled syntax/parentheses errors with exit code 0 |
 | Arithmetic | custom root degree | `rtD4D(16)` | `#n=2` |
 | Boolean constants | true | `true` | `#n=1` |
 | Boolean constants | false | `false` | `#n=0` |

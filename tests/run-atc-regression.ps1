@@ -591,6 +591,23 @@ $implicitMultiplicationTests = @(
     @{ Name = "number before custom log base"; Expression = "2logb2b(8)"; Expected = "^#\d+=6$" }
 )
 
+$parserSyntaxGuardTests = @(
+    @{ Name = "consecutive plus"; Expression = "2++22"; Expected = "consecutive arithmetic symbols[\s\S]*Error in syntax" },
+    @{ Name = "missing right parenthesis"; Expression = "((3+3)"; Expected = "Error in parentheses[\s\S]*2 left parenthesis and 1 right parenthesis" },
+    @{ Name = "extra right parenthesis"; Expression = "3+)"; Expected = "Error in parentheses[\s\S]*0 left parenthesis and 1 right parenthesis" },
+    @{ Name = "function missing right parenthesis"; Expression = "sin((30)"; Expected = "Error in parentheses[\s\S]*2 left parenthesis and 1 right parenthesis" },
+    @{ Name = "function extra right parenthesis"; Expression = "cos(30))"; Expected = "Error in parentheses[\s\S]*1 left parenthesis and 2 right parenthesis" },
+    @{ Name = "multiply divide symbols"; Expression = "2*/3"; Expected = "consecutive arithmetic symbols[\s\S]*Error in syntax" },
+    @{ Name = "empty sqrt"; Expression = "sqrt()"; Expected = "Error in parentheses[\s\S]*Error in syntax" },
+    @{ Name = "empty log"; Expression = "log()"; Expected = "Error in parentheses[\s\S]*Error in syntax" },
+    @{ Name = "unclosed arithmetic group"; Expression = "(2+3"; Expected = "Error in parentheses[\s\S]*1 left parenthesis and 0 right parenthesis" },
+    @{ Name = "plus multiply symbols"; Expression = "2+*2"; Expected = "consecutive arithmetic symbols[\s\S]*Error in syntax" },
+    @{ Name = "empty tan"; Expression = "tan()"; Expected = "Error in parentheses[\s\S]*Error in syntax" },
+    @{ Name = "unfinished function"; Expression = "sin("; Expected = "Error in parentheses[\s\S]*1 left parenthesis and 0 right parenthesis" },
+    @{ Name = "function missing left parenthesis"; Expression = "cos)"; Expected = "Error in parentheses[\s\S]*0 left parenthesis and 1 right parenthesis" },
+    @{ Name = "operator before close parenthesis"; Expression = "2(3+)"; Expected = "arithmetic symbol previous to `"\)`"[\s\S]*Error in syntax" }
+)
+
 $matrixVariableContent = "foo 1 0:2 0*3 0:4 0`n"
 $matrixVariableTests = @(
     @{ Name = "matrix variable minimum"; Expression = "min(foo)"; Expected = "^#\d+=1$" },
@@ -1596,6 +1613,9 @@ try {
         }
         foreach ($test in $implicitMultiplicationTests) {
             $results.Add((Test-AtcExpression "implicit multiplication: $($test.Name)" $test.Expression $test.Expected))
+        }
+        foreach ($test in $parserSyntaxGuardTests) {
+            $results.Add((Test-AtcExpression "parser syntax guard: $($test.Name)" $test.Expression $test.Expected))
         }
         foreach ($test in $matrixVariableTests) {
             $results.Add((Test-AtcExpressionWithVariables "guide function: $($test.Name)" $test.Expression $test.Expected $matrixVariableContent))

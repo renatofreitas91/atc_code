@@ -1,4 +1,4 @@
-﻿# Documentacao tecnica do Advanced Trigonometry Calculator 2.1.7
+# Documentacao tecnica do Advanced Trigonometry Calculator 2.1.7
 
 Este documento resume o estado tecnico do ATC 2.1.7.
 
@@ -101,7 +101,7 @@ simbolicas como `pi`, `e` e `pii`.
 Resultado atual:
 
 ```text
-Summary: 360 passed, 0 failed
+Summary: 374 passed, 0 failed
 ```
 
 Cobertura isolada atual:
