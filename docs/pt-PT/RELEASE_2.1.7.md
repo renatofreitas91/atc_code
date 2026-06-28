@@ -24,6 +24,20 @@ Data: 2026-06-09
 O ingles e o idioma de referencia para documentos open-source e comunidade. O
 portugues e mantido para apoiar a comunidade lusofona.
 
+## Melhorias de documentacao
+
+A documentacao do ATC 2.1.7 foi expandida para tornar o projeto mais facil de
+aprender, testar e desenvolver:
+
+- Quick Start de uma pagina no inicio dos guias;
+- Cookbook do ATC com workflows praticos e exemplos seguros;
+- Boas Praticas para uso fiavel e reports reprodutiveis;
+- Architecture Overview expandida com diagramas de modulo e fluxo;
+- Developer Reference com checklists de contribuicao;
+- reorganizacao do guia completo por curva natural de aprendizagem;
+- ligacao mais clara entre documentacao, cobertura e regressao;
+- documentacao bilingue Markdown/PDF e guias completos DOCX.
+
 ## Estado de testes
 
 Resultado validado:

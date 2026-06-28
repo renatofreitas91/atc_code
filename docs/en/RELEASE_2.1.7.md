@@ -42,6 +42,20 @@ Last updated: 2026-06-27
 Project documentation should be maintained in Portuguese and English from this
 point forward. Code comments, when present, should be written in English only.
 
+## Documentation improvements
+
+ATC 2.1.7 documentation was expanded to make the project easier to learn,
+test and contribute to:
+
+- added a one-page Quick Start near the beginning of the user guides;
+- added an ATC Cookbook with practical workflows and safe example commands;
+- added Best Practices for reliable use and reproducible bug reports;
+- expanded the Architecture Overview with module and execution-flow diagrams;
+- added a Developer Reference with contribution checklists;
+- reorganized the full user guide around a more natural learning path;
+- linked user documentation, coverage notes and regression status more clearly;
+- generated bilingual Markdown/PDF documentation and DOCX full user guides.
+
 ## Precision mode persistence
 
 ATC now reads and writes:

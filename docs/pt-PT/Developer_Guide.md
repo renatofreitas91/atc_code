@@ -3,6 +3,9 @@
 Este guia da uma visao tecnica de alto nivel do codigo do ATC. O codigo-fonte
 continua a ser a referencia final para comportamento exato.
 
+Para receitas de contribuicao, checklists e notas praticas de "como adicionar",
+ver `docs/pt-PT/Developer_Reference.md`.
+
 ## Objetivo do projeto
 
 O ATC e uma aplicacao matematica C++ de linha de comandos para Windows. Avalia
@@ -82,3 +85,20 @@ Resultado validado atual:
 ```text
 Summary: 359 passed, 0 failed
 ```
+
+## Referencia pratica de developer
+
+A Referencia de Developer cobre:
+
+- como adicionar um novo comando;
+- como adicionar uma funcao matematica;
+- como adicionar um modulo guiado;
+- como adicionar testes de regressao;
+- expectativas de documentacao;
+- riscos de regressao no parser e solver;
+- cuidados de compatibilidade Windows;
+- regras de estabilidade de output;
+- checklist antes de commit/release.
+
+Usar em conjunto com este guia e com a visao de arquitetura antes de alterar
+parser, solver, consola ou persistencia.

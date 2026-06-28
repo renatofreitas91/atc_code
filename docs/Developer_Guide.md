@@ -4,6 +4,9 @@ This guide gives a high-level view of the Advanced Trigonometry Calculator
 (ATC) codebase. It is intentionally factual and cautious; source code remains
 the authority for exact behavior.
 
+For contribution recipes, checklists and practical "how to add" notes, see
+`docs/en/Developer_Reference.md`.
+
 ## Project Purpose
 
 ATC is a C++ Windows command-line mathematical application. It evaluates
@@ -176,3 +179,20 @@ Summary: 65 passed, 0 failed
 ```
 
 See `docs/Testing.md` for commands and coverage details.
+
+## Practical Developer Reference
+
+The dedicated Developer Reference covers:
+
+- how to add a new command;
+- how to add a mathematical function;
+- how to add a guided module;
+- how to add regression tests;
+- documentation expectations;
+- parser and solver regression risks;
+- Windows compatibility considerations;
+- output-stability rules;
+- pre-commit and pre-release checklist.
+
+Use it together with this guide and the architecture overview before changing
+parser, solver, console or persistence behavior.

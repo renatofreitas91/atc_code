@@ -5,7 +5,10 @@ documentation.
 
 - [User Guide](User_Guide.md)
 - [Full User Guide](User_Guide_Full.md)
+- [ATC Cookbook](ATC_Cookbook.md)
+- [Best Practices](Best_Practices.md)
 - [Developer Guide](Developer_Guide.md)
+- [Developer Reference](Developer_Reference.md)
 - [Architecture](Architecture.md)
 - [Testing](Testing.md)
 - [Release Notes 2.1.7](RELEASE_2.1.7.md)

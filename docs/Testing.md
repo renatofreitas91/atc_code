@@ -112,6 +112,28 @@ The detailed test matrix is maintained in:
 tests\ATC_AUTOMATED_TEST_CASES.md
 ```
 
+## Documentation to Test Traceability
+
+Documented behavior should have automated coverage whenever it is deterministic
+and safe to execute under redirected input.
+
+Use these rules when updating documentation:
+
+- stable command examples should be added to the regression suite where
+  practical;
+- interactive modules should have at least a safe smoke test or an explicit
+  manual-validation note;
+- commands that open windows, files, browsers or PC-control actions should use
+  mocks, source-level checks or manual validation notes;
+- do not update the documented test count unless the suite has actually been
+  executed;
+- update `tests\ATC_USER_GUIDE_COVERAGE.md` when a documented area gains or
+  loses coverage.
+
+The Cookbook and Best Practices documents are intended to use already
+documented commands. If a recipe cannot be tested safely, it should say so
+through notes or limitations.
+
 ## Known Manual or Interactive Validation Gaps
 
 The automated suite intentionally avoids or only partially covers:

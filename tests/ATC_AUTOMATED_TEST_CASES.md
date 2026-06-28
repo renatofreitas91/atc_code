@@ -6,6 +6,10 @@ This suite is designed as a smoke/regression layer for ATC 2.1.7. It focuses on
 safe command-line tests that can run repeatedly without opening GUI features,
 changing the PC state, or requiring user interaction.
 
+The user documentation, Quick Start and Cookbook should prefer examples already
+covered by this file. New stable examples should be added to the runner before
+the documented test count is changed.
+
 ## Goals
 
 - Confirm that the core calculator still solves arithmetic, constants, logs and

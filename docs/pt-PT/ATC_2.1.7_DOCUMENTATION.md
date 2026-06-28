@@ -8,6 +8,18 @@ A versao 2.1.7 foca-se em previsibilidade do modo de precisao, correcoes no
 solver e simplificador polinomial, cobertura de regressao, comportamento da
 consola Windows 11, memoria dinamica, autocomplete e verbose resolution.
 
+## Mapa documental
+
+Usar estes documentos em conjunto:
+
+- `docs/pt-PT/User_Guide_Full.md`: guia completo e Quick Start;
+- `docs/pt-PT/ATC_Cookbook.md`: receitas praticas e workflows;
+- `docs/pt-PT/Best_Practices.md`: boas praticas de uso e bug reports;
+- `docs/pt-PT/Architecture.md`: arquitetura e fluxo de execucao;
+- `docs/pt-PT/Developer_Guide.md`: visao geral do codigo;
+- `docs/pt-PT/Developer_Reference.md`: checklists e notas praticas;
+- `docs/pt-PT/Testing.md`: regressao, cobertura isolada e lacunas manuais.
+
 ## O que o ATC nao e
 
 O ATC foca-se em computacao matematica pratica por comandos e nao pretende ser

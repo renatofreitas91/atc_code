@@ -1,4 +1,4 @@
-# Advanced Trigonometry Calculator Full User Guide
+﻿# Advanced Trigonometry Calculator Full User Guide
 
 Version: ATC 2.1.7  
 Language: English  
@@ -44,7 +44,57 @@ instead of trying to be a universal CAS.
 - Some symbolic behavior exists, but only where explicitly supported and
   tested.
 
-## 3. Input basics
+## 3. Quick Start
+
+ATC is a free, open-source Windows command-line mathematical application. It
+evaluates typed mathematical expressions, documented commands and guided
+workflows. It is best understood as a practical local calculator, not as a
+universal symbolic CAS.
+
+Open ATC by launching `atc.exe` from the built Release folder or through the
+installed ATC shortcut/launcher when available. The prompt accepts one command
+or expression per line.
+
+First commands to try:
+
+```text
+2+2
+sin(pi/2)
+mode
+solve equation(x^2-5*x+6)
+solver(x+2)
+create matrix(foo\2\2\3)
+see variables
+exit
+```
+
+Basic reading rules:
+
+- `_` is used by ATC as a negative marker in many documented command forms and
+  outputs, for example `_5` means `-5`.
+- `#0`, `#1`, and later indexes refer to previous results in the current
+  session.
+- A direct expression is evaluated immediately, such as `2+2`.
+- A command starts a named ATC action, such as `mode` or `solve equation(...)`.
+- A guided module opens an interactive workflow, such as `financial
+  calculations` or `unit conversions`.
+
+Recommended first workflow:
+
+```text
+mode
+2+2
+sin(pi/2)
+solve equation(x^2-5*x+6)
+verbose resolution(1)
+sin(pi/6)
+verbose resolution(0)
+```
+
+If a result matters, confirm the angle mode and precision mode before relying
+on it.
+
+## 4. Input basics
 
 ATC expressions are typed directly at the prompt.
 
@@ -83,7 +133,7 @@ Scientific notation uses uppercase `E`:
 1E-3
 ```
 
-## 4. Interactive prompt
+## 5. Interactive prompt
 
 ATC 2.1.7 includes a custom prompt editor:
 
@@ -97,7 +147,7 @@ ATC 2.1.7 includes a custom prompt editor:
 This improves speed while keeping calculation semantics in the normal ATC
 parser.
 
-## 5. Angle mode
+## 6. Angle mode
 
 Use:
 
@@ -122,7 +172,7 @@ sin(30)
 
 Use `sin(pi/2)` in radian mode and `sin(30)` in degree mode.
 
-## 6. Precision
+## 7. Precision
 
 ATC 2.1.7 supports:
 
@@ -160,7 +210,7 @@ dp50dpe
 `maxprec` is useful when a single expression needs higher precision without
 changing the persisted precision mode.
 
-## 7. Constants and previous answers
+## 8. Constants and previous answers
 
 Common constants:
 
@@ -183,7 +233,7 @@ Previous result references use ATC result indexes, for example:
 
 Use this to build calculations step by step.
 
-## 8. Arithmetic
+## 9. Arithmetic
 
 Examples:
 
@@ -210,7 +260,7 @@ abs(_7)    -> 7
 rtD4D(16)  -> 2
 ```
 
-## 9. Trigonometry
+## 10. Trigonometry
 
 Examples:
 
@@ -242,7 +292,7 @@ Expected:
 #n=0.5
 ```
 
-## 10. Hyperbolic functions
+## 11. Hyperbolic functions
 
 Examples:
 
@@ -264,7 +314,7 @@ acotanh(2)
 These are useful for scientific and engineering formulas involving hyperbolic
 relationships.
 
-## 11. Logarithms
+## 12. Logarithms
 
 Examples:
 
@@ -282,7 +332,7 @@ ln(e)     -> 1
 logb2b(8) -> 3
 ```
 
-## 12. Complex numbers
+## 13. Complex numbers
 
 ATC supports complex values with `i`.
 
@@ -298,7 +348,7 @@ asin(sin(30+30i))
 Complex-number behavior depends on the selected angle mode for trigonometric
 functions.
 
-## 13. Automatic multiplication
+## 14. Automatic multiplication
 
 ATC can infer multiplication in documented forms.
 
@@ -332,7 +382,7 @@ xsin(pi/2)
 When a variable name exists exactly, ATC should prefer the existing variable
 over splitting it into implied products.
 
-## 14. Variables
+## 15. Variables
 
 Examples:
 
@@ -356,7 +406,7 @@ see results
 eliminate results
 ```
 
-## 15. Matrices
+## 16. Matrices
 
 Create a matrix:
 
@@ -392,7 +442,7 @@ foo/2
 Use matrices for tabular numeric workflows, linear algebra helpers and repeated
 numeric data.
 
-## 16. Statistics and probability
+## 17. Statistics and probability
 
 List helpers:
 
@@ -430,7 +480,7 @@ statistics calculations
 Use the guided module for menu-based workflows such as variance and standard
 deviation where available.
 
-## 17. DSP
+## 18. DSP
 
 Signal helpers:
 
@@ -446,7 +496,7 @@ ifft(1\1\1\1)
 Use these commands for compact signal-processing experiments and educational
 checks.
 
-## 18. Polynomial tools
+## 19. Polynomial tools
 
 Simplify supported polynomial forms:
 
@@ -480,7 +530,7 @@ roots to polynomial(2\3)
 (1+0i)x^2+(_5+0i)x^1+(6+0i)
 ```
 
-## 19. Equation solving
+## 20. Equation solving
 
 Quadratic command:
 
@@ -519,7 +569,7 @@ x1=3
 x2=2
 ```
 
-## 20. Solver
+## 21. Solver
 
 The `solver(...)` command supports numerical solving paths and selected
 fast-path normalizations.
@@ -542,7 +592,7 @@ solver((x-e+pii)(x-e-pii))
 Angle-mode behavior matters for trigonometric solver examples. In degree mode,
 `solver(sin(x)-0.5)` is expected to return a degree-based solution.
 
-## 21. Function study
+## 22. Function study
 
 Examples:
 
@@ -561,7 +611,7 @@ function study((x+1)/(x^2+1))
 Function study reports items such as domain, intercepts, asymptotes,
 symmetries, sign, monotony, concavity and codomain where supported.
 
-## 22. Graph
+## 23. Graph
 
 Examples:
 
@@ -575,7 +625,7 @@ Graph behavior is console-based. Automated tests cover deterministic smoke
 paths and settings mutation; full visual inspection is still best done
 manually.
 
-## 23. Guided calculation modules
+## 24. Guided calculation modules
 
 ATC includes guided menus for:
 
@@ -593,7 +643,7 @@ microeconomics calculations
 These modules prompt for values and options. They are useful when the user
 prefers guided input over a single compact expression.
 
-## 24. Financial, geometry, physics and unit conversion recipes
+## 25. Financial, geometry, physics and unit conversion recipes
 
 Finance:
 
@@ -629,7 +679,7 @@ microeconomics calculations
 For guided menus, exact output depends on the selected options and entered
 values.
 
-## 25. Time commands
+## 26. Time commands
 
 Examples:
 
@@ -646,7 +696,7 @@ Interactive or continuously running tools include stopwatch, timer, big timer,
 clock and big clock variants. Use them manually when real time or opened
 windows are involved.
 
-## 26. Sorting
+## 27. Sorting
 
 Numeric sorting:
 
@@ -666,7 +716,7 @@ inverse ascii order
 
 Some sorting commands can export reports.
 
-## 27. TXT processing and command bridge
+## 28. TXT processing and command bridge
 
 Core TXT commands:
 
@@ -705,7 +755,7 @@ simplify polynomial((x+1)(x-1))
 ATC should keep processing after an invalid line and report the syntax error
 for that line.
 
-## 28. Scripting
+## 29. Scripting
 
 The online guide documents scripting helpers such as:
 
@@ -740,14 +790,14 @@ strlen
 Use scripting for repeatable command workflows. Keep scripts small and test
 them with known values before using them on larger calculations.
 
-## 29. User functions
+## 30. User functions
 
 User functions live under the ATC user-functions folder. Autocomplete can
 suggest available user functions as `atc_<name>(` completions.
 
 Use user functions when an expression should be reused by name.
 
-## 30. Settings and environment commands
+## 31. Settings and environment commands
 
 Common commands:
 
@@ -772,7 +822,7 @@ exit
 
 Use `current settings` to inspect persisted configuration.
 
-## 31. File and folder commands
+## 32. File and folder commands
 
 ATC manages folders such as:
 
@@ -786,7 +836,7 @@ ATC manages folders such as:
 Commands may open Explorer, Notepad or external viewers. In automated testing,
 these actions are mocked; in normal use they open real windows.
 
-## 32. Export prompts
+## 33. Export prompts
 
 Some commands ask:
 
@@ -808,7 +858,7 @@ to export, or:
 
 to skip export.
 
-## 33. Verbose resolution
+## 34. Verbose resolution
 
 Enable:
 
@@ -825,7 +875,19 @@ verbose resolution(0)
 Verbose mode explains calculation processing. It is useful for learning and
 debugging, but normal calculations are quieter with verbose mode disabled.
 
-## 34. Recipes / Usage profiles
+## 35. Cookbook / Recipes
+
+The dedicated cookbook is available at:
+
+```text
+docs/en/ATC_Cookbook.md
+```
+
+It contains practical workflows for scientific calculations, trigonometry,
+polynomial solving, matrices, statistics, DSP, TXT processing, verbose
+resolution and guided modules.
+
+## 36. Recipes / Usage profiles
 
 ### Engineering
 
@@ -873,7 +935,19 @@ financial calculations
 100*15/100
 ```
 
-## 35. Practical troubleshooting
+## 37. Best practices
+
+The dedicated best-practices guide is available at:
+
+```text
+docs/en/Best_Practices.md
+```
+
+Use it for reliable day-to-day workflows: start with small expressions,
+confirm angle mode, validate parentheses, choose the right solver path, use TXT
+files for repeatable batches and avoid undocumented behavior.
+
+## 38. Practical troubleshooting
 
 If an expression fails:
 
@@ -885,7 +959,7 @@ If an expression fails:
 - use `verbose resolution(1)` for a more detailed trace;
 - confirm whether the feature is documented and covered by regression tests.
 
-## 36. Documentation and test coverage
+## 39. Documentation and test coverage
 
 The repository includes:
 

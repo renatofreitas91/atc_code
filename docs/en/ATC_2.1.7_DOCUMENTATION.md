@@ -16,6 +16,19 @@ Windows 11 console behavior, and reducing unnecessary dynamic allocation in
 common numeric paths. It also relaxes previous variable-name restrictions while
 preserving exact reserved names.
 
+## Documentation Map
+
+Use these documents together:
+
+- `docs/en/User_Guide_Full.md`: complete user-facing guide and Quick Start;
+- `docs/en/ATC_Cookbook.md`: practical recipes and usage workflows;
+- `docs/en/Best_Practices.md`: reliable usage and bug-report practices;
+- `docs/en/Architecture.md`: module architecture and execution flow;
+- `docs/en/Developer_Guide.md`: high-level source overview;
+- `docs/en/Developer_Reference.md`: contribution checklists and practical
+  development notes;
+- `docs/en/Testing.md`: regression, isolated coverage and manual gaps.
+
 ## What ATC is not
 
 ATC deliberately focuses on practical command-driven mathematical computation

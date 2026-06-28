@@ -6,7 +6,10 @@ open-source e comunitaria.
 
 - [Guia de Utilizador](User_Guide.md)
 - [Guia Completo de Utilizador](User_Guide_Full.md)
+- [Cookbook do ATC](ATC_Cookbook.md)
+- [Boas Praticas](Best_Practices.md)
 - [Guia de Developer](Developer_Guide.md)
+- [Referencia de Developer](Developer_Reference.md)
 - [Arquitetura](Architecture.md)
 - [Testes](Testing.md)
 - [Notas de Release 2.1.7](RELEASE_2.1.7.md)

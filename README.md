@@ -62,6 +62,21 @@ instead of trying to be a universal CAS.
 
 ## Example Commands
 
+Quick start:
+
+```text
+2+2
+sin(pi/2)
+mode
+solve equation(x^2-5*x+6)
+solver(x+2)
+create matrix(foo\2\2\3)
+see variables
+exit
+```
+
+More examples:
+
 ```text
 2+3*4
 sin(pi/2)
@@ -193,8 +208,13 @@ community.
 - [PDF downloads](docs/pdf/)
 - [Full User Guide EN](docs/en/User_Guide_Full.md)
 - [Guia Completo PT-PT](docs/pt-PT/User_Guide_Full.md)
+- [ATC Cookbook](docs/en/ATC_Cookbook.md)
+- [Cookbook PT-PT](docs/pt-PT/ATC_Cookbook.md)
+- [Best Practices](docs/en/Best_Practices.md)
+- [Boas Praticas PT-PT](docs/pt-PT/Best_Practices.md)
 - [User Guide](docs/User_Guide.md)
 - [Developer Guide](docs/Developer_Guide.md)
+- [Developer Reference](docs/en/Developer_Reference.md)
 - [Architecture](docs/Architecture.md)
 - [Testing](docs/Testing.md)
 - [ATC 2.1.7 Technical Documentation](docs/ATC_2.1.7_DOCUMENTATION.md)

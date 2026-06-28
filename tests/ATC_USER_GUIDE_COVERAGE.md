@@ -11,6 +11,11 @@ commands that are described in the user guide. The automated smoke suite covers
 safe, deterministic command-line cases. Interactive, GUI, PC-control and
 external-link commands are intentionally kept as manual coverage.
 
+Documentation-only additions such as the Quick Start, ATC Cookbook, Best
+Practices and Developer Reference should use commands already present in this
+matrix whenever possible. If a documented recipe cannot be executed safely in
+automation, it should remain clearly marked as an interactive/manual workflow.
+
 ## Automated
 
 These areas have direct automated regression tests in

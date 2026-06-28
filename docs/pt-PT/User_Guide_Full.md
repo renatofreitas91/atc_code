@@ -1,4 +1,4 @@
-# Guia Completo de Utilizador do Advanced Trigonometry Calculator
+﻿# Guia Completo de Utilizador do Advanced Trigonometry Calculator
 
 Versao: ATC 2.1.7  
 Idioma: Portugues de Portugal  
@@ -44,7 +44,56 @@ comandos, em vez de tentar ser um CAS universal.
 - Existe comportamento simbolico apenas onde esta explicitamente suportado e
   testado.
 
-## 3. Bases de input
+## 3. Quick Start
+
+O ATC e uma aplicacao matematica de linha de comandos para Windows, gratuita e
+open-source. Avalia expressoes matematicas, comandos documentados e workflows
+guiados. Deve ser entendido como uma calculadora local pratica, nao como um CAS
+simbolico universal.
+
+Abrir o ATC executando `atc.exe` a partir da pasta Release criada pelo build ou
+atraves do atalho/launcher instalado quando existir. O prompt aceita um comando
+ou expressao por linha.
+
+Primeiros comandos a experimentar:
+
+```text
+2+2
+sin(pi/2)
+mode
+solve equation(x^2-5*x+6)
+solver(x+2)
+create matrix(foo\2\2\3)
+see variables
+exit
+```
+
+Regras basicas de leitura:
+
+- `_` e usado pelo ATC como marcador de negativo em varias formas documentadas
+  e outputs; por exemplo `_5` significa `-5`.
+- `#0`, `#1` e indices seguintes referem resultados anteriores da sessao atual.
+- Uma expressao direta e avaliada de imediato, por exemplo `2+2`.
+- Um comando inicia uma acao ATC, por exemplo `mode` ou `solve equation(...)`.
+- Um modulo guiado abre um workflow interativo, por exemplo `financial
+  calculations` ou `unit conversions`.
+
+Workflow inicial recomendado:
+
+```text
+mode
+2+2
+sin(pi/2)
+solve equation(x^2-5*x+6)
+verbose resolution(1)
+sin(pi/6)
+verbose resolution(0)
+```
+
+Quando um resultado e importante, confirmar primeiro o modo angular e o modo de
+precisao.
+
+## 4. Bases de input
 
 As expressoes sao escritas diretamente no prompt.
 
@@ -83,7 +132,7 @@ Notacao cientifica usa `E` maiusculo:
 1E-3
 ```
 
-## 4. Prompt interativo
+## 5. Prompt interativo
 
 O ATC 2.1.7 inclui editor de linha:
 
@@ -93,7 +142,7 @@ O ATC 2.1.7 inclui editor de linha:
 - `Up` e `Down` navegam no historico;
 - `Left`, `Right`, `Home`, `End`, `Delete` e `Backspace` editam a linha atual.
 
-## 5. Modo angular
+## 6. Modo angular
 
 Use:
 
@@ -118,7 +167,7 @@ sin(30)
 
 Use `sin(pi/2)` em radianos e `sin(30)` em graus.
 
-## 6. Precisao
+## 7. Precisao
 
 O ATC 2.1.7 suporta:
 
@@ -156,7 +205,7 @@ dp50dpe
 `maxprec` permite usar mais precisao numa expressao sem alterar o modo
 persistente.
 
-## 7. Constantes e respostas anteriores
+## 8. Constantes e respostas anteriores
 
 Constantes comuns:
 
@@ -177,7 +226,7 @@ Resultados anteriores:
 #1
 ```
 
-## 8. Aritmetica
+## 9. Aritmetica
 
 Exemplos:
 
@@ -204,7 +253,7 @@ abs(_7)    -> 7
 rtD4D(16)  -> 2
 ```
 
-## 9. Trigonometria
+## 10. Trigonometria
 
 ```text
 sin(pi/2)
@@ -234,7 +283,7 @@ Resultado esperado:
 #n=0.5
 ```
 
-## 10. Funcoes hiperbolicas
+## 11. Funcoes hiperbolicas
 
 ```text
 sinh(0)
@@ -251,7 +300,7 @@ acosech(1)
 acotanh(2)
 ```
 
-## 11. Logaritmos
+## 12. Logaritmos
 
 ```text
 log(100)
@@ -267,7 +316,7 @@ ln(e)     -> 1
 logb2b(8) -> 3
 ```
 
-## 12. Numeros complexos
+## 13. Numeros complexos
 
 ```text
 2i
@@ -278,7 +327,7 @@ asin(sin(30+30i))
 
 O modo angular influencia funcoes trigonometricas com argumentos complexos.
 
-## 13. Multiplicacao automatica
+## 14. Multiplicacao automatica
 
 ```text
 2pi
@@ -308,7 +357,7 @@ xsin(pi/2)
 Quando existe uma variavel com nome exato, o ATC deve preferir essa variavel
 em vez de dividir o nome em produtos implicitos.
 
-## 14. Variaveis
+## 15. Variaveis
 
 ```text
 data=5
@@ -327,7 +376,7 @@ see results
 eliminate results
 ```
 
-## 15. Matrizes
+## 16. Matrizes
 
 Criar matriz:
 
@@ -360,7 +409,7 @@ foo/2
 2*foo
 ```
 
-## 16. Estatistica e probabilidade
+## 17. Estatistica e probabilidade
 
 ```text
 min(3\_1\2)
@@ -393,7 +442,7 @@ Modulo guiado:
 statistics calculations
 ```
 
-## 17. DSP
+## 18. DSP
 
 ```text
 sinc(0)
@@ -404,7 +453,7 @@ ifft(1\0\0\0)
 ifft(1\1\1\1)
 ```
 
-## 18. Polinomios
+## 19. Polinomios
 
 Simplificacao:
 
@@ -438,7 +487,7 @@ roots to polynomial(2\3)
 (1+0i)x^2+(_5+0i)x^1+(6+0i)
 ```
 
-## 19. Resolucao de equacoes
+## 20. Resolucao de equacoes
 
 Quadraticas:
 
@@ -477,7 +526,7 @@ x1=3
 x2=2
 ```
 
-## 20. Solver
+## 21. Solver
 
 ```text
 solver(sin(x)-0.5)
@@ -494,7 +543,7 @@ solver((x-e+pii)(x-e-pii))
 
 O modo angular e importante nos exemplos trigonometricos.
 
-## 21. Estudo de funcoes
+## 22. Estudo de funcoes
 
 ```text
 function study(x+1)
@@ -511,7 +560,7 @@ function study((x+1)/(x^2+1))
 O estudo pode apresentar dominio, zeros, assintotas, simetrias, sinal,
 monotonia, concavidade e contradominio quando suportado.
 
-## 22. Grafico
+## 23. Grafico
 
 ```text
 graph settings
@@ -522,7 +571,7 @@ graph(x;_2\2\1)
 O grafico e renderizado na consola. A validacao visual completa continua a ser
 mais adequada manualmente.
 
-## 23. Modulos guiados
+## 24. Modulos guiados
 
 ```text
 triangles rectangles solver
@@ -537,7 +586,7 @@ microeconomics calculations
 
 Estes modulos pedem valores e opcoes ao utilizador.
 
-## 24. Receitas por area
+## 25. Receitas por area
 
 Financas:
 
@@ -570,7 +619,7 @@ Microeconomia:
 microeconomics calculations
 ```
 
-## 25. Tempo
+## 26. Tempo
 
 ```text
 time
@@ -584,7 +633,7 @@ actual time response
 Ferramentas como stopwatch, timer, big timer, clock e big clock devem ser
 usadas manualmente quando envolvem tempo real ou janelas abertas.
 
-## 26. Ordenacao
+## 27. Ordenacao
 
 ```text
 ascending order(3\1\2)
@@ -595,7 +644,7 @@ ascii order
 inverse ascii order
 ```
 
-## 27. TXT processing e command bridge
+## 28. TXT processing e command bridge
 
 ```text
 predefine txt
@@ -631,7 +680,7 @@ simplify polynomial((x+1)(x-1))
 
 O ATC deve continuar apos uma linha invalida e reportar o erro dessa linha.
 
-## 28. Scripting
+## 29. Scripting
 
 O guia online documenta helpers como:
 
@@ -666,12 +715,12 @@ strlen
 Use scripting para fluxos repetiveis e teste scripts pequenos antes de os usar
 em calculos maiores.
 
-## 29. Funcoes do utilizador
+## 30. Funcoes do utilizador
 
 As funcoes do utilizador vivem na pasta `User functions`. O autocomplete pode
 sugerir funcoes como `atc_<nome>(`.
 
-## 30. Settings e ambiente
+## 31. Settings e ambiente
 
 ```text
 current settings
@@ -692,7 +741,7 @@ clean
 exit
 ```
 
-## 31. Ficheiros e pastas
+## 32. Ficheiros e pastas
 
 O ATC gere pastas como:
 
@@ -705,7 +754,7 @@ O ATC gere pastas como:
 
 Alguns comandos abrem Explorer, Notepad ou visualizadores externos.
 
-## 32. Exportacao
+## 33. Exportacao
 
 Alguns comandos perguntam:
 
@@ -715,7 +764,7 @@ Export result? (Yes -> 1 \ No -> 0)
 
 Use `1` para exportar ou `0` para ignorar.
 
-## 33. Verbose resolution
+## 34. Verbose resolution
 
 ```text
 verbose resolution(1)
@@ -725,7 +774,19 @@ verbose resolution(0)
 O modo verbose ajuda a aprender e depurar, mas o uso normal e mais limpo com
 verbose desligado.
 
-## 34. Perfis de utilizacao
+## 35. Cookbook / Receitas
+
+O cookbook dedicado esta disponivel em:
+
+```text
+docs/pt-PT/ATC_Cookbook.md
+```
+
+Inclui workflows praticos para calculo cientifico, trigonometria, polinomios,
+matrizes, estatistica, DSP, TXT processing, verbose resolution e modulos
+guiados.
+
+## 36. Perfis de utilizacao
 
 Engenharia:
 
@@ -773,7 +834,19 @@ financial calculations
 100*15/100
 ```
 
-## 35. Resolucao de problemas
+## 37. Boas praticas
+
+O guia dedicado de boas praticas esta disponivel em:
+
+```text
+docs/pt-PT/Best_Practices.md
+```
+
+Usar para workflows fiaveis: comecar por expressoes pequenas, confirmar modo
+angular, validar parenteses, escolher o solver certo, usar TXT para lotes
+reprodutiveis e evitar comportamento nao documentado.
+
+## 38. Resolucao de problemas
 
 Se uma expressao falhar:
 
@@ -785,7 +858,7 @@ Se uma expressao falhar:
 - usar `verbose resolution(1)`;
 - confirmar se a funcionalidade esta documentada e coberta por testes.
 
-## 36. Documentacao e testes
+## 39. Documentacao e testes
 
 ```text
 docs/Testing.md

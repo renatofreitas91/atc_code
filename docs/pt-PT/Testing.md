@@ -58,3 +58,24 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-memory-stress.ps1 -Iter
 Comandos que desligam/reiniciam o PC, abrem janelas externas ou esperam tempo
 real longo devem continuar fora da suite automatica padrao ate existirem mocks
 seguros.
+
+## Ligacao entre documentacao e testes
+
+Comportamento documentado deve ter cobertura automatica sempre que for
+deterministico e seguro com input redirecionado.
+
+Regras ao atualizar documentacao:
+
+- exemplos estaveis devem ser adicionados a suite de regressao quando
+  praticavel;
+- modulos interativos devem ter pelo menos smoke test seguro ou nota explicita
+  de validacao manual;
+- comandos que abrem janelas, ficheiros, browsers ou acoes de PC devem usar
+  mocks, checks source-level ou notas manuais;
+- nao atualizar a contagem documentada de testes sem executar a suite;
+- atualizar `tests\ATC_USER_GUIDE_COVERAGE.md` quando uma area documentada
+  ganha ou perde cobertura.
+
+O Cookbook e as Boas Praticas devem usar comandos ja documentados. Se uma
+receita nao puder ser testada com seguranca, deve indicar isso nas notas ou
+limitacoes.

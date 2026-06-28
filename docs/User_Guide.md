@@ -21,6 +21,27 @@ console.
 ATC is focused on practical numerical workflows and documented command
 behavior.
 
+## Quick Start
+
+```text
+2+2
+sin(pi/2)
+mode
+solve equation(x^2-5*x+6)
+solver(x+2)
+create matrix(foo\2\2\3)
+see variables
+exit
+```
+
+Remember:
+
+- `_` is ATC's documented negative marker in many command forms and outputs;
+- `#0`, `#1` and later indexes refer to previous results;
+- direct expressions calculate immediately;
+- commands start named workflows;
+- guided modules open interactive menus.
+
 ## What ATC is not
 
 ATC deliberately focuses on practical command-driven mathematical computation

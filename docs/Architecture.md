@@ -15,6 +15,39 @@ modules, persisted settings, and regression tests.
 The following diagram gives a compact view of the main ATC modules. It is
 intended as a mental map for new contributors rather than a complete call graph.
 
+Textual overview:
+
+```text
+User Input
+  |
+  v
+Console Prompt / Command Editor
+  |
+  v
+Tokenizer / Parser
+  |
+  v
+Expression Engine
+  |
+  v
+Feature Modules
+  - Arithmetic
+  - Trigonometry
+  - Complex Numbers
+  - Matrices
+  - Statistics
+  - DSP
+  - Polynomial Tools
+  - Equation Solver
+  - Numerical Solver
+  - Graph
+  - TXT Processing
+  - Guided Modules
+  |
+  v
+Output / Results Store / Files
+```
+
 ```mermaid
 flowchart LR
     CLI["CLI / User Input"] --> Parser["Command Parser"]
@@ -52,6 +85,88 @@ flowchart TD
 In practice, `main.cpp`, `main_aux_processor.cpp`, `main_processor.cpp`,
 `processing_core.cpp`, and `commands.cpp` share responsibility for this flow.
 Specialized modules then handle the mathematical or workflow-specific work.
+
+## Input to Output Flow
+
+ATC input normally starts at the console prompt. The custom command editor
+collects the line, supports history/autocomplete, and sends the resulting text
+into the normal command-processing flow. From there, ATC decides whether the
+input is a direct expression, a named command or an interactive guided module.
+
+Direct expressions are evaluated immediately:
+
+```text
+2+2
+sin(pi/2)
+```
+
+Named commands select a specific workflow:
+
+```text
+mode
+solve equation(x^2-5*x+6)
+```
+
+Guided modules open menus or interactive prompts:
+
+```text
+financial calculations
+unit conversions
+```
+
+The result is formatted for the console, stored in the session result list
+when appropriate, and may also be written to files for report/export commands.
+
+## Results and Variables
+
+ATC stores visible calculation results as indexed entries such as `#0`, `#1`
+and later values. These references allow step-by-step work without retyping
+long expressions.
+
+Named variables are handled through the command/expression processing layer and
+persisted runtime files where the existing feature requires it. Matrix
+variables and scalar variables share the same high-level user workflow but are
+handled by different internal paths.
+
+## Precision Model
+
+ATC 2.1.7 can run the main typed runtime flow using `double` or Boost
+`mp_float`. Startup reads the persisted setting and dispatches the template
+runtime accordingly. This keeps the public command flow mostly unchanged while
+allowing higher precision for supported numeric paths.
+
+## Automatic Multiplication
+
+The expression engine includes support for documented implicit multiplication
+forms such as adjacent constants, factors and functions. This is a convenience
+feature, not a general symbolic algebra system. Parser changes in this area
+should be tested against arithmetic, variables, functions, matrices, polynomial
+tools, `solver(...)` and `solve equation(...)`.
+
+## TXT Processing
+
+TXT workflows route file input into the same command-processing model used by
+interactive input. The automated tests use temporary folders and mocks for
+window/file opening side effects so the public workflow can be checked without
+opening real user applications.
+
+## Architectural Limits
+
+ATC deliberately focuses on command-driven numerical work and implemented
+hybrid symbolic/numeric features. It should not be treated as a full
+general-purpose CAS. Unsupported symbolic transformations should fail clearly
+or remain on documented fallback paths.
+
+## Where New Modules Fit
+
+New user-facing modules should usually integrate at the command-dispatch layer,
+then delegate actual calculation work to a focused module file. They should
+also add:
+
+- autocomplete vocabulary when useful;
+- regression or smoke coverage;
+- user-guide documentation;
+- notes for manual validation if the module is deeply interactive.
 
 ## CLI Entry Point
 
