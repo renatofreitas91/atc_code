@@ -67,6 +67,27 @@ Para comandos sensiveis a memoria:
 powershell -ExecutionPolicy Bypass -File .\tests\run-atc-memory-stress.ps1 -Iterations 10
 ```
 
+## SRS Gate Runner
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-srs-gates.ps1 -AtcExe .\x64\Release\atc.exe -SkipStress
+```
+
+Este runner valida gates mensuraveis da SRS:
+
+- Stage 1: parser e syntax guard com mais de 50 inputs;
+- Stage 2: persistencia de `higherprecision` e startup gate;
+- Stage 3: polinomios de grau 20, solver, latencia e Memory Factor;
+- Stage 4: `auto solve txt`, `SOLVE_NOW`, `_answers.txt` e protecao de
+  diretorios nao relacionados.
+
+Validacao curta mais recente:
+
+```text
+Summary: 4 passed, 0 failed
+StressIterations: 2
+```
+
 ## Limites
 
 Comandos que desligam/reiniciam o PC, abrem janelas externas ou esperam tempo

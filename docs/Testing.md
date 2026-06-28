@@ -50,6 +50,43 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-memory-stress.ps1 -Iter
 It currently focuses on repeated polynomial simplification,
 roots-to-polynomial, and textual/coefficient equation solver commands.
 
+## SRS Gate Runner
+
+The SRS gate runner is:
+
+```text
+tests\run-atc-srs-gates.ps1
+```
+
+It validates selected measurable requirements from
+`docs\SOFTWARE_REQUIREMENTS_SPECIFICATION.md`:
+
+- Stage 1: parser and syntax guard matrix with 50+ valid/malformed inputs;
+- Stage 2: precision persistence and startup gate;
+- Stage 3: degree-20 polynomial simplification / equation solving latency and
+  Memory Factor telemetry;
+- Stage 4: command bridge / TXT detector fixture with mocked external opening
+  and unrelated-directory preservation.
+
+Quick validation without the heavy stress loop:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-srs-gates.ps1 -AtcExe .\x64\Release\atc.exe -SkipStress
+```
+
+Release stress validation:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-srs-gates.ps1 -AtcExe .\x64\Release\atc.exe -StressIterations 500
+```
+
+Latest short SRS gate validation:
+
+```text
+Summary: 4 passed, 0 failed
+StressIterations: 2
+```
+
 ## Isolated Coverage Helper
 
 The isolated coverage helper is:

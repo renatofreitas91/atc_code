@@ -402,6 +402,25 @@ Current package validation result:
 Summary: 44 passed, 0 failed
 ```
 
+## SRS Gate Runner
+
+`tests\run-atc-srs-gates.ps1` implements measurable gates from
+`docs\SOFTWARE_REQUIREMENTS_SPECIFICATION.md`.
+
+| Stage | Requirement focus | Automated fixture |
+| --- | --- | --- |
+| Stage 1 | `FR-010`, `FR-060`, `NFR-002` | 50+ parser inputs covering implicit multiplication and malformed syntax; every malformed input must return a controlled error without a process crash |
+| Stage 2 | `FR-056`, `NFR-001`, `NFR-005` | toggles `higherprecision` to Boost `mp_float`, restarts through command execution, validates startup probe and 50-digit pi |
+| Stage 3 | `FR-022`, `FR-024`, `NFR-003`, `NFR-004` | repeated degree-20 polynomial simplification and equation solving with elapsed-time and Memory Factor telemetry |
+| Stage 4 | `FR-050`, `NFR-014` | creates `test_commands.txt`, triggers `auto solve txt` with `SOLVE_NOW`, validates `_answers.txt`, mocked open action and unrelated-directory preservation |
+
+Latest short SRS gate validation:
+
+```text
+Summary: 4 passed, 0 failed
+StressIterations: 2
+```
+
 ## Runner
 
 Run after building Release x64:
