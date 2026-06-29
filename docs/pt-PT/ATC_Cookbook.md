@@ -1,18 +1,18 @@
 # Cookbook do Advanced Trigonometry Calculator
 
-Versao: ATC 2.1.7  
-Idioma: Portugues de Portugal
+Versão: ATC 2.1.7
+Idioma: Português de Portugal
 
-Este cookbook junta fluxos praticos de utilizacao do ATC. Nao substitui o guia
-completo; serve como ponto de partida rapido para tarefas comuns.
+Este cookbook junta fluxos praticos de utilização do ATC. Não substitui o guia
+completo; serve como ponto de partida rápido para tarefas comuns.
 
-Os exemplos com output estavel mostram o resultado esperado. Os modulos
-interativos sao descritos como workflows, porque o texto exato pode depender
-das opcoes escolhidas e das settings persistentes.
+Os exemplos com output estavel mostram o resultado esperado. Os módulos
+interativos são descritos como workflows, porque o texto exato pode depender
+das opções escolhidas e das settings persistentes.
 
-## Calculo cientifico rapido
+## Calculo cientifico rápido
 
-**Problema:** avaliar uma expressao curta sem criar variaveis.
+**Problema:** avaliar uma expressão curta sem criar variáveis.
 
 **Comando(s):**
 
@@ -30,8 +30,8 @@ log(100)
 2
 ```
 
-**Quando usar:** aritmetica rapida, logaritmos e verificacoes
-trigonometricas.
+**Quando usar:** aritmética rápida, logaritmos e verificacoes
+trigonométricas.
 
 **Notas / limites:** os indices `#0`, `#1` dependem dos comandos anteriores na
 sessao atual.
@@ -77,13 +77,13 @@ x2=2
 **Quando usar:** equacoes polinomiais que o ATC consegue normalizar e enviar
 para o equation solver.
 
-**Notas / limites:** o ATC nao e um CAS completo. Formas simbolicas nao
+**Notas / limites:** o ATC não é um CAS completo. Formas simbólicas não
 suportadas podem seguir fallback ou ser rejeitadas.
 
-## Solver numerico
+## Solver numérico
 
 **Problema:** encontrar uma raiz numericamente quando o comando polinomial
-direto nao e o melhor caminho.
+direto não é o melhor caminho.
 
 **Comando(s):**
 
@@ -95,14 +95,14 @@ solver(sin(x)-0.5)
 **Output esperado:** `solver(x+2)` devolve `-2`. O resultado trigonometrico
 depende do modo angular.
 
-**Quando usar:** pesquisa numerica de raizes em expressoes suportadas.
+**Quando usar:** pesquisa numérica de raizes em expressões suportadas.
 
-**Notas / limites:** verificar o modo angular e evitar depender de sintaxe nao
+**Notas / limites:** verificar o modo angular e evitar depender de sintaxe não
 documentada.
 
-## Simplificacao de polinomios
+## Simplificacao de polinómios
 
-**Problema:** expandir ou simplificar uma expressao polinomial suportada.
+**Problema:** expandir ou simplificar uma expressão polinomial suportada.
 
 **Comando(s):**
 
@@ -116,14 +116,14 @@ simplify polynomial((x-2)*(x-3))
 (1+0i)x^2+(_5+0i)x^1+(6+0i)
 ```
 
-**Quando usar:** preparar polinomios antes de resolver ou documentar calculos.
+**Quando usar:** preparar polinómios antes de resolver ou documentar cálculos.
 
-**Notas / limites:** o comportamento simbolico existe onde esta implementado e
+**Notas / limites:** o comportamento simbólico existe onde esta implementado e
 testado.
 
-## Raizes para polinomio
+## Raizes para polinómio
 
-**Problema:** construir um polinomio a partir de raizes conhecidas.
+**Problema:** construir um polinómio a partir de raizes conhecidas.
 
 **Comando(s):**
 
@@ -131,12 +131,12 @@ testado.
 roots to polynomial(2\3)
 ```
 
-**Output esperado:** um polinomio de segundo grau com raizes `2` e `3`.
+**Output esperado:** um polinómio de segundo grau com raizes `2` e `3`.
 
-**Quando usar:** workflows tipo Vieta ou criacao de polinomios para testar o
+**Quando usar:** workflows tipo Vieta ou criacao de polinómios para testar o
 solver.
 
-**Notas / limites:** raizes complexas sao suportadas nas formas documentadas.
+**Notas / limites:** raizes complexas são suportadas nas formas documentadas.
 
 ## Matrizes
 
@@ -149,17 +149,17 @@ create matrix(foo\2\2\3)
 see variables
 ```
 
-**Output esperado:** o ATC cria a variavel matriz `foo` e lista variaveis com
+**Output esperado:** o ATC cria a variavel matriz `foo` e lista variáveis com
 `see variables`.
 
-**Quando usar:** calculos matriciais repetidos ou exemplos com matriz nomeada.
+**Quando usar:** cálculos matriciais repetidos ou exemplos com matriz nomeada.
 
-**Notas / limites:** alguns comandos de matrizes sao interativos. Validar com
+**Notas / limites:** alguns comandos de matrizes são interativos. Validar com
 matrizes pequenas primeiro.
 
 ## Media, minimo e maximo
 
-**Problema:** calcular estatistica descritiva basica numa lista ou matriz.
+**Problema:** calcular estatística descritiva básica numa lista ou matriz.
 
 **Comando(s):**
 
@@ -177,10 +177,10 @@ max(2\4\6)
 6
 ```
 
-**Quando usar:** resumos estatisticos rapidos.
+**Quando usar:** resumos estatisticos rápidos.
 
-**Notas / limites:** o ATC 2.1.7 tambem valida `min`, `max` e `avg` com nomes
-de variaveis matriz.
+**Notas / limites:** o ATC 2.1.7 também valida `min`, `max` e `avg` com nomes
+de variáveis matriz.
 
 ## FFT / IFFT
 
@@ -193,7 +193,7 @@ fft(1\0\0\0)
 ifft(1\1\1\1)
 ```
 
-**Output esperado:** o ATC devolve dados transformados no formato numerico
+**Output esperado:** o ATC devolve dados transformados no formato numérico
 documentado.
 
 **Quando usar:** verificacoes simples de processamento de sinal e exemplos
@@ -204,7 +204,7 @@ usar os resultados noutra ferramenta.
 
 ## Workflow TXT
 
-**Problema:** processar varios comandos ATC a partir de um ficheiro de texto.
+**Problema:** processar vários comandos ATC a partir de um ficheiro de texto.
 
 **Comando(s):**
 
@@ -217,15 +217,15 @@ eliminate strings
 **Output esperado:** o ATC le um ficheiro, processa linhas suportadas e escreve
 um ficheiro de resposta.
 
-**Quando usar:** calculos em lote, exemplos reprodutiveis e validacao manual
-tipo regressao.
+**Quando usar:** cálculos em lote, exemplos reprodutíveis e validação manual
+tipo regressão.
 
 **Notas / limites:** comandos que abrem ficheiros ou janelas devem ser
-mockados ou contornados em testes automaticos.
+mockados ou contornados em testes automáticos.
 
 ## Verbose resolution para debug
 
-**Problema:** perceber como o ATC processa uma expressao.
+**Problema:** perceber como o ATC processa uma expressão.
 
 **Comando(s):**
 
@@ -235,17 +235,17 @@ sin(pi/6)
 verbose resolution(0)
 ```
 
-**Output esperado:** o ATC imprime informacao intermedia de processamento
+**Output esperado:** o ATC imprime informação intermedia de processamento
 enquanto a setting esta ativa.
 
-**Quando usar:** debug do parser e do processamento de expressoes.
+**Quando usar:** debug do parser e do processamento de expressões.
 
-**Notas / limites:** o output verbose e diagnostico. Nao deve ser tratado como
-contrato estavel salvo quando estiver coberto explicitamente por regressao.
+**Notas / limites:** o output verbose e diagnostico. Não deve ser tratado como
+contrato estavel salvo quando estiver coberto explicitamente por regressão.
 
 ## Modulos guiados
 
-**Problema:** usar modulos de dominio com menus.
+**Problema:** usar módulos de dominio com menus.
 
 **Comando(s):**
 
@@ -262,9 +262,8 @@ arithmetic matrix solver
 
 **Output esperado:** cada comando abre o respetivo workflow guiado.
 
-**Quando usar:** quando o calculo e mais facil de expressar por menu do que
-numa expressao de uma linha.
+**Quando usar:** quando o cálculo e mais fácil de expressar por menu do que
+numa expressão de uma linha.
 
-**Notas / limites:** os testes automaticos usam smoke paths seguros nestes
-modulos. A validacao completa de cada opcao continua manual ou futura.
-
+**Notas / limites:** os testes automáticos usam smoke paths seguros nestes
+módulos. A validação completa de cada opção continua manual ou futura.

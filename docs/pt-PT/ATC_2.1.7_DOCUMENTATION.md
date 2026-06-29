@@ -1,36 +1,36 @@
-# Documentacao tecnica do Advanced Trigonometry Calculator 2.1.7
+# Documentação técnica do Advanced Trigonometry Calculator 2.1.7
 
-Este documento resume o estado tecnico do ATC 2.1.7.
+Este documento resume o estado técnico do ATC 2.1.7.
 
-## Ambito
+## Âmbito
 
-A versao 2.1.7 foca-se em previsibilidade do modo de precisao, correcoes no
-solver e simplificador polinomial, cobertura de regressao, comportamento da
-consola Windows 11, memoria dinamica, autocomplete e verbose resolution.
+A versão 2.1.7 foca-se em previsibilidade do modo de precisão, correções no
+solver e simplificador polinomial, cobertura de regressão, comportamento da
+consola Windows 11, memória dinâmica, autocomplete e verbose resolution.
 
 ## Mapa documental
 
 Usar estes documentos em conjunto:
 
 - `docs/pt-PT/User_Guide_Full.md`: guia completo e Quick Start;
-- `docs/pt-PT/ATC_Cookbook.md`: receitas praticas e workflows;
-- `docs/pt-PT/Best_Practices.md`: boas praticas de uso e bug reports;
-- `docs/pt-PT/Architecture.md`: arquitetura e fluxo de execucao;
-- `docs/pt-PT/Developer_Guide.md`: visao geral do codigo;
-- `docs/pt-PT/Developer_Reference.md`: checklists e notas praticas;
+- `docs/pt-PT/ATC_Cookbook.md`: receitas práticas e workflows;
+- `docs/pt-PT/Best_Practices.md`: boas práticas de uso e bug reports;
+- `docs/pt-PT/Architecture.md`: arquitetura e fluxo de execução;
+- `docs/pt-PT/Developer_Guide.md`: visão geral do código;
+- `docs/pt-PT/Developer_Reference.md`: checklists e notas práticas;
 - `docs/SOFTWARE_REQUIREMENTS_SPECIFICATION.md`: requisitos formais,
-  criterios de aceitacao e rastreabilidade;
-- `docs/pt-PT/Testing.md`: regressao, cobertura isolada e lacunas manuais.
+  critérios de aceitação e rastreabilidade;
+- `docs/pt-PT/Testing.md`: regressão, cobertura isolada e lacunas manuais.
 
-## O que o ATC nao e
+## O que o ATC não é
 
-O ATC foca-se em computacao matematica pratica por comandos e nao pretende ser
+O ATC foca-se em computação matemática prática por comandos e não pretende ser
 um CAS universal.
 
-- Nao e substituto de Mathematica, Maple, SageMath ou SymPy.
-- Nao prova teoremas matematicos arbitrarios.
-- Nao substitui ferramentas profissionais de validacao de engenharia.
-- Tem comportamento simbolico apenas onde esta explicitamente suportado e
+- Não e substituto de Mathematica, Maple, SageMath ou SymPy.
+- Não prova teoremas matemáticos arbitrários.
+- Não substitui ferramentas profissionais de validação de engenharia.
+- Tem comportamento simbólico apenas onde está explicitamente suportado e
   testado.
 
 ## Recipes / Perfis
@@ -44,7 +44,7 @@ unit conversions
 physics calculations
 ```
 
-Educacao:
+Educação:
 
 ```text
 2+3*4
@@ -59,7 +59,7 @@ sinc(0)
 fft(1\0\0\0)
 ```
 
-Estatistica:
+Estatística:
 
 ```text
 avg(2\4\6)
@@ -68,24 +68,24 @@ max(3\_1\2)
 statistics calculations
 ```
 
-Financas:
+Finanças:
 
 ```text
 financial calculations
 100*15/100
 ```
 
-Menus interativos devem ser tratados como exemplos guiados; outputs estaveis
+Menus interativos devem ser tratados como exemplos guiados; outputs estáveis
 devem ser documentados apenas quando confirmados por testes.
 
 ## Precisao
 
-`higherprecision(1)` ativa Boost `mp_float` apos reinicio. `higherprecision(0)`
+`higherprecision(1)` ativa Boost `mp_float` após reinicio. `higherprecision(0)`
 volta a `double`. O ficheiro persistente e `higherPrecision.txt`.
 
-## Solver e polinomios
+## Solver e polinómios
 
-A versao 2.1.7 valida comandos como:
+A versão 2.1.7 valida comandos como:
 
 ```text
 solve equation(x^2-5*x+6)
@@ -94,7 +94,7 @@ solver(sin(x)-0.5)
 ```
 
 Tambem existem fast paths testados para cancelamento racional e constantes
-simbolicas como `pi`, `e` e `pii`.
+simbólicas como `pi`, `e` e `pii`.
 
 ## Testes
 

@@ -1,33 +1,33 @@
 # Guia de Utilizador do Advanced Trigonometry Calculator
 
-Este guia resume a utilizacao do Advanced Trigonometry Calculator (ATC). Nao
-substitui o guia completo, mas oferece uma entrada rapida para os fluxos
+Este guia resume a utilização do Advanced Trigonometry Calculator (ATC). Não
+substitui o guia completo, mas oferece uma entrada rápida para os fluxos
 principais.
 
 Para detalhe completo, consultar:
 
 - [Guia Completo de Utilizador](User_Guide_Full.md)
 - [Cookbook do ATC](ATC_Cookbook.md)
-- [Boas Praticas](Best_Practices.md)
+- [Boas Práticas](Best_Practices.md)
 - [Testes](Testing.md)
 
-## O que e o ATC
+## O que é o ATC
 
-O ATC e uma aplicacao matematica gratuita, open-source e de linha de comandos
-para Windows. O utilizador introduz expressoes ou comandos documentados e o ATC
+O ATC é uma aplicação matemática gratuita, open-source e de linha de comandos
+para Windows. O utilizador introduz expressões ou comandos documentados e o ATC
 devolve resultados na consola.
 
-## O que o ATC nao e
+## O que o ATC não é
 
-O ATC foca-se deliberadamente em computacao matematica pratica orientada por
+O ATC foca-se deliberadamente em computação matemática prática orientada por
 comandos, em vez de tentar ser um CAS universal.
 
-- O ATC nao e um CAS geral completo como Mathematica, Maple, SageMath ou
+- O ATC não é um CAS geral completo como Mathematica, Maple, SageMath ou
   SymPy.
-- O ATC nao foi desenhado para provar teoremas matematicos arbitrarios.
-- O ATC nao substitui ferramentas profissionais de validacao especificas de
+- O ATC não foi desenhado para provar teoremas matemáticos arbitrários.
+- O ATC não substitui ferramentas profissionais de validação específicas de
   engenharia.
-- Existe comportamento simbolico apenas onde esta explicitamente suportado e
+- Existe comportamento simbólico apenas onde está explicitamente suportado e
   testado.
 
 ## Quick Start
@@ -43,15 +43,15 @@ see variables
 exit
 ```
 
-Notas rapidas:
+Notas rápidas:
 
-- `_` e o marcador documentado de negativo em varias formas e outputs do ATC;
+- `_` e o marcador documentado de negativo em várias formas e outputs do ATC;
 - `#0`, `#1` e seguintes referem resultados anteriores;
-- expressoes diretas calculam imediatamente;
+- expressões diretas calculam imediatamente;
 - comandos iniciam workflows nomeados;
-- modulos guiados abrem menus interativos.
+- módulos guiados abrem menus interativos.
 
-## Expressoes basicas
+## Expressões básicas
 
 ```text
 2+3*4
@@ -73,20 +73,20 @@ Exemplo de output:
 
 O prompt suporta:
 
-- `Tab` para completar comandos, funcoes matematicas e funcoes do utilizador;
-- `Tab` repetido para alternar entre varias sugestoes;
-- setas `Up` e `Down` para reutilizar expressoes anteriores;
-- edicao normal com `Left`, `Right`, `Home`, `End`, `Delete` e `Backspace`.
+- `Tab` para completar comandos, funções matemáticas e funções do utilizador;
+- `Tab` repetido para alternar entre várias sugestões;
+- setas `Up` e `Down` para reutilizar expressões anteriores;
+- edição normal com `Left`, `Right`, `Home`, `End`, `Delete` e `Backspace`.
 
-## Modos de angulo e precisao
+## Modos de ângulo e precisão
 
-O modo angular e configurado com:
+O modo angular é configurado com:
 
 ```text
 mode
 ```
 
-Modos disponiveis:
+Modos disponíveis:
 
 ```text
 radian -> 1
@@ -94,7 +94,7 @@ degree -> 2
 gradian -> 3
 ```
 
-A precisao persistente pode alternar entre `double` e Boost `mp_float`:
+A precisão persistente pode alternar entre `double` e Boost `mp_float`:
 
 ```text
 higherprecision(1)
@@ -124,7 +124,7 @@ Para exemplos mais completos, consultar o cookbook.
 
 ## TXT processing
 
-O ATC suporta workflows de ficheiros TXT para processar varios comandos:
+O ATC suporta workflows de ficheiros TXT para processar vários comandos:
 
 ```text
 predefine txt
@@ -132,7 +132,7 @@ solve txt
 eliminate strings
 ```
 
-Usar estes fluxos para calculos em lote e exemplos reprodutiveis.
+Usar estes fluxos para cálculos em lote e exemplos reprodutíveis.
 
 ## Verbose resolution
 
@@ -141,15 +141,15 @@ verbose resolution(1)
 verbose resolution(0)
 ```
 
-O modo verbose ajuda a depurar o processamento de expressoes. Para calculo
+O modo verbose ajuda a depurar o processamento de expressões. Para cálculo
 normal, deve geralmente estar desligado.
 
-## Boas praticas
+## Boas práticas
 
-- Comecar com expressoes pequenas.
+- Comecar com expressões pequenas.
 - Validar parenteses.
 - Confirmar o modo angular.
 - Usar `solve equation(...)` para equacoes suportadas.
-- Usar `solver(...)` para pesquisa numerica de raizes.
-- Guardar exemplos reprodutiveis ao reportar problemas.
-- Nao usar o ATC como substituto de validacao profissional critica.
+- Usar `solver(...)` para pesquisa numérica de raizes.
+- Guardar exemplos reprodutíveis ao reportar problemas.
+- Não usar o ATC como substituto de validação profissional crítica.

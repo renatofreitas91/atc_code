@@ -1,59 +1,59 @@
 # Guia Completo de Utilizador do Advanced Trigonometry Calculator
 
-Versao: ATC 2.1.7  
-Idioma: Portugues de Portugal  
+Versão: ATC 2.1.7
+Idioma: Português de Portugal
 Autor: Renato Alexandre dos Santos Freitas
 
-Este e o guia de utilizador expandido do Advanced Trigonometry Calculator
-(ATC). Foi construido a partir do guia online existente, da documentacao 2.1.7
-atual e da cobertura automatizada de regressao deste repositorio.
+Este é o guia de utilizador expandido do Advanced Trigonometry Calculator
+(ATC). Foi construído a partir do guia online existente, da documentação 2.1.7
+atual e da cobertura automatizada de regressão deste repositório.
 
-## 1. O que e o ATC
+## 1. O que é o ATC
 
-O ATC e uma aplicacao matematica gratuita, open source e de linha de comandos
-para Windows. Foi desenhada para trabalho matematico local rapido atraves de
-comandos e expressoes textuais.
+O ATC é uma aplicação matemática gratuita, open source e de linha de comandos
+para Windows. Foi desenhada para trabalho matemático local rápido através de
+comandos e expressões textuais.
 
 Casos tipicos:
 
-- calculos cientificos rapidos;
+- cálculos científicos rápidos;
 - trigonometria e trigonometria inversa;
 - numeros complexos;
 - matrizes;
-- estatistica e probabilidade;
-- funcoes DSP;
+- estatística e probabilidade;
+- funções DSP;
 - simplificacao polinomial;
 - resolucao de equacoes e sistemas;
-- variaveis e expressoes reutilizaveis;
-- modulos interativos guiados;
+- variáveis e expressões reutilizaveis;
+- módulos interativos guiados;
 - processamento de ficheiros TXT.
 
-## 2. O que o ATC nao e
+## 2. O que o ATC não é
 
-O ATC foca-se deliberadamente em computacao matematica pratica orientada por
+O ATC foca-se deliberadamente em computação matemática prática orientada por
 comandos, em vez de tentar ser um CAS universal.
 
-- O ATC nao e um CAS geral completo como Mathematica, Maple, SageMath ou
+- O ATC não é um CAS geral completo como Mathematica, Maple, SageMath ou
   SymPy.
-- O ATC nao foi desenhado para provar teoremas matematicos arbitrarios.
-- O ATC nao substitui ferramentas profissionais de validacao especificas de
+- O ATC não foi desenhado para provar teoremas matemáticos arbitrários.
+- O ATC não substitui ferramentas profissionais de validação específicas de
   engenharia.
-- O ATC foca-se em calculo numerico, fluxos por comandos, uso educativo,
-  funcionalidades hibridas simbolicas/numericas implementadas e execucao local
-  rapida.
-- Existe comportamento simbolico apenas onde esta explicitamente suportado e
+- O ATC foca-se em cálculo numérico, fluxos por comandos, uso educativo,
+  funcionalidades hibridas simbólicas/numéricas implementadas e execução local
+  rápida.
+- Existe comportamento simbólico apenas onde está explicitamente suportado e
   testado.
 
 ## 3. Quick Start
 
-O ATC e uma aplicacao matematica de linha de comandos para Windows, gratuita e
-open-source. Avalia expressoes matematicas, comandos documentados e workflows
-guiados. Deve ser entendido como uma calculadora local pratica, nao como um CAS
-simbolico universal.
+O ATC é uma aplicação matemática de linha de comandos para Windows, gratuita e
+open-source. Avalia expressões matemáticas, comandos documentados e workflows
+guiados. Deve ser entendido como uma calculadora local prática, não como um CAS
+simbólico universal.
 
 Abrir o ATC executando `atc.exe` a partir da pasta Release criada pelo build ou
-atraves do atalho/launcher instalado quando existir. O prompt aceita um comando
-ou expressao por linha.
+através do atalho/launcher instalado quando existir. O prompt aceita um comando
+ou expressão por linha.
 
 Primeiros comandos a experimentar:
 
@@ -68,14 +68,14 @@ see variables
 exit
 ```
 
-Regras basicas de leitura:
+Regras básicas de leitura:
 
-- `_` e usado pelo ATC como marcador de negativo em varias formas documentadas
+- `_` e usado pelo ATC como marcador de negativo em várias formas documentadas
   e outputs; por exemplo `_5` significa `-5`.
 - `#0`, `#1` e indices seguintes referem resultados anteriores da sessao atual.
-- Uma expressao direta e avaliada de imediato, por exemplo `2+2`.
+- Uma expressão direta e avaliada de imediato, por exemplo `2+2`.
 - Um comando inicia uma acao ATC, por exemplo `mode` ou `solve equation(...)`.
-- Um modulo guiado abre um workflow interativo, por exemplo `financial
+- Um módulo guiado abre um workflow interativo, por exemplo `financial
   calculations` ou `unit conversions`.
 
 Workflow inicial recomendado:
@@ -90,12 +90,12 @@ sin(pi/6)
 verbose resolution(0)
 ```
 
-Quando um resultado e importante, confirmar primeiro o modo angular e o modo de
-precisao.
+Quando um resultado é importante, confirmar primeiro o modo angular e o modo de
+precisão.
 
 ## 4. Bases de input
 
-As expressoes sao escritas diretamente no prompt.
+As expressões são escritas diretamente no prompt.
 
 ```text
 2+3*4
@@ -104,7 +104,7 @@ sin(pi/2)
 log(100)
 ```
 
-Outputs estaveis:
+Outputs estáveis:
 
 ```text
 #0=14
@@ -136,10 +136,10 @@ Notacao cientifica usa `E` maiusculo:
 
 O ATC 2.1.7 inclui editor de linha:
 
-- `Tab` completa comandos, funcoes matematicas, aliases e funcoes do
+- `Tab` completa comandos, funções matemáticas, aliases e funções do
   utilizador;
-- `Tab` repetido alterna entre completamentos possiveis;
-- `Up` e `Down` navegam no historico;
+- `Tab` repetido alterna entre completamentos possíveis;
+- `Up` e `Down` navegam no histórico;
 - `Left`, `Right`, `Home`, `End`, `Delete` e `Backspace` editam a linha atual.
 
 ## 6. Modo angular
@@ -181,7 +181,7 @@ higherprecision(1)
 higherprecision(0)
 ```
 
-A definicao e aplicada apos reiniciar o ATC.
+A definição e aplicada após reiniciar o ATC.
 
 Comandos uteis:
 
@@ -202,7 +202,7 @@ dp50dpe
 2.71828182845904523536028747135266249775724709369996
 ```
 
-`maxprec` permite usar mais precisao numa expressao sem alterar o modo
+`maxprec` permite usar mais precisão numa expressão sem alterar o modo
 persistente.
 
 ## 8. Constantes e respostas anteriores
@@ -226,7 +226,7 @@ Resultados anteriores:
 #1
 ```
 
-## 9. Aritmetica
+## 9. Aritmética
 
 Exemplos:
 
@@ -325,9 +325,9 @@ sin(30+30i)
 asin(sin(30+30i))
 ```
 
-O modo angular influencia funcoes trigonometricas com argumentos complexos.
+O modo angular influencia funções trigonométricas com argumentos complexos.
 
-## 14. Multiplicacao automatica
+## 14. Multiplicacao automática
 
 ```text
 2pi
@@ -341,7 +341,7 @@ sin(pi/2)2
 3(2i)
 ```
 
-Com variaveis:
+Com variáveis:
 
 ```text
 x=4
@@ -357,7 +357,7 @@ xsin(pi/2)
 Quando existe uma variavel com nome exato, o ATC deve preferir essa variavel
 em vez de dividir o nome em produtos implicitos.
 
-## 15. Variaveis
+## 15. Variáveis
 
 ```text
 data=5
@@ -409,7 +409,7 @@ foo/2
 2*foo
 ```
 
-## 17. Estatistica e probabilidade
+## 17. Estatística e probabilidade
 
 ```text
 min(3\_1\2)
@@ -436,7 +436,7 @@ qfunc(0)
 qfuncinv(0.5)
 ```
 
-Modulo guiado:
+Módulo guiado:
 
 ```text
 statistics calculations
@@ -470,7 +470,7 @@ simplify polynomial((x+2i)*(x-2i))
 simplify polynomial(((x-5)(x+2))/(x-5))
 ```
 
-Raizes para polinomio:
+Raizes para polinómio:
 
 ```text
 roots to polynomial(2\3)
@@ -543,7 +543,7 @@ solver((x-e+pii)(x-e-pii))
 
 O modo angular e importante nos exemplos trigonometricos.
 
-## 22. Estudo de funcoes
+## 22. Estudo de funções
 
 ```text
 function study(x+1)
@@ -568,7 +568,7 @@ graph(x)
 graph(x;_2\2\1)
 ```
 
-O grafico e renderizado na consola. A validacao visual completa continua a ser
+O grafico e renderizado na consola. A validação visual completa continua a ser
 mais adequada manualmente.
 
 ## 24. Modulos guiados
@@ -584,11 +584,11 @@ unit conversions
 microeconomics calculations
 ```
 
-Estes modulos pedem valores e opcoes ao utilizador.
+Estes módulos pedem valores e opções ao utilizador.
 
 ## 25. Receitas por area
 
-Financas:
+Finanças:
 
 ```text
 financial calculations
@@ -601,7 +601,7 @@ Geometria:
 geometry calculations
 ```
 
-Fisica:
+Física:
 
 ```text
 physics calculations
@@ -678,7 +678,7 @@ simplify polynomial((x+1)(x-1))
 2+3
 ```
 
-O ATC deve continuar apos uma linha invalida e reportar o erro dessa linha.
+O ATC deve continuar após uma linha invalida e reportar o erro dessa linha.
 
 ## 29. Scripting
 
@@ -713,12 +713,12 @@ strlen
 ```
 
 Use scripting para fluxos repetiveis e teste scripts pequenos antes de os usar
-em calculos maiores.
+em cálculos maiores.
 
 ## 30. Funcoes do utilizador
 
-As funcoes do utilizador vivem na pasta `User functions`. O autocomplete pode
-sugerir funcoes como `atc_<nome>(`.
+As funções do utilizador vivem na pasta `User functions`. O autocomplete pode
+sugerir funções como `atc_<nome>(`.
 
 ## 31. Settings e ambiente
 
@@ -776,17 +776,17 @@ verbose desligado.
 
 ## 35. Cookbook / Receitas
 
-O cookbook dedicado esta disponivel em:
+O cookbook dedicado esta disponível em:
 
 ```text
 docs/pt-PT/ATC_Cookbook.md
 ```
 
-Inclui workflows praticos para calculo cientifico, trigonometria, polinomios,
-matrizes, estatistica, DSP, TXT processing, verbose resolution e modulos
+Inclui workflows praticos para cálculo cientifico, trigonometria, polinómios,
+matrizes, estatística, DSP, TXT processing, verbose resolution e módulos
 guiados.
 
-## 36. Perfis de utilizacao
+## 36. Perfis de utilização
 
 Engenharia:
 
@@ -798,7 +798,7 @@ unit conversions
 physics calculations
 ```
 
-Educacao:
+Educação:
 
 ```text
 2+3*4
@@ -817,7 +817,7 @@ ifft(1\1\1\1)
 sin(pi/2)+cos(0)
 ```
 
-Estatistica:
+Estatística:
 
 ```text
 avg(2\4\6)
@@ -827,38 +827,38 @@ statistics calculations
 qfunc(0)
 ```
 
-Financas:
+Finanças:
 
 ```text
 financial calculations
 100*15/100
 ```
 
-## 37. Boas praticas
+## 37. Boas práticas
 
-O guia dedicado de boas praticas esta disponivel em:
+O guia dedicado de boas práticas esta disponível em:
 
 ```text
 docs/pt-PT/Best_Practices.md
 ```
 
-Usar para workflows fiaveis: comecar por expressoes pequenas, confirmar modo
+Usar para workflows fiáveis: começar por expressões pequenas, confirmar modo
 angular, validar parenteses, escolher o solver certo, usar TXT para lotes
-reprodutiveis e evitar comportamento nao documentado.
+reprodutíveis e evitar comportamento não documentado.
 
 ## 38. Resolucao de problemas
 
-Se uma expressao falhar:
+Se uma expressão falhar:
 
 - verificar parenteses;
 - verificar modo angular;
 - confirmar se deve usar `_` para negativo;
 - confirmar se o comando e interativo;
-- testar partes menores da expressao;
+- testar partes menores da expressão;
 - usar `verbose resolution(1)`;
 - confirmar se a funcionalidade esta documentada e coberta por testes.
 
-## 39. Documentacao e testes
+## 39. Documentação e testes
 
 ```text
 docs/Testing.md
