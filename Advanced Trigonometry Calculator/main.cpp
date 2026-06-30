@@ -973,6 +973,10 @@ bool processTxt(char* path, int re) {
 			_delete(saveSendFunc, "saveSendFunc");
 			saveSendFunc = nullptr;
 			_delete(arith, "arith");
+			_delete(anstxt, "anstxt");
+			anstxt = nullptr;
+			_delete(anstxtI, "anstxtI");
+			anstxtI = nullptr;
 			rf = re;
 			_delete(sD, "sD");
 			sD = nullptr;
@@ -1264,6 +1268,10 @@ bool processTxt(char* path, int re) {
 	varLetters = nullptr;
 	_delete(saveSendFunc, "saveSendFunc");
 	saveSendFunc = nullptr;
+	_delete(anstxt, "anstxt");
+	anstxt = nullptr;
+	_delete(anstxtI, "anstxtI");
+	anstxtI = nullptr;
 	processingTxtFile = previousProcessingTxtFile;
 	rf = re;
 	return toWrite;

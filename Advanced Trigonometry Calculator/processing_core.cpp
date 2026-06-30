@@ -593,40 +593,34 @@ T initialProcessor(char* arithTrig, T result) {
 	int facto = 0, *sig = getDynamicIntArray(), s = 0, rectPar = 0, h = 0, i = 0, rePar = 0, so = 0, j = 0, g = 0, count = 0, e = 0, d = 0, th = 0, f = 0, trigo = 1, trigono = 0, co = 0, k = 0, l = 0, tr = 0, pa = 0, paren = 1, pare = 0, tg = 0, p = 0, a = 0, c = 1, r = 0, iN = 0, iL = 0;
 	T exp = 1, result1 = 0, result2 = 0, amplitude = 1;
 	PrecisionValue* triArith = getDynamicDoubleArray(); PrecisionValue* triArithI = getDynamicDoubleArray();
-	PrecisionValue** vector1_R, ** vector1_I, ** res_vectorR, ** res_vectorI;
-	vector1_R = new PrecisionValue* [DIMTWOD];
-
-	for (int i = 0; i < DIMTWOD; ++i) {
-		vector1_R[i] = getDynamicDoubleArray();
-	}
-	vector1_I = new PrecisionValue* [DIMTWOD];
-
-	for (int i = 0; i < DIMTWOD; ++i) {
-		vector1_I[i] = getDynamicDoubleArray();
-	}
-	res_vectorR = new PrecisionValue* [DIMTWOD];
-
-	for (int i = 0; i < DIMTWOD; ++i) {
-		res_vectorR[i] = getDynamicDoubleArray();
-	}
-	res_vectorI = new PrecisionValue* [DIMTWOD];
-
-	for (int i = 0; i < DIMTWOD; ++i) {
-		res_vectorI[i] = getDynamicDoubleArray();
-	}
-
-
+	PrecisionValue** vector1_R = nullptr, ** vector1_I = nullptr, ** res_vectorR = nullptr, ** res_vectorI = nullptr;
+	auto ensureMatrixScratch = [&]() {
+		if (vector1_R != nullptr) {
+			return;
+		}
+		vector1_R = new PrecisionValue* [DIMTWOD];
+		for (int i = 0; i < DIMTWOD; ++i) {
+			vector1_R[i] = getDynamicDoubleArray();
+		}
+		vector1_I = new PrecisionValue* [DIMTWOD];
+		for (int i = 0; i < DIMTWOD; ++i) {
+			vector1_I[i] = getDynamicDoubleArray();
+		}
+		res_vectorR = new PrecisionValue* [DIMTWOD];
+		for (int i = 0; i < DIMTWOD; ++i) {
+			res_vectorR[i] = getDynamicDoubleArray();
+		}
+		res_vectorI = new PrecisionValue* [DIMTWOD];
+		for (int i = 0; i < DIMTWOD; ++i) {
+			res_vectorI[i] = getDynamicDoubleArray();
+		}
+	};
 
 	for (s = 0; s < DIMDOUBLE; s++) {
 		triArith[s] = 0;
 		triArithI[s] = 0;
 		signalVectors[s] = -1;
 		sig[s] = -1;
-	}
-	for (i = 0; i < DIMTWOD; i++) {
-		for (j = 0; j < DIMDOUBLE; j++) {
-			vector1_R[i][j] = 0; vector1_I[i][j] = 0; res_vectorR[i][j] = 0; res_vectorI[i][j] = 0;
-		}
 	}
 
 	for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
@@ -1002,8 +996,12 @@ T initialProcessor(char* arithTrig, T result) {
 
 		_delete(paTrig, "paTrig"); paTrig = nullptr;
 		_delete(simplified, "simplified"); simplified = nullptr;
+		_delete(saveFunc, "saveFunc"); saveFunc = nullptr;
 		_deleteShort(func, "func");
 		_Delete(vectors, DIMTWOD, DIMDOUBLE, "vectors[w]");
+		_delete(signalVectors, "signalVectors"); signalVectors = nullptr;
+		_delete(parent, "parent"); parent = nullptr;
+		_delete(sig, "sig"); sig = nullptr;
 
 		return result1;
 	}
@@ -1895,6 +1893,10 @@ T initialProcessor(char* arithTrig, T result) {
 		printf("\nSimplified expression by initialProcessor: %s\n\n", verboseDisplayExpression(simplified).c_str());
 	}
 
+	if (countVectors > 0 || matrixMode == 1) {
+		ensureMatrixScratch();
+	}
+
 	for (so = 0; so < c; so++) {
 		if (arTrig[so] == '^') {
 			if (signalVectors[so + 1] == -1 && signalVectors[so] != -1) {
@@ -2416,6 +2418,9 @@ T initialProcessor(char* arithTrig, T result) {
 	_delete(simplified, "simplified"); simplified = nullptr;
 	_delete(saveFunc, "saveFunc"); saveFunc = nullptr;
 	_Delete(vectors, DIMTWOD, DIMDOUBLE, "vectors[w]");
+	_delete(signalVectors, "signalVectors"); signalVectors = nullptr;
+	_delete(parent, "parent"); parent = nullptr;
+	_delete(sig, "sig"); sig = nullptr;
 	return result1;
 }
 template<typename T>
@@ -3255,7 +3260,10 @@ T arithSolver(char* trigon1, T result) {
 	_delete(simplified, "simplified"); simplified = nullptr;
 	_delete(amp, "amp"); amp = nullptr;
 	_delete(prefCalc, "prefCalc"); prefCalc = nullptr;
-	_delete(trigon, "trigon");
+	_delete(trigon, "trigon"); trigon = nullptr;
+	_delete(sig, "sig"); sig = nullptr;
+	_delete(ampl, "ampl"); ampl = nullptr;
+	_delete(amplI, "amplI"); amplI = nullptr;
 	return result1;
 
 

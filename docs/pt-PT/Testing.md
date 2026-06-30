@@ -136,3 +136,11 @@ Regras ao atualizar documentação:
 O Cookbook e as Boas Práticas devem usar comandos já documentados. Se uma
 receita não puder ser testada com segurança, deve indicar isso nas notas ou
 limitacoes.
+
+## Validação de desempenho de scripts
+
+O interpretador de scripts tem validação manual adicional com o exemplo `Scripts examples/Multiplication Table 1-100_script_generator.txt`. Este cenário exercita ciclos `for` aninhados, atribuições, reutilização de variáveis, `print("...", ...)` e avaliação repetida de expressões escalares.
+
+Na versão 2.1.7, este fluxo reduz pressão de memória ao libertar arrays temporários do processamento TXT, evitar buffers matriciais em expressões escalares e executar linhas `print("...", ...)` seguras diretamente em memória.
+
+Como o teste depende da consola real e de output visual, a medição completa de tempo continua como validação manual. Uma fixture automática não interativa deverá ser adicionada quando houver um harness estável para scripts.

@@ -8,6 +8,12 @@ A versão 2.1.7 foca-se em previsibilidade do modo de precisão, correções no
 solver e simplificador polinomial, cobertura de regressão, comportamento da
 consola Windows 11, memória dinâmica, autocomplete e verbose resolution.
 
+
+## Memória e scripts
+
+A versão 2.1.7 reduz o consumo de memória em scripts repetitivos. O `processTxt()` liberta arrays temporários de respostas, o `arithSolver()` liberta buffers auxiliares no retorno normal e o `initialProcessor()` só aloca buffers matriciais quando a expressão realmente usa matrizes.
+
+O interpretador de scripts também tem um caminho rápido para `print("...", ...)`: quando a linha é segura, o ATC executa o `print` diretamente em memória e evita o ficheiro temporário usado pelo fluxo TXT tradicional.
 ## Mapa documental
 
 Usar estes documentos em conjunto:

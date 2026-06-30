@@ -246,3 +246,23 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 ```
 
 For memory-sensitive work, also run the memory stress runner when practical.
+
+## Script Performance Validation
+
+The script interpreter has additional manual validation coverage for the
+`Scripts examples/Multiplication Table 1-100_script_generator.txt` workflow.
+This scenario is useful because it repeatedly exercises:
+
+- nested `for` loops;
+- variable assignment and reuse;
+- `print("...", ...)` formatting;
+- repeated scalar expression evaluation inside script output.
+
+ATC 2.1.7 reduces memory pressure in this flow by releasing temporary
+TXT-processing arrays, avoiding matrix scratch allocation for scalar
+expressions, and executing safe `print("...", ...)` script lines directly in
+memory instead of routing them through the temporary TXT-processing file path.
+
+Because this scenario depends on real console behavior and user-visible output,
+the full timing check remains a manual validation item. Automated coverage
+should be added later with a stable non-interactive script harness.

@@ -13,6 +13,11 @@ Data: 2026-06-09
 - Melhorias no comportamento da consola no Windows 11.
 - Melhorias de memória dinâmica e reducao de alocacoes desnecessarias em
   caminhos comuns.
+- Melhorias no processamento de scripts: `print("...", ...)` pode ser tratado
+  diretamente em memória quando é seguro, evitando o caminho temporário por TXT.
+- Redução adicional de memória em scripts através da libertação de arrays
+  temporários e da alocação preguiçosa de buffers matriciais no
+  `initialProcessor()`.
 - Cobertura de `min`, `max` e `avg` com listas e variáveis matriz.
 - Autocomplete com `Tab`, ciclo de sugestões e histórico com setas.
 - Melhorias em `verbose resolution`.

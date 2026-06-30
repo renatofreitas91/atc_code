@@ -691,6 +691,41 @@ void sprint(char* text, T result1, T result2) {
 	_delete(String, "String"); String = nullptr;
 	_delete(finalString, "finalString"); finalString = nullptr;
 }
+template<typename T>
+bool tryFastScriptPrint(char* exprDev, T result1, T result2) {
+	if (exprDev == nullptr) {
+		return false;
+	}
+	int start = 0;
+	while (exprDev[start] == ' ' || exprDev[start] == '\t') {
+		start++;
+	}
+	if (!(exprDev[start] == 'p' && exprDev[start + 1] == 'r' && exprDev[start + 2] == 'i' && exprDev[start + 3] == 'n' && exprDev[start + 4] == 't' && exprDev[start + 5] == '(' && exprDev[start + 6] == '"')) {
+		return false;
+	}
+	int length = abs((int)strlen(exprDev));
+	int end = length - 1;
+	while (end > start && (exprDev[end] == ' ' || exprDev[end] == '\t')) {
+		end--;
+	}
+	if (end <= start || exprDev[end] != ')') {
+		return false;
+	}
+	char* printArgument = getDynamicCharArray("", "printArgument");
+	int j = 0;
+	for (int i = start + 7; i < end; ++i) {
+		printArgument[j] = exprDev[i];
+		j++;
+	}
+	printArgument[j] = '\0';
+	print<T>(printArgument, result1, result2);
+	puts(" ");
+	resultR = result1;
+	resultI = result2;
+	_delete(printArgument, "printArgument");
+	printArgument = nullptr;
+	return true;
+}
 template <typename T>
 T solveNow(char* toSolveNow, T result1, T result2) {
 	FILE *fsolveN = NULL;
@@ -725,6 +760,9 @@ template<typename T>
 T atcProg(char* exprDev) {
 
 	sprintf(context, "script");
+	if (tryFastScriptPrint<T>(exprDev, precisionValueTo<T>(resultR), precisionValueTo<T>(resultI))) {
+		return precisionValueTo<T>(resultR);
+	}
 	fflush(NULL);
 	FILE *atcDev = NULL;
 	char* path = getDynamicCharArray("", "path");

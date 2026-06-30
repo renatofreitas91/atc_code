@@ -34,6 +34,12 @@ Last updated: 2026-06-27
 - Added interactive prompt improvements: Tab completion, repeated-Tab cycling
   for ambiguous matches, broader command/function suggestions, dynamic user
   function suggestions and Up/Down history navigation.
+- Improved script execution for common `print("...", ...)` statements by
+  bypassing the temporary TXT-processing path when the line can be evaluated
+  safely in memory.
+- Reduced script memory pressure by freeing repeated TXT-processing arrays and
+  allocating matrix scratch buffers only when matrix processing is actually
+  needed.
 - Rewrote and published the repository README to the GitHub `main` branch in
   commit `f71e507 Improve project README`.
 
@@ -275,6 +281,14 @@ size is known:
   interactive output
 - `function study(...)` now releases `poleZerosR` and `poleZerosI` before
   returning, avoiding repeated memory growth in that path
+- script execution now avoids repeated `processTxt()`/temporary-file overhead
+  for simple `print("...", ...)` statements
+- `processTxt()` now releases temporary answer arrays used while processing TXT
+  and script commands
+- `initialProcessor()` no longer allocates four large matrix scratch matrices
+  for scalar expressions
+- `arithSolver()` now releases temporary amplitude and sign arrays on the
+  normal return path
 - Release builds now set linker heap reserve/commit explicitly
   (`x64: /HEAP:150000000,4194304`; `Win32: /HEAP:50000000,1048576`) and remove
   duplicate manual `/STACK` options from `AdditionalOptions`

@@ -588,6 +588,14 @@ The 2.1.7 codebase now avoids several avoidable large allocations and leaks:
 - `function study(...)` now releases the `poleZerosR` and `poleZerosI` dynamic
   arrays before returning, avoiding repeated memory growth in that analysis
   path
+- `processTxt()` now releases temporary answer arrays used while processing TXT
+  and script commands
+- `arithSolver()` now releases temporary amplitude/sign arrays on the normal
+  return path
+- `initialProcessor()` now allocates matrix scratch matrices lazily, so scalar
+  script expressions do not reserve matrix buffers they never use
+- common script `print("...", ...)` statements can now bypass the temporary
+  TXT-processing file path and execute directly in memory
 - Release linker settings now define heap reserve/commit explicitly. Release
   x64 uses `/HEAP:150000000,4194304`; Release Win32 uses
   `/HEAP:50000000,1048576`. Stack reserve/commit remains explicit through the

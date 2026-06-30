@@ -34,6 +34,11 @@ Dates and version details should be kept aligned with `docs/RELEASE_2.1.7.md`.
 - Improved Release heap reserve/commit settings for x64 and x86 builds.
 - Improved autocomplete ordering so the shortest closest match is inserted
   first and subsequent Tab presses can cycle alternatives.
+- Improved script execution performance for common `print("...", ...)`
+  statements by avoiding the temporary TXT-processing path when the command can
+  be handled safely in memory.
+- Reduced script memory pressure by avoiding large matrix scratch allocations
+  for scalar expressions in `initialProcessor()`.
 
 ### Fixed
 
@@ -47,6 +52,8 @@ Dates and version details should be kept aligned with `docs/RELEASE_2.1.7.md`.
   and complex `pii`.
 - Fixed avoidable dynamic-allocation and release issues in several common
   numeric paths.
+- Fixed repeated script-processing allocation growth in `processTxt()`,
+  `initialProcessor()`, and `arithSolver()`.
 
 ### Testing
 
