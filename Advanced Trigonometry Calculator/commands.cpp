@@ -2573,6 +2573,10 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			sprintf(data, "%s", exprDev);
 			char* internalPolynomial = getDynamicCharArray("", "internalPolynomial");
 			bool hasInternalPolynomial = convertSimplePolynomialToInternalPolynomial(data, internalPolynomial);
+			if (rationalProductReduced && strcmp(data, "1") == 0) {
+				sprintf(internalPolynomial, "(0+0i)x^1+(1+0i)");
+				hasInternalPolynomial = true;
+			}
 			if (rationalProductReduced && hasInternalPolynomial) {
 				sprintf(data, "%s", internalPolynomial);
 			}

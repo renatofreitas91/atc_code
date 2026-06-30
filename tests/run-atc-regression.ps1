@@ -804,6 +804,7 @@ $polynomialSimplifyTests = @(
     @{ Name = "complex roots written as subtracted groups"; Expression = "simplify polynomial((x-(1+2i))*(x-(1-2i)))"; Expected = "\(1\+0i\)x\^2\+\(_2\+0i\)x\^1\+\(5\+0i\)" },
     @{ Name = "complex conjugate product"; Expression = "simplify polynomial((x-1)(x+6.5i)(x-6.5i))"; Expected = "\(1\+0i\)x\^3\+\(_1\+0i\)x\^2\+\(42\.25\+0i\)x\^1\+\(_42\.25\+0i\)" },
     @{ Name = "complex product with zero root"; Expression = "simplify polynomial((x-1)(x-0)(x-0.5i)(x-2))"; Expected = "\(1\+0i\)x\^4\+\(_3\+_0\.5i\)x\^3\+\(2\+1\.5i\)x\^2\+\(0\+_1i\)x\^1\+\(0\+0i\)" },
+    @{ Name = "rational product cancels all factors to one"; Expression = "simplify polynomial(((x-7)(x+8))/((x-7)(x+8)))"; Expected = "\(0\+0i\)x\^1\+\(1\+0i\)" },
     @{ Name = "rational product cancels common factor"; Expression = "simplify polynomial(((x-5)(x+2))/(x-5))"; Expected = "\(1\+0i\)x\^1\+\(2\+0i\)" },
     @{ Name = "nested rational product cancels common factor"; Expression = "simplify polynomial((((x-5)(x+2))/(x-5))*(((x-5)(x+2))/(x-5)))"; Expected = "\(1\+0i\)x\^2\+\(4\+0i\)x\^1\+\(4\+0i\)" }
 )

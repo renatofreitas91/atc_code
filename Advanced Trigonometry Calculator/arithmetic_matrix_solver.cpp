@@ -1,19 +1,13 @@
 
 #include "stdafx.h"
 
-#ifndef ATC_ENABLE_MATRIX_PARALLELISM
-#define ATC_ENABLE_MATRIX_PARALLELISM 1
-#endif
-
 static const int ATC_MATRIX_PARALLEL_THRESHOLD = 225;
+static const int ATC_MATRIX_MAX_WORKERS = 8;
 
+#if ATC_ENABLE_MATRIX_PARALLELISM != 0
 static bool isMatrixParallelismDisabled() {
-#if ATC_ENABLE_MATRIX_PARALLELISM == 0
-	return true;
-#else
 	const char* disabled = getenv("ATC_DISABLE_MATRIX_PARALLELISM");
 	return disabled != nullptr && disabled[0] != '\0' && disabled[0] != '0';
-#endif
 }
 
 template <typename Worker>
@@ -25,7 +19,7 @@ static bool runMatrixRowsParallel(int rows, int columns, Worker worker) {
 	if (hardwareThreads < 2) {
 		return false;
 	}
-	int workerCount = std::min(rows, (int)hardwareThreads);
+	int workerCount = std::min(rows, std::min((int)hardwareThreads, ATC_MATRIX_MAX_WORKERS));
 	if (workerCount < 2) {
 		return false;
 	}
@@ -58,6 +52,15 @@ static bool runMatrixRowsParallel(int rows, int columns, Worker worker) {
 	}
 	return !workers.empty();
 }
+#else
+template <typename Worker>
+static bool runMatrixRowsParallel(int rows, int columns, Worker worker) {
+	(void)rows;
+	(void)columns;
+	(void)worker;
+	return false;
+}
+#endif
 
 static void matrixSumCell(PrecisionValue leftR, PrecisionValue leftI, PrecisionValue rightR, PrecisionValue rightI, PrecisionValue& outR, PrecisionValue& outI) {
 	outR = precisionValueTo<mp_float>(leftR) + precisionValueTo<mp_float>(rightR);

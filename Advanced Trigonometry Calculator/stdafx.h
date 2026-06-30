@@ -20,7 +20,12 @@
 #include <iomanip>       // Decimal precision formatting
 #include <limits>        // Numeric limits
 #include <complex>       // Complex numeric solver helpers
+#ifndef ATC_ENABLE_MATRIX_PARALLELISM
+#define ATC_ENABLE_MATRIX_PARALLELISM 1
+#endif
+#if ATC_ENABLE_MATRIX_PARALLELISM != 0
 #include <thread>        // Internal computation workers
+#endif
 #include <conio.h>       // Console I/O
 #include <io.h>          // Console redirection checks
 #include <tchar.h>       // Generic text mapping
