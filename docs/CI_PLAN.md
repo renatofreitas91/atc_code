@@ -120,18 +120,17 @@ isolated ATC data directory.
 - The CI proposal does not replace manual validation of console UI behavior,
 Windows 11 terminal rendering, package layout or SourceForge ZIP validation.
 
-## Activation Checklist
+## Activation checklist
 
-Before enabling the workflow:
+TODO before enabling the workflow:
 
-1. Confirm that the selected runner can build `v141_xp`.
-2. Confirm x64 Release build success.
-3. Confirm x86 Release build success or mark x86 as allowed to fail while the
-   runner is being prepared.
-4. Confirm main regression suite passes with isolated `-AtcDataDir`.
-5. Confirm matrix parallelism tests pass with isolated `-AtcDataDir`.
-6. Confirm no CI job writes to the developer/user default ATC data directory.
-7. Decide whether artifacts should be uploaded for x64/x86 executables.
+- Confirm that the GitHub-hosted Windows runner has the required
+  MSBuild/toolset.
+- Test whether `v141_xp` is available.
+- If `v141_xp` is unavailable, prepare a self-hosted Windows runner.
+- Only then move `docs/ci/atc-ci.proposed.yml` to
+  `.github/workflows/atc-ci.yml`.
+- Run CI once on a test branch before relying on it for `main`.
 
 ## Future Improvements
 
