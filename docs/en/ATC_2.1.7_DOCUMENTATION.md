@@ -1,7 +1,7 @@
 # Advanced Trigonometry Calculator 2.1.7 - current technical documentation
 
 Date: 2026-06-09
-Last updated: 2026-06-27
+Last updated: 2026-06-30
 
 This document describes the current state of ATC 2.1.7 after the precision,
 equation solver, regression-test, Windows console, documentation and
@@ -477,7 +477,7 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 374 passed, 0 failed
+Summary: 377 passed, 0 failed
 ```
 
 The isolated coverage helper currently validates:
@@ -640,7 +640,7 @@ These changes were build-verified and the command-line regression suite remains
 green:
 
 ```text
-Summary: 374 passed, 0 failed
+Summary: 377 passed, 0 failed
 ```
 
 Release x86 and Release x64 were rebuilt successfully with MSBuild. Both
@@ -688,32 +688,3 @@ The test runner temporarily touches:
 ```
 
 It backs up and restores their previous contents.
-
-## Resumo em portugues
-
-Este documento descreve o estado tecnico atual do Advanced Trigonometry
-Calculator 2.1.7. A versao 2.1.7 concentra-se em tornar a transicao entre
-`double` e Boost `mp_float` previsivel entre reinicios, corrigir formatacao de
-alta precisao, reforcar os caminhos de `solve equation`, `solver` e
-`simplify polynomial`, melhorar o comportamento da consola no Windows 11,
-reduzir consumo de memoria e aumentar a cobertura automatizada baseada no guia
-de utilizador.
-
-Pontos principais:
-
-- o README publico do repositorio foi reescrito em ingles e publicado no branch
-  `main` do GitHub no commit `f71e507 Improve project README`;
-- a documentacao do projeto deve passar a ser mantida em portugues e ingles;
-- comentarios no codigo, quando existirem, devem ficar apenas em ingles;
-- `higherprecision(1)` e `higherprecision(0)` controlam a persistencia entre
-  `double` e Boost `mp_float`;
-- `verbose resolution`, `verbose resolution(1)` e `verbose resolution(0)` estao
-  suportados, sem ativar logs verbosos durante o arranque interno;
-- os caminhos rapidos de solver/equation cobrem cancelamentos racionais exatos,
-  constantes simbolicas `pi`, `e` e casos complexos com `pii`;
-- a suite automatizada valida atualmente `359 passed, 0 failed` em Release x64
-  e Release x86;
-- a cobertura isolada valida atualmente `65 passed, 0 failed`, incluindo
-  autocomplete, navegacao por historico e ramos de comandos interativos;
-- x64 e Win32/x86 continuam a ser alvos de build, mantendo compatibilidade com
-  Windows antigo e Windows 11.

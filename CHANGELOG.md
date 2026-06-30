@@ -64,7 +64,7 @@ Dates and version details should be kept aligned with `docs/RELEASE_2.1.7.md`.
 - Current validated regression result for Release x64 and Release x86:
 
 ```text
-Summary: 374 passed, 0 failed
+Summary: 377 passed, 0 failed
 ```
 
 - Current isolated coverage result:

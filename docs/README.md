@@ -62,6 +62,9 @@ English:
 - [Software Requirements Specification](SOFTWARE_REQUIREMENTS_SPECIFICATION.md)
 - [Testing](en/Testing.md)
 - [GitHub Actions CI Plan](CI_PLAN.md)
+- [Release Readiness 2.1.7](RELEASE_READINESS_2.1.7.md)
+- [Windows 11 Smoke Test 2.1.7](SMOKE_TEST_WINDOWS_11_2.1.7.md)
+- [Package Validation 2.1.7](PACKAGE_VALIDATION_2.1.7.md)
 - [Release Notes 2.1.7](en/RELEASE_2.1.7.md)
 - [Technical Documentation 2.1.7](en/ATC_2.1.7_DOCUMENTATION.md)
 
@@ -70,13 +73,13 @@ Portuguese:
 - [Guia de Utilizador](pt-PT/User_Guide.md)
 - [Guia Completo de Utilizador](pt-PT/User_Guide_Full.md)
 - [Cookbook do ATC](pt-PT/ATC_Cookbook.md)
-- [Boas Praticas](pt-PT/Best_Practices.md)
+- [Boas Práticas](pt-PT/Best_Practices.md)
 - [Guia de Developer](pt-PT/Developer_Guide.md)
-- [Referencia de Developer](pt-PT/Developer_Reference.md)
+- [Referência de Developer](pt-PT/Developer_Reference.md)
 - [Arquitetura](pt-PT/Architecture.md)
 - [Testes](pt-PT/Testing.md)
 - [Notas de Release 2.1.7](pt-PT/RELEASE_2.1.7.md)
-- [Documentacao Tecnica 2.1.7](pt-PT/ATC_2.1.7_DOCUMENTATION.md)
+- [Documentação Técnica 2.1.7](pt-PT/ATC_2.1.7_DOCUMENTATION.md)
 
 PDF:
 

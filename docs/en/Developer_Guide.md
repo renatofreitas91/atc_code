@@ -170,7 +170,7 @@ Main scripts:
 Current validated regression result for Release x64 and Release x86:
 
 ```text
-Summary: 374 passed, 0 failed
+Summary: 377 passed, 0 failed
 ```
 
 Current isolated coverage result:

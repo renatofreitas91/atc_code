@@ -12,6 +12,7 @@ open-source e comunitária.
 - [Referência de Developer](Developer_Reference.md)
 - [Arquitetura](Architecture.md)
 - [Testes](Testing.md)
+- [Release Readiness 2.1.7](../RELEASE_READINESS_2.1.7.md)
 - [Notas de Release 2.1.7](RELEASE_2.1.7.md)
 - [Documentação Técnica 2.1.7](ATC_2.1.7_DOCUMENTATION.md)
 

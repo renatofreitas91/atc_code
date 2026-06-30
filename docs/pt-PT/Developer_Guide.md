@@ -84,7 +84,7 @@ Scripts principais:
 Resultado validado atual:
 
 ```text
-Summary: 374 passed, 0 failed
+Summary: 377 passed, 0 failed
 ```
 
 ## Referência prática de developer

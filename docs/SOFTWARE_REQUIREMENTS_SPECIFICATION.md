@@ -1,6 +1,6 @@
 # Advanced Trigonometry Calculator Software Requirements Specification
 
-Version: ATC 2.1.7 in development  
+Version: ATC 2.1.7
 Author: Renato Alexandre dos Santos Freitas  
 License: GPL-3.0  
 Standard alignment: IEEE 29148-style Software Requirements Specification  
@@ -1754,7 +1754,7 @@ ATC 2.1.7 requirements are acceptable when:
 Current documented validation baseline:
 
 ```text
-Regression: 374 passed, 0 failed
+Regression: 377 passed, 0 failed
 Isolated coverage: 68 passed, 0 failed
 Package validation: 44 passed, 0 failed
 ```

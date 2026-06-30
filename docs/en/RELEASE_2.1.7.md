@@ -1,7 +1,7 @@
 # Advanced Trigonometry Calculator 2.1.7 release notes
 
 Release date: 2026-06-09
-Last updated: 2026-06-27
+Last updated: 2026-06-30
 
 ## Highlights
 
@@ -339,7 +339,7 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current result for both Release x64 and Release x86:
 
 ```text
-Summary: 374 passed, 0 failed
+Summary: 377 passed, 0 failed
 ```
 
 Script benchmark validation for the `Multiplication Table 1-100` workflow:
@@ -494,30 +494,3 @@ tests\ATC_USER_GUIDE_COVERAGE.md
 tests\run-atc-regression.ps1
 tests\run-atc-isolated-coverage.ps1
 ```
-
-## Resumo de release em portugues
-
-Esta release 2.1.7 reforca a estabilidade tecnica do ATC e prepara o projeto
-para uma distribuicao mais clara como projeto open-source.
-
-Principais pontos em portugues:
-
-- alternancia persistente entre `double` e Boost `mp_float`;
-- correcao da formatacao de alta precisao, incluindo `dp50dppi` e `dp50dpe`;
-- melhorias em `solve equation`, `solver` e `simplify polynomial`, incluindo
-  produtos racionais com fatores cancelaveis e constantes simbolicas como
-  `pi`, `e` e `pii`;
-- melhoria de `verbose resolution`, agora com `verbose resolution(1)` e
-  `verbose resolution(0)`, evitando logs internos durante o arranque;
-- melhorias no comportamento da consola no Windows 11 e suporte para novas
-  instancias/abas quando o Windows Terminal esta disponivel;
-- reducao de alocacoes desnecessarias e melhoria de libertacao de memoria em
-  varios caminhos;
-- suite automatizada atual com `359 passed, 0 failed` em Release x64 e
-  Release x86;
-- cobertura isolada atual com `65 passed, 0 failed`, incluindo autocomplete e
-  navegacao por historico;
-- README publico reescrito e publicado no GitHub em `main` no commit
-  `f71e507 Improve project README`;
-- a documentacao futura deve ser mantida em portugues e ingles, enquanto os
-  comentarios no codigo devem permanecer apenas em ingles.

@@ -51,7 +51,7 @@ aprender, testar e desenvolver:
 Resultado validado:
 
 ```text
-Summary: 374 passed, 0 failed
+Summary: 377 passed, 0 failed
 ```
 
 Cobertura isolada:

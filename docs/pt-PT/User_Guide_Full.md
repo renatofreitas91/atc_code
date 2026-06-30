@@ -869,7 +869,7 @@ tests/ATC_USER_GUIDE_COVERAGE.md
 Resultado atual validado:
 
 ```text
-Summary: 374 passed, 0 failed
+Summary: 377 passed, 0 failed
 ```
 
 Este guia deve evoluir com os testes e com o comportamento documentado do ATC

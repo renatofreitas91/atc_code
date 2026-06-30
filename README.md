@@ -138,7 +138,7 @@ behavior.
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 374 passed, 0 failed
+Summary: 377 passed, 0 failed
 ```
 
 The isolated coverage helper currently validates 68 source-level and safe
@@ -211,7 +211,7 @@ community.
 
 - [Documentation index](docs/README.md)
 - [English documentation](docs/en/)
-- [Documentacao em portugues](docs/pt-PT/)
+- [Documentação em português](docs/pt-PT/)
 - [PDF downloads](docs/pdf/)
 - [Full User Guide EN](docs/en/User_Guide_Full.md)
 - [Guia Completo PT-PT](docs/pt-PT/User_Guide_Full.md)
