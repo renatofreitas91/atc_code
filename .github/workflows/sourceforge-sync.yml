@@ -51,7 +51,7 @@ jobs:
 
       - name: Add SourceForge remote
         run: |
-          git remote add sourceforge "ssh://renatofreitas91@git.code.sf.net/p/advantrigoncalc/code"
+          git remote add sourceforge "ssh://renatofreitas91@git.code.sf.net/p/advantrigoncalc/atc"
 
       - name: Push branches to SourceForge
         run: |
