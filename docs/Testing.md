@@ -26,12 +26,17 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe 
 Current validated result for both Release x64 and Release x86:
 
 ```text
-Summary: 374 passed, 0 failed
+Summary: 377 passed, 0 failed
 ```
 
 Latest Release x86 and Release x64 builds completed successfully with
 `0 Warning(s), 0 Error(s)`, and both executables passed the same regression
 suite.
+
+Do not run ATC test runners in parallel against the same ATC data directory.
+The runners intentionally mutate settings, variables and temporary files under
+the ATC data folder. Parallel execution is only safe when each ATC process uses
+an isolated data directory.
 
 ## Memory Stress Runner
 

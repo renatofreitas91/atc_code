@@ -12,16 +12,17 @@ static bool isMatrixParallelismDisabled() {
 }
 
 template <typename Worker>
-static bool runMatrixRowsParallel(int rows, int columns, Worker worker) {
-	int totalCells = rows * columns;
-	if (isMatrixParallelismDisabled() || rows <= 1 || columns <= 0 || totalCells < ATC_MATRIX_PARALLEL_THRESHOLD) {
+static bool runMatrixRowsParallel(int rows, long long workItemsPerRow, Worker worker) {
+	long long totalWorkItems = (long long)rows * workItemsPerRow;
+	if (isMatrixParallelismDisabled() || rows <= 1 || workItemsPerRow <= 0 || totalWorkItems < ATC_MATRIX_PARALLEL_THRESHOLD) {
 		return false;
 	}
 	unsigned int hardwareThreads = std::thread::hardware_concurrency();
 	if (hardwareThreads < 2) {
 		return false;
 	}
-	int usefulWorkers = (totalCells + ATC_MATRIX_MIN_CELLS_PER_WORKER - 1) / ATC_MATRIX_MIN_CELLS_PER_WORKER;
+	long long usefulWorkerEstimate = (totalWorkItems + ATC_MATRIX_MIN_CELLS_PER_WORKER - 1) / ATC_MATRIX_MIN_CELLS_PER_WORKER;
+	int usefulWorkers = (int)std::min<long long>(ATC_MATRIX_MAX_WORKERS, usefulWorkerEstimate);
 	int workerCount = std::min(rows, std::min((int)hardwareThreads, std::min(ATC_MATRIX_MAX_WORKERS, usefulWorkers)));
 	if (workerCount < 2) {
 		return false;
@@ -57,9 +58,9 @@ static bool runMatrixRowsParallel(int rows, int columns, Worker worker) {
 }
 #else
 template <typename Worker>
-static bool runMatrixRowsParallel(int rows, int columns, Worker worker) {
+static bool runMatrixRowsParallel(int rows, long long workItemsPerRow, Worker worker) {
 	(void)rows;
-	(void)columns;
+	(void)workItemsPerRow;
 	(void)worker;
 	return false;
 }

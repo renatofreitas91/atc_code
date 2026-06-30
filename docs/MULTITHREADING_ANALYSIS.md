@@ -339,6 +339,9 @@ Status for ATC 2.1.7 development:
   `tests/run-atc-matrix-parallelism.ps1`.
 - Serial vs default runtime benchmark support is available in
   `tests/run-atc-matrix-benchmark.ps1`.
+- ATC test runners must not be executed in parallel against the same ATC data
+  directory. They mutate settings, variables and temporary files. Parallel test
+  execution is only safe when every ATC process uses an isolated data directory.
 
 ### Phase 2 - Statistics Reductions
 
