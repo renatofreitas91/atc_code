@@ -21,6 +21,7 @@ Dates and version details should be kept aligned with `docs/RELEASE_2.1.7.md`.
   documented commands, mathematical functions, dynamic user functions and
   repeated-Tab cycling through ambiguous matches.
 - Added Up/Down command history navigation while typing expressions.
+- Added a script benchmark runner for the Multiplication Table 1-100 workflow.
 
 ### Changed
 
@@ -37,6 +38,9 @@ Dates and version details should be kept aligned with `docs/RELEASE_2.1.7.md`.
 - Improved script execution performance for common `print("...", ...)`
   statements by avoiding the temporary TXT-processing path when the command can
   be handled safely in memory.
+- Improved script loop throughput by evaluating simple scalar script
+  assignments, loop conditions and integer `print` arguments without invoking
+  the full expression-processing path.
 - Reduced script memory pressure by avoiding large matrix scratch allocations
   for scalar expressions in `initialProcessor()`.
 
@@ -60,13 +64,20 @@ Dates and version details should be kept aligned with `docs/RELEASE_2.1.7.md`.
 - Current validated regression result for Release x64 and Release x86:
 
 ```text
-Summary: 359 passed, 0 failed
+Summary: 374 passed, 0 failed
 ```
 
 - Current isolated coverage result:
 
 ```text
-Summary: 65 passed, 0 failed
+Summary: 68 passed, 0 failed
+```
+
+- Current script benchmark result for `Multiplication Table 1-100` on Release
+  x64:
+
+```text
+Summary: 4 passed, 0 failed
 ```
 
 See `docs/Testing.md` and `tests/ATC_AUTOMATED_TEST_CASES.md` for more detail.

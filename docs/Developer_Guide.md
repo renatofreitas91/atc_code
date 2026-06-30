@@ -167,6 +167,7 @@ Main scripts:
 
 - `run-atc-regression.ps1`: broad regression runner;
 - `run-atc-memory-stress.ps1`: repeated memory-sensitive command runner;
+- `run-atc-script-benchmark.ps1`: script throughput and memory benchmark;
 - `run-atc-isolated-coverage.ps1`: helper for isolated coverage scenarios.
 
 Current validated regression result for Release x64 and Release x86:

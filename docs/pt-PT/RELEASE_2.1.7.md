@@ -18,6 +18,9 @@ Data: 2026-06-09
 - Redução adicional de memória em scripts através da libertação de arrays
   temporários e da alocação preguiçosa de buffers matriciais no
   `initialProcessor()`.
+- Avaliação rápida de atribuições escalares simples, condições de ciclo e
+  argumentos inteiros de `print`, mantendo o parser completo como fallback para
+  expressões mais complexas.
 - Cobertura de `min`, `max` e `avg` com listas e variáveis matriz.
 - Autocomplete com `Tab`, ciclo de sugestões e histórico com setas.
 - Melhorias em `verbose resolution`.
@@ -61,6 +64,14 @@ Validacao do package SourceForge:
 
 ```text
 Summary: 44 passed, 0 failed
+```
+
+Benchmark automático do script `Multiplication Table 1-100` em Release x64:
+
+```text
+Summary: 4 passed, 0 failed
+ElapsedSeconds: 7.41
+PeakWorkingSetMB: 119.56
 ```
 
 ## Limites

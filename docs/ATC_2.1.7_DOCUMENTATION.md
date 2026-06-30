@@ -596,6 +596,9 @@ The 2.1.7 codebase now avoids several avoidable large allocations and leaks:
   script expressions do not reserve matrix buffers they never use
 - common script `print("...", ...)` statements can now bypass the temporary
   TXT-processing file path and execute directly in memory
+- simple scalar script assignments, loop conditions and integer `print`
+  arguments now use a lightweight in-memory evaluator, with fallback to the
+  full expression engine for unsupported expressions
 - Release linker settings now define heap reserve/commit explicitly. Release
   x64 uses `/HEAP:150000000,4194304`; Release Win32 uses
   `/HEAP:50000000,1048576`. Stack reserve/commit remains explicit through the
@@ -617,6 +620,20 @@ roots to polynomial(...)       ~115 MB
 solve equation(x^2-5*x+6)      ~141 MB
 solve equation(1\8\1\_42)      ~144 MB
 solve equation(x^7-12)         ~165 MB
+```
+
+The multiplication-table script benchmark is available through:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-script-benchmark.ps1 -AtcExe .\x64\Release\atc.exe
+```
+
+Latest Release x64 validation:
+
+```text
+Summary: 4 passed, 0 failed
+ElapsedSeconds: 7.41
+PeakWorkingSetMB: 119.56
 ```
 
 These changes were build-verified and the command-line regression suite remains

@@ -14,6 +14,19 @@ consola Windows 11, memória dinâmica, autocomplete e verbose resolution.
 A versão 2.1.7 reduz o consumo de memória em scripts repetitivos. O `processTxt()` liberta arrays temporários de respostas, o `arithSolver()` liberta buffers auxiliares no retorno normal e o `initialProcessor()` só aloca buffers matriciais quando a expressão realmente usa matrizes.
 
 O interpretador de scripts também tem um caminho rápido para `print("...", ...)`: quando a linha é segura, o ATC executa o `print` diretamente em memória e evita o ficheiro temporário usado pelo fluxo TXT tradicional.
+
+Além disso, atribuições escalares simples, condições de ciclo e argumentos
+inteiros de `print` podem ser avaliados por um caminho leve em memória. Quando a
+expressão não é suportada por esse caminho, o ATC continua a usar o parser
+completo como fallback.
+
+Benchmark automático do script `Multiplication Table 1-100` em Release x64:
+
+```text
+Summary: 4 passed, 0 failed
+ElapsedSeconds: 7.41
+PeakWorkingSetMB: 119.56
+```
 ## Mapa documental
 
 Usar estes documentos em conjunto:

@@ -283,6 +283,9 @@ size is known:
   returning, avoiding repeated memory growth in that path
 - script execution now avoids repeated `processTxt()`/temporary-file overhead
   for simple `print("...", ...)` statements
+- script execution now evaluates simple scalar assignments, loop conditions and
+  integer `print` arguments through a lightweight in-memory path, while keeping
+  the legacy parser as fallback for more complex expressions
 - `processTxt()` now releases temporary answer arrays used while processing TXT
   and script commands
 - `initialProcessor()` no longer allocates four large matrix scratch matrices
@@ -323,6 +326,7 @@ New files:
 ```text
 tests\run-atc-regression.ps1
 tests\run-atc-memory-stress.ps1
+tests\run-atc-script-benchmark.ps1
 tests\ATC_AUTOMATED_TEST_CASES.md
 ```
 
@@ -336,6 +340,20 @@ Current result for both Release x64 and Release x86:
 
 ```text
 Summary: 374 passed, 0 failed
+```
+
+Script benchmark validation for the `Multiplication Table 1-100` workflow:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-script-benchmark.ps1 -AtcExe .\x64\Release\atc.exe
+```
+
+Latest Release x64 result:
+
+```text
+Summary: 4 passed, 0 failed
+ElapsedSeconds: 7.41
+PeakWorkingSetMB: 119.56
 ```
 
 Current isolated coverage result:

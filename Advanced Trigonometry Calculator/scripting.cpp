@@ -6,6 +6,327 @@ bool runningScript = false, I_O = false;
 int Break = 0, countUseBreak = 0, countUseReturn = 0, countBreak = 0, countReturn = 0, countEnters = 0, countUseEnters = 0, countSplits = 0;
 PrecisionValue returnedR = 0, returnedI = 0;
 
+static void skipFastScriptSpaces(const char*& p) {
+	while (*p == ' ' || *p == '\t') {
+		p++;
+	}
+}
+
+static bool isFastScriptLetter(char c) {
+	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+}
+
+static const char* getFastScriptVariableSource() {
+	if (isEqual(context, "script")) {
+		return saveScriptVariablesTextFile;
+	}
+	if (isEqual(context, "processTxt")) {
+		return saveTxtVariablesTextFile;
+	}
+	if (isEqual(context, "userFunctions")) {
+		return saveUserFunctionsVariablesTextFile;
+	}
+	return saveVariablesTextFile;
+}
+
+static char* getFastScriptVariableTarget() {
+	if (isEqual(context, "script")) {
+		return saveScriptVariablesTextFile;
+	}
+	if (isEqual(context, "processTxt")) {
+		return saveTxtVariablesTextFile;
+	}
+	if (isEqual(context, "userFunctions")) {
+		return saveUserFunctionsVariablesTextFile;
+	}
+	return saveVariablesTextFile;
+}
+
+static bool getFastScriptScalarVariable(const char* name, double& value) {
+	if (name == nullptr || name[0] == '\0') {
+		return false;
+	}
+	const char* variables = getFastScriptVariableSource();
+	size_t nameLength = strlen(name);
+	const char* p = variables;
+	while (p != nullptr && *p != '\0') {
+		if ((p == variables || p[-1] == '\n') && strncmp(p, name, nameLength) == 0 && p[nameLength] == ' ') {
+			const char* valueStart = p + nameLength + 1;
+			char* realEnd = nullptr;
+			double realValue = strtod(valueStart, &realEnd);
+			if (realEnd == valueStart || *realEnd != ' ') {
+				return false;
+			}
+			char* imagEnd = nullptr;
+			double imagValue = strtod(realEnd + 1, &imagEnd);
+			if (imagEnd == realEnd + 1 || (*imagEnd != '\n' && *imagEnd != '\0')) {
+				return false;
+			}
+			if (fabs(imagValue) > 1E-12) {
+				return false;
+			}
+			value = realValue;
+			return true;
+		}
+		while (*p != '\0' && *p != '\n') {
+			p++;
+		}
+		if (*p == '\n') {
+			p++;
+		}
+	}
+	return false;
+}
+
+static bool setFastScriptScalarVariable(const char* name, double value) {
+	if (name == nullptr || name[0] == '\0') {
+		return false;
+	}
+	char* variables = getFastScriptVariableTarget();
+	if (variables == nullptr) {
+		return false;
+	}
+	char entry[256];
+	sprintf(entry, "%s %.17G 0\n", name, value);
+	size_t nameLength = strlen(name);
+	size_t entryLength = strlen(entry);
+	char* p = variables;
+	while (*p != '\0') {
+		if ((p == variables || p[-1] == '\n') && strncmp(p, name, nameLength) == 0 && p[nameLength] == ' ') {
+			char* lineEnd = p;
+			while (*lineEnd != '\0' && *lineEnd != '\n') {
+				lineEnd++;
+			}
+			if (*lineEnd == '\n') {
+				lineEnd++;
+			}
+			size_t tailLength = strlen(lineEnd);
+			memmove(p + entryLength, lineEnd, tailLength + 1);
+			memcpy(p, entry, entryLength);
+			variableControllersUsed = true;
+			return true;
+		}
+		while (*p != '\0' && *p != '\n') {
+			p++;
+		}
+		if (*p == '\n') {
+			p++;
+		}
+	}
+	strcat(variables, entry);
+	variableControllersUsed = true;
+	return true;
+}
+
+static bool parseFastScriptExpression(const char*& p, double& value);
+
+static bool parseFastScriptFactor(const char*& p, double& value) {
+	skipFastScriptSpaces(p);
+	if (*p == '_' || *p == '-') {
+		p++;
+		if (!parseFastScriptFactor(p, value)) {
+			return false;
+		}
+		value = -value;
+		return true;
+	}
+	if (*p == '+') {
+		p++;
+		return parseFastScriptFactor(p, value);
+	}
+	if (*p == '(') {
+		p++;
+		if (!parseFastScriptExpression(p, value)) {
+			return false;
+		}
+		skipFastScriptSpaces(p);
+		if (*p != ')') {
+			return false;
+		}
+		p++;
+		return true;
+	}
+	if ((*p >= '0' && *p <= '9') || *p == '.') {
+		char* end = nullptr;
+		value = strtod(p, &end);
+		if (end == p) {
+			return false;
+		}
+		p = end;
+		return true;
+	}
+	if (isFastScriptLetter(*p)) {
+		char name[128];
+		int i = 0;
+		while (isFastScriptLetter(*p) && i < 127) {
+			name[i++] = *p;
+			p++;
+		}
+		name[i] = '\0';
+		return getFastScriptScalarVariable(name, value);
+	}
+	return false;
+}
+
+static bool parseFastScriptTerm(const char*& p, double& value) {
+	if (!parseFastScriptFactor(p, value)) {
+		return false;
+	}
+	while (true) {
+		skipFastScriptSpaces(p);
+		if (*p != '*' && *p != '/') {
+			return true;
+		}
+		char op = *p;
+		p++;
+		double rhs = 0.0;
+		if (!parseFastScriptFactor(p, rhs)) {
+			return false;
+		}
+		if (op == '*') {
+			value *= rhs;
+		}
+		else {
+			if (rhs == 0.0) {
+				return false;
+			}
+			value /= rhs;
+		}
+	}
+}
+
+static bool parseFastScriptExpression(const char*& p, double& value) {
+	if (!parseFastScriptTerm(p, value)) {
+		return false;
+	}
+	while (true) {
+		skipFastScriptSpaces(p);
+		if (*p != '+' && *p != '-') {
+			return true;
+		}
+		char op = *p;
+		p++;
+		double rhs = 0.0;
+		if (!parseFastScriptTerm(p, rhs)) {
+			return false;
+		}
+		if (op == '+') {
+			value += rhs;
+		}
+		else {
+			value -= rhs;
+		}
+	}
+}
+
+static bool tryFastScriptScalarExpression(const char* expression, double& value) {
+	if (expression == nullptr || expression[0] == '\0') {
+		return false;
+	}
+	const char* p = expression;
+	if (!parseFastScriptExpression(p, value)) {
+		return false;
+	}
+	skipFastScriptSpaces(p);
+	return *p == '\0';
+}
+
+static bool tryFastScriptAssignment(const char* expression, double& value) {
+	if (!runningScript || expression == nullptr) {
+		return false;
+	}
+	const char* p = expression;
+	skipFastScriptSpaces(p);
+	char name[128];
+	int i = 0;
+	if (!isFastScriptLetter(*p)) {
+		return false;
+	}
+	while (isFastScriptLetter(*p) && i < 127) {
+		name[i++] = *p;
+		p++;
+	}
+	name[i] = '\0';
+	skipFastScriptSpaces(p);
+	if (*p != '=' || p[1] == '=') {
+		return false;
+	}
+	p++;
+	if (!parseFastScriptExpression(p, value)) {
+		return false;
+	}
+	skipFastScriptSpaces(p);
+	if (*p != '\0') {
+		return false;
+	}
+	return setFastScriptScalarVariable(name, value);
+}
+
+static bool tryFastScriptIfCondition(const char* expression, bool& value) {
+	if (!runningScript || expression == nullptr) {
+		return false;
+	}
+	const char* p = expression;
+	skipFastScriptSpaces(p);
+	if (!(p[0] == 'i' && p[1] == 'f' && p[2] == '(')) {
+		return false;
+	}
+	p += 3;
+	double left = 0.0;
+	if (!parseFastScriptExpression(p, left)) {
+		return false;
+	}
+	skipFastScriptSpaces(p);
+	char op1 = *p;
+	char op2 = '\0';
+	if (op1 != '<' && op1 != '>' && op1 != '=' && op1 != '!') {
+		return false;
+	}
+	p++;
+	if (*p == '=') {
+		op2 = *p;
+		p++;
+	}
+	double right = 0.0;
+	if (!parseFastScriptExpression(p, right)) {
+		return false;
+	}
+	skipFastScriptSpaces(p);
+	if (*p != ')') {
+		return false;
+	}
+	p++;
+	skipFastScriptSpaces(p);
+	if (*p != '\0') {
+		return false;
+	}
+	if (op1 == '<' && op2 == '=') {
+		value = left <= right;
+		return true;
+	}
+	if (op1 == '>' && op2 == '=') {
+		value = left >= right;
+		return true;
+	}
+	if (op1 == '<' && op2 == '\0') {
+		value = left < right;
+		return true;
+	}
+	if (op1 == '>' && op2 == '\0') {
+		value = left > right;
+		return true;
+	}
+	if (op1 == '=' && op2 == '=') {
+		value = fabs(left - right) <= 1E-12;
+		return true;
+	}
+	if (op1 == '!' && op2 == '=') {
+		value = fabs(left - right) > 1E-12;
+		return true;
+	}
+	return false;
+}
+
 template <typename T>
 void print(char* text, T result1, T result2) {
 	int i = 0, j = 0, varAndValues = 0, k = 0, var2Print = 0, g = 0, valP = 0, l = 0, chChar = 0, b = 0, nV = 0, nC = 0;
@@ -185,26 +506,30 @@ void print(char* text, T result1, T result2) {
 					}
 					valP++;
 					varValue[g] = '\0';
-					renamer(varValue);
-					sprintf(varValue, expressionF);
+					double fastScalarValue = 0.0;
+					bool useFastScalarValue = runningScript && tryFastScriptScalarExpression(varValue, fastScalarValue);
+					if (!useFastScalarValue) {
+						renamer(varValue);
+						sprintf(varValue, expressionF);
+					}
 					specifier = varType[abs((int)strlen(varType)) - 1];
 					if (specifier == 'i' || specifier == 'd') {
-						int value = (int)calcNow(varValue, result1, result2);
+						int value = useFastScalarValue ? (int)fastScalarValue : (int)calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'u') {
-						unsigned int value = (unsigned int)calcNow(varValue, result1, result2);
+						unsigned int value = useFastScalarValue ? (unsigned int)fastScalarValue : (unsigned int)calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'o') {
-						unsigned int value = (unsigned int)calcNow(varValue, result1, result2);
+						unsigned int value = useFastScalarValue ? (unsigned int)fastScalarValue : (unsigned int)calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'x' || specifier == 'X') {
-						unsigned int value = (unsigned int)calcNow(varValue, result1, result2);
+						unsigned int value = useFastScalarValue ? (unsigned int)fastScalarValue : (unsigned int)calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
@@ -274,7 +599,7 @@ void print(char* text, T result1, T result2) {
 								_delete(index, "index"); index = nullptr;
 							}
 							else {
-								int valu = (int)calcNow(varValue, result1, result2);
+								int valu = useFastScalarValue ? (int)fastScalarValue : (int)calcNow(varValue, result1, result2);
 								value = valu;
 								printf(printing, value);
 								value = 0;
@@ -292,7 +617,7 @@ void print(char* text, T result1, T result2) {
 						printf(printing, variableSTring);
 					}
 					if (specifier == 'p') {
-						int value = (int)calcNow(varValue, result1, result2);
+						int value = useFastScalarValue ? (int)fastScalarValue : (int)calcNow(varValue, result1, result2);
 						printf(printing, value);
 						value = 0;
 					}
@@ -761,6 +1086,19 @@ T atcProg(char* exprDev) {
 
 	sprintf(context, "script");
 	if (tryFastScriptPrint<T>(exprDev, precisionValueTo<T>(resultR), precisionValueTo<T>(resultI))) {
+		return precisionValueTo<T>(resultR);
+	}
+	double fastAssignmentValue = 0.0;
+	if (tryFastScriptAssignment(exprDev, fastAssignmentValue)) {
+		resultR = fastAssignmentValue;
+		resultI = 0;
+		return precisionValueTo<T>(resultR);
+	}
+	bool fastConditionValue = false;
+	if (tryFastScriptIfCondition(exprDev, fastConditionValue)) {
+		returned = fastConditionValue;
+		resultR = fastConditionValue ? 1 : 0;
+		resultI = 0;
 		return precisionValueTo<T>(resultR);
 	}
 	fflush(NULL);

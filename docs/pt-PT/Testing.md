@@ -139,8 +139,28 @@ limitacoes.
 
 ## Validação de desempenho de scripts
 
-O interpretador de scripts tem validação manual adicional com o exemplo `Scripts examples/Multiplication Table 1-100_script_generator.txt`. Este cenário exercita ciclos `for` aninhados, atribuições, reutilização de variáveis, `print("...", ...)` e avaliação repetida de expressões escalares.
+O interpretador de scripts tem validação automática de desempenho com o exemplo
+`Scripts examples/Multiplication Table 1-100_script_generator.txt`. Este cenário
+exercita ciclos `for` aninhados, atribuições, reutilização de variáveis,
+`print("...", ...)` e avaliação repetida de expressões escalares.
 
-Na versão 2.1.7, este fluxo reduz pressão de memória ao libertar arrays temporários do processamento TXT, evitar buffers matriciais em expressões escalares e executar linhas `print("...", ...)` seguras diretamente em memória.
+Na versão 2.1.7, este fluxo reduz pressão de memória ao libertar arrays
+temporários do processamento TXT, evitar buffers matriciais em expressões
+escalares, executar linhas `print("...", ...)` seguras diretamente em memória e
+avaliar atribuições escalares simples, condições de ciclo e argumentos inteiros
+de `print` por um caminho leve do interpretador.
 
-Como o teste depende da consola real e de output visual, a medição completa de tempo continua como validação manual. Uma fixture automática não interativa deverá ser adicionada quando houver um harness estável para scripts.
+Executar o benchmark com:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-script-benchmark.ps1 -AtcExe .\x64\Release\atc.exe
+```
+
+O benchmark valida a saída do processo, tempo de execução, pico de memória RAM e
+conteúdo estável do output. Última validação Release x64:
+
+```text
+Summary: 4 passed, 0 failed
+ElapsedSeconds: 7.41
+PeakWorkingSetMB: 119.56
+```

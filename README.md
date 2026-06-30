@@ -145,6 +145,13 @@ The isolated coverage helper currently validates 68 source-level and safe
 smoke checks, including command exposure, autocomplete behavior and selected
 long-running time command guards.
 
+Script throughput is also covered by a dedicated Multiplication Table 1-100
+benchmark:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-script-benchmark.ps1 -AtcExe .\x64\Release\atc.exe
+```
+
 Run the regression suite after building ATC:
 
 ```powershell

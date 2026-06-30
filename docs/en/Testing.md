@@ -245,11 +245,12 @@ For most changes:
 powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe .\x64\Release\atc.exe
 ```
 
-For memory-sensitive work, also run the memory stress runner when practical.
+For memory-sensitive work, also run the memory stress runner and the script
+benchmark when practical.
 
 ## Script Performance Validation
 
-The script interpreter has additional manual validation coverage for the
+The script interpreter has additional automated benchmark coverage for the
 `Scripts examples/Multiplication Table 1-100_script_generator.txt` workflow.
 This scenario is useful because it repeatedly exercises:
 
@@ -260,9 +261,22 @@ This scenario is useful because it repeatedly exercises:
 
 ATC 2.1.7 reduces memory pressure in this flow by releasing temporary
 TXT-processing arrays, avoiding matrix scratch allocation for scalar
-expressions, and executing safe `print("...", ...)` script lines directly in
-memory instead of routing them through the temporary TXT-processing file path.
+expressions, executing safe `print("...", ...)` script lines directly in
+memory instead of routing them through the temporary TXT-processing file path,
+and evaluating simple scalar assignments, loop conditions and integer `print`
+arguments through a lightweight script path.
 
-Because this scenario depends on real console behavior and user-visible output,
-the full timing check remains a manual validation item. Automated coverage
-should be added later with a stable non-interactive script harness.
+Run the benchmark with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-script-benchmark.ps1 -AtcExe .\x64\Release\atc.exe
+```
+
+The benchmark validates process exit, elapsed time, peak working set and stable
+output content. Latest Release x64 validation:
+
+```text
+Summary: 4 passed, 0 failed
+ElapsedSeconds: 7.41
+PeakWorkingSetMB: 119.56
+```

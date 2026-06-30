@@ -78,6 +78,7 @@ Scripts principais:
 
 - `tests/run-atc-regression.ps1`
 - `tests/run-atc-memory-stress.ps1`
+- `tests/run-atc-script-benchmark.ps1`
 - `tests/run-atc-isolated-coverage.ps1`
 
 Resultado validado atual:

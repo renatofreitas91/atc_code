@@ -461,3 +461,28 @@ tests\memory-stress-reports
 
 It also backs up and restores `variables.txt` for the matrix-variable,
 matrix-indexing and relaxed-variable-name tests.
+
+## Script Benchmark Runner
+
+Script throughput and memory use for the Multiplication Table 1-100 workflow
+are checked separately from the functional smoke suite:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\run-atc-script-benchmark.ps1 -AtcExe .\x64\Release\atc.exe
+```
+
+The benchmark generates a temporary script with nested `for` loops and repeated
+formatted `print("...", ...)` calls. It validates:
+
+- process exit code;
+- elapsed execution time;
+- peak working set;
+- stable output content, including `100x10=1000`.
+
+Current Release x64 result:
+
+```text
+Summary: 4 passed, 0 failed
+ElapsedSeconds: 7.41
+PeakWorkingSetMB: 119.56
+```
