@@ -1,0 +1,120 @@
+name: ATC Windows CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  build-x64:
+    name: Build Release x64
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build x64 Release
+        run: |
+          msbuild ".\Advanced Trigonometry Calculator.sln" `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /m:1
+
+      - name: Upload x64 build
+        uses: actions/upload-artifact@v4
+        with:
+          name: atc-release-x64
+          path: |
+            x64/Release/atc.exe
+            x64/Release/*.pdb
+          if-no-files-found: error
+
+  test-x64:
+    name: Test Release x64
+    runs-on: windows-latest
+    needs: build-x64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download x64 build
+        uses: actions/download-artifact@v4
+        with:
+          name: atc-release-x64
+          path: x64/Release
+
+      - name: Main regression suite
+        run: |
+          powershell -ExecutionPolicy Bypass -File ".\tests\run-atc-regression.ps1" `
+            -AtcExe ".\x64\Release\atc.exe" `
+            -AtcDataDir "$env:RUNNER_TEMP\atc-data-regression-x64"
+
+      - name: Matrix parallelism tests
+        run: |
+          powershell -ExecutionPolicy Bypass -File ".\tests\run-atc-matrix-parallelism.ps1" `
+            -AtcExe ".\x64\Release\atc.exe" `
+            -AtcDataDir "$env:RUNNER_TEMP\atc-data-matrix-x64"
+
+  build-x86:
+    name: Build Release x86
+    runs-on: windows-latest
+    needs: test-x64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build x86 Release
+        run: |
+          msbuild ".\Advanced Trigonometry Calculator.sln" `
+            /p:Configuration=Release `
+            /p:Platform=x86 `
+            /m:1
+
+      - name: Upload x86 build
+        uses: actions/upload-artifact@v4
+        with:
+          name: atc-release-x86
+          path: |
+            Release/atc.exe
+            Release/*.pdb
+          if-no-files-found: error
+
+  test-x86:
+    name: Test Release x86
+    runs-on: windows-latest
+    needs: build-x86
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download x86 build
+        uses: actions/download-artifact@v4
+        with:
+          name: atc-release-x86
+          path: Release
+
+      - name: Main regression suite
+        run: |
+          powershell -ExecutionPolicy Bypass -File ".\tests\run-atc-regression.ps1" `
+            -AtcExe ".\Release\atc.exe" `
+            -AtcDataDir "$env:RUNNER_TEMP\atc-data-regression-x86"
+
+      - name: Matrix parallelism tests
+        run: |
+          powershell -ExecutionPolicy Bypass -File ".\tests\run-atc-matrix-parallelism.ps1" `
+            -AtcExe ".\Release\atc.exe" `
+            -AtcDataDir "$env:RUNNER_TEMP\atc-data-matrix-x86"
