@@ -1,5 +1,83 @@
 
 #include "stdafx.h"
+
+#ifndef ATC_ENABLE_MATRIX_PARALLELISM
+#define ATC_ENABLE_MATRIX_PARALLELISM 1
+#endif
+
+static const int ATC_MATRIX_PARALLEL_THRESHOLD = 225;
+
+static bool isMatrixParallelismDisabled() {
+#if ATC_ENABLE_MATRIX_PARALLELISM == 0
+	return true;
+#else
+	const char* disabled = getenv("ATC_DISABLE_MATRIX_PARALLELISM");
+	return disabled != nullptr && disabled[0] != '\0' && disabled[0] != '0';
+#endif
+}
+
+template <typename Worker>
+static bool runMatrixRowsParallel(int rows, int columns, Worker worker) {
+	if (isMatrixParallelismDisabled() || rows <= 1 || columns <= 0 || rows * columns < ATC_MATRIX_PARALLEL_THRESHOLD) {
+		return false;
+	}
+	unsigned int hardwareThreads = std::thread::hardware_concurrency();
+	if (hardwareThreads < 2) {
+		return false;
+	}
+	int workerCount = std::min(rows, (int)hardwareThreads);
+	if (workerCount < 2) {
+		return false;
+	}
+	int rowsPerWorker = (rows + workerCount - 1) / workerCount;
+	std::vector<std::thread> workers;
+	try {
+		for (int workerIndex = 0; workerIndex < workerCount; workerIndex++) {
+			int startRow = workerIndex * rowsPerWorker;
+			int endRow = std::min(rows, startRow + rowsPerWorker);
+			if (startRow >= endRow) {
+				break;
+			}
+			workers.push_back(std::thread([startRow, endRow, &worker]() {
+				worker(startRow, endRow);
+			}));
+		}
+	}
+	catch (...) {
+		for (size_t i = 0; i < workers.size(); i++) {
+			if (workers[i].joinable()) {
+				workers[i].join();
+			}
+		}
+		return false;
+	}
+	for (size_t i = 0; i < workers.size(); i++) {
+		if (workers[i].joinable()) {
+			workers[i].join();
+		}
+	}
+	return !workers.empty();
+}
+
+static void matrixSumCell(PrecisionValue leftR, PrecisionValue leftI, PrecisionValue rightR, PrecisionValue rightI, PrecisionValue& outR, PrecisionValue& outI) {
+	outR = precisionValueTo<mp_float>(leftR) + precisionValueTo<mp_float>(rightR);
+	outI = precisionValueTo<mp_float>(leftI) + precisionValueTo<mp_float>(rightI);
+}
+
+static void matrixSubtractCell(PrecisionValue leftR, PrecisionValue leftI, PrecisionValue rightR, PrecisionValue rightI, PrecisionValue& outR, PrecisionValue& outI) {
+	outR = precisionValueTo<mp_float>(leftR) - precisionValueTo<mp_float>(rightR);
+	outI = precisionValueTo<mp_float>(leftI) - precisionValueTo<mp_float>(rightI);
+}
+
+static void matrixMultiplyCell(PrecisionValue leftR, PrecisionValue leftI, PrecisionValue rightR, PrecisionValue rightI, PrecisionValue& outR, PrecisionValue& outI) {
+	mp_float a = precisionValueTo<mp_float>(leftR);
+	mp_float b = precisionValueTo<mp_float>(leftI);
+	mp_float c = precisionValueTo<mp_float>(rightR);
+	mp_float d = precisionValueTo<mp_float>(rightI);
+	outR = a * c - b * d;
+	outI = a * d + b * c;
+}
+
 template <typename T>
 void arithmeticMatrixSolver() {
 	int op = 0, op1 = 1;
@@ -609,12 +687,23 @@ void fmsum(int lins, int cols, T** v, T** u, T** r, T** vI, T** uI, T** rI) {
 	int i, j;
 	char* report = getDynamicCharArray("", "report");
 	sprintf(report, "");
+	auto worker = [&](int startRow, int endRow) {
+		for (int row = startRow; row < endRow; row++) {
+			for (int col = 0; col < cols; col++) {
+				matrixSumCell(v[row][col], vI[row][col], u[row][col], uI[row][col], r[row][col], rI[row][col]);
+			}
+		}
+	};
+	if (!runMatrixRowsParallel(lins, cols, worker)) {
+		worker(0, lins);
+	}
+	if (lins > 0 && cols > 0) {
+		resultR = r[lins - 1][cols - 1];
+		resultI = rI[lins - 1][cols - 1];
+	}
 	for (i = 0; i < lins; i++) {
 		for (j = 0; j < cols; j++) {
-			sum(v[i][j], vI[i][j], u[i][j], uI[i][j]);
-			r[i][j] = resultR;
-			rI[i][j] = resultI;
-			convertComplex2Exponential(resultR, resultI);
+			convertComplex2Exponential(r[i][j], rI[i][j]);
 			sprintf(report, "%s%s+%si ", report, respR, respI);
 		}
 		sprintf(report, "%s\n", report);
@@ -639,12 +728,23 @@ void fmsubt(int lins, int cols, T** v, T** u, T** r, T** vI, T** uI, T** rI) {
 	int i, j;
 	char* report = getDynamicCharArray("", "report");
 	sprintf(report, "");
+	auto worker = [&](int startRow, int endRow) {
+		for (int row = startRow; row < endRow; row++) {
+			for (int col = 0; col < cols; col++) {
+				matrixSubtractCell(v[row][col], vI[row][col], u[row][col], uI[row][col], r[row][col], rI[row][col]);
+			}
+		}
+	};
+	if (!runMatrixRowsParallel(lins, cols, worker)) {
+		worker(0, lins);
+	}
+	if (lins > 0 && cols > 0) {
+		resultR = r[lins - 1][cols - 1];
+		resultI = rI[lins - 1][cols - 1];
+	}
 	for (i = 0; i < lins; i++) {
 		for (j = 0; j < cols; j++) {
-			subtraction(v[i][j], vI[i][j], u[i][j], uI[i][j]);
-			r[i][j] = resultR;
-			rI[i][j] = resultI;
-			convertComplex2Exponential(resultR, resultI);
+			convertComplex2Exponential(r[i][j], rI[i][j]);
 			sprintf(report, "%s%s+%si ", report, respR, respI);
 		}
 		sprintf(report, "%s\n", report);
@@ -668,12 +768,23 @@ void fmmulr(int lins, int cols, PrecisionValue** v, PrecisionValue** r, Precisio
 	int i, j;
 	char* report = getDynamicCharArray("", "report");
 	sprintf(report, "");
+	auto worker = [&](int startRow, int endRow) {
+		for (int row = startRow; row < endRow; row++) {
+			for (int col = 0; col < cols; col++) {
+				matrixMultiplyCell(v[row][col], vI[row][col], re, reI, r[row][col], rI[row][col]);
+			}
+		}
+	};
+	if (!runMatrixRowsParallel(lins, cols, worker)) {
+		worker(0, lins);
+	}
+	if (lins > 0 && cols > 0) {
+		resultR = r[lins - 1][cols - 1];
+		resultI = rI[lins - 1][cols - 1];
+	}
 	for (i = 0; i < lins; i++) {
 		for (j = 0; j < cols; j++) {
-			multiplication(v[i][j], vI[i][j], re, reI);
-			r[i][j] = resultR;
-			rI[i][j] = resultI;
-			convertComplex2Exponential(resultR, resultI);
+			convertComplex2Exponential(r[i][j], rI[i][j]);
 			sprintf(report, "%s%s+%si ", report, respR, respI);
 		}
 		sprintf(report, "%s\n", report);
@@ -695,25 +806,36 @@ void fmmulr(int lins, int cols, PrecisionValue** v, PrecisionValue** r, Precisio
 }
 template <typename T>
 void fmmulm(int lins2, int cols1, int lins1, int cols2, T** v, T** u, T** r, T** vI, T** uI, T** rI) {
-	int k, i, j;
+	int k, i;
 	char* report = getDynamicCharArray("", "report");
 	sprintf(report, "");
-	T prod, prodI;
 	if (lins2 != cols1) {
 		printf("\nError: The number of columns of first Matrix differs from the number of rows of second Matrix.\n");
 	}
 	else {
-		for (i = 0; i < lins1; i++) {
-			for (k = 0; k < cols2; k++) {
-				prod = 0; prodI = 0;
-				for (j = 0; j < cols1; j++) {
-					multiplication(v[i][j], vI[i][j], u[j][k], uI[j][k]);
-					prod = prod + resultR;
-					prodI = prodI + resultI;
+		auto worker = [&](int startRow, int endRow) {
+			for (int row = startRow; row < endRow; row++) {
+				for (int col = 0; col < cols2; col++) {
+					PrecisionValue localProd = 0;
+					PrecisionValue localProdI = 0;
+					for (int inner = 0; inner < cols1; inner++) {
+						PrecisionValue productR = 0;
+						PrecisionValue productI = 0;
+						matrixMultiplyCell(v[row][inner], vI[row][inner], u[inner][col], uI[inner][col], productR, productI);
+						localProd = localProd + productR;
+						localProdI = localProdI + productI;
+					}
+					r[row][col] = localProd;
+					rI[row][col] = localProdI;
 				}
-				r[i][k] = prod;
-				rI[i][k] = prodI;
 			}
+		};
+		if (!runMatrixRowsParallel(lins1, cols2, worker)) {
+			worker(0, lins1);
+		}
+		if (lins1 > 0 && cols2 > 0) {
+			resultR = r[lins1 - 1][cols2 - 1];
+			resultI = rI[lins1 - 1][cols2 - 1];
 		}
 		for (i = 0; i < lins1; i++) {
 			for (k = 0; k < cols2; k++) {
@@ -804,11 +926,16 @@ void fmtranspose(int lins, int  cols, PrecisionValue** vMS, PrecisionValue** vMS
 	int i = 0, j = 0;
 	char* report = getDynamicCharArray("", "report");
 	sprintf(report, "");
-	for (i = 0; i < cols; i++) {
-		for (j = 0; j < lins; j++) {
-			mTransposeR[i][j] = vMS[j][i];
-			mTransposeI[i][j] = vMSI[j][i];
+	auto worker = [&](int startRow, int endRow) {
+		for (int row = startRow; row < endRow; row++) {
+			for (int col = 0; col < lins; col++) {
+				mTransposeR[row][col] = vMS[col][row];
+				mTransposeI[row][col] = vMSI[col][row];
+			}
 		}
+	};
+	if (!runMatrixRowsParallel(cols, lins, worker)) {
+		worker(0, cols);
 	}
 	for (i = 0; i < cols; i++) {
 		for (j = 0; j < lins; j++) {

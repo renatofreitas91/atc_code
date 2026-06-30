@@ -660,9 +660,11 @@ $matrixScalarTests = @(
     @{ Name = "reserved-prefix matrix divided by scalar"; Expression = "small/2"; Expected = "#\d+=\s+1\+0i\s+2\+0i\s+3\+0i\s+4\+0i" }
 )
 
-$complexMatrixContent = "cmat 1 2:3 0*_4 0:5 0`n"
+$complexMatrixContent = "cmat 1 2:3 0*_4 0:5 0`ncmatb 2 1:1 1*4 0:1 2`n"
 $complexMatrixTests = @(
-    @{ Name = "complex matrix average"; Expression = "avg(cmat)"; Expected = "^#\d+=2\.25\+0\.5i$" }
+    @{ Name = "complex matrix average"; Expression = "avg(cmat)"; Expected = "^#\d+=2\.25\+0\.5i$" },
+    @{ Name = "complex matrix addition"; Expression = "cmat+cmatb"; Expected = "#\d+=\s+3\+3i\s+4\+1i\s+4\+0i\s+6\+2i" },
+    @{ Name = "complex matrix subtraction"; Expression = "cmat-cmatb"; Expected = "#\d+=\s+-1\+1i\s+2\+-1i\s+-4\+0i\s+4\+-2i" }
 )
 
 $matrixIndexSessionContent = "foo 1 0:2 0:3 0*4 0:5 0:6 0`n"

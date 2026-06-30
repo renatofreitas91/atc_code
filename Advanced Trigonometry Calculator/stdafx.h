@@ -20,6 +20,7 @@
 #include <iomanip>       // Decimal precision formatting
 #include <limits>        // Numeric limits
 #include <complex>       // Complex numeric solver helpers
+#include <thread>        // Internal computation workers
 #include <conio.h>       // Console I/O
 #include <io.h>          // Console redirection checks
 #include <tchar.h>       // Generic text mapping
