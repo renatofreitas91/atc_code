@@ -4,9 +4,6 @@ name: Sync SourceForge
 # This workflow mirrors pushed GitHub branches and tags to SourceForge.
 # Required repository secrets:
 #   - SOURCEFORGE_SSH_KEY: private SSH key allowed to push to SourceForge.
-#   - SOURCEFORGE_USERNAME: SourceForge username used in the SSH remote URL.
-# TODO: If the SourceForge username should be public in this file, replace
-#       secrets.SOURCEFORGE_USERNAME below with the actual username.
 
 on:
   push:
@@ -53,15 +50,8 @@ jobs:
           chmod 600 ~/.ssh/config
 
       - name: Add SourceForge remote
-        env:
-          SOURCEFORGE_USERNAME: ${{ secrets.SOURCEFORGE_USERNAME }}
         run: |
-          if [ -z "$SOURCEFORGE_USERNAME" ]; then
-            echo "::error::SOURCEFORGE_USERNAME repository secret is not configured. Replace the TODO in this workflow with the actual SourceForge username or configure the secret."
-            exit 1
-          fi
-
-          git remote add sourceforge "ssh://${SOURCEFORGE_USERNAME}@git.code.sf.net/p/advantrigoncalc/code"
+          git remote add sourceforge "ssh://renatofreitas91@git.code.sf.net/p/advantrigoncalc/code"
 
       - name: Push branches to SourceForge
         run: |
