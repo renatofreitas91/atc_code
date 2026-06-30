@@ -3,6 +3,7 @@
 
 static const int ATC_MATRIX_PARALLEL_THRESHOLD = 225;
 static const int ATC_MATRIX_MAX_WORKERS = 8;
+static const int ATC_MATRIX_MIN_CELLS_PER_WORKER = 128;
 
 #if ATC_ENABLE_MATRIX_PARALLELISM != 0
 static bool isMatrixParallelismDisabled() {
@@ -12,14 +13,16 @@ static bool isMatrixParallelismDisabled() {
 
 template <typename Worker>
 static bool runMatrixRowsParallel(int rows, int columns, Worker worker) {
-	if (isMatrixParallelismDisabled() || rows <= 1 || columns <= 0 || rows * columns < ATC_MATRIX_PARALLEL_THRESHOLD) {
+	int totalCells = rows * columns;
+	if (isMatrixParallelismDisabled() || rows <= 1 || columns <= 0 || totalCells < ATC_MATRIX_PARALLEL_THRESHOLD) {
 		return false;
 	}
 	unsigned int hardwareThreads = std::thread::hardware_concurrency();
 	if (hardwareThreads < 2) {
 		return false;
 	}
-	int workerCount = std::min(rows, std::min((int)hardwareThreads, ATC_MATRIX_MAX_WORKERS));
+	int usefulWorkers = (totalCells + ATC_MATRIX_MIN_CELLS_PER_WORKER - 1) / ATC_MATRIX_MIN_CELLS_PER_WORKER;
+	int workerCount = std::min(rows, std::min((int)hardwareThreads, std::min(ATC_MATRIX_MAX_WORKERS, usefulWorkers)));
 	if (workerCount < 2) {
 		return false;
 	}
@@ -833,7 +836,7 @@ void fmmulm(int lins2, int cols1, int lins1, int cols2, T** v, T** u, T** r, T**
 				}
 			}
 		};
-		if (!runMatrixRowsParallel(lins1, cols2, worker)) {
+		if (!runMatrixRowsParallel(lins1, cols2 * cols1, worker)) {
 			worker(0, lins1);
 		}
 		if (lins1 > 0 && cols2 > 0) {

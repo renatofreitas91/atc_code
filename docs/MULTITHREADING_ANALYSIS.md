@@ -321,6 +321,11 @@ Status for ATC 2.1.7 development:
 
 - Implemented for `fmsum`, `fmsubt`, `fmmulr`, `fmtranspose` and `fmmulm`.
 - Uses row-range worker partitioning with `std::thread`.
+- Worker count is capped and is derived from useful row chunks and estimated
+  cell work, so medium matrices do not create more threads than useful.
+- `fmmulm` estimates work using output cells multiplied by the shared inner
+  dimension, because matrix multiplication is more expensive than element-wise
+  kernels.
 - The runtime switch `ATC_DISABLE_MATRIX_PARALLELISM=1` disables the threaded
   path.
 - The compile-time switch `ATC_ENABLE_MATRIX_PARALLELISM=0` disables the
@@ -332,6 +337,8 @@ Status for ATC 2.1.7 development:
   matrices and small user matrices stay on the serial path.
 - Dedicated validation is available in
   `tests/run-atc-matrix-parallelism.ps1`.
+- Serial vs default runtime benchmark support is available in
+  `tests/run-atc-matrix-benchmark.ps1`.
 
 ### Phase 2 - Statistics Reductions
 

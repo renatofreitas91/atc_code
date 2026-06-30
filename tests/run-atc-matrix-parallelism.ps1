@@ -49,10 +49,10 @@ function New-MatrixVariableLine([string]$Name, [int]$Rows, [int]$Columns, [strin
 }
 
 function Normalize-AtcOutput([string]$Text) {
-    return (($Text -replace "`r", "") -replace "#\d+=", "#N=").Trim()
+    return ((($Text -replace "`r", "") -replace "#\d+=", "#N=") -replace "Processed in [^\r\n]+ ATC is ready", "Processed in <time>. ATC is ready").Trim()
 }
 
-function Invoke-AtcMatrixCommand([string]$Expression, [bool]$DisableParallelism) {
+function Invoke-AtcMatrixCommand([string]$Expression, [bool]$DisableParallelism, [string[]]$InputLines = @()) {
     $processInfo = New-Object System.Diagnostics.ProcessStartInfo
     $processInfo.FileName = $AtcExe
     $processInfo.Arguments = '"' + $Expression.Replace('"', '\"') + '"'
@@ -71,6 +71,9 @@ function Invoke-AtcMatrixCommand([string]$Expression, [bool]$DisableParallelism)
     $process = [System.Diagnostics.Process]::Start($processInfo)
     $stdoutTask = $process.StandardOutput.ReadToEndAsync()
     $stderrTask = $process.StandardError.ReadToEndAsync()
+    foreach ($line in $InputLines) {
+        $process.StandardInput.WriteLine($line)
+    }
     $process.StandardInput.Close()
     if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {
         try {
@@ -88,11 +91,11 @@ function Invoke-AtcMatrixCommand([string]$Expression, [bool]$DisableParallelism)
     }
 }
 
-function Test-MatrixParallelOperation([string]$Name, [string]$Expression, [string]$ExpectedRegex, [string]$VariablesContent) {
+function Test-MatrixParallelOperation([string]$Name, [string]$Expression, [string]$ExpectedRegex, [string]$VariablesContent, [string[]]$InputLines = @()) {
     Set-Content -Path $variablesPath -Value $VariablesContent -NoNewline
-    $serial = Invoke-AtcMatrixCommand $Expression $true
+    $serial = Invoke-AtcMatrixCommand $Expression $true $InputLines
     Set-Content -Path $variablesPath -Value $VariablesContent -NoNewline
-    $parallel = Invoke-AtcMatrixCommand $Expression $false
+    $parallel = Invoke-AtcMatrixCommand $Expression $false $InputLines
 
     $serialOutput = Normalize-AtcOutput $serial.Output
     $parallelOutput = Normalize-AtcOutput $parallel.Output
@@ -101,7 +104,7 @@ function Test-MatrixParallelOperation([string]$Name, [string]$Expression, [strin
 
     for ($i = 0; $i -lt 2; $i++) {
         Set-Content -Path $variablesPath -Value $VariablesContent -NoNewline
-        $repeat = Invoke-AtcMatrixCommand $Expression $false
+        $repeat = Invoke-AtcMatrixCommand $Expression $false $InputLines
         $repeatOutput = Normalize-AtcOutput $repeat.Output
         if ($repeatOutput -ne $lastOutput) {
             $deterministic = $false
@@ -149,7 +152,21 @@ try {
     ) -join "`n"
 
     $rectangular = New-MatrixVariableLine "mpr" 15 16 "1 0"
+    $oneRow = @(
+        (New-MatrixVariableLine "mrowa" 1 15 "1 0"),
+        (New-MatrixVariableLine "mrowb" 1 15 "2 0")
+    ) -join "`n"
+    $oneColumn = @(
+        (New-MatrixVariableLine "mcola" 15 1 "1 0"),
+        (New-MatrixVariableLine "mcolb" 15 1 "2 0")
+    ) -join "`n"
+    $sessionMatrices = @(
+        "msa 1 0:2 0*3 0:4 0",
+        "msb 5 0:6 0*7 0:8 0"
+    ) -join "`n"
 
+    $results.Add((Test-MatrixParallelOperation "matrix parallel: one-row addition remains deterministic" "mrowa+mrowb" "3\+0i" $oneRow))
+    $results.Add((Test-MatrixParallelOperation "matrix parallel: one-column subtraction remains deterministic" "mcolb-mcola" "1\+0i" $oneColumn))
     $results.Add((Test-MatrixParallelOperation "matrix parallel: real addition" "mpa+mpb" "3\+0i" $real15))
     $results.Add((Test-MatrixParallelOperation "matrix parallel: real subtraction" "mpb-mpa" "1\+0i" $real15))
     $results.Add((Test-MatrixParallelOperation "matrix parallel: scalar multiplication" "2*mpa" "2\+0i" $real15))
@@ -157,6 +174,7 @@ try {
     $results.Add((Test-MatrixParallelOperation "matrix parallel: matrix multiplication" "mpa*mpb" "30\+0i" $real15))
     $results.Add((Test-MatrixParallelOperation "matrix parallel: complex addition" "mpc+mpd" "3\+3i" $complex15))
     $results.Add((Test-MatrixParallelOperation "matrix parallel: complex subtraction" "mpc-mpd" "-1\+1i" $complex15))
+    $results.Add((Test-MatrixParallelOperation "matrix parallel: repeated operations in one session" "atc over cmd" "ATC is ready to process data[\s\S]*6\+0i\s+8\+0i\s+10\+0i\s+12\+0i[\s\S]*4\+0i\s+4\+0i\s+4\+0i\s+4\+0i[\s\S]*2\+0i\s+4\+0i\s+6\+0i\s+8\+0i[\s\S]*19\+0i\s+22\+0i\s+43\+0i\s+50\+0i" $sessionMatrices @("msa+msb", "msb-msa", "2*msa", "msa*msb", "exit")))
 }
 finally {
     Restore-OptionalFile $variablesPath $hadVariables $originalVariables
