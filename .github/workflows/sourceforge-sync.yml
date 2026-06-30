@@ -59,6 +59,12 @@ jobs:
           # SourceForge refs that may exist outside the GitHub mirror.
           git push sourceforge --all
 
+      - name: Keep SourceForge master aligned with GitHub main
+        run: |
+          # SourceForge historically exposes master. Keep it equal to GitHub main
+          # while GitHub remains the source of truth for development.
+          git push sourceforge refs/remotes/origin/main:refs/heads/master
+
       - name: Push tags to SourceForge
         run: |
           # SourceForge receives mirrored GitHub tags.
