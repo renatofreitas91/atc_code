@@ -1,0 +1,75 @@
+name: Sync SourceForge
+
+# GitHub remains the source of truth for ATC development.
+# This workflow mirrors pushed GitHub branches and tags to SourceForge.
+# Required repository secrets:
+#   - SOURCEFORGE_SSH_KEY: private SSH key allowed to push to SourceForge.
+#   - SOURCEFORGE_USERNAME: SourceForge username used in the SSH remote URL.
+# TODO: If the SourceForge username should be public in this file, replace
+#       secrets.SOURCEFORGE_USERNAME below with the actual username.
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "**"
+
+jobs:
+  sync-sourceforge:
+    name: Mirror branches and tags to SourceForge
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure SSH for SourceForge
+        env:
+          SOURCEFORGE_SSH_KEY: ${{ secrets.SOURCEFORGE_SSH_KEY }}
+        run: |
+          if [ -z "$SOURCEFORGE_SSH_KEY" ]; then
+            echo "::error::SOURCEFORGE_SSH_KEY repository secret is not configured."
+            exit 1
+          fi
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SOURCEFORGE_SSH_KEY" > ~/.ssh/sourceforge_sync_key
+          chmod 600 ~/.ssh/sourceforge_sync_key
+
+          ssh-keyscan git.code.sf.net >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+          cat > ~/.ssh/config <<'EOF'
+          Host git.code.sf.net
+            HostName git.code.sf.net
+            IdentityFile ~/.ssh/sourceforge_sync_key
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Add SourceForge remote
+        env:
+          SOURCEFORGE_USERNAME: ${{ secrets.SOURCEFORGE_USERNAME }}
+        run: |
+          if [ -z "$SOURCEFORGE_USERNAME" ]; then
+            echo "::error::SOURCEFORGE_USERNAME repository secret is not configured. Replace the TODO in this workflow with the actual SourceForge username or configure the secret."
+            exit 1
+          fi
+
+          git remote add sourceforge "ssh://${SOURCEFORGE_USERNAME}@git.code.sf.net/p/advantrigoncalc/code"
+
+      - name: Push branches to SourceForge
+        run: |
+          # Safer than git push --mirror: this updates branches without deleting
+          # SourceForge refs that may exist outside the GitHub mirror.
+          git push sourceforge --all
+
+      - name: Push tags to SourceForge
+        run: |
+          # SourceForge receives mirrored GitHub tags.
+          git push sourceforge --tags
