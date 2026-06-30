@@ -2,7 +2,7 @@ SOURCE CODE OF APPLICATION
 
 Advanced Trigonometry Calculator
 
-Copyright (C) 2011-2019 - Renato Alexandre dos Santos Freitas
+Copyright (C) 2011-2026 - Renato Alexandre dos Santos Freitas
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

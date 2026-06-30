@@ -2,7 +2,7 @@ ABOUT EXECUTION OF APPLICATION
 
 Advanced Trigonometry Calculator v2.1.7
 
-Copyright (C) 2011-2020 - Renato Alexandre dos Santos Freitas
+Copyright (C) 2011-2026 - Renato Alexandre dos Santos Freitas
 
 This program comes with ABSOLUTELY NO WARRANTY;
 This is free software, and you are welcome to redistribute it under certain conditions;
