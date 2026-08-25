@@ -20,7 +20,8 @@ plain-text calculator workflow. It supports direct expression evaluation,
 variables, matrices, polynomial tools, equation solving commands, complex
 numbers, and configurable numerical precision.
 
-Version 2.1.7 focuses on precision-mode persistence, equation and polynomial
+Version 2.1.8 focuses on solver correctness, settings robustness,
+cross-version x86 compatibility, precision-mode persistence, equation and polynomial
 fixes, broader regression coverage, Windows console behavior, memory
 improvements, command-line editing, and clearer verbose-resolution output.
 
@@ -102,7 +103,7 @@ and persisted user configuration.
 
 ## High Precision Mode
 
-ATC 2.1.7 supports persistent switching between:
+ATC 2.1.8 supports persistent switching between:
 
 - `double`
 - Boost `mp_float`
@@ -132,7 +133,7 @@ dp50dpmaxprecpi
 
 ## Automated Testing
 
-ATC 2.1.7 includes an automated regression suite based on documented user-guide
+ATC 2.1.8 includes an automated regression suite based on documented user-guide
 behavior.
 
 Current validated result for both Release x64 and Release x86:

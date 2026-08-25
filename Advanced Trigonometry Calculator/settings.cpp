@@ -6,6 +6,18 @@ bool starting = true;
 int x, y, maxX, maxY, saveX, saveY;
 int xATC, yATC, colsATC, linesATC, widthATC, heightATC;
 
+static FILE* openSettingsFileWithRetries(const char* path, const char* mode) {
+	FILE* file = NULL;
+	for (int attempt = 0; attempt < 20; attempt++) {
+		file = fopen(path, mode);
+		if (file != NULL) {
+			return file;
+		}
+		Sleep(10);
+	}
+	return NULL;
+}
+
 void colors() {
 	FILE* open;
 	char bGround = ' ', cTxt = ' ';
@@ -116,7 +128,7 @@ void mode() {
 }
 
 void about2() {
-	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)", memFactor);
+	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)", memFactor);
 	applyConsoleTitleSafe(forsprintf);
 	if (!applyConsoleDimensionsSafe(90, 15)) {
 		system("MODE con cols=90 lines=15");
@@ -136,7 +148,7 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)                                                            ==) Enter data (==              ", memFactor);
+	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)                                                            ==) Enter data (==              ", memFactor);
 	applyConsoleTitleSafe(forsprintf);
 	_delete(about, "about"); about = nullptr;
 }
@@ -332,14 +344,15 @@ void graphSettings() {
 	if (toDo == 1) {
 		char* toOpen = getDynamicCharArray("", "toOpen");
 		sprintf(toOpen, "%s\\colors.txt", atcPath);
-		if (fopen(toOpen, "r") == NULL) {
+		open = fopen(toOpen, "r");
+		if (open == NULL) {
 			applyConsoleColorSafe("color 73");
 			system("color 73");
 		}
 		else {
-			open = fopen(toOpen, "r");
 			fgets(setting, 9, open);
 			fclose(open);
+			open = NULL;
 			applyConsoleColorSafe(setting);
 			system(setting);
 		}
@@ -352,20 +365,17 @@ void graphSettings() {
 	if (toDo == 2) {
 		sprintf(forsprintf, "%s\\dimensions.txt", atcPath);
 		char* toOpen = getDynamicCharArray(forsprintf, "toOpen");
-		if (fopen(toOpen, "r") == NULL) {
+		open = fopen(toOpen, "r");
+		if (open == NULL) {
 			applyConsoleDimensionsSafe(160, 300);
 		}
 		else {
-			open = NULL;
-			while (open == NULL) {
-				open = fopen(toOpen, "r");
-				Sleep(10);
-			}
 			if (open != NULL) {
 				int i = 0;
 				for (i = 0; (setting[i] = fgetc(open)) != EOF; i++);
 				setting[i] = '\0';
 				fclose(open);
+				open = NULL;
 				if (!applyConsoleCommandDimensions(setting)) {
 					system(setting);
 				}
@@ -379,13 +389,15 @@ void graphSettings() {
 					widthATC = (rect.right - rect.left);
 					heightATC = (rect.bottom - rect.top);
 					sprintf(toOpen, "%s\\window.txt", atcPath);
-					open = NULL;
-					while (open == NULL) {
-						open = fopen(toOpen, "w");
-						Sleep(10);
+					open = openSettingsFileWithRetries(toOpen, "w");
+					if (open != NULL) {
+						fprintf(open, "%d\n%d\n%d\n%d\n", xATC, yATC, widthATC, heightATC);
+						fclose(open);
+						open = NULL;
 					}
-					fprintf(open, "%d\n%d\n%d\n%d\n", xATC, yATC, widthATC, heightATC);
-					fclose(open);
+					else {
+						puts("\nATC was unable to update the window settings file.\n");
+					}
 				}
 			}
 		}
@@ -554,7 +566,7 @@ void graphSettings() {
 
 bool about() {
 	ShowConsoleCursor(FALSE);
-	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)", memFactor);
+	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)", memFactor);
 	applyConsoleTitleSafe(forsprintf);
 
 	HWND a;
@@ -587,7 +599,7 @@ bool about() {
 	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
 	puts("");
-	puts("                                      v2.1.7");
+	puts("                                      v2.1.8");
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n                                    Made in Portugal\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
 	trackMouse();
@@ -663,6 +675,7 @@ void getDimensions() {
 			forsprintf[i] = '\0';
 			sprintf(setting, "%s", forsprintf);
 			fclose(open);
+			open = NULL;
 			char* value = getDynamicCharArray("", "value");
 			sprintf(value, "");
 			int l = 0, m = strEnd;
@@ -687,7 +700,10 @@ void getDimensions() {
 			_delete(value, "value"); value = nullptr;
 
 		}
-		fclose(open);
+		if (open != NULL) {
+			fclose(open);
+			open = NULL;
+		}
 	}
 	int i = 0, e = 0;
 	int a = 1;
@@ -696,9 +712,21 @@ void getDimensions() {
 	sprintf(setting, "%s\\window.txt", atcPath);
 	sprintf(toOpen, "%s", setting);
 	open = NULL;
-	while (open == NULL) {
+	int openAttempts = 0;
+	while (open == NULL && openAttempts < 20) {
 		open = fopen(toOpen, "r");
-		Sleep(10);
+		if (open == NULL) {
+			Sleep(10);
+		}
+		openAttempts++;
+	}
+	if (open == NULL) {
+		open = fopen(toOpen, "w");
+		if (open != NULL) {
+			fprintf(open, "%d\n%d\n%d\n%d\n", xATC, yATC, widthATC, heightATC);
+			fclose(open);
+			open = fopen(toOpen, "r");
+		}
 	}
 	if (open != NULL) {
 		for (i = 0; (setting[i] = fgetc(open)) != EOF; i++) {

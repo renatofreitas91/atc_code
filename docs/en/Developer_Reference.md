@@ -1,7 +1,7 @@
 # ATC Developer Reference
 
 This reference complements the Developer Guide. It focuses on practical
-contribution workflows for Advanced Trigonometry Calculator 2.1.7.
+contribution workflows for Advanced Trigonometry Calculator 2.1.8.
 
 ## Main Project Structure
 
@@ -112,4 +112,3 @@ consider whether it is part of:
 - Run memory stress tests for allocation-heavy changes.
 - Update documentation and release notes.
 - Check Markdown links and regenerate PDFs/DOCX when needed.
-

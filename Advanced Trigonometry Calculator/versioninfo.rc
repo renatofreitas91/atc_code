@@ -13,8 +13,8 @@
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,7
- PRODUCTVERSION 2,1,7
+ FILEVERSION 2,1,8,0
+ PRODUCTVERSION 2,1,8,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -31,12 +31,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Renato Alexandre dos Santos Freitas"
             VALUE "FileDescription", "Advanced Trigonometry Calculator"
-            VALUE "FileVersion", "2.1.7"
+            VALUE "FileVersion", "2.1.8.0"
             VALUE "InternalName", "Advanced Trigonometry Calculator"
-            VALUE "LegalCopyright", "Copyright (C) 2011-2025"
+            VALUE "LegalCopyright", "Copyright (C) 2011-2026"
             VALUE "OriginalFilename", "Advanced Trigonometry Calculator"
             VALUE "ProductName", "Advanced Trigonometry Calculator"
-            VALUE "ProductVersion", "2.1.7"
+            VALUE "ProductVersion", "2.1.8.0"
 	    VALUE "ProductPublisher", "Renato Alexandre dos Santos Freitas"
         END
     END

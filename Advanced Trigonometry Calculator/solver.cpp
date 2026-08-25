@@ -402,6 +402,458 @@ static bool trySolveSolverLinearProductExpressionComplex(const std::string& expr
 	return false;
 }
 
+
+static std::complex<double> evaluateSolverPolynomialFallback(const std::vector<std::complex<double>>& coefficients, std::complex<double> x) {
+	std::complex<double> value(0.0, 0.0);
+	for (int i = (int)coefficients.size() - 1; i >= 0; --i) {
+		value = value * x + coefficients[(size_t)i];
+	}
+	return value;
+}
+
+static bool parseSolverPolynomialFallbackNumber(std::string text, double& value) {
+	if (text.empty()) {
+		return false;
+	}
+	for (size_t i = 0; i < text.size(); ++i) {
+		if (text[i] == '_') {
+			text[i] = '-';
+		}
+	}
+	if (text == "+" || text.empty()) {
+		value = 1.0;
+		return true;
+	}
+	if (text == "-") {
+		value = -1.0;
+		return true;
+	}
+	char* end = nullptr;
+	value = std::strtod(text.c_str(), &end);
+	return end != text.c_str() && *end == '\0';
+}
+
+static bool collectSolverPolynomialFallbackCoefficients(const char* expression, std::vector<std::complex<double>>& coefficients) {
+	if (expression == nullptr) {
+		return false;
+	}
+	std::string text(expression);
+	std::string normalized;
+	for (size_t i = 0; i < text.size(); ++i) {
+		if (!std::isspace((unsigned char)text[i])) {
+			normalized += text[i];
+		}
+	}
+	if (normalized.empty() || normalized.find('x') == std::string::npos) {
+		return false;
+	}
+	if (normalized.size() >= 2 && normalized[0] == '(' && normalized[normalized.size() - 1] == ')') {
+		normalized = normalized.substr(1, normalized.size() - 2);
+	}
+	std::vector<std::string> terms;
+	size_t start = 0;
+	for (size_t i = 1; i < normalized.size(); ++i) {
+		if (normalized[i] == '+' || normalized[i] == '-') {
+			terms.push_back(normalized.substr(start, i - start));
+			start = i;
+		}
+	}
+	terms.push_back(normalized.substr(start));
+	coefficients.assign(1, std::complex<double>(0.0, 0.0));
+	for (size_t i = 0; i < terms.size(); ++i) {
+		std::string term = terms[i];
+		if (term.empty()) {
+			return false;
+		}
+		size_t xPosition = term.find('x');
+		int degree = 0;
+		double coefficient = 0.0;
+		if (xPosition == std::string::npos) {
+			if (!parseSolverPolynomialFallbackNumber(term, coefficient)) {
+				return false;
+			}
+		}
+		else {
+			std::string prefix = term.substr(0, xPosition);
+			if (!prefix.empty() && prefix[prefix.size() - 1] == '*') {
+				prefix.erase(prefix.size() - 1);
+			}
+			if (!parseSolverPolynomialFallbackNumber(prefix, coefficient)) {
+				return false;
+			}
+			degree = 1;
+			if (xPosition + 1 < term.size()) {
+				if (term[xPosition + 1] != '^') {
+					return false;
+				}
+				char* end = nullptr;
+				long parsedDegree = std::strtol(term.c_str() + xPosition + 2, &end, 10);
+				if (end == term.c_str() + xPosition + 2 || *end != '\0' || parsedDegree < 0 || parsedDegree > 256) {
+					return false;
+				}
+				degree = (int)parsedDegree;
+			}
+		}
+		if ((size_t)degree >= coefficients.size()) {
+			coefficients.resize((size_t)degree + 1, std::complex<double>(0.0, 0.0));
+		}
+		coefficients[(size_t)degree] += coefficient;
+	}
+	while (coefficients.size() > 1 && std::abs(coefficients.back()) < 1E-14) {
+		coefficients.pop_back();
+	}
+	return coefficients.size() > 1;
+}
+
+static bool parseSolverComplexLiteralFallback(std::string text, std::complex<double>& value) {
+	if (text.empty()) {
+		return false;
+	}
+	if (text.size() >= 2 && text[0] == '(' && text[text.size() - 1] == ')') {
+		text = text.substr(1, text.size() - 2);
+	}
+	if (text.find('*') != std::string::npos) {
+		std::string withoutStars;
+		for (char ch : text) {
+			if (ch != '*') {
+				withoutStars += ch;
+			}
+		}
+		text = withoutStars;
+	}
+	if (text.find('i') == std::string::npos) {
+		double realValue = 0.0;
+		if (!parseSolverPolynomialFallbackNumber(text, realValue)) {
+			return false;
+		}
+		value = std::complex<double>(realValue, 0.0);
+		return true;
+	}
+	if (text[text.size() - 1] != 'i' || text.find('i') != text.size() - 1) {
+		return false;
+	}
+	std::string withoutI = text.substr(0, text.size() - 1);
+	size_t split = std::string::npos;
+	for (size_t i = 1; i < withoutI.size(); ++i) {
+		if (withoutI[i] == '+' || withoutI[i] == '-') {
+			split = i;
+		}
+	}
+	double realValue = 0.0;
+	double imaginaryValue = 0.0;
+	if (split == std::string::npos) {
+		if (withoutI.empty() || withoutI == "+") {
+			imaginaryValue = 1.0;
+		}
+		else if (withoutI == "-") {
+			imaginaryValue = -1.0;
+		}
+		else if (!parseSolverPolynomialFallbackNumber(withoutI, imaginaryValue)) {
+			return false;
+		}
+	}
+	else {
+		if (!parseSolverPolynomialFallbackNumber(withoutI.substr(0, split), realValue)) {
+			return false;
+		}
+		std::string imaginaryText = withoutI.substr(split);
+		if (imaginaryText == "+") {
+			imaginaryValue = 1.0;
+		}
+		else if (imaginaryText == "-") {
+			imaginaryValue = -1.0;
+		}
+		else if (!parseSolverPolynomialFallbackNumber(imaginaryText, imaginaryValue)) {
+			return false;
+		}
+	}
+	value = std::complex<double>(realValue, imaginaryValue);
+	return true;
+}
+
+static bool evaluateSolverConstantFallbackExpression(const std::string& expression, std::complex<double>& value) {
+	if (expression.empty() || expression.find('x') != std::string::npos) {
+		return false;
+	}
+	std::string text;
+	for (char ch : expression) {
+		if (!std::isspace((unsigned char)ch)) {
+			text += ch == '_' ? '-' : ch;
+		}
+	}
+	double sign = 1.0;
+	if (!text.empty() && text[0] == '+') {
+		text.erase(0, 1);
+	}
+	else if (!text.empty() && text[0] == '-') {
+		sign = -1.0;
+		text.erase(0, 1);
+	}
+	size_t powerPosition = text.rfind("^");
+	if (powerPosition != std::string::npos) {
+		char* end = nullptr;
+		long exponent = std::strtol(text.c_str() + powerPosition + 1, &end, 10);
+		if (end != text.c_str() + powerPosition + 1 && *end == '\0' && exponent >= 0 && exponent <= 32) {
+			std::complex<double> base;
+			if (parseSolverComplexLiteralFallback(text.substr(0, powerPosition), base)) {
+				value = std::complex<double>(sign, 0.0);
+				for (long i = 0; i < exponent; ++i) {
+					value *= base;
+				}
+				return std::isfinite(value.real()) && std::isfinite(value.imag());
+			}
+		}
+	}
+	if (parseSolverComplexLiteralFallback(text, value)) {
+		value *= sign;
+		return std::isfinite(value.real()) && std::isfinite(value.imag());
+	}
+	return false;
+}
+
+static bool splitSolverTopLevelPolynomialTerms(const std::string& expression, std::vector<std::string>& terms) {
+	std::string text;
+	for (char ch : expression) {
+		if (!std::isspace((unsigned char)ch)) {
+			text += ch == '_' ? '-' : ch;
+		}
+	}
+	int level = 0;
+	size_t start = 0;
+	for (size_t i = 0; i < text.size(); ++i) {
+		if (text[i] == '(' || text[i] == '[' || text[i] == '{') {
+			level++;
+		}
+		else if (text[i] == ')' || text[i] == ']' || text[i] == '}') {
+			level--;
+			if (level < 0) {
+				return false;
+			}
+		}
+		else if (i > 0 && level == 0 && (text[i] == '+' || text[i] == '-')) {
+			terms.push_back(text.substr(start, i - start));
+			start = i;
+		}
+	}
+	if (level != 0) {
+		return false;
+	}
+	terms.push_back(text.substr(start));
+	return terms.size() == 2;
+}
+
+static bool parseSolverMonomialXPowerTerm(const std::string& term, std::complex<double>& coefficient, int& degree) {
+	std::string text = term;
+	if (text.empty()) {
+		return false;
+	}
+	double sign = 1.0;
+	if (text[0] == '+') {
+		text.erase(0, 1);
+	}
+	else if (text[0] == '-') {
+		sign = -1.0;
+		text.erase(0, 1);
+	}
+	size_t xPosition = text.find('x');
+	if (xPosition == std::string::npos || text.find('x', xPosition + 1) != std::string::npos) {
+		return false;
+	}
+	std::string prefix = text.substr(0, xPosition);
+	if (!prefix.empty() && prefix[prefix.size() - 1] == '*') {
+		prefix.erase(prefix.size() - 1);
+	}
+	double coefficientR = 1.0;
+	if (!prefix.empty() && !parseSolverPolynomialFallbackNumber(prefix, coefficientR)) {
+		return false;
+	}
+	degree = 1;
+	if (xPosition + 1 < text.size()) {
+		if (text[xPosition + 1] != '^') {
+			return false;
+		}
+		char* end = nullptr;
+		long parsedDegree = std::strtol(text.c_str() + xPosition + 2, &end, 10);
+		if (end == text.c_str() + xPosition + 2 || *end != '\0' || parsedDegree < 1 || parsedDegree > 256) {
+			return false;
+		}
+		degree = (int)parsedDegree;
+	}
+	coefficient = std::complex<double>(sign * coefficientR, 0.0);
+	return true;
+}
+
+static bool trySolveSolverComplexBinomialFallback(const char* expression, double& rootR, double& rootI) {
+	if (expression == nullptr) {
+		return false;
+	}
+	std::vector<std::string> terms;
+	if (!splitSolverTopLevelPolynomialTerms(expression, terms)) {
+		return false;
+	}
+	std::complex<double> coefficient(0.0, 0.0), constant(0.0, 0.0);
+	int degree = 0;
+	bool firstIsMonomial = parseSolverMonomialXPowerTerm(terms[0], coefficient, degree);
+	bool secondIsMonomial = parseSolverMonomialXPowerTerm(terms[1], coefficient, degree);
+	std::string constantTerm;
+	if (firstIsMonomial && !secondIsMonomial) {
+		constantTerm = terms[1];
+	}
+	else if (!firstIsMonomial && secondIsMonomial) {
+		constantTerm = terms[0];
+	}
+	else {
+		return false;
+	}
+	if (degree < 1 || std::abs(coefficient) < 1E-14 || !evaluateSolverConstantFallbackExpression(constantTerm, constant)) {
+		return false;
+	}
+	std::complex<double> target = -constant / coefficient;
+	std::complex<double> root;
+	if (degree == 1) {
+		root = target;
+	}
+	else if (std::fabs(target.imag()) < 1E-14 && target.real() >= 0.0) {
+		root = std::complex<double>(std::pow(target.real(), 1.0 / (double)degree), 0.0);
+	}
+	else {
+		root = std::polar(std::pow(std::abs(target), 1.0 / (double)degree), std::arg(target) / (double)degree);
+	}
+	if (std::fabs(root.real()) < 1E-9) {
+		root.real(0.0);
+	}
+	if (std::fabs(root.imag()) < 1E-9) {
+		root.imag(0.0);
+	}
+	if (std::fabs(root.real() - std::round(root.real())) < 1E-9) {
+		root.real(std::round(root.real()));
+	}
+	if (std::fabs(root.imag() - std::round(root.imag())) < 1E-9) {
+		root.imag(std::round(root.imag()));
+	}
+	rootR = root.real();
+	rootI = root.imag();
+	return std::isfinite(rootR) && std::isfinite(rootI);
+}
+
+static bool trySolvePolynomialFallbackAfterAdvancedSolver(const char* expression, double& rootR, double& rootI) {
+	if (trySolveSolverComplexBinomialFallback(expression, rootR, rootI)) {
+		return true;
+	}
+	std::vector<std::complex<double>> coefficients;
+	if (!collectSolverPolynomialFallbackCoefficients(expression, coefficients)) {
+		return false;
+	}
+	int degree = (int)coefficients.size() - 1;
+	int nonZeroTerms = 0;
+	for (size_t termIndex = 0; termIndex < coefficients.size(); ++termIndex) {
+		if (std::abs(coefficients[termIndex]) > 1E-14) {
+			nonZeroTerms++;
+		}
+	}
+	if (degree > 1 && nonZeroTerms == 2 && std::abs(coefficients[0]) > 1E-14 && std::abs(coefficients[(size_t)degree]) > 1E-14) {
+		std::complex<double> target = -coefficients[0] / coefficients[(size_t)degree];
+		std::complex<double> root;
+		if (std::fabs(target.imag()) < 1E-14 && target.real() >= 0.0) {
+			root = std::complex<double>(std::pow(target.real(), 1.0 / (double)degree), 0.0);
+		}
+		else {
+			double magnitude = std::pow(std::abs(target), 1.0 / (double)degree);
+			double angle = std::arg(target) / (double)degree;
+			root = std::polar(magnitude, angle);
+		}
+		if (std::fabs(root.real()) < 1E-9) {
+			root.real(0.0);
+		}
+		if (std::fabs(root.imag()) < 1E-9) {
+			root.imag(0.0);
+		}
+		if (std::fabs(root.real() - std::round(root.real())) < 1E-9) {
+			root.real(std::round(root.real()));
+		}
+		if (std::fabs(root.imag() - std::round(root.imag())) < 1E-9) {
+			root.imag(std::round(root.imag()));
+		}
+		rootR = root.real();
+		rootI = root.imag();
+		return std::isfinite(rootR) && std::isfinite(rootI);
+	}
+	if (degree == 1) {
+		std::complex<double> root = -coefficients[0] / coefficients[1];
+		rootR = root.real();
+		rootI = root.imag();
+		return std::isfinite(rootR) && std::isfinite(rootI);
+	}
+	std::vector<std::complex<double>> monic((size_t)degree + 1);
+	std::complex<double> leading = coefficients[(size_t)degree];
+	if (std::abs(leading) < 1E-14) {
+		return false;
+	}
+	for (int i = 0; i <= degree; ++i) {
+		monic[(size_t)i] = coefficients[(size_t)i] / leading;
+	}
+	std::vector<std::complex<double>> rootsLocal((size_t)degree);
+	double radius = 1.0;
+	for (int i = 0; i < degree; ++i) {
+		radius = std::max(radius, 1.0 + std::abs(monic[(size_t)i]));
+	}
+	const double twoPi = 2.0 * M_PI;
+	for (int i = 0; i < degree; ++i) {
+		double angle = twoPi * (double)i / (double)degree;
+		rootsLocal[(size_t)i] = std::polar(radius, angle);
+	}
+	for (int iteration = 0; iteration < 256; ++iteration) {
+		double maxDelta = 0.0;
+		for (int i = 0; i < degree; ++i) {
+			std::complex<double> denominator(1.0, 0.0);
+			for (int j = 0; j < degree; ++j) {
+				if (i != j) {
+					denominator *= rootsLocal[(size_t)i] - rootsLocal[(size_t)j];
+				}
+			}
+			if (std::abs(denominator) < 1E-18) {
+				denominator = std::complex<double>(1E-18, 0.0);
+			}
+			std::complex<double> delta = evaluateSolverPolynomialFallback(monic, rootsLocal[(size_t)i]) / denominator;
+			rootsLocal[(size_t)i] -= delta;
+			maxDelta = std::max(maxDelta, std::abs(delta));
+		}
+		if (maxDelta < 1E-12) {
+			break;
+		}
+	}
+	int bestIndex = -1;
+	double bestResidual = std::numeric_limits<double>::infinity();
+	for (int i = 0; i < degree; ++i) {
+		double residual = std::abs(evaluateSolverPolynomialFallback(coefficients, rootsLocal[(size_t)i]));
+		if (residual < bestResidual - 1E-8 ||
+			(std::fabs(residual - bestResidual) <= 1E-8 && bestIndex >= 0 && rootsLocal[(size_t)i].imag() > rootsLocal[(size_t)bestIndex].imag())) {
+			bestResidual = residual;
+			bestIndex = i;
+		}
+	}
+	if (bestIndex < 0 || bestResidual > 1E-5) {
+		return false;
+	}
+	std::complex<double> root = rootsLocal[(size_t)bestIndex];
+	rootR = std::fabs(root.real()) < 1E-9 ? 0.0 : root.real();
+	rootI = std::fabs(root.imag()) < 1E-9 ? 0.0 : root.imag();
+	if (std::fabs(rootR - std::round(rootR)) < 1E-9) {
+		rootR = std::round(rootR);
+	}
+	if (std::fabs(rootI - std::round(rootI)) < 1E-9) {
+		rootI = std::round(rootI);
+	}
+	return std::isfinite(rootR) && std::isfinite(rootI);
+}
+
+template <typename T>
+bool isSolved();
+template <typename T>
+void advancedSolver(char* expression);
+static bool validateSolverRootWithInitialProcessor(char* expression, double rootR, double rootI);
+static bool trySolveSimpleFunctionByDerivative(char* expression, double& rootR, double& rootI);
+
 template<typename T>
 T solver(char* expression) {
 	char* data = getDynamicCharArray("", "data");
@@ -418,7 +870,7 @@ T solver(char* expression) {
 		sprintf(saveEquation, "%s", solverExpression.c_str());
 		sprintf(equation, "%s", solverExpression.c_str());
 	}
-	std::complex<long double> complexLinearSolution(0.0L, 0.0L);
+std::complex<long double> complexLinearSolution(0.0L, 0.0L);
 	if (trySolveSolverLinearExpressionComplex(solverExpression, complexLinearSolution) ||
 		trySolveSolverLinearProductExpressionComplex(solverExpression, complexLinearSolution)) {
 		resultR = (T)complexLinearSolution.real();
@@ -429,6 +881,29 @@ T solver(char* expression) {
 		_delete(notSolvedEquation, "notSolvedEquation"); notSolvedEquation = nullptr;
 		_delete(data, "data"); data = nullptr;
 		return (T)complexLinearSolution.real();
+	}
+	double complexBinomialRootR = 0.0, complexBinomialRootI = 0.0;
+	if (trySolveSolverComplexBinomialFallback(solverExpression.c_str(), complexBinomialRootR, complexBinomialRootI)) {
+		resultR = complexBinomialRootR;
+		resultI = complexBinomialRootI;
+		verified = 1;
+		_delete(equation, "equation"); equation = nullptr;
+		_delete(saveEquation, "saveEquation"); saveEquation = nullptr;
+		_delete(notSolvedEquation, "notSolvedEquation"); notSolvedEquation = nullptr;
+		_delete(data, "data"); data = nullptr;
+		return precisionValueTo<T>(resultR);
+	}
+	double simpleFunctionRootR = 0.0, simpleFunctionRootI = 0.0;
+	if (trySolveSimpleFunctionByDerivative(expression, simpleFunctionRootR, simpleFunctionRootI) &&
+		validateSolverRootWithInitialProcessor(expression, simpleFunctionRootR, simpleFunctionRootI)) {
+		resultR = simpleFunctionRootR;
+		resultI = simpleFunctionRootI;
+		verified = 1;
+		_delete(equation, "equation"); equation = nullptr;
+		_delete(saveEquation, "saveEquation"); saveEquation = nullptr;
+		_delete(notSolvedEquation, "notSolvedEquation"); notSolvedEquation = nullptr;
+		_delete(data, "data"); data = nullptr;
+		return precisionValueTo<T>(resultR);
 	}
 	if (isContained("\\", expression)) {
 		int d = 0, check_integral = 0;;
@@ -447,7 +922,7 @@ T solver(char* expression) {
 				d++;
 			}
 			getValue[e] = '\0';
-			T a = solveMath(getValue);
+			T a = solveMath<T>(getValue);
 			d++;
 			e = 0;
 			sprintf(getValue, "");
@@ -457,7 +932,7 @@ T solver(char* expression) {
 				d++;
 			}
 			getValue[e] = '\0';
-			T b = solveMath(getValue);
+			T b = solveMath<T>(getValue);
 			d++;
 			char* function = getDynamicCharArray("", "function");
 			e = 0;
@@ -483,7 +958,7 @@ T solver(char* expression) {
 			return area;
 		}
 	}
-	bool to_solve = dataVerifier(equation, 0, 0, 0, 1);
+	bool to_solve = dataVerifier<T>(equation, (T)0, (T)0, 0, 1);
 	solverRunning = true;
 
 	if (to_solve) {
@@ -521,7 +996,17 @@ T solver(char* expression) {
 			replaceTimes = 0;
 			sprintf(saveSimplified, "%s", expressionF);
 			resultR = 0; resultI = 0;
-			advancedSolver(data);
+			double earlyPolynomialRootR = 0.0, earlyPolynomialRootI = 0.0;
+			bool solvedByPolynomialIsolation = trySolvePolynomialFallbackAfterAdvancedSolver(data, earlyPolynomialRootR, earlyPolynomialRootI) ||
+				trySolvePolynomialFallbackAfterAdvancedSolver(expression, earlyPolynomialRootR, earlyPolynomialRootI) ||
+				trySolvePolynomialFallbackAfterAdvancedSolver(saveEquation, earlyPolynomialRootR, earlyPolynomialRootI);
+			if (solvedByPolynomialIsolation) {
+				resultR = earlyPolynomialRootR;
+				resultI = earlyPolynomialRootI;
+			}
+			else {
+				advancedSolver<T>(data);
+			}
 			solverRunning = false;
 			equationSolverRunning = false;
 			poly = false;
@@ -535,9 +1020,22 @@ T solver(char* expression) {
 				_delete(notSolvedEquation, "notSolvedEquation"); notSolvedEquation = nullptr;
 				_delete(data, "data");
 
-				return resultR;
+				return precisionValueTo<T>(resultR);
 			}
 			else {
+				double fallbackRootR = 0.0, fallbackRootI = 0.0;
+				if (trySolvePolynomialFallbackAfterAdvancedSolver(data, fallbackRootR, fallbackRootI)) {
+					resultR = fallbackRootR;
+					resultI = fallbackRootI;
+					solverRunning = false;
+					equationSolverRunning = false;
+					poly = false;
+					_delete(equation, "equation"); equation = nullptr;
+					_delete(saveEquation, "saveEquation"); saveEquation = nullptr;
+					_delete(notSolvedEquation, "notSolvedEquation"); notSolvedEquation = nullptr;
+					_delete(data, "data"); data = nullptr;
+					return (T)fallbackRootR;
+				}
 				poly = true;
 				replaceTimes = 0;
 				if (isContained("res", data)) {
@@ -554,10 +1052,10 @@ T solver(char* expression) {
 				simplifyExpression(data);
 				sprintf(data, "%s", expressionF);
 				sprintf(answers, "");
-				equationSolver(data);
+				equationSolver<T>(data);
 				int i = 0, j = 0, z = 0;
-				T* zeroR = getDynamicDoubleArray();
-				T* zeroI = getDynamicDoubleArray();
+				T* zeroR = getDynamicArray<T>(DIMDOUBLE);
+				T* zeroI = getDynamicArray<T>(DIMDOUBLE);
 				char* value = getDynamicCharArray("", "value");
 				replaceTimes = 0;
 				char* saveExpF = getDynamicCharArray("", "saveExpF");
@@ -576,8 +1074,8 @@ T solver(char* expression) {
 						replace("-", "_", value);
 						sprintf(value, "%s", expressionF);
 					}
-					solveMath(value);
-					zeroR[z] = resultR; zeroI[z] = resultI;
+					solveMath<T>(value);
+					zeroR[z] = precisionValueTo<T>(resultR); zeroI[z] = precisionValueTo<T>(resultI);
 					z++;
 					if (zeroI[z - 1] != 0 || zeroR[z - 1] != 0) {
 						break;
@@ -592,8 +1090,8 @@ T solver(char* expression) {
 					replace("x", "res", equation);
 					sprintf(equation, "%s", expressionF);
 				}
-				solveMath(equation);
-				if (abs(resultR) < 1E-2 && abs(resultI) < 1E-2) {
+				solveMath<T>(equation);
+				if (abs(precisionValueTo<T>(resultR)) < 1E-2 && abs(precisionValueTo<T>(resultI)) < 1E-2) {
 					resultR = saveResultR;
 					resultI = saveResultI;
 					solverRunning = false;
@@ -608,7 +1106,7 @@ T solver(char* expression) {
 					_delete(notSolvedEquation, "notSolvedEquation"); notSolvedEquation = nullptr;
 					_delete(data, "data");
 					_delete(value, "value"); value = nullptr;
-					return resultR;
+					return precisionValueTo<T>(resultR);
 				}
 
 				_delete(saveExpF, "saveExpF"); saveExpF = nullptr;
@@ -640,7 +1138,7 @@ T solver(char* expression) {
 		xValuesR = resultFR; xValuesI = resultFI; saveResultR = -0.1; saveResultI = 0;
 		if ((retrySolver == (bool)false || retrySolver) && retrySolver_2 == (bool)false && retrySolver_3 == (bool)false) {
 			xValuesR = resultFR; xValuesI = resultFI;
-			while (isSolved() == false && timesEvaluated < timesToEvaluate) {
+			while (isSolved<T>() == false && timesEvaluated < timesToEvaluate) {
 				timesEvaluated++;
 				if (resultFR >= (saveResultR * -1) || initialR) {
 					saveResultR = saveResultR * 10;
@@ -658,89 +1156,89 @@ T solver(char* expression) {
 						initialI = false;
 					}
 				}
-				while (resultR != 0 && resultFR < (saveResultR * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0) {
+				while (precisionValueTo<T>(resultR) != 0 && resultFR < (saveResultR * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0) {
 					timesEvaluated++;
 					xValuesR = resultFR; xValuesI = resultFI;
-					solveMath(equation);
-					if (resultR < 0) {
+					solveMath<T>(equation);
+					if (precisionValueTo<T>(resultR) < 0) {
 						do {
 							timesEvaluated++;
-							if (resultR < 0) {
+							if (precisionValueTo<T>(resultR) < 0) {
 								resultFR = resultFR + precisionR;
 								xValuesR = resultFR; xValuesI = resultFI;
-								solveMath(equation);
+								solveMath<T>(equation);
 							}
-							if (resultR > 0) {
+							if (precisionValueTo<T>(resultR) > 0) {
 								resultFR = resultFR - precisionR;
 								precisionR = precisionR / 10;
 								xValuesR = resultFR; xValuesI = resultFI;
-								solveMath(equation);
+								solveMath<T>(equation);
 							}
-						} while (resultR != 0 && resultFR < (saveResultR * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
+						} while (precisionValueTo<T>(resultR) != 0 && resultFR < (saveResultR * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
 					}
 					else {
 						do {
 							timesEvaluated++;
-							if (resultR > 0) {
+							if (precisionValueTo<T>(resultR) > 0) {
 								resultFR = resultFR + precisionR;
 								xValuesR = resultFR; xValuesI = resultFI;
-								solveMath(equation);
+								solveMath<T>(equation);
 							}
 							else {
-								if (resultR < 0) {
+								if (precisionValueTo<T>(resultR) < 0) {
 									resultFR = resultFR - precisionR;
 									precisionR = precisionR / 10;
 									xValuesR = resultFR; xValuesI = resultFI;
-									solveMath(equation);
+									solveMath<T>(equation);
 								}
 							}
-						} while (resultR != 0 && resultFR < (saveResultR * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
+						} while (precisionValueTo<T>(resultR) != 0 && resultFR < (saveResultR * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
 					}
-					if (resultR == 0) {
+					if (precisionValueTo<T>(resultR) == 0) {
 						break;
 					}
 				}
 				timesEvaluated++;
 				if (retrySolver) {
-					while (resultI != 0 && resultFI < (saveResultI * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0) {
+					while (precisionValueTo<T>(resultI) != 0 && resultFI < (saveResultI * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0) {
 						timesEvaluated++;
 						xValuesR = resultFR; xValuesI = resultFI;
-						solveMath(equation);
-						if (resultI < 0) {
+						solveMath<T>(equation);
+						if (precisionValueTo<T>(resultI) < 0) {
 							do {
 								timesEvaluated++;
-								if (resultI < 0) {
+								if (precisionValueTo<T>(resultI) < 0) {
 									resultFI = resultFI + precisionI;
 									xValuesR = resultFR; xValuesI = resultFI;
-									solveMath(equation);
+									solveMath<T>(equation);
 								}
-								if (resultI > 0) {
+								if (precisionValueTo<T>(resultI) > 0) {
 									resultFI = resultFI - precisionI;
 									precisionI = precisionI / 10;
 									xValuesR = resultFR; xValuesI = resultFI;
-									solveMath(equation);
+									solveMath<T>(equation);
 								}
-							} while (resultI != 0 && resultFI < (saveResultI * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
+							} while (precisionValueTo<T>(resultI) != 0 && resultFI < (saveResultI * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
 						}
 						else {
 							do {
 								timesEvaluated++;
-								if (resultI > 0) {
+								if (precisionValueTo<T>(resultI) > 0) {
 									resultFI = resultFI + precisionI;
 									xValuesR = resultFR; xValuesI = resultFI;
-									solveMath(equation);
+									solveMath<T>(equation);
 								}
 								else {
-									if (resultI < 0) {
+									if (precisionValueTo<T>(resultI) < 0) {
 										resultFI = resultFI - precisionI;
 										precisionI = precisionI / 10;
 										xValuesR = resultFR; xValuesI = resultFI;
-										solveMath(equation);
+										solveMath<T>(equation);
 									}
 								}
-							} while (resultI != 0 && resultFI < (saveResultI * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
+							} while (precisionValueTo<T>(resultI) != 0 && resultFI < (saveResultI * -1) && timesEvaluated < timesToEvaluate && timesEvaluated % interactions != 0);
 						}
-						if (resultI == 0) {
+						if (precisionValueTo<T>(resultI) == 0) {
 							break;
 						}
 					}
@@ -750,8 +1248,8 @@ T solver(char* expression) {
 		else {
 			if (retrySolver_2 && retrySolver == (bool)false && retrySolver_3 == (bool)false) {
 				xValuesR = 1E9; xValuesI = 0;
-				solveMath(equation);
-				T minMaxR = resultR, minMaxI = resultI;
+				solveMath<T>(equation);
+				T minMaxR = precisionValueTo<T>(resultR), minMaxI = precisionValueTo<T>(resultI);
 				int i = 0, j = 0, interval = 499, c = 1, d = 0;
 				int* x_values = getDynamicArray<int>(1000);
 				T* y_valuesR = getDynamicArray<T>(1000);
@@ -759,10 +1257,10 @@ T solver(char* expression) {
 				int firstValueR = 0, secondValueR = 0, selected_X = 0;
 				for (i = -interval; i < interval; i++) {
 					xValuesR = (T)i; xValuesI = 0;
-					solveMath(equation);
+					solveMath<T>(equation);
 					x_values[j] = i;
-					y_valuesR[j] = resultR;
-					y_valuesI[j] = resultI;
+					y_valuesR[j] = precisionValueTo<T>(resultR);
+					y_valuesI[j] = precisionValueTo<T>(resultI);
 					j++;
 				}
 				bool zero = false;
@@ -787,21 +1285,21 @@ T solver(char* expression) {
 						zero = false;
 						if (y_valuesR[firstValueR] != INF * 2 && y_valuesR[secondValueR] != INF * 2 && y_valuesR[selected_X] != INF * 2) {
 							xValuesR = firstValueR; xValuesI = 0;
-							T negYR = solveMath(equation);
-							T negYI = resultI;
+							T negYR = solveMath<T>(equation);
+							T negYI = precisionValueTo<T>(resultI);
 							xValuesR = secondValueR; xValuesI = 0;
-							T posYR = solveMath(equation);
-							T posYI = resultI;
+							T posYR = solveMath<T>(equation);
+							T posYI = precisionValueTo<T>(resultI);
 							T dividend = (((negYR + negYI) - (posYR + posYI)) * -1) / 2;
-							division(dividend, 0, minMaxR, minMaxI);
-							multiplication(resultR, resultI, -1, 0);
-							sum(resultR, resultI, selected_X, 0);
-							if (resultR > mINF && resultR<INF && resultI>mINF && resultI < INF) {
-								resultFR = resultR; resultFI = resultI;
+							division<T>(dividend, 0, minMaxR, minMaxI);
+							multiplication<T>(precisionValueTo<T>(resultR), precisionValueTo<T>(resultI), -1, 0);
+							sum<T>(precisionValueTo<T>(resultR), precisionValueTo<T>(resultI), selected_X, 0);
+							if (precisionValueTo<T>(resultR) > mINF && precisionValueTo<T>(resultR)<INF && precisionValueTo<T>(resultI)>mINF && precisionValueTo<T>(resultI) < INF) {
+								resultFR = precisionValueTo<T>(resultR); resultFI = precisionValueTo<T>(resultI);
 								if (physics == (bool)false) {
 								}
 								xValuesR = resultFR; xValuesI = resultFI;
-								solveMath(equation);
+								solveMath<T>(equation);
 								c++;
 							}
 						}
@@ -810,7 +1308,7 @@ T solver(char* expression) {
 					i++;
 				}
 				xValuesR = resultFR; xValuesI = resultFI;
-				solveMath(equation);
+				solveMath<T>(equation);
 				_delete(x_values, "x_values");
 				x_values = nullptr;
 				_delete(y_valuesR, "y_valuesR");
@@ -819,11 +1317,11 @@ T solver(char* expression) {
 				y_valuesI = nullptr;
 			}
 		}
-		if ((retrySolver == (bool)false && retrySolver_2 == (bool)false && retrySolver_3 == (bool)false && ((resultR > -1E-2 && resultR < 1E-2) == false || (resultI > -1E-2 && resultI < 1E-2) == false)) && equationSolverRunning == (bool)false) {
+		if ((retrySolver == (bool)false && retrySolver_2 == (bool)false && retrySolver_3 == (bool)false && ((precisionValueTo<T>(resultR) > -1E-2 && precisionValueTo<T>(resultR) < 1E-2) == false || (precisionValueTo<T>(resultI) > -1E-2 && precisionValueTo<T>(resultI) < 1E-2) == false)) && equationSolverRunning == (bool)false) {
 			retrySolver = true;
 			solverRunning = true;
-			solver(expression);
-			resultFR = resultR; resultFI = resultI;
+			solver<T>(expression);
+			resultFR = precisionValueTo<T>(resultR); resultFI = precisionValueTo<T>(resultI);
 			solverRunning = false;
 			solving = true;
 			equationSolverRunning = false;
@@ -839,12 +1337,12 @@ T solver(char* expression) {
 
 			return resultFR;
 		}
-		if ((retrySolver && retrySolver_2 == (bool)false && retrySolver_3 == (bool)false && ((resultR > -1E-7 && resultR < 1E-7) == false || (resultI > -1E-7 && resultI < 1E-7) == false)) && equationSolverRunning == (bool)false) {
+		if ((retrySolver && retrySolver_2 == (bool)false && retrySolver_3 == (bool)false && ((precisionValueTo<T>(resultR) > -1E-7 && precisionValueTo<T>(resultR) < 1E-7) == false || (precisionValueTo<T>(resultI) > -1E-7 && precisionValueTo<T>(resultI) < 1E-7) == false)) && equationSolverRunning == (bool)false) {
 			retrySolver = false;
 			retrySolver_2 = true;
 			solverRunning = true;
-			solver(expression);
-			resultFR = resultR; resultFI = resultI;
+			solver<T>(expression);
+			resultFR = precisionValueTo<T>(resultR); resultFI = precisionValueTo<T>(resultI);
 			solverRunning = false;
 			equationSolverRunning = false;
 			solving = true;
@@ -861,12 +1359,12 @@ T solver(char* expression) {
 
 			return resultFR;
 		}
-		if ((retrySolver == (bool)false && retrySolver_2 && retrySolver_3 == (bool)false && ((resultR > -1 && resultR < 1) == false || (resultI > -1 && resultI < 1) == false)) && equationSolverRunning == (bool)false) {
+		if ((retrySolver == (bool)false && retrySolver_2 && retrySolver_3 == (bool)false && ((precisionValueTo<T>(resultR) > -1 && precisionValueTo<T>(resultR) < 1) == false || (precisionValueTo<T>(resultI) > -1 && precisionValueTo<T>(resultI) < 1) == false)) && equationSolverRunning == (bool)false) {
 			retrySolver_2 = false;
 			retrySolver_3 = true;
 			solverRunning = true;
-			solver(expression);
-			resultFR = resultR; resultFI = resultI;
+			solver<T>(expression);
+			resultFR = precisionValueTo<T>(resultR); resultFI = precisionValueTo<T>(resultI);
 			solverRunning = false;
 			equationSolverRunning = false;
 			solving = true;
@@ -891,7 +1389,7 @@ T solver(char* expression) {
 		sprintf(expressionF, "");
 		sprintf(roots, "");
 		if (resultFR == -0.1) {
-			printf("\nCould not solve the expression: %s\n\n", notSolvedEquation);
+			printf("\\nATC was unable to find a valid solution.\\n\\n");
 			feedbackValidation = 1;
 		}
 		_delete(equation, "equation"); equation = nullptr;
@@ -949,11 +1447,10 @@ template <typename T>
 void advancedSolver(char* expression) {
 	rasf = 0;
 	bool foundNotValid = false;
-	T initialAngle = (T)(M_PI / 2);
-	xValuesR = initialAngle; xValuesI = 0;
-	T xValueR = initialAngle, xValueI = 0, previousSolR = initialAngle, previousSolI = 0;
+	xValuesR = M_PI / 2; xValuesI = 0;
+	T xValueR = (T)(M_PI / 2), xValueI = 0, previousSolR = (T)(M_PI / 2), previousSolI = 0;
 	int i = 0;
-	T deltaxR = initialAngle, deltaxI = 0;
+	T deltaxR = (T)(M_PI / 2), deltaxI = 0;
 	char* toSolve = getDynamicCharArray("", "toSolve"); 	char* toHelp = getDynamicCharArray("", "toHelp");
 	T fxDevR = 1, fxDevI = 0;
 	replaceTimes = 0;
@@ -963,41 +1460,41 @@ void advancedSolver(char* expression) {
 	T solR = 1, solI = 0;
 	while (i < 175) {
 		xValuesR = xValueR; xValuesI = xValueI;
-		initialProcessor(toSolve, 0);
-		T fxR = resultR, fxI = resultI;
+		initialProcessor<T>(toSolve, (T)0);
+		T fxR = precisionValueTo<T>(resultR), fxI = precisionValueTo<T>(resultI);
 		xValuesR = xValueR + deltaxR;
 		xValuesI = xValueI + deltaxI;
 
-		initialProcessor(toSolve, 0);
-		T fxplusaR = resultR, fxplusaI = resultI;
+		initialProcessor<T>(toSolve, (T)0);
+		T fxplusaR = precisionValueTo<T>(resultR), fxplusaI = precisionValueTo<T>(resultI);
 
-		subtraction(fxplusaR, fxplusaI, fxR, fxI);
-		division(resultR, resultI, deltaxR, deltaxI);
-		if (resultR != 0 || resultI != 0) {
-			fxDevR = resultR, fxDevI = resultI;
+		subtraction<T>(fxplusaR, fxplusaI, fxR, fxI);
+		division<T>(precisionValueTo<T>(resultR), precisionValueTo<T>(resultI), deltaxR, deltaxI);
+		if (precisionValueTo<T>(resultR) != 0 || precisionValueTo<T>(resultI) != 0) {
+			fxDevR = precisionValueTo<T>(resultR), fxDevI = precisionValueTo<T>(resultI);
 		}
 
-		division(fxR, fxI, fxDevR, fxDevI);
-		subtraction(xValueR, xValueI, resultR, resultI);
+		division<T>(fxR, fxI, fxDevR, fxDevI);
+		subtraction<T>(xValueR, xValueI, precisionValueTo<T>(resultR), precisionValueTo<T>(resultI));
 		if (abs(previousSolR - solR) < 1E-6 && abs(previousSolI - solI) < 1E-6) {
 			T xR1, xR2, xI1, xI2, resR1, resR2, resI1, resI2;
-			if (abs(resultR) < 1E-6)
+			if (abs(precisionValueTo<T>(resultR)) < 1E-6)
 			{
 				resultR = 0;
 			}
-			if (abs(resultI) < 1E-6)
+			if (abs(precisionValueTo<T>(resultI)) < 1E-6)
 			{
 				resultI = 0;
 			}
-			xR1 = quo(resultR); xI1 = quo(resultI);
-			xR2 = resultR; xI2 = resultI;
+			xR1 = quo(precisionValueTo<T>(resultR)); xI1 = quo(precisionValueTo<T>(resultI));
+			xR2 = precisionValueTo<T>(resultR); xI2 = precisionValueTo<T>(resultI);
 
 			xValuesR = xR1; xValuesI = xI1;
-			initialProcessor(toSolve, 0);
-			resR1 = resultR; resI1 = resultI;
+			initialProcessor<T>(toSolve, (T)0);
+			resR1 = precisionValueTo<T>(resultR); resI1 = precisionValueTo<T>(resultI);
 			xValuesR = xR2; xValuesI = xI2;
-			initialProcessor(toSolve, 0);
-			resR2 = resultR; resI2 = resultI;
+			initialProcessor<T>(toSolve, (T)0);
+			resR2 = precisionValueTo<T>(resultR); resI2 = precisionValueTo<T>(resultI);
 			if (abs(resR2) >= abs(resR1) && abs(resI2) >= abs(resI1)) {
 				solR = xR1; solI = xI1;
 
@@ -1009,7 +1506,7 @@ void advancedSolver(char* expression) {
 
 		}
 		else {
-			xValueR = resultR; xValueI = resultI;
+			xValueR = precisionValueTo<T>(resultR); xValueI = precisionValueTo<T>(resultI);
 			previousSolR = solR; previousSolI = solI;
 			solR = xValueR; solI = xValueI;
 		}
@@ -1020,18 +1517,18 @@ void advancedSolver(char* expression) {
 		T saveResultR = solR, saveResultI = solI;
 		while (mode < 4) {
 			if (mode == 1) {
-				re_complex(saveResultR, saveResultI, 2 * M_PI, 0.0);
+				re_complex<T>(saveResultR, saveResultI, 2 * M_PI, 0.0);
 			}
 			if (mode == 2) {
-				re_complex(saveResultR, saveResultI, 360, 0.0);
+				re_complex<T>(saveResultR, saveResultI, 360, 0.0);
 			}
 			if (mode == 3) {
-				re_complex(saveResultR, saveResultI, 400, 0.0);
+				re_complex<T>(saveResultR, saveResultI, 400, 0.0);
 			}
-			T savePossibleSolR = resultR, savePossibleSolI = resultI;
+			T savePossibleSolR = precisionValueTo<T>(resultR), savePossibleSolI = precisionValueTo<T>(resultI);
 			xValuesR = savePossibleSolR; xValuesI = savePossibleSolI;
-			initialProcessor(toSolve, 0);
-			T fxR = resultR, fxI = resultI;
+			initialProcessor<T>(toSolve, (T)0);
+			T fxR = precisionValueTo<T>(resultR), fxI = precisionValueTo<T>(resultI);
 			if (abs(fxR) < 1E-6 && abs(fxI) < 1E-6) {
 				solR = savePossibleSolR; solI = savePossibleSolI;
 				resultR = solR; resultI = solI;
@@ -1252,18 +1749,59 @@ static bool extractSolverFunctionTargetMinusFunctionX(const std::string& source,
 	return true;
 }
 
-static std::complex<double> convertSolverGuessToInternalDomain(std::complex<double> guess, bool angularFunction) {
-	if (!angularFunction) {
-		return guess;
+static int getSolverAngularMode(int explicitAngularMode) {
+	if (explicitAngularMode != 0) {
+		return explicitAngularMode;
 	}
-	int angularMode = applySettings(4);
+	return applySettings(4);
+}
+
+static std::complex<double> convertSolverRootFromInternalDomain(std::complex<double> root, int explicitAngularMode) {
+	int angularMode = getSolverAngularMode(explicitAngularMode);
 	if (angularMode == 2) {
-		return guess * (M_PI / 180.0);
+		return root * (180.0 / M_PI);
 	}
 	if (angularMode == 3) {
-		return guess * (M_PI / 200.0);
+		return root * (200.0 / M_PI);
 	}
-	return guess;
+	return root;
+}
+
+static bool validateSolverRootWithInitialProcessor(char* expression, double rootR, double rootI) {
+	if (expression == nullptr) {
+		return false;
+	}
+	std::string savedExpressionF(expressionF == nullptr ? "" : expressionF);
+	PrecisionValue savedResultR = resultR;
+	PrecisionValue savedResultI = resultI;
+	PrecisionValue savedXValuesR = xValuesR;
+	PrecisionValue savedXValuesI = xValuesI;
+	bool savedSolverRunning = solverRunning;
+	int savedReplaceTimes = replaceTimes;
+	char* validationExpression = getDynamicCharArray("", "solverValidationExpression");
+
+	replaceTimes = 0;
+	replace("x", "res", expression);
+	sprintf(validationExpression, "%s", expressionF);
+	xValuesR = rootR;
+	xValuesI = rootI;
+	solverRunning = true;
+	initialProcessor<double>(validationExpression, 0.0);
+
+	double fxR = precisionValueTo<double>(resultR);
+	double fxI = precisionValueTo<double>(resultI);
+	bool validated = std::fabs(fxR) < 1E-6 && std::fabs(fxI) < 1E-6;
+
+	sprintf(expressionF, "%s", savedExpressionF.c_str());
+	resultR = savedResultR;
+	resultI = savedResultI;
+	xValuesR = savedXValuesR;
+	xValuesI = savedXValuesI;
+	solverRunning = savedSolverRunning;
+	replaceTimes = savedReplaceTimes;
+	_delete(validationExpression, "solverValidationExpression");
+	validationExpression = nullptr;
+	return validated;
 }
 
 static bool trySolveLinearXExpression(char* expression, double& rootR, double& rootI) {
@@ -1336,11 +1874,24 @@ static bool trySolveSimpleFunctionByDerivative(char* expression, double& rootR, 
 		return false;
 	}
 	std::string text(expression);
-	const char* functions[] = { "sin", "cos", "tan", "sinh", "cosh", "tanh" };
-	for (int functionIndex = 0; functionIndex < 6; ++functionIndex) {
+	struct SolverFunction {
+		const char* name;
+		int functionIndex;
+		int explicitAngularMode;
+	};
+	const SolverFunction functions[] = {
+		{ "sin", 0, 0 }, { "cos", 1, 0 }, { "tan", 2, 0 },
+		{ "radsin", 0, 1 }, { "radcos", 1, 1 }, { "radtan", 2, 1 },
+		{ "degsin", 0, 2 }, { "degcos", 1, 2 }, { "degtan", 2, 2 },
+		{ "gonsin", 0, 3 }, { "goncos", 1, 3 }, { "gontan", 2, 3 },
+		{ "sinh", 3, 1 }, { "cosh", 4, 1 }, { "tanh", 5, 1 }
+	};
+	const int functionCount = sizeof(functions) / sizeof(functions[0]);
+	for (int entryIndex = 0; entryIndex < functionCount; ++entryIndex) {
+		int functionIndex = functions[entryIndex].functionIndex;
 		bool angularFunction = functionIndex < 3;
 		std::string invertedSameFunctionArgument;
-		if (extractSolverFunctionTargetMinusFunctionX(text, functions[functionIndex], invertedSameFunctionArgument)) {
+		if (extractSolverFunctionTargetMinusFunctionX(text, functions[entryIndex].name, invertedSameFunctionArgument)) {
 			std::complex<double> argumentValue;
 			if (evaluateSolverTargetExpression(invertedSameFunctionArgument, argumentValue)) {
 				rootR = argumentValue.real();
@@ -1348,18 +1899,19 @@ static bool trySolveSimpleFunctionByDerivative(char* expression, double& rootR, 
 				return true;
 			}
 		}
-		std::string prefix = std::string(functions[functionIndex]) + "(x)";
+		std::string prefix = std::string(functions[entryIndex].name) + "(x)";
 		if (text.compare(0, prefix.size(), prefix) != 0 || text.size() <= prefix.size()) {
 			continue;
 		}
-		std::complex<double> preferredGuess(0.0, 0.0);
-		bool hasPreferredGuess = false;
 		std::string sameFunctionArgument;
-		if (extractSolverSameFunctionArgument(text.substr(prefix.size()), functions[functionIndex], sameFunctionArgument)) {
+		if (extractSolverSameFunctionArgument(text.substr(prefix.size()), functions[entryIndex].name, sameFunctionArgument)) {
 			std::complex<double> argumentValue;
 			if (evaluateSolverTargetExpression(sameFunctionArgument, argumentValue)) {
-				preferredGuess = convertSolverGuessToInternalDomain(argumentValue, angularFunction);
-				hasPreferredGuess = true;
+				// f(x) - f(a) = 0 always admits x = a. Returning the identity
+				// root also avoids re-entering the expression processor from the solver.
+				rootR = argumentValue.real();
+				rootI = argumentValue.imag();
+				return true;
 			}
 		}
 		std::complex<double> constant;
@@ -1406,7 +1958,7 @@ static bool trySolveSimpleFunctionByDerivative(char* expression, double& rootR, 
 			return 1.0 / (coshX * coshX);
 		};
 		std::complex<double> guesses[] = {
-			hasPreferredGuess ? preferredGuess : std::complex<double>(0.0, 0.0),
+			std::complex<double>(0.0, 0.0),
 			target,
 			std::complex<double>(target.real(), target.imag()),
 			std::complex<double>(0.0, 0.0),
@@ -1423,19 +1975,11 @@ static bool trySolveSimpleFunctionByDerivative(char* expression, double& rootR, 
 			for (int iteration = 0; iteration < 40; ++iteration) {
 				std::complex<double> fx = evaluate(x);
 				if (std::abs(fx) < 1E-10) {
+					if (angularFunction) {
+						x = convertSolverRootFromInternalDomain(x, functions[entryIndex].explicitAngularMode);
+					}
 					rootR = x.real();
 					rootI = x.imag();
-					if (angularFunction) {
-						int angularMode = applySettings(4);
-						if (angularMode == 2) {
-							rootR = rootR * 180.0 / M_PI;
-							rootI = rootI * 180.0 / M_PI;
-						}
-						if (angularMode == 3) {
-							rootR = rootR * 200.0 / M_PI;
-							rootI = rootI * 200.0 / M_PI;
-						}
-					}
 					if (std::fabs(rootR - std::round(rootR)) < 1E-9) {
 						rootR = std::round(rootR);
 					}
@@ -1458,230 +2002,9 @@ static bool trySolveSimpleFunctionByDerivative(char* expression, double& rootR, 
 	}
 	return false;
 }
-
-static char* getNormalizedSolverExpression(char* expression) {
-	std::string normalized(expression == nullptr ? "" : expression);
-	size_t position = 0;
-	while ((position = normalized.find("((1000))", position)) != std::string::npos) {
-		normalized.replace(position, 8, "(x)");
-		position += 3;
-	}
-	position = 0;
-	while ((position = normalized.find("(1000)", position)) != std::string::npos) {
-		normalized.replace(position, 6, "x");
-		position += 1;
-	}
-	position = 0;
-	while ((position = normalized.find("_(1000)", position)) != std::string::npos) {
-		normalized.replace(position, 7, "_x");
-		position += 2;
-	}
-	return getDynamicCharArray(const_cast<char*>(normalized.c_str()), "normalizedSolverExpression");
-}
-
-template <typename T>
-static T solveByNumericalDerivative(char* expression) {
-	std::string equationTemplate(expression == nullptr ? "" : expression);
-	char* evaluationExpression = getDynamicCharArray("", "evaluationExpression");
-	T lastEvaluationI = (T)0;
-	bool previousSolverRunning = solverRunning;
-	solverRunning = true;
-	auto evaluate = [&](T x) {
-		std::ostringstream valueStream;
-		valueStream << std::setprecision(30) << x;
-		std::string value = valueStream.str();
-		std::string concreteExpression;
-		for (size_t index = 0; index < equationTemplate.size(); ++index) {
-			if (equationTemplate[index] == 'x') {
-				concreteExpression += "(";
-				if (!value.empty() && value[0] == '-') {
-					concreteExpression += "0";
-				}
-				concreteExpression += value;
-				concreteExpression += ")";
-			}
-			else {
-				concreteExpression += equationTemplate[index];
-			}
-		}
-		sprintf(evaluationExpression, "%s", concreteExpression.c_str());
-		initialProcessor<T>(evaluationExpression, (T)0);
-		lastEvaluationI = precisionValueTo<T>(resultI);
-		return precisionValueTo<T>(resultR);
-	};
-	T tolerance = (T)1E-7;
-	T root = (T)0;
-	bool found = false;
-
-	T guesses[] = { (T)0, (T)1, (T)-1, (T)10, (T)-10 };
-	for (int guessIndex = 0; guessIndex < 5 && !found; ++guessIndex) {
-		T x = guesses[guessIndex];
-		T delta = solverAbs(x) > (T)1 ? solverAbs(x) * (T)1E-3 : (T)1E-3;
-		for (int iteration = 0; iteration < 20; ++iteration) {
-			T fx = evaluate(x);
-			if (solverAbs(fx) < tolerance && solverAbs(lastEvaluationI) < tolerance) {
-				root = x;
-				found = true;
-				break;
-			}
-			T derivative = (evaluate(x + delta) - fx) / delta;
-			if (solverAbs(derivative) < (T)1E-18) {
-				delta *= (T)10;
-				continue;
-			}
-			T next = x - fx / derivative;
-			if (solverAbs((T)(next - x)) < tolerance) {
-				x = next;
-				if (solverAbs(evaluate(x)) < (T)1E-7 && solverAbs(lastEvaluationI) < (T)1E-7) {
-					root = x;
-					found = true;
-				}
-				break;
-			}
-			x = next;
-			delta = solverAbs(x) > (T)1 ? solverAbs(x) * (T)1E-3 : (T)1E-3;
-		}
-	}
-
-	if (!found) {
-		T previousX = (T)0;
-		T previousY = evaluate(previousX);
-		if (solverAbs(previousY) < tolerance && solverAbs(lastEvaluationI) < tolerance) {
-			root = previousX;
-			found = true;
-		}
-		for (int direction = 0; !found && direction < 2; direction++) {
-			previousX = (T)0;
-			previousY = evaluate(previousX);
-			for (int i = 1; i <= 100 && !found; i++) {
-				T currentX = direction == 0 ? (T)i : (T)-i;
-				T currentY = evaluate(currentX);
-				if (solverAbs(currentY) < tolerance && solverAbs(lastEvaluationI) < tolerance) {
-					root = currentX;
-					found = true;
-					break;
-				}
-				if ((previousY < (T)0 && currentY > (T)0) || (previousY > (T)0 && currentY < (T)0)) {
-					T left = previousX;
-					T right = currentX;
-					T leftY = previousY;
-					for (int iteration = 0; iteration < 80; iteration++) {
-						T middle = (left + right) / (T)2;
-						T middleY = evaluate(middle);
-						if (solverAbs(middleY) < (T)1E-12) {
-							left = middle;
-							right = middle;
-							break;
-						}
-						if ((leftY < (T)0 && middleY > (T)0) || (leftY > (T)0 && middleY < (T)0)) {
-							right = middle;
-						}
-						else {
-							left = middle;
-							leftY = middleY;
-						}
-					}
-					root = (left + right) / (T)2;
-					found = true;
-				}
-				previousX = currentX;
-				previousY = currentY;
-			}
-		}
-	}
-	if (!found) {
-		resultR = (T)-765432;
-		resultI = (T)234567;
-		solverRunning = previousSolverRunning;
-		_delete(evaluationExpression, "evaluationExpression");
-		evaluationExpression = nullptr;
-		return (T)-765432;
-	}
-	double rootAsDouble = precisionValueTo<double>(root);
-	if (std::fabs(rootAsDouble - std::round(rootAsDouble)) < 1E-9) {
-		root = (T)std::round(rootAsDouble);
-	}
-	resultR = root;
-	resultI = (T)0;
-	solverRunning = previousSolverRunning;
-	_delete(evaluationExpression, "evaluationExpression");
-	evaluationExpression = nullptr;
-	return root;
-}
-
-template <>
-double solver<double>(char* expression) {
-	char* normalizedExpression = getNormalizedSolverExpression(expression);
-	double rootR = 0.0, rootI = 0.0;
-	std::string solverExpression(normalizedExpression != nullptr ? normalizedExpression : "");
-	std::string reducedRationalProduct;
-	if (reduceExactRationalProductExpression(solverExpression.c_str(), reducedRationalProduct)) {
-		solverExpression = reducedRationalProduct;
-	}
-	std::complex<long double> complexLinearSolution(0.0L, 0.0L);
-	if (trySolveSolverLinearExpressionComplex(solverExpression, complexLinearSolution) ||
-		trySolveSolverLinearProductExpressionComplex(solverExpression, complexLinearSolution)) {
-		resultR = (double)complexLinearSolution.real();
-		resultI = (double)complexLinearSolution.imag();
-		_delete(normalizedExpression, "normalizedSolverExpression");
-		normalizedExpression = nullptr;
-		return (double)complexLinearSolution.real();
-	}
-	if (trySolveLinearXExpression(normalizedExpression, rootR, rootI)) {
-		resultR = rootR;
-		resultI = rootI;
-		_delete(normalizedExpression, "normalizedSolverExpression");
-		normalizedExpression = nullptr;
-		return rootR;
-	}
-	if (trySolveSimpleFunctionByDerivative(normalizedExpression, rootR, rootI)) {
-		resultR = rootR;
-		resultI = rootI;
-		_delete(normalizedExpression, "normalizedSolverExpression");
-		normalizedExpression = nullptr;
-		return rootR;
-	}
-	double value = solveByNumericalDerivative<double>(normalizedExpression);
-	_delete(normalizedExpression, "normalizedSolverExpression");
-	normalizedExpression = nullptr;
-	return value;
-}
-
+template double solver<double>(char*);
 template <>
 mp_float solver<mp_float>(char* expression) {
-	char* normalizedExpression = getNormalizedSolverExpression(expression);
-	double rootR = 0.0, rootI = 0.0;
-	std::string solverExpression(normalizedExpression != nullptr ? normalizedExpression : "");
-	std::string reducedRationalProduct;
-	if (reduceExactRationalProductExpression(solverExpression.c_str(), reducedRationalProduct)) {
-		solverExpression = reducedRationalProduct;
-	}
-	std::complex<long double> complexLinearSolution(0.0L, 0.0L);
-	if (trySolveSolverLinearExpressionComplex(solverExpression, complexLinearSolution) ||
-		trySolveSolverLinearProductExpressionComplex(solverExpression, complexLinearSolution)) {
-		resultR = (mp_float)complexLinearSolution.real();
-		resultI = (mp_float)complexLinearSolution.imag();
-		_delete(normalizedExpression, "normalizedSolverExpression");
-		normalizedExpression = nullptr;
-		return (mp_float)complexLinearSolution.real();
-	}
-	if (trySolveLinearXExpression(normalizedExpression, rootR, rootI)) {
-		resultR = rootR;
-		resultI = rootI;
-		_delete(normalizedExpression, "normalizedSolverExpression");
-		normalizedExpression = nullptr;
-		return (mp_float)rootR;
-	}
-	if (trySolveSimpleFunctionByDerivative(normalizedExpression, rootR, rootI)) {
-		resultR = rootR;
-		resultI = rootI;
-		_delete(normalizedExpression, "normalizedSolverExpression");
-		normalizedExpression = nullptr;
-		return (mp_float)rootR;
-	}
-	mp_float value = solveByNumericalDerivative<mp_float>(normalizedExpression);
-	_delete(normalizedExpression, "normalizedSolverExpression");
-	normalizedExpression = nullptr;
-	return value;
+	double value = solver<double>(expression);
+	return (mp_float)value;
 }
-

@@ -2,7 +2,7 @@
 
 Source reference: https://advantrigoncalc.sourceforge.io/full_user_guide/index.html
 
-This suite is designed as a smoke/regression layer for ATC 2.1.7. It focuses on
+This suite is designed as a smoke/regression layer for ATC 2.1.8. It focuses on
 safe command-line tests that can run repeatedly without opening GUI features,
 changing the PC state, or requiring user interaction.
 

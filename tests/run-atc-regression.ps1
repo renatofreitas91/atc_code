@@ -1,15 +1,28 @@
 param(
     [string]$AtcExe = (Join-Path $PSScriptRoot "..\x64\Release\atc.exe"),
-    [string]$AtcDataDir = (Join-Path $env:USERPROFILE "Pictures\Advanced Trigonometry Calculator"),
+    [string]$AtcDataDir = "",
+    [string]$AtcPackageDir = "",
     [int]$TimeoutSeconds = 20,
-    [ValidateSet("All", "Double", "MpFloat", "Persistence")]
+    [ValidateSet("All", "Double", "MpFloat", "Persistence", "SolverComplex", "Txt", "Settings", "Package")]
     [string]$Mode = "All"
 )
 
 $ErrorActionPreference = "Stop"
 
 $AtcExe = [System.IO.Path]::GetFullPath($AtcExe)
+if ([string]::IsNullOrWhiteSpace($AtcDataDir)) {
+    $AtcDataDir = Split-Path -Parent $AtcExe
+}
 $AtcDataDir = [System.IO.Path]::GetFullPath($AtcDataDir)
+$AtcAssetDir = $AtcDataDir
+$sourceAssetDir = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot "..\Advanced Trigonometry Calculator"))
+if ((-not (Test-Path (Join-Path $AtcAssetDir "License.txt"))) -and (Test-Path (Join-Path $sourceAssetDir "License.txt"))) {
+    $AtcAssetDir = $sourceAssetDir
+}
+if ([string]::IsNullOrWhiteSpace($AtcPackageDir)) {
+    $AtcPackageDir = $AtcAssetDir
+}
+$AtcPackageDir = [System.IO.Path]::GetFullPath($AtcPackageDir)
 $higherPrecisionPath = Join-Path $AtcDataDir "higherPrecision.txt"
 $aboutDisabledPath = Join-Path $AtcDataDir "aboutDisabled.txt"
 $variablesPath = Join-Path $AtcDataDir "variables.txt"
@@ -30,22 +43,42 @@ $onStartPath = Join-Path $AtcDataDir "onStart.txt"
 $historyPath = Join-Path $AtcDataDir "history.txt"
 $exitPath = Join-Path $AtcDataDir "exit.txt"
 $disableTxtDetectorPath = Join-Path $AtcDataDir "disable_txt_detector.txt"
-$scriptsExamplesDir = Join-Path $AtcDataDir "Scripts examples"
-$sourceCodeDir = Join-Path $AtcDataDir "Source code"
-$stringsDir = Join-Path $AtcDataDir "Strings"
-$toSolveDir = Join-Path $AtcDataDir "To solve"
-$userFunctionsDir = Join-Path $AtcDataDir "User functions"
-$userGuidePdfPath = Join-Path $AtcDataDir "Advanced Trigonometry Calculator - User Guide.pdf"
-$licensePath = Join-Path $AtcDataDir "License.txt"
-$aboutExecutionPath = Join-Path $AtcDataDir "About execution of application.txt"
+$scriptsExamplesDir = Join-Path $AtcAssetDir "Scripts examples"
+$sourceCodeDir = Join-Path $AtcAssetDir "Source code"
+$stringsDir = Join-Path $AtcAssetDir "Strings"
+$toSolveDir = Join-Path $AtcAssetDir "To solve"
+$userFunctionsDir = Join-Path $AtcAssetDir "User functions"
+$userGuidePdfPath = Join-Path $AtcAssetDir "Advanced Trigonometry Calculator - User Guide.pdf"
+$licensePath = Join-Path $AtcAssetDir "License.txt"
+$aboutExecutionPath = Join-Path $AtcAssetDir "About execution of application.txt"
 $scriptExamplePath = Join-Path $scriptsExamplesDir "conditions_script_example.txt"
 $sourceCodeExamplePath = Join-Path $sourceCodeDir "commands.cpp"
+$packageScriptsExamplesDir = Join-Path $AtcPackageDir "Scripts examples"
+$packageSourceCodeDir = Join-Path $AtcPackageDir "Source code"
+$packageStringsDir = Join-Path $AtcPackageDir "Strings"
+$packageToSolveDir = Join-Path $AtcPackageDir "To solve"
+$packageUserFunctionsDir = Join-Path $AtcPackageDir "User functions"
+$packageUserGuidePdfPath = Join-Path $AtcPackageDir "Advanced Trigonometry Calculator - User Guide.pdf"
+$packageLicensePath = Join-Path $AtcPackageDir "License.txt"
+$packageAboutExecutionPath = Join-Path $AtcPackageDir "About execution of application.txt"
+$packageScriptExamplePath = Join-Path $packageScriptsExamplesDir "conditions_script_example.txt"
+$packageSourceCodeExamplePath = Join-Path $packageSourceCodeDir "commands.cpp"
+if (-not (Test-Path $packageSourceCodeExamplePath)) {
+    $packageSourceCodeExamplePath = Join-Path $AtcPackageDir "Source code of application.txt"
+}
 
 if (-not (Test-Path $AtcExe)) {
     throw "ATC executable not found: $AtcExe"
 }
 
 New-Item -ItemType Directory -Path $AtcDataDir -Force | Out-Null
+
+# Mode semantics:
+# - All: functional executable regression for a local build/runtime tree.
+# - SolverComplex: focused 2.1.8 complex solver and complex arithmetic regression.
+# - Txt: focused TXT/command bridge regression.
+# - Settings: isolated startup/settings file handling regression.
+# - Package: distributable package asset/structure regression; pass -AtcPackageDir for the package root.
 
 function Get-OptionalFileContent([string]$Path) {
     if (Test-Path $Path) {
@@ -99,6 +132,181 @@ function Set-HigherPrecision([string]$Value) {
     Set-Content -Path $higherPrecisionPath -Value $Value -NoNewline
 }
 
+function Get-RunnerChildTotal {
+    if ($Mode -eq "All") { return 371 }
+    if ($Mode -eq "SolverComplex") { return 14 }
+    if ($Mode -eq "Txt") { return 16 }
+    if ($Mode -eq "Settings") { return 8 }
+    if ($Mode -eq "Package") { return 0 }
+    return 0
+}
+
+$script:AtcChildIndex = 0
+$script:AtcChildTotal = Get-RunnerChildTotal
+$script:StartedAtcPids = New-Object System.Collections.Generic.List[int]
+
+function Format-RunnerPosition([int]$Index) {
+    if ($script:AtcChildTotal -gt 0) {
+        return ("[{0}/{1}]" -f $Index, $script:AtcChildTotal)
+    }
+    return ("[{0}/?]" -f $Index)
+}
+
+function Get-LastOutputLines([AllowNull()][string]$Text, [int]$Count = 8) {
+    if ([string]::IsNullOrEmpty($Text)) {
+        return ""
+    }
+    $lines = (($Text -replace "`r", "") -split "`n")
+    if ($lines.Count -le $Count) {
+        return ($lines -join "`n").Trim()
+    }
+    return (($lines | Select-Object -Last $Count) -join "`n").Trim()
+}
+
+function Stop-AtcProcessTree([int]$ProcessId) {
+    try {
+        $process = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue
+        if ($null -ne $process) {
+            & "$env:SystemRoot\System32\taskkill.exe" /PID $ProcessId /T /F | Out-Null
+        }
+    }
+    catch {
+        try {
+            Stop-Process -Id $ProcessId -Force -ErrorAction SilentlyContinue
+        }
+        catch {
+        }
+    }
+}
+
+function Write-RunnerStart([string]$Name) {
+    $script:AtcChildIndex++
+    $position = Format-RunnerPosition $script:AtcChildIndex
+    Write-Host ("START {0} {1}" -f $position, $Name)
+    [Console]::Out.Flush()
+    return $script:AtcChildIndex
+}
+
+function Write-RunnerProcessResult([string]$Status, [int]$Index, [string]$Name, [double]$ElapsedSeconds, [string]$Reason = "") {
+    $position = Format-RunnerPosition $Index
+    if ([string]::IsNullOrWhiteSpace($Reason)) {
+        Write-Host ("{0} {1} {2} ({3:n3}s)" -f $Status, $position, $Name, $ElapsedSeconds)
+    }
+    else {
+        Write-Host ("{0} {1} {2} ({3})" -f $Status, $position, $Name, $Reason)
+    }
+    [Console]::Out.Flush()
+}
+
+function Get-AtcFailureDiagnostic([pscustomobject]$Result, [string]$Reason) {
+    @(
+        "mode: $Mode",
+        "test: $($Result.Name)",
+        "reason: $Reason",
+        "command: $($Result.Command)",
+        "working directory: $($Result.WorkingDirectory)",
+        "executable: $($Result.Executable)",
+        "pid: $($Result.Pid)",
+        "timeout: $TimeoutSeconds seconds",
+        "stdout tail:",
+        (Get-LastOutputLines $Result.StdOut),
+        "stderr tail:",
+        (Get-LastOutputLines $Result.StdErr)
+    ) -join "`n"
+}
+
+function Invoke-AtcProcess(
+    [string]$Name,
+    [string]$Arguments,
+    [string[]]$InputLines = @(),
+    [string]$Executable = $AtcExe,
+    [string]$WorkingDirectory = (Split-Path -Parent $AtcExe)
+) {
+    $workingDirectory = $WorkingDirectory
+    $index = Write-RunnerStart $Name
+    $processInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $processInfo.FileName = $Executable
+    $processInfo.Arguments = $Arguments
+    $processInfo.WorkingDirectory = $workingDirectory
+    $processInfo.RedirectStandardOutput = $true
+    $processInfo.RedirectStandardError = $true
+    $processInfo.RedirectStandardInput = $true
+    $processInfo.UseShellExecute = $false
+
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    $process = [System.Diagnostics.Process]::Start($processInfo)
+    $script:StartedAtcPids.Add($process.Id) | Out-Null
+    Write-Host ("PID {0} {1} pid={2} args={3} wd={4}" -f (Format-RunnerPosition $index), $Name, $process.Id, $Arguments, $workingDirectory)
+    [Console]::Out.Flush()
+
+    $stdoutTask = $process.StandardOutput.ReadToEndAsync()
+    $stderrTask = $process.StandardError.ReadToEndAsync()
+    foreach ($line in $InputLines) {
+        $process.StandardInput.WriteLine($line)
+    }
+    $process.StandardInput.Close()
+
+    $timedOut = $false
+    if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {
+        $timedOut = $true
+        Stop-AtcProcessTree $process.Id
+        $process.WaitForExit(5000) | Out-Null
+    }
+    else {
+        $process.WaitForExit()
+    }
+    $stopwatch.Stop()
+
+    $stdout = ""
+    $stderr = ""
+    try { $stdout = $stdoutTask.Result } catch {}
+    try { $stderr = $stderrTask.Result } catch {}
+
+    $result = [pscustomobject]@{
+        Name = $Name
+        Index = $index
+        ExitCode = $process.ExitCode
+        StdOut = $stdout
+        StdErr = $stderr
+        TimedOut = $timedOut
+        ElapsedSeconds = $stopwatch.Elapsed.TotalSeconds
+        Pid = $process.Id
+        Command = $Arguments
+        WorkingDirectory = $workingDirectory
+        Executable = $Executable
+        Reported = $false
+    }
+
+    if ($timedOut) {
+        $diagnostic = Get-AtcFailureDiagnostic $result "timeout"
+        Write-RunnerProcessResult "TIMEOUT" $index $Name $stopwatch.Elapsed.TotalSeconds ("{0:n3}s" -f $stopwatch.Elapsed.TotalSeconds)
+        Write-Host $diagnostic
+        $result.Reported = $true
+    }
+
+    return $result
+}
+
+function Invoke-AtcCommand([string]$Name, [string]$Expression, [string[]]$InputLines = @()) {
+    $arguments = '"' + $Expression.Replace('"', '\"') + '"'
+    Invoke-AtcProcess $Name $arguments $InputLines
+}
+
+function Complete-AtcProcessResult([pscustomobject]$ProcessResult, [bool]$Passed, [string]$Reason) {
+    if ($ProcessResult.Reported) {
+        return
+    }
+    if ($Passed) {
+        Write-RunnerProcessResult "PASS " $ProcessResult.Index $ProcessResult.Name $ProcessResult.ElapsedSeconds
+    }
+    else {
+        Write-RunnerProcessResult "FAIL " $ProcessResult.Index $ProcessResult.Name $ProcessResult.ElapsedSeconds $Reason
+        Write-Host (Get-AtcFailureDiagnostic $ProcessResult $Reason)
+    }
+    $ProcessResult.Reported = $true
+}
+
+<#
 function Invoke-AtcCommand([string]$Expression, [string[]]$InputLines = @()) {
     $processInfo = New-Object System.Diagnostics.ProcessStartInfo
     $processInfo.FileName = $AtcExe
@@ -132,11 +340,164 @@ function Invoke-AtcCommand([string]$Expression, [string[]]$InputLines = @()) {
         StdErr = $stderrTask.Result
     }
 }
+#>
+
+
+function Invoke-AtcInteractiveSession([string]$Name, [string[]]$Lines) {
+    $sessionLines = @($Lines)
+    if ($sessionLines.Count -eq 0 -or $sessionLines[-1] -ne "exit") {
+        $sessionLines += "exit"
+    }
+    Invoke-AtcProcess $Name '"atc over cmd"' $sessionLines
+}
+
+<#
+function Invoke-AtcInteractiveSession([string[]]$Lines) {
+    $processInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $processInfo.FileName = $AtcExe
+    $processInfo.Arguments = '"atc over cmd"'
+    $processInfo.WorkingDirectory = Split-Path -Parent $AtcExe
+    $processInfo.RedirectStandardOutput = $true
+    $processInfo.RedirectStandardError = $true
+    $processInfo.RedirectStandardInput = $true
+    $processInfo.UseShellExecute = $false
+
+    $process = [System.Diagnostics.Process]::Start($processInfo)
+    $stdoutTask = $process.StandardOutput.ReadToEndAsync()
+    $stderrTask = $process.StandardError.ReadToEndAsync()
+    foreach ($line in $Lines) {
+        $process.StandardInput.WriteLine($line)
+    }
+    if ($Lines.Count -eq 0 -or $Lines[-1] -ne "exit") {
+        $process.StandardInput.WriteLine("exit")
+    }
+    $process.StandardInput.Close()
+    if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {
+        try {
+            $process.Kill()
+        }
+        catch {
+        }
+        throw "Timed out after $TimeoutSeconds seconds: interactive ATC session"
+    }
+    $process.WaitForExit()
+
+    [pscustomobject]@{
+        ExitCode = $process.ExitCode
+        StdOut = $stdoutTask.Result
+        StdErr = $stderrTask.Result
+    }
+}
+#>
+
+function Get-AtcResultValue([string]$Output, [int]$Index) {
+    $pattern = "(?m)^#$Index=(.+)$"
+    $match = [regex]::Match($Output, $pattern)
+    if (-not $match.Success) {
+        return $null
+    }
+    return $match.Groups[1].Value.Trim()
+}
+
+function Convert-AtcDouble([string]$Value) {
+    return [double]::Parse($Value, [System.Globalization.CultureInfo]::InvariantCulture)
+}
+
+function Get-AtcComplexMagnitude([string]$Value) {
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return [double]::PositiveInfinity
+    }
+    $text = $Value.Trim()
+    if ($text -match "NAN|INF") {
+        return [double]::PositiveInfinity
+    }
+    if (-not $text.EndsWith("i")) {
+        return [Math]::Abs((Convert-AtcDouble $text))
+    }
+
+    $body = $text.Substring(0, $text.Length - 1)
+    if ($body -eq "" -or $body -eq "+") {
+        return 1.0
+    }
+    if ($body -eq "-") {
+        return 1.0
+    }
+
+    $split = -1
+    for ($i = 1; $i -lt $body.Length; $i++) {
+        $c = $body[$i]
+        $previous = $body[$i - 1]
+        if (($c -eq '+' -or $c -eq '-') -and $previous -ne 'E' -and $previous -ne 'e') {
+            $split = $i
+        }
+    }
+
+    if ($split -ge 0) {
+        $real = Convert-AtcDouble $body.Substring(0, $split)
+        $imagText = $body.Substring($split)
+    }
+    else {
+        $real = 0.0
+        $imagText = $body
+    }
+
+    if ($imagText -eq "" -or $imagText -eq "+") {
+        $imag = 1.0
+    }
+    elseif ($imagText -eq "-") {
+        $imag = -1.0
+    }
+    else {
+        $imag = Convert-AtcDouble $imagText
+    }
+
+    return [Math]::Sqrt(($real * $real) + ($imag * $imag))
+}
+
+function Test-AtcSessionExpression([string]$Name, [string[]]$Lines, [string]$ExpectedRegex) {
+    $result = Invoke-AtcInteractiveSession $Name $Lines
+    $combined = (($result.StdOut + $result.StdErr) -replace "`r", "").Trim()
+    $passed = (-not $result.TimedOut) -and ($result.ExitCode -eq 0) -and ($combined -match $ExpectedRegex)
+    Complete-AtcProcessResult $result $passed "expected regex not matched or nonzero exit"
+
+    [pscustomobject]@{
+        Passed = $passed
+        Name = $Name
+        Expression = ($Lines -join "; ")
+        ExitCode = $result.ExitCode
+        Output = $combined
+        Expected = $ExpectedRegex
+        Reported = $result.Reported
+    }
+}
+
+function Test-AtcSolverResidue([string]$Name, [string]$Expression, [string]$RootRegex, [double]$Tolerance = 1e-8) {
+    Set-Content -Path $variablesPath -Value "x 1000 0" -NoNewline
+    $lines = @("solver($Expression)", "x=#0", $Expression, "exit")
+    $result = Invoke-AtcInteractiveSession $Name $lines
+    $combined = (($result.StdOut + $result.StdErr) -replace "`r", "").Trim()
+    $root = Get-AtcResultValue $combined 0
+    $residue = Get-AtcResultValue $combined 2
+    $residueMagnitude = Get-AtcComplexMagnitude $residue
+    $passed = (-not $result.TimedOut) -and ($result.ExitCode -eq 0) -and ($null -ne $root) -and ($root -match $RootRegex) -and ($null -ne $residue) -and ($residueMagnitude -le $Tolerance)
+    Complete-AtcProcessResult $result $passed ("root /{0}/ and |f(root)| <= {1}" -f $RootRegex, $Tolerance)
+
+    [pscustomobject]@{
+        Passed = $passed
+        Name = $Name
+        Expression = ($lines -join "; ")
+        ExitCode = $result.ExitCode
+        Output = $combined
+        Expected = ("root /{0}/ and |f(root)| <= {1}" -f $RootRegex, $Tolerance)
+        Reported = $result.Reported
+    }
+}
 
 function Test-AtcExpression([string]$Name, [string]$Expression, [string]$ExpectedRegex, [string[]]$InputLines = @()) {
-    $result = Invoke-AtcCommand $Expression $InputLines
+    $result = Invoke-AtcCommand $Name $Expression $InputLines
     $combined = (($result.StdOut + $result.StdErr) -replace "`r", "").Trim()
-    $passed = ($result.ExitCode -eq 0) -and ($combined -match $ExpectedRegex)
+    $passed = (-not $result.TimedOut) -and ($result.ExitCode -eq 0) -and ($combined -match $ExpectedRegex)
+    Complete-AtcProcessResult $result $passed "expected regex not matched or nonzero exit"
 
     [pscustomobject]@{
         Passed = $passed
@@ -145,6 +506,25 @@ function Test-AtcExpression([string]$Name, [string]$Expression, [string]$Expecte
         ExitCode = $result.ExitCode
         Output = $combined
         Expected = $ExpectedRegex
+        Reported = $result.Reported
+    }
+}
+
+function Test-AtcExpressionInDirectory([string]$Name, [string]$Expression, [string]$ExpectedRegex, [string]$WorkingDirectory) {
+    $arguments = '"' + $Expression.Replace('"', '\"') + '"'
+    $result = Invoke-AtcProcess $Name $arguments @() $AtcExe $WorkingDirectory
+    $combined = (($result.StdOut + $result.StdErr) -replace "`r", "").Trim()
+    $passed = (-not $result.TimedOut) -and ($result.ExitCode -eq 0) -and ($combined -match $ExpectedRegex)
+    Complete-AtcProcessResult $result $passed "expected regex not matched or nonzero exit"
+
+    [pscustomobject]@{
+        Passed = $passed
+        Name = $Name
+        Expression = $Expression
+        ExitCode = $result.ExitCode
+        Output = $combined
+        Expected = $ExpectedRegex
+        Reported = $result.Reported
     }
 }
 
@@ -278,9 +658,45 @@ function Test-AtcExpressionWithEnvironment([string]$Name, [string]$Expression, [
     }
 }
 
+function Get-RunnerTempDir([string]$Name) {
+    $tempDir = Join-Path $AtcDataDir (Join-Path "runner-temp" $Name)
+    New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
+    return $tempDir
+}
+
+function New-SettingsCaseDirectory([string]$Name) {
+    $settingsRoot = Get-RunnerTempDir "settings"
+    $caseDir = Join-Path $settingsRoot ($Name + "-" + [guid]::NewGuid().ToString("N"))
+    New-Item -ItemType Directory -Path $caseDir | Out-Null
+    Set-Content -Path (Join-Path $caseDir "atc_path.txt") -Value $caseDir -NoNewline
+    Set-Content -Path (Join-Path $caseDir "aboutDisabled.txt") -Value "1" -NoNewline
+    return $caseDir
+}
+
+function Test-SettingsExpression(
+    [string]$Name,
+    [string]$CaseDirectory,
+    [string]$ExpectedRegex = "Dimensions-+>"
+) {
+    Test-AtcExpressionInDirectory $Name "current settings" $ExpectedRegex $CaseDirectory
+}
+
+function Test-SettingsConsecutiveRuns([string]$CaseDirectory) {
+    $first = Test-SettingsExpression "settings: consecutive run 1" $CaseDirectory
+    $second = Test-SettingsExpression "settings: consecutive run 2" $CaseDirectory
+    [pscustomobject]@{
+        Passed = $first.Passed -and $second.Passed
+        Name = "settings: two consecutive runs"
+        Expression = "current settings; current settings"
+        ExitCode = if ($second.ExitCode -ne 0) { $second.ExitCode } else { $first.ExitCode }
+        Output = ($first.Output + "`n--- second run ---`n" + $second.Output).Trim()
+        Expected = "both runs complete within timeout and print Dimensions settings"
+        Reported = $first.Reported -and $second.Reported
+    }
+}
+
 function Test-MockedExternalCommand([string]$Name, [string]$Expression, [string]$ExpectedRegex, [string]$ExpectedLogRegex, [scriptblock]$BeforeRun = $null, [scriptblock]$AfterRun = $null) {
-    $flowDir = Join-Path $PSScriptRoot "temp\txt-flow"
-    New-Item -ItemType Directory -Path $flowDir -Force | Out-Null
+    $flowDir = Get-RunnerTempDir "txt-flow"
     $logPath = Join-Path $flowDir ("external-" + (($Name -replace "[^A-Za-z0-9]+", "-").Trim("-")) + ".log")
     Remove-Item -Path $logPath -Force -ErrorAction SilentlyContinue
     if ($null -ne $BeforeRun) {
@@ -309,8 +725,7 @@ function Test-MockedExternalCommand([string]$Name, [string]$Expression, [string]
 }
 
 function Test-TxtProcessingFlow {
-    $flowDir = Join-Path $PSScriptRoot "temp\txt-flow"
-    New-Item -ItemType Directory -Path $flowDir -Force | Out-Null
+    $flowDir = Get-RunnerTempDir "txt-flow"
     $inputPath = Join-Path $flowDir "input.txt"
     $answerPath = Join-Path $flowDir "input_answers.txt"
     $logPath = Join-Path $flowDir "solve-txt-open.log"
@@ -359,8 +774,7 @@ function Test-TxtProcessingFlow {
 }
 
 function Test-AutoSolveTxtWatcherFlow {
-    $flowDir = Join-Path $PSScriptRoot "temp\txt-flow"
-    New-Item -ItemType Directory -Path $flowDir -Force | Out-Null
+    $flowDir = Get-RunnerTempDir "txt-flow"
     $inputPath = Join-Path $flowDir "auto-watch.txt"
     $answerPath = Join-Path $flowDir "auto-watch_answers.txt"
     $logPath = Join-Path $flowDir "auto-solve-txt-open.log"
@@ -407,7 +821,7 @@ function Test-AutoSolveTxtWatcherFlow {
 }
 
 function Test-EliminateStringsMock {
-    $flowDir = Join-Path $PSScriptRoot "temp\txt-flow"
+    $flowDir = Get-RunnerTempDir "txt-flow"
     $testStringsDir = Join-Path $flowDir "Strings"
     New-Item -ItemType Directory -Path $testStringsDir -Force | Out-Null
     $markerPath = Join-Path $testStringsDir "temporary-string.txt"
@@ -455,7 +869,8 @@ function Test-AtcExpressionAndFileValues([string]$Name, [string]$Expression, [st
 }
 
 function Test-AtcExportExpression([string]$Name, [string]$Expression, [string]$ExpectedConsoleRegex, [string]$ExpectedFileRegex) {
-    $reportPath = Join-Path $PSScriptRoot ("tmp-" + (($Name -replace "[^A-Za-z0-9]+", "-").Trim("-")) + ".txt")
+    $reportDir = Get-RunnerTempDir "exports"
+    $reportPath = Join-Path $reportDir ("tmp-" + (($Name -replace "[^A-Za-z0-9]+", "-").Trim("-")) + ".txt")
     Set-Content -Path $reportPath -Value "" -NoNewline
 
     $result = Test-AtcExpression $Name $Expression $ExpectedConsoleRegex @("1", $reportPath)
@@ -819,9 +1234,18 @@ $equationSolverTests = @(
 )
 
 $solverFunctionTests = @(
+    @{
+        Name = "quadratic solver complex root"
+        Expression = "solver(x^2+1)"
+        Expected = "^#\d+=(0[-+])?1i$"
+        ModeValue = "1"
+    },
     @{ Name = "trigonometric equation radian mode"; Expression = "solver(sin(x)-0.5)"; Expected = "^#\d+=0\.523599"; ModeValue = "1" },
     @{ Name = "trigonometric equation degree mode"; Expression = "solver(sin(x)-0.5)"; Expected = "^#\d+=30$"; ModeValue = "2" },
     @{ Name = "trigonometric equation gradian mode"; Expression = "solver(sin(x)-0.5)"; Expected = "^#\d+=33\.3333"; ModeValue = "3" },
+    @{ Name = "explicit radian sine solver"; Expression = "solver(radsin(x)-0.5)"; Expected = "^#\d+=0\.523599"; ModeValue = "2" },
+    @{ Name = "explicit degree sine solver"; Expression = "solver(degsin(x)-0.5)"; Expected = "^#\d+=30$"; ModeValue = "1" },
+    @{ Name = "explicit gradian sine solver"; Expression = "solver(gonsin(x)-0.5)"; Expected = "^#\d+=33\.3333"; ModeValue = "1" },
     @{ Name = "complex trigonometric equation degree mode"; Expression = "solver(sin(x)-0.5+0.5i)"; Expected = "^#\d+=25\.9136-30\.4033i"; ModeValue = "2" },
     @{ Name = "mirrored trigonometric equation degree mode"; Expression = "solver(0.5-sin(x))"; Expected = "^#\d+=30$"; ModeValue = "2" },
     @{ Name = "complex trigonometric expression target degree mode"; Expression = "solver(sin(x)-sin(30+30i))"; Expected = "^#\d+=30\+30i"; ModeValue = "2" },
@@ -834,7 +1258,7 @@ $solverFunctionTests = @(
     @{ Name = "complex inverse trigonometric linear target degree mode"; Expression = "solver(asin(sin(30+30i))-x)"; Expected = "^#\d+=30\+30i"; ModeValue = "2" },
     @{ Name = "qfunc target"; Expression = "solver(qfunc(x)-qfunc(0.34233))"; Expected = "^#\d+=0\.34233$"; ModeValue = "1" },
     @{ Name = "mirrored qfunc target"; Expression = "solver(qfunc(0.34233)-qfunc(x))"; Expected = "^#\d+=0\.34233$"; ModeValue = "1" },
-    @{ Name = "polynomial Newton equation"; Expression = "solver(x^2-12x-9)"; Expected = "^#\d+=-0\.708204$"; ModeValue = "1" },
+    @{ Name = "polynomial Newton equation"; Expression = "x^2-12x-9"; Expected = "^(-0\.708204|12\.7082)"; ModeValue = "1"; ValidateResidue = $true; Tolerance = 1e-8 },
     @{ Name = "linear polynomial fast path"; Expression = "solver(x+2)"; Expected = "^#\d+=-2$"; ModeValue = "1" },
     @{ Name = "complex linear symbolic constant solver fast path"; Expression = "solver(x-e+pii)"; Expected = "^#\d+=2\.71828-3\.14159i$"; ModeValue = "1" },
     @{ Name = "complex product symbolic constant solver fast path"; Expression = "solver((x-e+pii)(x-e-pii))"; Expected = "^#\d+=2\.71828-3\.14159i$"; ModeValue = "1" },
@@ -1277,18 +1701,28 @@ $txtCommandBridgeTests = @(
 $fileFolderPathTests = @(
     @{ Name = "ATC data folder exists"; Path = $AtcDataDir },
     @{ Name = "Scripts examples folder exists"; Path = $scriptsExamplesDir },
-    @{ Name = "Source code folder exists"; Path = $sourceCodeDir },
-    @{ Name = "Strings folder exists"; Path = $stringsDir },
-    @{ Name = "To solve folder exists"; Path = $toSolveDir },
     @{ Name = "User functions folder exists"; Path = $userFunctionsDir }
 )
 
 $fileFolderFileTests = @(
-    @{ Name = "user guide PDF exists"; Path = $userGuidePdfPath },
     @{ Name = "license file exists"; Path = $licensePath },
     @{ Name = "about execution file exists"; Path = $aboutExecutionPath },
-    @{ Name = "script example file exists"; Path = $scriptExamplePath },
-    @{ Name = "source code snapshot file exists"; Path = $sourceCodeExamplePath }
+    @{ Name = "script example file exists"; Path = $scriptExamplePath }
+)
+
+$packagePathTests = @(
+    @{ Name = "Scripts examples folder exists"; Path = $packageScriptsExamplesDir },
+    @{ Name = "Strings folder exists"; Path = $packageStringsDir },
+    @{ Name = "To solve folder exists"; Path = $packageToSolveDir },
+    @{ Name = "User functions folder exists"; Path = $packageUserFunctionsDir }
+)
+
+$packageFileTests = @(
+    @{ Name = "user guide PDF exists"; Path = $packageUserGuidePdfPath },
+    @{ Name = "license file exists"; Path = $packageLicensePath },
+    @{ Name = "about execution file exists"; Path = $packageAboutExecutionPath },
+    @{ Name = "script example file exists"; Path = $packageScriptExamplePath },
+    @{ Name = "source code snapshot exists"; Path = $packageSourceCodeExamplePath }
 )
 
 $variableResultManagementTests = @(
@@ -1592,7 +2026,67 @@ $verboseResolutionBehaviorTests = @(
     }
 )
 
+
+$solverComplexRegressionTests = @(
+    @{ Name = "quadratic complex unit root"; Expression = "x^2+1"; Root = "^1i$"; Tolerance = 1e-10 },
+    @{ Name = "quadratic real power constant"; Expression = "x^2-4^2"; Root = "^4$"; Tolerance = 1e-10 },
+    @{ Name = "quadratic real unit root"; Expression = "x^2-1"; Root = "^1$"; Tolerance = 1e-10 },
+    @{ Name = "quadratic irrational root"; Expression = "x^2-2"; Root = "^1\.41421"; Tolerance = 1e-5 },
+    @{ Name = "quadratic complex shifted power"; Expression = "x^2-(1+6i)^2"; Root = "^1\+6i$"; Tolerance = 1e-8 },
+    @{ Name = "cubic complex squared target"; Expression = "x^3-(1+6i)^2"; Root = "^[^#]+i$"; Tolerance = 1e-8 },
+    @{ Name = "cubic complex cubed target"; Expression = "x^3-(1+6i)^3"; Root = "^4\.69615.*-3\.86603.*i$"; Tolerance = 1e-8 },
+    @{ Name = "quartic complex cubed target"; Expression = "x^4-(1+6i)^3"; Root = "^[^#]+i$"; Tolerance = 1e-8 },
+    @{ Name = "quintic complex mixed target"; Expression = "x^5-(2-3i)^4"; Root = "^[^#]+i$"; Tolerance = 1e-8 },
+    @{ Name = "septic real polynomial target"; Expression = "x^7-12"; Root = "^1\.426"; Tolerance = 1e-5 }
+)
+
+$complexArithmeticRegressionTests = @(
+    @{
+        Name = "assigned complex solver root evaluates original cubic"
+        Lines = @("solver(x^3-(1+6i)^3)", "x=#0", "x^3-(1+6i)^3", "exit")
+        Expected = "(?m)^#2=0$"
+    },
+    @{
+        Name = "generic complex exponent subtraction"
+        Lines = @("(1+6i)^4-(1+6i)^4", "exit")
+        Expected = "(?m)^#0=0$"
+    },
+    @{
+        Name = "generic complex exponent division identity"
+        Lines = @("(1+6i)^5/(1+6i)^2-(1+6i)^3", "exit")
+        Expected = "(?m)^#0=0$"
+    },
+    @{
+        Name = "history reference in complex arithmetic"
+        Lines = @("solver(x^2+1)", "#0^2+1", "exit")
+        Expected = "(?m)^#1=0$"
+    }
+)
+
 $results = New-Object System.Collections.Generic.List[object]
+
+$runTxtCommandBridgeTests = {
+    foreach ($test in $txtCommandBridgeTests) {
+        if ($test.ContainsKey("ClearPredefined") -and $test.ClearPredefined) {
+            Remove-Item -Path $predefinedTxtPath -Force -ErrorAction SilentlyContinue
+        }
+        if ($test.ContainsKey("FixturePath")) {
+            Set-Content -Path $test.FixturePath -Value $test.FixtureContent -NoNewline
+        }
+        if ($test.ContainsKey("FileExpected")) {
+            $results.Add((Test-AtcExpressionAndFileValue "txt/command bridge: $($test.Name)" $test.Expression $test.Expected $predefinedTxtPath $test.FileExpected $test.InputLines))
+        }
+        else {
+            $results.Add((Test-AtcExpression "txt/command bridge: $($test.Name)" $test.Expression $test.Expected $test.InputLines))
+        }
+    }
+    $results.Add((Test-MockedExternalCommand "txt/command bridge: atc from cmd mocked PATH update" "atc from cmd" "You can now run cmd\.exe" "atcFromCmd\|/C"))
+    $results.Add((Test-MockedExternalCommand "txt/command bridge: to solve mocked folder open" "to solve" "^$" "toSolve\|/C ""explorer"))
+    $results.Add((Test-MockedExternalCommand "txt/command bridge: enable txt detector removes disable flag" "enable txt detector" "^$" "enableTxtDetector\|.*disable_txt_detector\.txt" { Set-Content -Path $disableTxtDetectorPath -Value "1" -NoNewline } { param($result) if (Test-Path $disableTxtDetectorPath) { $result.Passed = $false; $result.Output = ($result.Output + "`ndisable_txt_detector still exists").Trim(); $result.Expected = $result.Expected + " and disable flag removed" } }))
+    $results.Add((Test-TxtProcessingFlow))
+    $results.Add((Test-AutoSolveTxtWatcherFlow))
+    $results.Add((Test-EliminateStringsMock))
+}
 
 try {
     Set-Content -Path $aboutDisabledPath -Value "1" -NoNewline
@@ -1683,7 +2177,12 @@ try {
         foreach ($test in $solverFunctionTests) {
             Set-Content -Path $modePath -Value $test.ModeValue -NoNewline
             Set-Content -Path $variablesPath -Value "x 1000 0" -NoNewline
-            $results.Add((Test-AtcExpression "solver function: $($test.Name)" $test.Expression $test.Expected))
+            if ($test.ContainsKey("ValidateResidue") -and $test.ValidateResidue) {
+                $results.Add((Test-AtcSolverResidue "solver function: $($test.Name)" $test.Expression $test.Expected $test.Tolerance))
+            }
+            else {
+                $results.Add((Test-AtcExpression "solver function: $($test.Name)" $test.Expression $test.Expected))
+            }
             Set-Content -Path $modePath -Value "1" -NoNewline
         }
         foreach ($test in $equationExportTests) {
@@ -1722,26 +2221,7 @@ try {
         foreach ($test in $deepInteractiveModuleTests) {
             $results.Add((Test-AtcExpression "deep interactive module: $($test.Name)" $test.Expression $test.Expected $test.InputLines))
         }
-        foreach ($test in $txtCommandBridgeTests) {
-            if ($test.ContainsKey("ClearPredefined") -and $test.ClearPredefined) {
-                Remove-Item -Path $predefinedTxtPath -Force -ErrorAction SilentlyContinue
-            }
-            if ($test.ContainsKey("FixturePath")) {
-                Set-Content -Path $test.FixturePath -Value $test.FixtureContent -NoNewline
-            }
-            if ($test.ContainsKey("FileExpected")) {
-                $results.Add((Test-AtcExpressionAndFileValue "txt/command bridge: $($test.Name)" $test.Expression $test.Expected $predefinedTxtPath $test.FileExpected $test.InputLines))
-            }
-            else {
-                $results.Add((Test-AtcExpression "txt/command bridge: $($test.Name)" $test.Expression $test.Expected $test.InputLines))
-            }
-        }
-        $results.Add((Test-MockedExternalCommand "txt/command bridge: atc from cmd mocked PATH update" "atc from cmd" "You can now run cmd\.exe" "atcFromCmd\|/C"))
-        $results.Add((Test-MockedExternalCommand "txt/command bridge: to solve mocked folder open" "to solve" "^$" "toSolve\|/C ""explorer"))
-        $results.Add((Test-MockedExternalCommand "txt/command bridge: enable txt detector removes disable flag" "enable txt detector" "^$" "enableTxtDetector\|.*disable_txt_detector\.txt" { Set-Content -Path $disableTxtDetectorPath -Value "1" -NoNewline } { param($result) if (Test-Path $disableTxtDetectorPath) { $result.Passed = $false; $result.Output = ($result.Output + "`ndisable_txt_detector still exists").Trim(); $result.Expected = $result.Expected + " and disable flag removed" } }))
-        $results.Add((Test-TxtProcessingFlow))
-        $results.Add((Test-AutoSolveTxtWatcherFlow))
-        $results.Add((Test-EliminateStringsMock))
+        & $runTxtCommandBridgeTests
         foreach ($test in $fileFolderPathTests) {
             $results.Add((Test-DirectoryExists "file/folder command: $($test.Name)" $test.Path))
         }
@@ -1809,6 +2289,74 @@ try {
             else {
                 $results.Add((Test-AtcExpression "app environment: $($test.Name)" $test.Expression $test.Expected $inputLines))
             }
+        }
+    }
+
+    if ($Mode -eq "Txt") {
+        Set-HigherPrecision "0"
+        Set-Content -Path $modePath -Value "1" -NoNewline
+        Set-Content -Path $numSystemsPath -Value "0" -NoNewline
+        Set-Content -Path $siPrefixesPath -Value "0" -NoNewline
+        Set-Content -Path $actualTimePath -Value "0" -NoNewline
+        & $runTxtCommandBridgeTests
+    }
+
+    if ($Mode -eq "SolverComplex") {
+        Set-HigherPrecision "0"
+        Set-Content -Path $modePath -Value "1" -NoNewline
+        Set-Content -Path $numSystemsPath -Value "0" -NoNewline
+        Set-Content -Path $siPrefixesPath -Value "0" -NoNewline
+        Set-Content -Path $actualTimePath -Value "0" -NoNewline
+        foreach ($test in $solverComplexRegressionTests) {
+            $results.Add((Test-AtcSolverResidue "solver 2.1.8: $($test.Name)" $test.Expression $test.Root $test.Tolerance))
+        }
+        foreach ($test in $complexArithmeticRegressionTests) {
+            $results.Add((Test-AtcSessionExpression "complex arithmetic 2.1.8: $($test.Name)" $test.Lines $test.Expected))
+        }
+    }
+
+    if ($Mode -eq "Settings") {
+        $validDir = New-SettingsCaseDirectory "valid"
+        Set-Content -Path (Join-Path $validDir "dimensions.txt") -Value "MODE con cols=120 lines=40" -NoNewline
+        Set-Content -Path (Join-Path $validDir "window.txt") -Value "10`n20`n500`n600`n" -NoNewline
+        $results.Add((Test-SettingsExpression "settings: valid dimensions.txt" $validDir "Dimensions-+> Lines: 40 - Columns: 120"))
+
+        $missingDir = New-SettingsCaseDirectory "missing"
+        Set-Content -Path (Join-Path $missingDir "window.txt") -Value "10`n20`n500`n600`n" -NoNewline
+        $results.Add((Test-SettingsExpression "settings: missing dimensions.txt" $missingDir))
+
+        $emptyDir = New-SettingsCaseDirectory "empty"
+        Set-Content -Path (Join-Path $emptyDir "dimensions.txt") -Value "" -NoNewline
+        Set-Content -Path (Join-Path $emptyDir "window.txt") -Value "10`n20`n500`n600`n" -NoNewline
+        $results.Add((Test-SettingsExpression "settings: empty dimensions.txt" $emptyDir))
+
+        $malformedDir = New-SettingsCaseDirectory "malformed"
+        Set-Content -Path (Join-Path $malformedDir "dimensions.txt") -Value "not a dimensions command" -NoNewline
+        Set-Content -Path (Join-Path $malformedDir "window.txt") -Value "invalid`nwindow`ndata`nvalues`n" -NoNewline
+        $results.Add((Test-SettingsExpression "settings: malformed dimensions.txt" $malformedDir))
+
+        $consecutiveDir = New-SettingsCaseDirectory "consecutive"
+        Set-Content -Path (Join-Path $consecutiveDir "dimensions.txt") -Value "MODE con cols=120 lines=40" -NoNewline
+        Set-Content -Path (Join-Path $consecutiveDir "window.txt") -Value "10`n20`n500`n600`n" -NoNewline
+        $results.Add((Test-SettingsConsecutiveRuns $consecutiveDir))
+
+        $readFailureDir = New-SettingsCaseDirectory "read-failure"
+        New-Item -ItemType Directory -Path (Join-Path $readFailureDir "dimensions.txt") | Out-Null
+        Set-Content -Path (Join-Path $readFailureDir "window.txt") -Value "10`n20`n500`n600`n" -NoNewline
+        $results.Add((Test-SettingsExpression "settings: permanent dimensions read failure" $readFailureDir))
+
+        $writeFailureDir = New-SettingsCaseDirectory "write-failure"
+        Set-Content -Path (Join-Path $writeFailureDir "dimensions.txt") -Value "MODE con cols=120 lines=40" -NoNewline
+        New-Item -ItemType Directory -Path (Join-Path $writeFailureDir "window.txt") | Out-Null
+        $results.Add((Test-SettingsExpression "settings: permanent window write failure" $writeFailureDir))
+    }
+
+    if ($Mode -eq "Package") {
+        foreach ($test in $packagePathTests) {
+            $results.Add((Test-DirectoryExists "package asset: $($test.Name)" $test.Path))
+        }
+        foreach ($test in $packageFileTests) {
+            $results.Add((Test-FileExists "package asset: $($test.Name)" $test.Path))
         }
     }
 
@@ -1980,8 +2528,11 @@ finally {
 $failed = @($results | Where-Object { -not $_.Passed })
 
 foreach ($result in $results) {
+    if ($result.PSObject.Properties.Name -contains "Reported" -and $result.Reported) {
+        continue
+    }
     $status = if ($result.Passed) { "PASS" } else { "FAIL" }
-    Write-Host ("[{0}] {1} :: {2}" -f $status, $result.Name, $result.Expression)
+    Write-Host ("{0}  [-/-] {1} :: {2}" -f $status, $result.Name, $result.Expression)
     if (-not $result.Passed) {
         Write-Host ("       expected: {0}" -f $result.Expected)
         Write-Host ("       exitcode: {0}" -f $result.ExitCode)
@@ -1991,6 +2542,24 @@ foreach ($result in $results) {
 
 Write-Host ""
 Write-Host ("Summary: {0} passed, {1} failed" -f ($results.Count - $failed.Count), $failed.Count)
+
+$orphanPids = @()
+foreach ($startedPid in $script:StartedAtcPids) {
+    $startedProcess = Get-Process -Id $startedPid -ErrorAction SilentlyContinue
+    if ($null -ne $startedProcess -and $startedProcess.ProcessName -eq "atc") {
+        $orphanPids += $startedPid
+    }
+}
+if ($orphanPids.Count -gt 0) {
+    Write-Host ("Orphan ATC processes from this runner: {0}" -f ($orphanPids -join ", "))
+    foreach ($orphanPid in $orphanPids) {
+        Stop-AtcProcessTree $orphanPid
+    }
+    exit 1
+}
+else {
+    Write-Host "Orphan ATC processes from this runner: none"
+}
 
 if ($failed.Count -gt 0) {
     exit 1

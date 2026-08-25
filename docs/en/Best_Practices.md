@@ -1,7 +1,7 @@
 # ATC Best Practices
 
 These practices help users get reliable results from Advanced Trigonometry
-Calculator 2.1.7.
+Calculator 2.1.8.
 
 ## Start Small
 
@@ -76,4 +76,3 @@ results with independent methods.
 Do not build workflows that depend on behavior not described in the user guide,
 release notes or tests. Parser and solver internals can change while preserving
 documented behavior.
-

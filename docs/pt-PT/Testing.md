@@ -1,6 +1,6 @@
 # Testes do Advanced Trigonometry Calculator
 
-Este documento resume a infraestrutura de testes do ATC 2.1.7.
+Este documento resume a infraestrutura de testes do ATC 2.1.8.
 
 ## Suite principal
 

@@ -127,7 +127,7 @@ clearly rather than being treated as solved.
 
 ## Precision Mode Overview
 
-ATC 2.1.7 can run using:
+ATC 2.1.8 can run using:
 
 - `double`
 - Boost `mp_float`
@@ -145,7 +145,7 @@ evaluation through the documented `maxprec` prefix.
 ## Memory Considerations
 
 The project uses custom dynamic allocation helpers in
-`dynamic_allocations.cpp`. Recent 2.1.7 work reduced unnecessary allocation in
+`dynamic_allocations.cpp`. Recent 2.1.8 work reduced unnecessary allocation in
 several areas and improved release behavior for dynamic arrays.
 
 When changing memory-sensitive code:

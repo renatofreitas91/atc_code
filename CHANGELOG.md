@@ -2,8 +2,57 @@
 
 All notable project changes should be documented in this file.
 
-This project uses the existing release documentation as the source of truth.
-Dates and version details should be kept aligned with `docs/RELEASE_2.1.7.md`.
+Current release details are recorded here. Historical release sections retain
+their original dates and validation evidence.
+
+## 2.1.8 - 2026-08-25
+
+### Solver correctness
+
+- Added validation of candidate roots against the original expression before a
+  solution is returned.
+- Added support for validated real and complex solutions, including complex
+  polynomial cases.
+- Added a general numerical fallback when the existing solver path does not
+  produce a valid root.
+- Fixed direct complex evaluation involving stored results and general exponent
+  expressions.
+- Added the message `ATC was unable to find a valid solution.` when no candidate
+  satisfies the original expression.
+
+### Settings and file robustness
+
+- Bounded settings-file retries and closed file handles safely across valid,
+  missing, empty, malformed, permanent read-failure, and permanent write-failure
+  cases.
+
+### Windows builds
+
+- Added a modern Release x64 build using the v143 toolset.
+- Preserved Windows XP SP3 x86 compatibility in the Release x86 build and
+  validated the same executable on Windows 11 x64 through WOW64.
+- Added optional external Windows Terminal profile installation and removal
+  without changing `settings.json`, the default terminal, or the classic
+  shortcut. Windows Terminal is not required by ATC.
+- Updated product copyright metadata to `Copyright (C) 2011-2026`.
+
+### Testing
+
+Current validated results for the Release x64 and Release x86 builds:
+
+```text
+All: 376 passed, 0 failed
+SolverComplex: 14 passed, 0 failed
+Txt: 15 passed, 0 failed
+Settings: 7 passed, 0 failed
+```
+
+The exact x86 release executable also passed manual smoke tests on Windows XP
+SP3 x86 and Windows 11 x64 through WOW64.
+
+The optional Windows Terminal profile was also approved manually on Windows 11.
+The profile identity and icon, interactive calculations, `calendar`, resizing,
+scrolling, persistence, and user-selected colors behaved as expected.
 
 ## 2.1.7 - 2026-06-09
 
@@ -61,7 +110,8 @@ Dates and version details should be kept aligned with `docs/RELEASE_2.1.7.md`.
 
 ### Testing
 
-- Current validated regression result for Release x64 and Release x86:
+- Historical validated regression result for ATC 2.1.7 Release x64 and Release
+  x86:
 
 ```text
 Summary: 377 passed, 0 failed

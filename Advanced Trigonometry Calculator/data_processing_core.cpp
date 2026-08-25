@@ -5034,6 +5034,8 @@ T processVariable(char* variable) {
 			}
 			if (space == 0) {
 				resultR = strtod(value, &pointer);
+				resultI = 0;
+				varValue = precisionValueTo<T>(resultR);
 			}
 			else {
 				y = 0;
@@ -5137,6 +5139,8 @@ T processVariable(char* variable) {
 				}
 				if (space == 0) {
 					resultR = strtod(value, &pointer);
+					resultI = 0;
+					varValue = precisionValueTo<T>(resultR);
 				}
 				else {
 					y = 0;

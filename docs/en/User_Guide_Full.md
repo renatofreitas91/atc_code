@@ -1,12 +1,12 @@
 # Advanced Trigonometry Calculator Full User Guide
 
-Version: ATC 2.1.7  
+Version: ATC 2.1.8
 Language: English  
 Author: Renato Alexandre dos Santos Freitas
 
 This guide is the expanded repository user guide for Advanced Trigonometry
 Calculator (ATC). It is based on the existing online user guide, the current
-2.1.7 documentation, and the automated regression coverage available in this
+2.1.8 documentation, and the automated regression coverage available in this
 repository.
 
 ## 1. What ATC is
@@ -135,7 +135,7 @@ Scientific notation uses uppercase `E`:
 
 ## 5. Interactive prompt
 
-ATC 2.1.7 includes a custom prompt editor:
+ATC 2.1.8 includes a custom prompt editor:
 
 - `Tab` completes documented commands, mathematical functions, aliases and user
   functions;
@@ -174,7 +174,7 @@ Use `sin(pi/2)` in radian mode and `sin(30)` in degree mode.
 
 ## 7. Precision
 
-ATC 2.1.7 supports:
+ATC 2.1.8 supports:
 
 - `double`
 - Boost `mp_float`
@@ -393,7 +393,7 @@ energy=10
 energy+1
 ```
 
-ATC 2.1.7 accepts broader variable names than older parser versions while
+ATC 2.1.8 accepts broader variable names than older parser versions while
 preserving reserved function and constant names.
 
 Useful commands:
@@ -572,7 +572,10 @@ x2=2
 ## 21. Solver
 
 The `solver(...)` command supports numerical solving paths and selected
-fast-path normalizations.
+fast-path normalizations. ATC 2.1.8 validates each candidate against the
+original expression before returning it. A solution may be real or complex.
+If the earlier solver path does not produce a valid root, a general numerical
+fallback is attempted.
 
 Examples:
 
@@ -587,6 +590,17 @@ solver(x^2-12x-9)
 solver(x+2)
 solver(((x-5)(x+2))/(x-5))
 solver((x-e+pii)(x-e-pii))
+solver(x^2-2)
+solver(x^2+1)
+solver(x^2-2i)
+solver(x^2+22)
+```
+
+The last four examples cover validated real and complex polynomial roots. When
+no candidate satisfies the original expression, ATC reports:
+
+```text
+ATC was unable to find a valid solution.
 ```
 
 Angle-mode behavior matters for trigonometric solver examples. In degree mode,
@@ -877,11 +891,9 @@ debugging, but normal calculations are quieter with verbose mode disabled.
 
 ## 35. Cookbook / Recipes
 
-The dedicated cookbook is available at:
+Online project documentation:
 
-```text
-docs/en/ATC_Cookbook.md
-```
+- [ATC Cookbook](https://github.com/renatofreitas91/atc_code/blob/master/docs/en/ATC_Cookbook.md)
 
 It contains practical workflows for scientific calculations, trigonometry,
 polynomial solving, matrices, statistics, DSP, TXT processing, verbose
@@ -937,11 +949,9 @@ financial calculations
 
 ## 37. Best practices
 
-The dedicated best-practices guide is available at:
+Online project documentation:
 
-```text
-docs/en/Best_Practices.md
-```
+- [ATC Best Practices](https://github.com/renatofreitas91/atc_code/blob/master/docs/en/Best_Practices.md)
 
 Use it for reliable day-to-day workflows: start with small expressions,
 confirm angle mode, validate parentheses, choose the right solver path, use TXT
@@ -961,19 +971,18 @@ If an expression fails:
 
 ## 39. Documentation and test coverage
 
-The repository includes:
+Online project documentation:
 
-```text
-docs/Testing.md
-tests/ATC_AUTOMATED_TEST_CASES.md
-tests/ATC_USER_GUIDE_COVERAGE.md
-```
+- [Testing](https://github.com/renatofreitas91/atc_code/blob/master/docs/Testing.md)
 
 Current validated regression result:
 
 ```text
-Summary: 377 passed, 0 failed
+All: 376 passed, 0 failed
+SolverComplex: 14 passed, 0 failed
+Txt: 15 passed, 0 failed
+Settings: 7 passed, 0 failed
 ```
 
 This guide should evolve with the tests and the documented behavior of ATC
-2.1.7.
+2.1.8.

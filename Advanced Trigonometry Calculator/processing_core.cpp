@@ -507,11 +507,1044 @@ static bool trySolveCoreLinearProductExpressionComplex(const std::string& expres
 	return false;
 }
 
+
+static std::complex<double> evaluateCorePolynomialFallback(const std::vector<std::complex<double>>& coefficients, std::complex<double> x) {
+	std::complex<double> value(0.0, 0.0);
+	for (int i = (int)coefficients.size() - 1; i >= 0; --i) {
+		value = value * x + coefficients[(size_t)i];
+	}
+	return value;
+}
+
+static bool parseCorePolynomialFallbackNumber(const std::string& text, double& value) {
+	if (text.empty() || text == "+") {
+		value = 1.0;
+		return true;
+	}
+	if (text == "-") {
+		value = -1.0;
+		return true;
+	}
+	char* end = nullptr;
+	value = std::strtod(text.c_str(), &end);
+	return end != text.c_str() && *end == '\0';
+}
+
+static bool collectCorePolynomialFallbackCoefficients(const std::string& source, std::vector<std::complex<double>>& coefficients) {
+	std::string text;
+	for (size_t i = 0; i < source.size(); ++i) {
+		if (!std::isspace((unsigned char)source[i])) {
+			text += source[i] == '_' ? '-' : source[i];
+		}
+	}
+	if (text.empty() || text.find('x') == std::string::npos) {
+		return false;
+	}
+	if (text.size() >= 2 && text[0] == '(' && text[text.size() - 1] == ')') {
+		text = text.substr(1, text.size() - 2);
+	}
+	std::vector<std::string> terms;
+	size_t start = 0;
+	for (size_t i = 1; i < text.size(); ++i) {
+		if (text[i] == '+' || text[i] == '-') {
+			terms.push_back(text.substr(start, i - start));
+			start = i;
+		}
+	}
+	terms.push_back(text.substr(start));
+	coefficients.assign(1, std::complex<double>(0.0, 0.0));
+	for (size_t i = 0; i < terms.size(); ++i) {
+		std::string term = terms[i];
+		size_t xPosition = term.find('x');
+		double coefficient = 0.0;
+		int degree = 0;
+		if (xPosition == std::string::npos) {
+			if (!parseCorePolynomialFallbackNumber(term, coefficient)) {
+				return false;
+			}
+		}
+		else {
+			std::string prefix = term.substr(0, xPosition);
+			if (!prefix.empty() && prefix[prefix.size() - 1] == '*') {
+				prefix.erase(prefix.size() - 1);
+			}
+			if (!parseCorePolynomialFallbackNumber(prefix, coefficient)) {
+				return false;
+			}
+			degree = 1;
+			if (xPosition + 1 < term.size()) {
+				if (term[xPosition + 1] != '^') {
+					return false;
+				}
+				char* end = nullptr;
+				long parsedDegree = std::strtol(term.c_str() + xPosition + 2, &end, 10);
+				if (end == term.c_str() + xPosition + 2 || *end != '\0' || parsedDegree < 0 || parsedDegree > 256) {
+					return false;
+				}
+				degree = (int)parsedDegree;
+			}
+		}
+		if ((size_t)degree >= coefficients.size()) {
+			coefficients.resize((size_t)degree + 1, std::complex<double>(0.0, 0.0));
+		}
+		coefficients[(size_t)degree] += coefficient;
+	}
+	while (coefficients.size() > 1 && std::abs(coefficients.back()) < 1E-14) {
+		coefficients.pop_back();
+	}
+	return coefficients.size() > 1;
+}
+
+static bool parseCoreComplexLiteralFallback(std::string text, std::complex<double>& value) {
+	if (text.empty()) {
+		return false;
+	}
+	if (text.size() >= 2 && text[0] == '(' && text[text.size() - 1] == ')') {
+		text = text.substr(1, text.size() - 2);
+	}
+	if (text.find('i') == std::string::npos) {
+		double realValue = 0.0;
+		if (!parseCorePolynomialFallbackNumber(text, realValue)) {
+			return false;
+		}
+		value = std::complex<double>(realValue, 0.0);
+		return true;
+	}
+	if (text[text.size() - 1] != 'i' || text.find('i') != text.size() - 1) {
+		return false;
+	}
+	std::string withoutI = text.substr(0, text.size() - 1);
+	size_t split = std::string::npos;
+	for (size_t i = 1; i < withoutI.size(); ++i) {
+		if (withoutI[i] == '+' || withoutI[i] == '-') {
+			split = i;
+		}
+	}
+	double realValue = 0.0;
+	double imaginaryValue = 0.0;
+	if (split == std::string::npos) {
+		if (withoutI.empty() || withoutI == "+") {
+			imaginaryValue = 1.0;
+		}
+		else if (withoutI == "-") {
+			imaginaryValue = -1.0;
+		}
+		else if (!parseCorePolynomialFallbackNumber(withoutI, imaginaryValue)) {
+			return false;
+		}
+	}
+	else {
+		if (!parseCorePolynomialFallbackNumber(withoutI.substr(0, split), realValue)) {
+			return false;
+		}
+		std::string imaginaryText = withoutI.substr(split);
+		if (imaginaryText == "+") {
+			imaginaryValue = 1.0;
+		}
+		else if (imaginaryText == "-") {
+			imaginaryValue = -1.0;
+		}
+		else if (!parseCorePolynomialFallbackNumber(imaginaryText, imaginaryValue)) {
+			return false;
+		}
+	}
+	value = std::complex<double>(realValue, imaginaryValue);
+	return true;
+}
+
+static bool evaluateCoreConstantFallbackExpression(const std::string& expression, std::complex<double>& value) {
+	if (expression.empty() || expression.find('x') != std::string::npos) {
+		return false;
+	}
+	std::string text;
+	for (char ch : expression) {
+		if (!std::isspace((unsigned char)ch)) {
+			text += ch == '_' ? '-' : ch;
+		}
+	}
+	double sign = 1.0;
+	if (!text.empty() && text[0] == '+') {
+		text.erase(0, 1);
+	}
+	else if (!text.empty() && text[0] == '-') {
+		sign = -1.0;
+		text.erase(0, 1);
+	}
+	size_t powerPosition = text.rfind("^");
+	if (powerPosition != std::string::npos) {
+		char* end = nullptr;
+		long exponent = std::strtol(text.c_str() + powerPosition + 1, &end, 10);
+		if (end != text.c_str() + powerPosition + 1 && *end == '\0' && exponent >= 0 && exponent <= 32) {
+			std::complex<double> base;
+			if (parseCoreComplexLiteralFallback(text.substr(0, powerPosition), base)) {
+				value = std::complex<double>(sign, 0.0);
+				for (long i = 0; i < exponent; ++i) {
+					value *= base;
+				}
+				return std::isfinite(value.real()) && std::isfinite(value.imag());
+			}
+		}
+	}
+	if (parseCoreComplexLiteralFallback(text, value)) {
+		value *= sign;
+		return std::isfinite(value.real()) && std::isfinite(value.imag());
+	}
+	std::string savedExpressionF(expressionF == nullptr ? "" : expressionF);
+	PrecisionValue savedResultR = resultR;
+	PrecisionValue savedResultI = resultI;
+	PrecisionValue savedXValuesR = xValuesR;
+	PrecisionValue savedXValuesI = xValuesI;
+	bool savedSolverRunning = solverRunning;
+	int savedReplaceTimes = replaceTimes;
+	char* constantExpression = getDynamicCharArray(const_cast<char*>(expression.c_str()), "corePolynomialConstantExpression");
+
+	replaceTimes = 0;
+	xValuesR = 0.0;
+	xValuesI = 0.0;
+	solverRunning = true;
+	initialProcessor<double>(constantExpression, 0.0);
+
+	double valueR = precisionValueTo<double>(resultR);
+	double valueI = precisionValueTo<double>(resultI);
+	bool ok = std::isfinite(valueR) && std::isfinite(valueI);
+	value = std::complex<double>(valueR, valueI);
+
+	sprintf(expressionF, "%s", savedExpressionF.c_str());
+	resultR = savedResultR;
+	resultI = savedResultI;
+	xValuesR = savedXValuesR;
+	xValuesI = savedXValuesI;
+	solverRunning = savedSolverRunning;
+	replaceTimes = savedReplaceTimes;
+	_delete(constantExpression, "corePolynomialConstantExpression");
+	constantExpression = nullptr;
+	return ok;
+}
+
+static bool splitCoreTopLevelPolynomialTerms(const std::string& expression, std::vector<std::string>& terms) {
+	std::string text;
+	for (char ch : expression) {
+		if (!std::isspace((unsigned char)ch)) {
+			text += ch == '_' ? '-' : ch;
+		}
+	}
+	if (text.empty()) {
+		return false;
+	}
+	if (text.size() >= 2 && text[0] == '(' && text[text.size() - 1] == ')') {
+		text = text.substr(1, text.size() - 2);
+	}
+	int level = 0;
+	size_t start = 0;
+	for (size_t i = 0; i < text.size(); ++i) {
+		if (text[i] == '(' || text[i] == '[' || text[i] == '{') {
+			level++;
+		}
+		else if (text[i] == ')' || text[i] == ']' || text[i] == '}') {
+			level--;
+			if (level < 0) {
+				return false;
+			}
+		}
+		else if (i > 0 && level == 0 && (text[i] == '+' || text[i] == '-')) {
+			terms.push_back(text.substr(start, i - start));
+			start = i;
+		}
+	}
+	if (level != 0) {
+		return false;
+	}
+	terms.push_back(text.substr(start));
+	return terms.size() == 2;
+}
+
+static bool parseCoreMonomialXPowerTerm(const std::string& term, std::complex<double>& coefficient, int& degree) {
+	std::string text = term;
+	if (text.empty()) {
+		return false;
+	}
+	double sign = 1.0;
+	if (text[0] == '+') {
+		text.erase(0, 1);
+	}
+	else if (text[0] == '-') {
+		sign = -1.0;
+		text.erase(0, 1);
+	}
+	size_t xPosition = text.find('x');
+	if (xPosition == std::string::npos || text.find('x', xPosition + 1) != std::string::npos) {
+		return false;
+	}
+	std::string prefix = text.substr(0, xPosition);
+	if (!prefix.empty() && prefix[prefix.size() - 1] == '*') {
+		prefix.erase(prefix.size() - 1);
+	}
+	double coefficientR = 1.0;
+	if (!prefix.empty() && !parseCorePolynomialFallbackNumber(prefix, coefficientR)) {
+		return false;
+	}
+	degree = 1;
+	if (xPosition + 1 < text.size()) {
+		if (text[xPosition + 1] != '^') {
+			return false;
+		}
+		char* end = nullptr;
+		long parsedDegree = std::strtol(text.c_str() + xPosition + 2, &end, 10);
+		if (end == text.c_str() + xPosition + 2 || *end != '\0' || parsedDegree < 1 || parsedDegree > 256) {
+			return false;
+		}
+		degree = (int)parsedDegree;
+	}
+	coefficient = std::complex<double>(sign * coefficientR, 0.0);
+	return true;
+}
+
+static bool trySolveCoreComplexBinomialFallback(const std::string& expression, std::complex<double>& root) {
+	std::vector<std::string> terms;
+	if (!splitCoreTopLevelPolynomialTerms(expression, terms)) {
+		return false;
+	}
+	std::complex<double> coefficient(0.0, 0.0), constant(0.0, 0.0);
+	int degree = 0;
+	bool firstIsMonomial = parseCoreMonomialXPowerTerm(terms[0], coefficient, degree);
+	bool secondIsMonomial = parseCoreMonomialXPowerTerm(terms[1], coefficient, degree);
+	std::string constantTerm;
+	if (firstIsMonomial && !secondIsMonomial) {
+		constantTerm = terms[1];
+	}
+	else if (!firstIsMonomial && secondIsMonomial) {
+		constantTerm = terms[0];
+	}
+	else {
+		return false;
+	}
+	if (degree < 1 || std::abs(coefficient) < 1E-14 || !evaluateCoreConstantFallbackExpression(constantTerm, constant)) {
+		return false;
+	}
+	std::complex<double> target = -constant / coefficient;
+	if (degree == 1) {
+		root = target;
+	}
+	else if (std::fabs(target.imag()) < 1E-14 && target.real() >= 0.0) {
+		root = std::complex<double>(std::pow(target.real(), 1.0 / (double)degree), 0.0);
+	}
+	else {
+		double magnitude = std::pow(std::abs(target), 1.0 / (double)degree);
+		double angle = std::arg(target) / (double)degree;
+		root = std::polar(magnitude, angle);
+	}
+	if (std::fabs(root.real()) < 1E-9) {
+		root.real(0.0);
+	}
+	if (std::fabs(root.imag()) < 1E-9) {
+		root.imag(0.0);
+	}
+	if (std::fabs(root.real() - std::round(root.real())) < 1E-9) {
+		root.real(std::round(root.real()));
+	}
+	if (std::fabs(root.imag() - std::round(root.imag())) < 1E-9) {
+		root.imag(std::round(root.imag()));
+	}
+	return std::isfinite(root.real()) && std::isfinite(root.imag());
+}
+
+static bool trySolveCorePolynomialFallback(const std::string& expression, std::complex<double>& root) {
+	if (trySolveCoreComplexBinomialFallback(expression, root)) {
+		return true;
+	}
+	std::vector<std::complex<double>> coefficients;
+	if (!collectCorePolynomialFallbackCoefficients(expression, coefficients)) {
+		return false;
+	}
+	int degree = (int)coefficients.size() - 1;
+	int nonZeroTerms = 0;
+	for (size_t termIndex = 0; termIndex < coefficients.size(); ++termIndex) {
+		if (std::abs(coefficients[termIndex]) > 1E-14) {
+			nonZeroTerms++;
+		}
+	}
+	if (degree > 1 && nonZeroTerms == 2 && std::abs(coefficients[0]) > 1E-14 && std::abs(coefficients[(size_t)degree]) > 1E-14) {
+		std::complex<double> target = -coefficients[0] / coefficients[(size_t)degree];
+		if (std::fabs(target.imag()) < 1E-14 && target.real() >= 0.0) {
+			root = std::complex<double>(std::pow(target.real(), 1.0 / (double)degree), 0.0);
+		}
+		else {
+			double magnitude = std::pow(std::abs(target), 1.0 / (double)degree);
+			double angle = std::arg(target) / (double)degree;
+			root = std::polar(magnitude, angle);
+		}
+		if (std::fabs(root.real()) < 1E-9) {
+			root.real(0.0);
+		}
+		if (std::fabs(root.imag()) < 1E-9) {
+			root.imag(0.0);
+		}
+		if (std::fabs(root.real() - std::round(root.real())) < 1E-9) {
+			root.real(std::round(root.real()));
+		}
+		if (std::fabs(root.imag() - std::round(root.imag())) < 1E-9) {
+			root.imag(std::round(root.imag()));
+		}
+		return true;
+	}
+	if (degree == 1) {
+		root = -coefficients[0] / coefficients[1];
+		return true;
+	}
+	auto evaluateRealPolynomial = [&](double x) {
+		double value = 0.0;
+		for (int coefficientIndex = degree; coefficientIndex >= 0; --coefficientIndex) {
+			value = value * x + coefficients[(size_t)coefficientIndex].real();
+		}
+		return value;
+	};
+	auto acceptRealPolynomialRoot = [&](double candidate) {
+		double residual = std::fabs(evaluateRealPolynomial(candidate));
+		if (!std::isfinite(candidate) || !std::isfinite(residual) || residual > 1E-6) {
+			return false;
+		}
+		root = std::complex<double>(candidate, 0.0);
+		if (std::fabs(root.real()) < 1E-9) {
+			root.real(0.0);
+		}
+		if (std::fabs(root.real() - std::round(root.real())) < 1E-9) {
+			root.real(std::round(root.real()));
+		}
+		return true;
+	};
+	if ((degree % 2) == 1) {
+		double realGuesses[] = { 0.0, 1.0, -1.0, 2.0, -2.0, 5.0, -5.0, 10.0, -10.0, 100.0, -100.0 };
+		const int realGuessCount = sizeof(realGuesses) / sizeof(realGuesses[0]);
+		for (int guessIndex = 0; guessIndex < realGuessCount; ++guessIndex) {
+			double x = realGuesses[guessIndex];
+			for (int iteration = 0; iteration < 80; ++iteration) {
+				double fx = evaluateRealPolynomial(x);
+				if (!std::isfinite(fx)) {
+					break;
+				}
+				if (std::fabs(fx) < 1E-8) {
+					if (acceptRealPolynomialRoot(x)) {
+						return true;
+					}
+					break;
+				}
+				double h = std::max(1E-6, std::fabs(x) * 1E-6);
+				double derivative = (evaluateRealPolynomial(x + h) - evaluateRealPolynomial(x - h)) / (2.0 * h);
+				if (!std::isfinite(derivative) || std::fabs(derivative) < 1E-12) {
+					break;
+				}
+				double next = x - fx / derivative;
+				if (!std::isfinite(next) || std::fabs(next) > 1E8) {
+					break;
+				}
+				if (std::fabs(next - x) < 1E-12) {
+					x = next;
+					break;
+				}
+				x = next;
+			}
+			if (acceptRealPolynomialRoot(x)) {
+				return true;
+			}
+		}
+		double scanPoints[] = { -1000.0, -100.0, -10.0, -5.0, -2.0, -1.0, 0.0, 1.0, 2.0, 5.0, 10.0, 100.0, 1000.0 };
+		const int scanPointCount = sizeof(scanPoints) / sizeof(scanPoints[0]);
+		double previousX = scanPoints[0];
+		double previousY = evaluateRealPolynomial(previousX);
+		for (int scanIndex = 1; scanIndex < scanPointCount; ++scanIndex) {
+			double currentX = scanPoints[scanIndex];
+			double currentY = evaluateRealPolynomial(currentX);
+			if (!std::isfinite(previousY) || !std::isfinite(currentY)) {
+				previousX = currentX;
+				previousY = currentY;
+				continue;
+			}
+			if (previousY == 0.0 && acceptRealPolynomialRoot(previousX)) {
+				return true;
+			}
+			if ((previousY < 0.0 && currentY > 0.0) || (previousY > 0.0 && currentY < 0.0)) {
+				double left = previousX;
+				double right = currentX;
+				double leftY = previousY;
+				for (int iteration = 0; iteration < 100; ++iteration) {
+					double middle = (left + right) / 2.0;
+					double middleY = evaluateRealPolynomial(middle);
+					if (std::fabs(middleY) < 1E-10) {
+						left = middle;
+						right = middle;
+						break;
+					}
+					if ((leftY < 0.0 && middleY > 0.0) || (leftY > 0.0 && middleY < 0.0)) {
+						right = middle;
+					}
+					else {
+						left = middle;
+						leftY = middleY;
+					}
+				}
+				if (acceptRealPolynomialRoot((left + right) / 2.0)) {
+					return true;
+				}
+			}
+			previousX = currentX;
+			previousY = currentY;
+		}
+	}
+	std::complex<double> leading = coefficients[(size_t)degree];
+	if (std::abs(leading) < 1E-14) {
+		return false;
+	}
+	std::vector<std::complex<double>> monic((size_t)degree + 1);
+	for (int i = 0; i <= degree; ++i) {
+		monic[(size_t)i] = coefficients[(size_t)i] / leading;
+	}
+	std::vector<std::complex<double>> rootsLocal((size_t)degree);
+	double radius = 1.0;
+	for (int i = 0; i < degree; ++i) {
+		radius = std::max(radius, 1.0 + std::abs(monic[(size_t)i]));
+	}
+	for (int i = 0; i < degree; ++i) {
+		rootsLocal[(size_t)i] = std::polar(radius, 2.0 * M_PI * (double)i / (double)degree);
+	}
+	for (int iteration = 0; iteration < 256; ++iteration) {
+		double maxDelta = 0.0;
+		for (int i = 0; i < degree; ++i) {
+			std::complex<double> denominator(1.0, 0.0);
+			for (int j = 0; j < degree; ++j) {
+				if (i != j) {
+					denominator *= rootsLocal[(size_t)i] - rootsLocal[(size_t)j];
+				}
+			}
+			if (std::abs(denominator) < 1E-18) {
+				denominator = std::complex<double>(1E-18, 0.0);
+			}
+			std::complex<double> delta = evaluateCorePolynomialFallback(monic, rootsLocal[(size_t)i]) / denominator;
+			rootsLocal[(size_t)i] -= delta;
+			maxDelta = std::max(maxDelta, std::abs(delta));
+		}
+		if (maxDelta < 1E-12) {
+			break;
+		}
+	}
+	int bestIndex = -1;
+	double bestResidual = std::numeric_limits<double>::infinity();
+	for (int i = 0; i < degree; ++i) {
+		double residual = std::abs(evaluateCorePolynomialFallback(coefficients, rootsLocal[(size_t)i]));
+		if (residual < bestResidual - 1E-8 ||
+			(std::fabs(residual - bestResidual) <= 1E-8 && bestIndex >= 0 && rootsLocal[(size_t)i].imag() > rootsLocal[(size_t)bestIndex].imag())) {
+			bestResidual = residual;
+			bestIndex = i;
+		}
+	}
+	if (bestIndex < 0 || bestResidual > 1E-5) {
+		return false;
+	}
+	root = rootsLocal[(size_t)bestIndex];
+	if (std::fabs(root.real()) < 1E-9) {
+		root.real(0.0);
+	}
+	if (std::fabs(root.imag()) < 1E-9) {
+		root.imag(0.0);
+	}
+	if (std::fabs(root.real() - std::round(root.real())) < 1E-9) {
+		root.real(std::round(root.real()));
+	}
+	if (std::fabs(root.imag() - std::round(root.imag())) < 1E-9) {
+		root.imag(std::round(root.imag()));
+	}
+	return true;
+}
+
+static bool evaluateCoreSolverExpressionAt(const std::string& expression, double x, double& valueR, double& valueI) {
+	if (expression.find('x') == std::string::npos) {
+		return false;
+	}
+	std::string savedExpressionF(expressionF == nullptr ? "" : expressionF);
+	PrecisionValue savedResultR = resultR;
+	PrecisionValue savedResultI = resultI;
+	PrecisionValue savedXValuesR = xValuesR;
+	PrecisionValue savedXValuesI = xValuesI;
+	bool savedSolverRunning = solverRunning;
+	int savedReplaceTimes = replaceTimes;
+	char* source = getDynamicCharArray(const_cast<char*>(expression.c_str()), "coreSolverNumericalSource");
+	char* evaluationExpression = getDynamicCharArray("", "coreSolverNumericalExpression");
+
+	replaceTimes = 0;
+	replace("x", "res", source);
+	sprintf(evaluationExpression, "%s", expressionF);
+	xValuesR = x;
+	xValuesI = 0.0;
+	solverRunning = true;
+	initialProcessor<double>(evaluationExpression, 0.0);
+
+	valueR = precisionValueTo<double>(resultR);
+	valueI = precisionValueTo<double>(resultI);
+	bool ok = std::isfinite(valueR) && std::isfinite(valueI);
+
+	sprintf(expressionF, "%s", savedExpressionF.c_str());
+	resultR = savedResultR;
+	resultI = savedResultI;
+	xValuesR = savedXValuesR;
+	xValuesI = savedXValuesI;
+	solverRunning = savedSolverRunning;
+	replaceTimes = savedReplaceTimes;
+	_delete(source, "coreSolverNumericalSource");
+	source = nullptr;
+	_delete(evaluationExpression, "coreSolverNumericalExpression");
+	evaluationExpression = nullptr;
+	return ok;
+}
+
+static bool acceptCoreSolverNumericalRoot(const std::string& expression, double candidate, double& root) {
+	double valueR = 0.0, valueI = 0.0;
+	if (!evaluateCoreSolverExpressionAt(expression, candidate, valueR, valueI)) {
+		return false;
+	}
+	if (std::fabs(valueR) > 1E-6 || std::fabs(valueI) > 1E-6) {
+		return false;
+	}
+	root = candidate;
+	if (std::fabs(root) < 1E-9) {
+		root = 0.0;
+	}
+	if (std::fabs(root - std::round(root)) < 1E-9) {
+		root = std::round(root);
+	}
+	return true;
+}
+
+static bool trySolveCoreNumericalFallback(const std::string& expression, double& root) {
+	std::string text;
+	for (char ch : expression) {
+		if (!std::isspace((unsigned char)ch)) {
+			text += ch == '_' ? '-' : ch;
+		}
+	}
+	if (text.empty() || text.find('x') == std::string::npos) {
+		return false;
+	}
+	double samples[] = {
+		-100.0, -50.0, -20.0, -10.0, -5.0, -3.0, -2.0, -1.0,
+		-0.5, -0.1, -0.01, -0.001, -0.000001, 0.0,
+		0.000001, 0.001, 0.01, 0.1, 0.5, 1.0, 2.0, 3.0, 5.0,
+		10.0, 20.0, 30.0, 45.0, 50.0, 60.0, 90.0, 100.0,
+		M_PI / 6.0, M_PI / 4.0, M_PI / 2.0, M_PI, M_E
+	};
+	const int sampleCount = sizeof(samples) / sizeof(samples[0]);
+	for (int i = 0; i < sampleCount; ++i) {
+		if (acceptCoreSolverNumericalRoot(text, samples[i], root)) {
+			return true;
+		}
+	}
+	for (int i = 0; i < sampleCount; ++i) {
+		double x = samples[i];
+		for (int iteration = 0; iteration < 35; ++iteration) {
+			double fxR = 0.0, fxI = 0.0;
+			if (!evaluateCoreSolverExpressionAt(text, x, fxR, fxI)) {
+				break;
+			}
+			if (std::fabs(fxR) < 1E-7 && std::fabs(fxI) < 1E-7) {
+				return acceptCoreSolverNumericalRoot(text, x, root);
+			}
+			double h = std::max(1E-5, std::fabs(x) * 1E-6);
+			double plusR = 0.0, plusI = 0.0, minusR = 0.0, minusI = 0.0;
+			if (!evaluateCoreSolverExpressionAt(text, x + h, plusR, plusI) ||
+				!evaluateCoreSolverExpressionAt(text, x - h, minusR, minusI)) {
+				break;
+			}
+			double derivative = (plusR - minusR) / (2.0 * h);
+			if (!std::isfinite(derivative) || std::fabs(derivative) < 1E-12) {
+				break;
+			}
+			double next = x - fxR / derivative;
+			if (!std::isfinite(next) || std::fabs(next) > 1E8) {
+				break;
+			}
+			if (std::fabs(next - x) < 1E-10) {
+				x = next;
+				break;
+			}
+			x = next;
+		}
+		if (acceptCoreSolverNumericalRoot(text, x, root)) {
+			return true;
+		}
+	}
+	double previousX = 0.0, previousR = 0.0, previousI = 0.0;
+	bool hasPrevious = false;
+	for (int i = 0; i < sampleCount; ++i) {
+		double currentR = 0.0, currentI = 0.0;
+		if (!evaluateCoreSolverExpressionAt(text, samples[i], currentR, currentI) || std::fabs(currentI) > 1E-6) {
+			hasPrevious = false;
+			continue;
+		}
+		if (hasPrevious && ((previousR < 0.0 && currentR > 0.0) || (previousR > 0.0 && currentR < 0.0))) {
+			double left = previousX;
+			double right = samples[i];
+			double leftValue = previousR;
+			for (int iteration = 0; iteration < 80; ++iteration) {
+				double middle = (left + right) / 2.0;
+				double middleR = 0.0, middleI = 0.0;
+				if (!evaluateCoreSolverExpressionAt(text, middle, middleR, middleI)) {
+					break;
+				}
+				if (std::fabs(middleR) < 1E-10 && std::fabs(middleI) < 1E-8) {
+					return acceptCoreSolverNumericalRoot(text, middle, root);
+				}
+				if ((leftValue < 0.0 && middleR > 0.0) || (leftValue > 0.0 && middleR < 0.0)) {
+					right = middle;
+				}
+				else {
+					left = middle;
+					leftValue = middleR;
+				}
+			}
+			if (acceptCoreSolverNumericalRoot(text, (left + right) / 2.0, root)) {
+				return true;
+			}
+		}
+		previousX = samples[i];
+		previousR = currentR;
+		previousI = currentI;
+		hasPrevious = true;
+	}
+	return false;
+}
+
+static bool parseCoreSolverTrailingTarget(const std::string& suffix, double& target) {
+	if (suffix.empty()) {
+		target = 0.0;
+		return true;
+	}
+	if (suffix[0] != '+' && suffix[0] != '-') {
+		return false;
+	}
+	char* end = nullptr;
+	double value = std::strtod(suffix.c_str() + 1, &end);
+	if (end == suffix.c_str() + 1 || *end != '\0') {
+		return false;
+	}
+	target = suffix[0] == '-' ? value : -value;
+	return true;
+}
+
+
+static std::complex<double> convertCoreSolverRootFromInternalDomain(std::complex<double> root, int explicitAngularMode) {
+	int angularMode = explicitAngularMode != 0 ? explicitAngularMode : applySettings(4);
+	if (angularMode == 2) {
+		return root * (180.0 / M_PI);
+	}
+	if (angularMode == 3) {
+		return root * (200.0 / M_PI);
+	}
+	return root;
+}
+
+static bool validateCoreSolverRootWithInitialProcessor(const std::string& expression, std::complex<double> root) {
+	std::string savedExpressionF(expressionF == nullptr ? "" : expressionF);
+	PrecisionValue savedResultR = resultR;
+	PrecisionValue savedResultI = resultI;
+	PrecisionValue savedXValuesR = xValuesR;
+	PrecisionValue savedXValuesI = xValuesI;
+	bool savedSolverRunning = solverRunning;
+	int savedReplaceTimes = replaceTimes;
+	char* validationExpression = getDynamicCharArray("", "coreSolverRootValidationExpression");
+	char* sourceExpression = getDynamicCharArray(const_cast<char*>(expression.c_str()), "coreSolverRootValidationSource");
+
+	replaceTimes = 0;
+	replace("x", "res", sourceExpression);
+	sprintf(validationExpression, "%s", expressionF);
+	xValuesR = root.real();
+	xValuesI = root.imag();
+	solverRunning = true;
+	initialProcessor<double>(validationExpression, 0.0);
+
+	double fxR = precisionValueTo<double>(resultR);
+	double fxI = precisionValueTo<double>(resultI);
+	bool validated = std::fabs(fxR) < 1E-6 && std::fabs(fxI) < 1E-6;
+
+	sprintf(expressionF, "%s", savedExpressionF.c_str());
+	resultR = savedResultR;
+	resultI = savedResultI;
+	xValuesR = savedXValuesR;
+	xValuesI = savedXValuesI;
+	solverRunning = savedSolverRunning;
+	replaceTimes = savedReplaceTimes;
+	_delete(validationExpression, "coreSolverRootValidationExpression");
+	validationExpression = nullptr;
+	_delete(sourceExpression, "coreSolverRootValidationSource");
+	sourceExpression = nullptr;
+	return validated;
+}
+
+static bool extractCoreSolverSameFunctionArgument(const std::string& suffix, const std::string& functionName, std::string& argument) {
+	std::string prefix = "-" + functionName + "(";
+	if (suffix.compare(0, prefix.size(), prefix) != 0) {
+		return false;
+	}
+	int depth = 0;
+	for (size_t index = prefix.size() - 1; index < suffix.size(); ++index) {
+		if (suffix[index] == '(') {
+			++depth;
+		}
+		else if (suffix[index] == ')') {
+			--depth;
+			if (depth == 0) {
+				if (index != suffix.size() - 1) {
+					return false;
+				}
+				argument = suffix.substr(prefix.size(), index - prefix.size());
+				return true;
+			}
+			if (depth < 0) {
+				return false;
+			}
+		}
+	}
+	return false;
+}
+
+static bool extractCoreSolverFunctionTargetMinusFunctionX(const std::string& text, const std::string& functionName, std::string& argument) {
+	std::string prefix = functionName + "(";
+	if (text.compare(0, prefix.size(), prefix) != 0) {
+		return false;
+	}
+	int depth = 0;
+	size_t closeIndex = std::string::npos;
+	for (size_t index = prefix.size() - 1; index < text.size(); ++index) {
+		if (text[index] == '(') {
+			++depth;
+		}
+		else if (text[index] == ')') {
+			--depth;
+			if (depth == 0) {
+				closeIndex = index;
+				break;
+			}
+			if (depth < 0) {
+				return false;
+			}
+		}
+	}
+	if (closeIndex == std::string::npos || closeIndex <= prefix.size()) {
+		return false;
+	}
+	std::string suffix = text.substr(closeIndex + 1);
+	std::string negativeFunction = "-" + functionName + "(x)";
+	std::string internalNegativeFunction = "+_1*" + functionName + "(x)";
+	if (suffix != negativeFunction && suffix != internalNegativeFunction) {
+		return false;
+	}
+	argument = text.substr(prefix.size(), closeIndex - prefix.size());
+	return true;
+}
+
+static bool trySolveCoreSimpleFunctionComplexFallback(const std::string& expression, std::complex<double>& root) {
+	std::string text;
+	for (char ch : expression) {
+		if (!std::isspace((unsigned char)ch)) {
+			text += ch == '_' ? '-' : ch;
+		}
+	}
+	if (text.empty() || text.find('x') == std::string::npos) {
+		return false;
+	}
+	struct SolverFunction {
+		const char* name;
+		int functionIndex;
+		int explicitAngularMode;
+	};
+	const SolverFunction functions[] = {
+		{ "sin", 0, 0 }, { "cos", 1, 0 }, { "tan", 2, 0 },
+		{ "radsin", 0, 1 }, { "radcos", 1, 1 }, { "radtan", 2, 1 },
+		{ "degsin", 0, 2 }, { "degcos", 1, 2 }, { "degtan", 2, 2 },
+		{ "gonsin", 0, 3 }, { "goncos", 1, 3 }, { "gontan", 2, 3 },
+		{ "sinh", 3, 1 }, { "cosh", 4, 1 }, { "tanh", 5, 1 }
+	};
+	const int functionCount = sizeof(functions) / sizeof(functions[0]);
+	for (int entryIndex = 0; entryIndex < functionCount; ++entryIndex) {
+		std::string functionName = functions[entryIndex].name;
+		std::string invertedSameFunctionArgument;
+		if (extractCoreSolverFunctionTargetMinusFunctionX(text, functionName, invertedSameFunctionArgument)) {
+			std::complex<double> argumentValue;
+			if (parseCoreComplexLiteralFallback(invertedSameFunctionArgument, argumentValue) ||
+				evaluateCoreConstantFallbackExpression(invertedSameFunctionArgument, argumentValue)) {
+				root = argumentValue;
+				return std::isfinite(root.real()) && std::isfinite(root.imag());
+			}
+		}
+		std::string prefix = functionName + "(x)";
+		if (text.compare(0, prefix.size(), prefix) != 0 || text.find('x', prefix.size()) != std::string::npos || text.size() <= prefix.size()) {
+			continue;
+		}
+		std::string sameFunctionArgument;
+		if (extractCoreSolverSameFunctionArgument(text.substr(prefix.size()), functionName, sameFunctionArgument)) {
+			std::complex<double> argumentValue;
+			if (parseCoreComplexLiteralFallback(sameFunctionArgument, argumentValue) ||
+				evaluateCoreConstantFallbackExpression(sameFunctionArgument, argumentValue)) {
+				root = argumentValue;
+				return std::isfinite(root.real()) && std::isfinite(root.imag());
+			}
+		}
+		std::complex<double> constant;
+		std::string targetText = text.substr(prefix.size());
+		if (!parseCoreComplexLiteralFallback(targetText, constant) &&
+			!evaluateCoreConstantFallbackExpression(targetText, constant)) {
+			continue;
+		}
+		std::complex<double> target = -constant;
+		auto evaluate = [&](std::complex<double> x) {
+			if (functions[entryIndex].functionIndex == 0) {
+				return std::sin(x) - target;
+			}
+			if (functions[entryIndex].functionIndex == 1) {
+				return std::cos(x) - target;
+			}
+			if (functions[entryIndex].functionIndex == 2) {
+				return std::tan(x) - target;
+			}
+			if (functions[entryIndex].functionIndex == 3) {
+				return std::sinh(x) - target;
+			}
+			if (functions[entryIndex].functionIndex == 4) {
+				return std::cosh(x) - target;
+			}
+			return std::tanh(x) - target;
+		};
+		auto derivative = [&](std::complex<double> x) {
+			if (functions[entryIndex].functionIndex == 0) {
+				return std::cos(x);
+			}
+			if (functions[entryIndex].functionIndex == 1) {
+				return -std::sin(x);
+			}
+			if (functions[entryIndex].functionIndex == 2) {
+				std::complex<double> cosX = std::cos(x);
+				return 1.0 / (cosX * cosX);
+			}
+			if (functions[entryIndex].functionIndex == 3) {
+				return std::cosh(x);
+			}
+			if (functions[entryIndex].functionIndex == 4) {
+				return std::sinh(x);
+			}
+			std::complex<double> coshX = std::cosh(x);
+			return 1.0 / (coshX * coshX);
+		};
+		std::complex<double> guesses[] = {
+			std::complex<double>(0.0, 0.0), target,
+			std::complex<double>(target.real(), target.imag()),
+			std::complex<double>(M_PI / 6.0, 0.0), std::complex<double>(-M_PI / 6.0, 0.0),
+			std::complex<double>(M_PI / 4.0, 0.0), std::complex<double>(M_PI / 2.0, 0.0),
+			std::complex<double>(1.0, 1.0), std::complex<double>(-1.0, -1.0),
+			std::complex<double>(2.0, 2.0), std::complex<double>(-2.0, -2.0)
+		};
+		for (std::complex<double> guess : guesses) {
+			std::complex<double> x = guess;
+			for (int iteration = 0; iteration < 40; ++iteration) {
+				std::complex<double> fx = evaluate(x);
+				if (std::abs(fx) < 1E-10) {
+					if (functions[entryIndex].functionIndex < 3) {
+						x = convertCoreSolverRootFromInternalDomain(x, functions[entryIndex].explicitAngularMode);
+					}
+					if (!std::isfinite(x.real()) || !std::isfinite(x.imag())) {
+						return false;
+					}
+					root = x;
+					if (std::fabs(root.real()) < 1E-9) {
+						root.real(0.0);
+					}
+					if (std::fabs(root.imag()) < 1E-9) {
+						root.imag(0.0);
+					}
+					if (std::fabs(root.real() - std::round(root.real())) < 1E-9) {
+						root.real(std::round(root.real()));
+					}
+					if (std::fabs(root.imag() - std::round(root.imag())) < 1E-9) {
+						root.imag(std::round(root.imag()));
+					}
+					return true;
+				}
+				std::complex<double> fxDerivative = derivative(x);
+				if (std::abs(fxDerivative) < 1E-12) {
+					break;
+				}
+				std::complex<double> next = x - fx / fxDerivative;
+				if (!std::isfinite(next.real()) || !std::isfinite(next.imag())) {
+					break;
+				}
+				x = next;
+			}
+		}
+	}
+	return false;
+}
+
+static bool trySolveCoreInverseFunctionFallback(const std::string& expression, double& root) {
+	std::string text;
+	for (char ch : expression) {
+		if (!std::isspace((unsigned char)ch)) {
+			text += ch == '_' ? '-' : ch;
+		}
+	}
+	struct InverseFunction {
+		const char* name;
+		int kind;
+	};
+	const InverseFunction functions[] = {
+		{ "asin", 0 }, { "acos", 1 }, { "atan", 2 },
+		{ "asec", 3 }, { "acosec", 4 }, { "acotan", 5 },
+		{ "asinh", 6 }, { "acosh", 7 }, { "atanh", 8 },
+		{ "asech", 9 }, { "acosech", 10 }, { "acotanh", 11 }
+	};
+	const int functionCount = sizeof(functions) / sizeof(functions[0]);
+	for (int i = 0; i < functionCount; ++i) {
+		std::string prefix = std::string(functions[i].name) + "(x)";
+		if (text.compare(0, prefix.size(), prefix) != 0 || text.find('x', prefix.size()) != std::string::npos) {
+			continue;
+		}
+		double target = 0.0;
+		if (!parseCoreSolverTrailingTarget(text.substr(prefix.size()), target)) {
+			continue;
+		}
+		double angleTarget = target;
+		int angularMode = applySettings(4);
+		if (functions[i].kind <= 5 && angularMode == 2) {
+			angleTarget = target * M_PI / 180.0;
+		}
+		if (functions[i].kind <= 5 && angularMode == 3) {
+			angleTarget = target * M_PI / 200.0;
+		}
+		switch (functions[i].kind) {
+		case 0: root = std::sin(angleTarget); break;
+		case 1: root = std::cos(angleTarget); break;
+		case 2: root = std::tan(angleTarget); break;
+		case 3: root = 1.0 / std::cos(angleTarget); break;
+		case 4: root = 1.0 / std::sin(angleTarget); break;
+		case 5: root = 1.0 / std::tan(angleTarget); break;
+		case 6: root = std::sinh(target); break;
+		case 7: root = std::cosh(target); break;
+		case 8: root = std::tanh(target); break;
+		case 9: root = 1.0 / std::cosh(target); break;
+		case 10: root = 1.0 / std::sinh(target); break;
+		default: root = 1.0 / std::tanh(target); break;
+		}
+		if (!std::isfinite(root)) {
+			return false;
+		}
+		if (std::fabs(root) < 1E-9) {
+			root = 0.0;
+		}
+		if (std::fabs(root - std::round(root)) < 1E-9) {
+			root = std::round(root);
+		}
+		return true;
+	}
+	return false;
+}
+
 template double initialProcessor<double>(char* arithTrig, double result);
 template mp_float initialProcessor<mp_float>(char* arithTrig, mp_float result);
-template bool tryEvaluateSolverFastPath<double>(char* expression, double& solution);
-template bool tryEvaluateSolverFastPath<mp_float>(char* expression, mp_float& solution);
-
 template<typename T>
 bool tryEvaluateSolverFastPath(char* expression, T& solution) {
 	std::string solverArgument;
@@ -523,16 +1556,52 @@ bool tryEvaluateSolverFastPath(char* expression, T& solution) {
 		solverArgument = reducedRationalProduct;
 	}
 	std::complex<long double> complexSolution(0.0L, 0.0L);
-	if (!trySolveCoreLinearExpressionComplex(solverArgument, complexSolution) &&
-		!trySolveCoreLinearProductExpressionComplex(solverArgument, complexSolution)) {
+	if (trySolveCoreLinearExpressionComplex(solverArgument, complexSolution) ||
+		trySolveCoreLinearProductExpressionComplex(solverArgument, complexSolution)) {
+		solution = (T)complexSolution.real();
+		resultR = solution;
+		resultI = (T)complexSolution.imag();
+		verified = 1;
+		return true;
+	}
+	std::complex<double> polynomialRoot(0.0, 0.0);
+	if (trySolveCorePolynomialFallback(solverArgument, polynomialRoot)) {
+		solution = (T)polynomialRoot.real();
+		resultR = solution;
+		resultI = (T)polynomialRoot.imag();
+		verified = 1;
+		return true;
+	}
+	double inverseRoot = 0.0;
+	if (trySolveCoreInverseFunctionFallback(solverArgument, inverseRoot)) {
+		solution = (T)inverseRoot;
+		resultR = solution;
+		resultI = (T)0;
+		verified = 1;
+		return true;
+	}
+	std::complex<double> simpleFunctionRoot(0.0, 0.0);
+	if (trySolveCoreSimpleFunctionComplexFallback(solverArgument, simpleFunctionRoot) &&
+		validateCoreSolverRootWithInitialProcessor(solverArgument, simpleFunctionRoot)) {
+		solution = (T)simpleFunctionRoot.real();
+		resultR = solution;
+		resultI = (T)simpleFunctionRoot.imag();
+		verified = 1;
+		return true;
+	}
+	double numericalRoot = 0.0;
+	if (!trySolveCoreNumericalFallback(solverArgument, numericalRoot)) {
 		return false;
 	}
-	solution = (T)complexSolution.real();
+	solution = (T)numericalRoot;
 	resultR = solution;
-	resultI = (T)complexSolution.imag();
+	resultI = (T)0;
 	verified = 1;
 	return true;
 }
+
+template bool tryEvaluateSolverFastPath<double>(char* expression, double& solution);
+template bool tryEvaluateSolverFastPath<mp_float>(char* expression, mp_float& solution);
 
 template<typename T>
 T initialProcessor(char* arithTrig, T result) {

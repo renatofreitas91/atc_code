@@ -1,5 +1,5 @@
 param(
-    [string]$PackagePath = (Join-Path $PSScriptRoot "..\..\sourceforge_package\Advanced Trigonometry Calculator 2.1.7")
+    [string]$PackagePath = (Join-Path $PSScriptRoot "..\..\sourceforge_package\Advanced Trigonometry Calculator 2.1.8")
 )
 
 $ErrorActionPreference = "Stop"
@@ -48,9 +48,16 @@ function Test-Checksums() {
         return
     }
 
-    $lines = @(Get-Content -LiteralPath $checksumPath | Where-Object { $_.Trim() })
+    $allLines = @(Get-Content -LiteralPath $checksumPath | Where-Object { $_.Trim() })
+    $algorithmLines = @($allLines | Where-Object { $_ -match '^Algorithm:\s*SHA-256$' })
+    $lines = @($allLines | Where-Object { $_ -notmatch '^Algorithm:' })
     $allGood = $true
     $evidence = New-Object System.Collections.Generic.List[string]
+
+    if ($algorithmLines.Count -ne 1) {
+        $allGood = $false
+        $evidence.Add("expected exactly one 'Algorithm: SHA-256' line")
+    }
 
     foreach ($line in $lines) {
         if ($line -notmatch '^([0-9a-fA-F]{64})\s\s(.+)$') {
@@ -120,7 +127,7 @@ foreach ($doc in @(
 
 Test-FileContains "README explains x64 and x86 choice" "README.txt" "Use x64\\atc\.exe[\s\S]*Use x86\\atc\.exe"
 Test-FileContains "SOURCE references GitHub" "SOURCE.txt" "https://github\.com/renatofreitas91/atc_code"
-Test-FileContains "VERSION identifies ATC 2.1.7" "VERSION.txt" "Version: 2\.1\.7"
+Test-FileContains "VERSION identifies ATC 2.1.8" "VERSION.txt" "Version: 2\.1\.8"
 Test-Checksums
 
 $failed = @($results | Where-Object { -not $_.Passed })

@@ -30,6 +30,17 @@ The repository includes a Python-based PDF generation helper:
 .\.venv-docs\Scripts\python.exe .\tools\docs\build_pdfs.py
 ```
 
+Build the bilingual ATC 2.1.8 release guide expected by the `user guide`
+command:
+
+```powershell
+.\.venv-docs\Scripts\python.exe .\tools\docs\build_pdfs.py `
+  --release-guide ".\Advanced Trigonometry Calculator - User Guide.pdf"
+```
+
+The release-guide filename must not be changed because the application opens
+that exact name.
+
 Editable DOCX full user guides can be regenerated with:
 
 ```powershell

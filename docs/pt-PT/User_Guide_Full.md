@@ -1,11 +1,11 @@
 # Guia Completo de Utilizador do Advanced Trigonometry Calculator
 
-Versão: ATC 2.1.7
+Versão: ATC 2.1.8
 Idioma: Português de Portugal
 Autor: Renato Alexandre dos Santos Freitas
 
 Este é o guia de utilizador expandido do Advanced Trigonometry Calculator
-(ATC). Foi construído a partir do guia online existente, da documentação 2.1.7
+(ATC). Foi construído a partir do guia online existente, da documentação 2.1.8
 atual e da cobertura automatizada de regressão deste repositório.
 
 ## 1. O que é o ATC
@@ -134,7 +134,7 @@ Notacao cientifica usa `E` maiusculo:
 
 ## 5. Prompt interativo
 
-O ATC 2.1.7 inclui editor de linha:
+O ATC 2.1.8 inclui editor de linha:
 
 - `Tab` completa comandos, funções matemáticas, aliases e funções do
   utilizador;
@@ -169,7 +169,7 @@ Use `sin(pi/2)` em radianos e `sin(30)` em graus.
 
 ## 7. Precisao
 
-O ATC 2.1.7 suporta:
+O ATC 2.1.8 suporta:
 
 - `double`
 - Boost `mp_float`
@@ -528,6 +528,12 @@ x2=2
 
 ## 21. Solver
 
+O comando `solver(...)` suporta caminhos de resolução numérica e normalizações
+rápidas selecionadas. O ATC 2.1.8 valida cada candidato na expressão original
+antes de o devolver. Uma solução pode ser real ou complexa. Se o caminho
+anterior do solver não produzir uma raiz válida, é tentado um fallback numérico
+geral.
+
 ```text
 solver(sin(x)-0.5)
 solver(0.5-sin(x))
@@ -539,6 +545,18 @@ solver(x^2-12x-9)
 solver(x+2)
 solver(((x-5)(x+2))/(x-5))
 solver((x-e+pii)(x-e-pii))
+solver(x^2-2)
+solver(x^2+1)
+solver(x^2-2i)
+solver(x^2+22)
+```
+
+Os últimos quatro exemplos cobrem raízes polinomiais reais e complexas
+validadas. Quando nenhum candidato satisfaz a expressão original, o ATC
+apresenta:
+
+```text
+ATC was unable to find a valid solution.
 ```
 
 O modo angular e importante nos exemplos trigonometricos.
@@ -776,11 +794,9 @@ verbose desligado.
 
 ## 35. Cookbook / Receitas
 
-O cookbook dedicado esta disponível em:
+Documentação online do projeto:
 
-```text
-docs/pt-PT/ATC_Cookbook.md
-```
+- [Cookbook do ATC](https://github.com/renatofreitas91/atc_code/blob/master/docs/pt-PT/ATC_Cookbook.md)
 
 Inclui workflows praticos para cálculo cientifico, trigonometria, polinómios,
 matrizes, estatística, DSP, TXT processing, verbose resolution e módulos
@@ -836,11 +852,9 @@ financial calculations
 
 ## 37. Boas práticas
 
-O guia dedicado de boas práticas esta disponível em:
+Documentação online do projeto:
 
-```text
-docs/pt-PT/Best_Practices.md
-```
+- [Boas práticas do ATC](https://github.com/renatofreitas91/atc_code/blob/master/docs/pt-PT/Best_Practices.md)
 
 Usar para workflows fiáveis: começar por expressões pequenas, confirmar modo
 angular, validar parenteses, escolher o solver certo, usar TXT para lotes
@@ -860,17 +874,18 @@ Se uma expressão falhar:
 
 ## 39. Documentação e testes
 
-```text
-docs/Testing.md
-tests/ATC_AUTOMATED_TEST_CASES.md
-tests/ATC_USER_GUIDE_COVERAGE.md
-```
+Documentação online do projeto:
+
+- [Testes](https://github.com/renatofreitas91/atc_code/blob/master/docs/Testing.md)
 
 Resultado atual validado:
 
 ```text
-Summary: 377 passed, 0 failed
+All: 376 passed, 0 failed
+SolverComplex: 14 passed, 0 failed
+Txt: 15 passed, 0 failed
+Settings: 7 passed, 0 failed
 ```
 
 Este guia deve evoluir com os testes e com o comportamento documentado do ATC
-2.1.7.
+2.1.8.

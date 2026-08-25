@@ -1,7 +1,7 @@
 # Referência de developer do ATC
 
 Esta referência complementa o Guia de Developer. O foco e pratico: como
-contribuir para o Advanced Trigonometry Calculator 2.1.7 sem introduzir
+contribuir para o Advanced Trigonometry Calculator 2.1.8 sem introduzir
 regressoes.
 
 ## Estrutura principal do projeto

@@ -1,6 +1,6 @@
 # Advanced Trigonometry Calculator Software Requirements Specification
 
-Version: ATC 2.1.7
+Version: ATC 2.1.8
 Author: Renato Alexandre dos Santos Freitas  
 License: GPL-3.0  
 Standard alignment: IEEE 29148-style Software Requirements Specification  
@@ -100,7 +100,7 @@ normalizes and validates the command, dispatches it to the appropriate
 mathematical or workflow module, renders output, stores results when
 applicable and persists settings/history where documented.
 
-ATC 2.1.7 emphasizes persistent precision mode, solver/polynomial fixes,
+ATC 2.1.8 emphasizes persistent precision mode, solver/polynomial fixes,
 automatic multiplication improvements, variable-name improvements,
 autocomplete, history navigation, Windows console stability, memory cleanup
 and expanded automated regression coverage.
@@ -166,7 +166,7 @@ architecture remains documented in `docs/Architecture.md`.
 | ID | Assumption |
 | --- | --- |
 | AA-001 | ATC is executed locally on the user's Windows environment. |
-| AA-002 | The command-line interface is the primary user interface for ATC 2.1.7. |
+| AA-002 | The command-line interface is the primary user interface for ATC 2.1.8. |
 | AA-003 | Deterministic commands should produce stable output for the same settings, inputs and precision mode. |
 | AA-004 | Core mathematical workflows must operate offline. |
 | AA-005 | ATC does not require a cloud service for normal calculation workflows. |
@@ -177,7 +177,7 @@ architecture remains documented in `docs/Architecture.md`.
 
 ### 6.1 Technical Constraints
 
-- ATC 2.1.7 is a native C++ console application.
+- ATC 2.1.8 is a native C++ console application.
 - Public behavior is command-driven and text-based.
 - Persistent settings are stored in local files under the ATC user data folder.
 - High precision depends on the implemented Boost `mp_float` paths.
@@ -208,7 +208,7 @@ architecture remains documented in `docs/Architecture.md`.
 
 ## 7. Negative Requirements (Out of Scope)
 
-ATC 2.1.7 shall not be required to:
+ATC 2.1.8 shall not be required to:
 
 - require Internet access for normal mathematical computation;
 - send telemetry or hidden usage data;
@@ -220,7 +220,7 @@ ATC 2.1.7 shall not be required to:
   SymPy;
 - prove arbitrary mathematical theorems;
 - replace domain-specific professional engineering validation tools;
-- provide a complete WebAssembly or browser UI in the native 2.1.7 release.
+- provide a complete WebAssembly or browser UI in the native 2.1.8 release.
 
 ## 8. Requirement Attribute Register
 
@@ -1733,7 +1733,7 @@ flowchart TB
 
 ## 15. Acceptance Baseline
 
-ATC 2.1.7 requirements are acceptable when:
+ATC 2.1.8 requirements are acceptable when:
 
 - Release x64 builds successfully.
 - Release x86 builds successfully where the environment supports it.
@@ -1771,7 +1771,7 @@ Package validation: 44 passed, 0 failed
 - Commands that open browsers, downloads, Notepad or Explorer are mocked or
   source-checked where possible.
 - Current WebAssembly and learning-site concepts are future requirements, not
-  implemented 2.1.7 native CLI claims.
+  implemented 2.1.8 native CLI claims.
 
 ## 17. Documentation Synchronization Rules
 

@@ -1,7 +1,7 @@
 # Boas práticas do ATC
 
 Estas práticas ajudam a obter resultados fiáveis no Advanced Trigonometry
-Calculator 2.1.7.
+Calculator 2.1.8.
 
 ## Comecar pequeno
 

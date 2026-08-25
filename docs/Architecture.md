@@ -130,7 +130,7 @@ handled by different internal paths.
 
 ## Precision Model
 
-ATC 2.1.7 can run the main typed runtime flow using `double` or Boost
+ATC 2.1.8 can run the main typed runtime flow using `double` or Boost
 `mp_float`. Startup reads the persisted setting and dispatches the template
 runtime accordingly. This keeps the public command flow mostly unchanged while
 allowing higher precision for supported numeric paths.
@@ -262,7 +262,7 @@ The exact set of files may vary depending on which commands have been used.
 ATC is a console application and contains Windows-specific behavior for console
 display, colors, window settings, and Windows Terminal compatibility.
 
-Current 2.1.7 behavior includes:
+Current 2.1.8 behavior includes:
 
 - Windows 11 detection through `RtlGetVersion`;
 - default intro handling for Windows 11 console environments;

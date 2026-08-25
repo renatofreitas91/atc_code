@@ -241,7 +241,7 @@ void rootsToPolynomial(char* rootsF) {
 		sprintf(expressionF, "(%s)", report);
 	}
 	else {
-		// Inicialização limpa de arrays até ao tamanho seguro de coeficientes (numberRoots + 1)
+		// Inicializaï¿½ï¿½o limpa de arrays atï¿½ ao tamanho seguro de coeficientes (numberRoots + 1)
 		for (i = 0; i < numberRoots + 2; i++) {
 			valuesRootsR[i] = 0; valuesRootsI[i] = 0;
 			polynomialR[i] = 0;  polynomialI[i] = 0;
@@ -276,16 +276,16 @@ void rootsToPolynomial(char* rootsF) {
 		}
 		numberRoots = members;
 
-		// Filtragem e Rearranjo direto (Otimizado sem conversões string redundantes)
+		// Filtragem e Rearranjo direto (Otimizado sem conversï¿½es string redundantes)
 		int g = 0;
-		// 1. Raízes Zero
+		// 1. Raï¿½zes Zero
 		for (i = 0; i < members; i++) {
 			if (valuesRootsR[i] == 0 && valuesRootsI[i] == 0) {
 				rearrangeValuesR[g] = 0; rearrangeValuesI[g] = 0;
 				g++;
 			}
 		}
-		// 2. Raízes Reais Puras (com verificação de aproximação analítica se necessário via re_complex)
+		// 2. Raï¿½zes Reais Puras (com verificaï¿½ï¿½o de aproximaï¿½ï¿½o analï¿½tica se necessï¿½rio via re_complex)
 		for (i = 0; i < members; i++) {
 			if (valuesRootsR[i] != 0 && valuesRootsI[i] == 0) {
 				re_complex<T>(valuesRootsR[i], valuesRootsI[i], 1.0, 0.0);
@@ -296,7 +296,7 @@ void rootsToPolynomial(char* rootsF) {
 				}
 			}
 		}
-		// 3. Raízes Imaginárias Puras
+		// 3. Raï¿½zes Imaginï¿½rias Puras
 		for (i = 0; i < members; i++) {
 			if (valuesRootsR[i] == 0 && valuesRootsI[i] != 0) {
 				re_complex<T>(valuesRootsR[i], valuesRootsI[i], 0.0, 1.0);
@@ -307,7 +307,7 @@ void rootsToPolynomial(char* rootsF) {
 				}
 			}
 		}
-		// 4. Restantes Raízes Complexas
+		// 4. Restantes Raï¿½zes Complexas
 		for (i = 0; i < members; i++) {
 			if (valuesRootsR[i] != 0 || valuesRootsI[i] != 0) {
 				rearrangeValuesR[g] = valuesRootsR[i];
@@ -321,15 +321,15 @@ void rootsToPolynomial(char* rootsF) {
 			valuesRootsI[i] = rearrangeValuesI[i];
 		}
 
-		// --- ALGORITMO CORRIGIDO DE MULTIPLICAÇÃO POLINOMIAL ---
+		// --- ALGORITMO CORRIGIDO DE MULTIPLICAï¿½ï¿½O POLINOMIAL ---
 		// Representa (x - r_0) inicialmente
 		polynomialR[0] = 1.0; polynomialI[0] = 0.0;
 		polynomialR[1] = valuesRootsR[0] * -1.0;
 		polynomialI[1] = valuesRootsI[0] * -1.0;
 
-		// Itera sobre as restantes raízes para expandir o polinómio
+		// Itera sobre as restantes raï¿½zes para expandir o polinï¿½mio
 		for (int m = 1; m < numberRoots; m++) {
-			// Executa a expansão de trás para a frente no próprio array para evitar overflows de índices
+			// Executa a expansï¿½o de trï¿½s para a frente no prï¿½prio array para evitar overflows de ï¿½ndices
 			for (int k = m + 1; k > 0; k--) {
 				T prodR, prodI;
 				// Multiplica o coeficiente anterior polynomial[k-1] pela raiz atual (com sinal invertido: -r_m)
@@ -348,7 +348,7 @@ void rootsToPolynomial(char* rootsF) {
 			polynomialIF[i] = polynomialI[i];
 		}
 
-		// --- GERAÇÃO DO REPORT (STRING FINAL) ---
+		// --- GERAï¿½ï¿½O DO REPORT (STRING FINAL) ---
 		int exp = numberRoots;
 		for (int pol = 0; pol <= numberRoots; pol++) {
 			multiplication<T>(polynomialRF[pol], polynomialIF[pol], precisionValueTo<T>(lastDividerR), precisionValueTo<T>(lastDividerI));
@@ -402,7 +402,7 @@ void rootsToPolynomial(char* rootsF) {
 			}
 		}
 
-		// Remoção segura do '+' terminal, validando o tamanho da string
+		// Remoï¿½ï¿½o segura do '+' terminal, validando o tamanho da string
 		int finalLen = abs((int)strlen(report));
 		if (finalLen > 0 && report[finalLen - 1] == '+') {
 			report[finalLen - 1] = '\0';
@@ -422,7 +422,7 @@ void rootsToPolynomial(char* rootsF) {
 		}
 	}
 
-	// Liberação de Memória Dinâmica Alocada de forma segura
+	// Liberaï¿½ï¿½o de Memï¿½ria Dinï¿½mica Alocada de forma segura
 	if (value != nullptr) { _delete(value, "value"); value = nullptr; }
 	_delete(toValue, "toValue"); toValue = nullptr;
 	_delete(toSimplify, "toSimplify"); toSimplify = nullptr;
@@ -2571,12 +2571,12 @@ T equationSolver(char* equation) {
 		return 0;
 	}
 	catch (const std::exception& e) {
-		std::cerr << "Exceção C++ capturada (std::exception): " << e.what() << std::endl;
+		std::cerr << "Exceï¿½ï¿½o C++ capturada (std::exception): " << e.what() << std::endl;
 		return 1;
 	}
 	catch (...) {
 
-		std::cerr << "Exceção C++ desconhecida ou não standard capturada." << std::endl;
+		std::cerr << "Exceï¿½ï¿½o C++ desconhecida ou nï¿½o standard capturada." << std::endl;
 		return 1;
 	}
 
@@ -5225,7 +5225,7 @@ char* convertToString(char* string) {
 }
 template<typename T>
 void getRoots(T* expressionR, T* expressionI, T* rootsR, T* rootsI, int maxExponent, int rootIndex) {
-	// Alocação dinâmica de buffers locais usando o motor ATC
+	// Alocaï¿½ï¿½o dinï¿½mica de buffers locais usando o motor ATC
 	T* _expressionR = getDynamicArray<T>(DIMDOUBLE);
 	T* _expressionI = getDynamicArray<T>(DIMDOUBLE);
 	T* expDerivateR = getDynamicArray<T>(DIMDOUBLE);
@@ -5245,9 +5245,9 @@ void getRoots(T* expressionR, T* expressionI, T* rootsR, T* rootsI, int maxExpon
 		int y = 1, index = 0;
 
 		while (countRoots < maxExponent - 1) {
-			// Correção de Fuga de Memória: Se houver uma saída antecipada (break),
-			// o fluxo saía do bloco sem libertar a memória se os deletes estivessem mal posicionados.
-			// Além disso, previne loops infinitos se a parte imaginária for nula.
+			// Correï¿½ï¿½o de Fuga de Memï¿½ria: Se houver uma saï¿½da antecipada (break),
+			// o fluxo saï¿½a do bloco sem libertar a memï¿½ria se os deletes estivessem mal posicionados.
+			// Alï¿½m disso, previne loops infinitos se a parte imaginï¿½ria for nula.
 			if (fabs(rootsI[index]) < 1E-5) {
 				break;
 			}
@@ -5258,7 +5258,7 @@ void getRoots(T* expressionR, T* expressionI, T* rootsR, T* rootsI, int maxExpon
 			index = index % (maxExponent + 1);
 
 			_rf = 0;
-			// Calcula a derivada do polinómio atual (deflacionado)
+			// Calcula a derivada do polinï¿½mio atual (deflacionado)
 			while (_rf < maxExponent - countRoots) {
 				multiplication<T>(_expressionR[_rf], _expressionI[_rf], (T)maxExponent - _rf - countRoots, 0.0);
 				expDerivateR[_rf] = precisionValueTo<T>(resultR);
@@ -5272,7 +5272,7 @@ void getRoots(T* expressionR, T* expressionI, T* rootsR, T* rootsI, int maxExpon
 
 			_rf = 0;
 			SummatoryR = 0; SummatoryI = 0;
-			// Avalia o polinómio no ponto atual (Método de Horner / Newton-Raphson)
+			// Avalia o polinï¿½mio no ponto atual (Mï¿½todo de Horner / Newton-Raphson)
 			while (_rf < maxExponent - countRoots) {
 				exponentiation<T>(precisionValueTo<T>(xValuesR), precisionValueTo<T>(xValuesI), maxExponent - _rf - countRoots, 0.0, 1);
 				multiplication<T>(_expressionR[_rf], _expressionI[_rf], precisionValueTo<T>(resultR), precisionValueTo<T>(resultI));
@@ -5281,8 +5281,8 @@ void getRoots(T* expressionR, T* expressionI, T* rootsR, T* rootsI, int maxExpon
 				_rf++;
 			}
 
-			// Correção de Limites (Out-of-bounds): Garante que _rf não acede a uma posição inválida
-			// caso o grau do polinómio em processamento tenha sido reduzido.
+			// Correï¿½ï¿½o de Limites (Out-of-bounds): Garante que _rf nï¿½o acede a uma posiï¿½ï¿½o invï¿½lida
+			// caso o grau do polinï¿½mio em processamento tenha sido reduzido.
 			if (_rf < maxExponent - countRoots) {
 				sum<T>(SummatoryR, SummatoryI, _expressionR[_rf], _expressionI[_rf]);
 				SummatoryR = precisionValueTo<T>(resultR); SummatoryI = precisionValueTo<T>(resultI);
@@ -5301,7 +5301,7 @@ void getRoots(T* expressionR, T* expressionI, T* rootsR, T* rootsI, int maxExpon
 			sum<T>(SummDerivateR, SummDerivateI, expDerivateR[_rf], expDerivateI[_rf]);
 			SummDerivateR = precisionValueTo<T>(resultR); SummDerivateI = precisionValueTo<T>(resultI);
 
-			// Prevenção contra Divisão por Zero no plano complexo
+			// Prevenï¿½ï¿½o contra Divisï¿½o por Zero no plano complexo
 			if (fabs(SummDerivateR) < 1E-12 && fabs(SummDerivateI) < 1E-12) {
 				SummDerivateR = 1E-12;
 				SummDerivateI = 0.0;
@@ -5312,7 +5312,7 @@ void getRoots(T* expressionR, T* expressionI, T* rootsR, T* rootsI, int maxExpon
 			xValuesR = precisionValueTo<T>(resultR);
 			xValuesI = precisionValueTo<T>(resultI);
 
-			// Deflação Polinomial (Divisão Sintética) utilizando a aproximação convergida
+			// Deflaï¿½ï¿½o Polinomial (Divisï¿½o Sintï¿½tica) utilizando a aproximaï¿½ï¿½o convergida
 			y = 1;
 			while (y - 1 < maxExponent - countRoots) {
 				multiplication<T>(_expressionR[y - 1], _expressionI[y - 1], precisionValueTo<T>(xValuesR), precisionValueTo<T>(xValuesI));
@@ -5321,7 +5321,7 @@ void getRoots(T* expressionR, T* expressionI, T* rootsR, T* rootsI, int maxExpon
 				y++;
 			}
 
-			// Validação de convergência da raiz antes de atualizar o mapa de raízes
+			// Validaï¿½ï¿½o de convergï¿½ncia da raiz antes de atualizar o mapa de raï¿½zes
 			if (fabs(precisionValueTo<T>(resultR)) <= 1E-6 && fabs(precisionValueTo<T>(resultI)) < 1E-6) {
 				rootsR[index] = precisionValueTo<T>(xValuesR);
 				rootsI[index] = precisionValueTo<T>(xValuesI);
@@ -5331,7 +5331,7 @@ void getRoots(T* expressionR, T* expressionI, T* rootsR, T* rootsI, int maxExpon
 			index++;
 		}
 
-		// Resolução do termo quadrático/linear restante pós-deflação
+		// Resoluï¿½ï¿½o do termo quadrï¿½tico/linear restante pï¿½s-deflaï¿½ï¿½o
 		if (fabs(_expressionR[2]) < 1E-6 && fabs(_expressionI[2]) < 1E-6 && countRoots == maxExponent - 1) {
 			multiplication<T>(_expressionR[1], _expressionI[1], -1.0, 0.0);
 			rootsR[rootIndex] = precisionValueTo<T>(resultR);
@@ -5339,7 +5339,7 @@ void getRoots(T* expressionR, T* expressionI, T* rootsR, T* rootsI, int maxExpon
 		}
 	}
 
-	// Correção de Diagnóstico e Logs: Passagem explícita dos nomes das variáveis para a rotina _delete
+	// Correï¿½ï¿½o de Diagnï¿½stico e Logs: Passagem explï¿½cita dos nomes das variï¿½veis para a rotina _delete
 	_delete(_expressionR, "_expressionR");
 	_delete(_expressionI, "_expressionI");
 	_delete(expDerivateR, "expDerivateR");

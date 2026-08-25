@@ -13,20 +13,20 @@ T calculateIntegral(T a, T b, char* function) {
 	T deltaX = (b - a) / n;
 	T finalMultiplier = deltaX / 3;
 	xValuesR = a; xValuesI = 0;
-	solveMath(function);
-	T y_0 = resultR;
+	solveMath<T>(function);
+	T y_0 = precisionValueTo<T>(resultR);
 	xValuesR = b; xValuesI = 0;
-	solveMath(function);
-	T y_n = resultR;
+	solveMath<T>(function);
+	T y_n = precisionValueTo<T>(resultR);
 	T summatory = y_n + y_0;
 	for (int i = 1; i < n; i++) {
 		xValuesR = deltaX * i + a; xValuesI = 0;
-		solveMath(function);
+		solveMath<T>(function);
 		if (i % 2 == 1) {
-			summatory = summatory + resultR * 4;
+			summatory = summatory + precisionValueTo<T>(resultR) * 4;
 		}
 		else {
-			summatory = summatory + resultR * 2;
+			summatory = summatory + precisionValueTo<T>(resultR) * 2;
 		}
 	}
 	result = finalMultiplier * summatory;
@@ -34,3 +34,4 @@ T calculateIntegral(T a, T b, char* function) {
 	solving = true;
 	return result;
 }
+template double calculateIntegral<double>(double, double, char*);

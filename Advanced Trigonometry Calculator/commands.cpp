@@ -741,6 +741,219 @@ bool normalizeSolverCommandExpression(char* expression) {
 	return true;
 }
 
+static bool parseCommandFallbackComplexLiteral(std::string text, std::complex<long double>& value) {
+	if (text.empty()) {
+		return false;
+	}
+	if (text.size() >= 2 && text[0] == '(' && text[text.size() - 1] == ')') {
+		text = text.substr(1, text.size() - 2);
+	}
+	std::string noStars;
+	for (char ch : text) {
+		if (ch != '*') {
+			noStars += ch;
+		}
+	}
+	text = noStars;
+	if (text.find('i') == std::string::npos) {
+		long double realValue = 0.0L;
+		if (!parseCommandLinearNumber(text, realValue)) {
+			return false;
+		}
+		value = std::complex<long double>(realValue, 0.0L);
+		return true;
+	}
+	if (text.empty() || text[text.size() - 1] != 'i' || text.find('i') != text.size() - 1) {
+		return false;
+	}
+	std::string withoutI = text.substr(0, text.size() - 1);
+	size_t split = std::string::npos;
+	for (size_t i = 1; i < withoutI.size(); ++i) {
+		if (withoutI[i] == '+' || withoutI[i] == '-') {
+			split = i;
+		}
+	}
+	if (split == std::string::npos) {
+		return parseCommandLinearComplexNumber(text, value);
+	}
+	long double realValue = 0.0L;
+	long double imaginaryValue = 0.0L;
+	if (!parseCommandLinearNumber(withoutI.substr(0, split), realValue) ||
+		!parseCommandLinearNumber(withoutI.substr(split), imaginaryValue)) {
+		return false;
+	}
+	value = std::complex<long double>(realValue, imaginaryValue);
+	return true;
+}
+
+static bool evaluateCommandFallbackConstant(std::string text, std::complex<long double>& value) {
+	text = removeSpaces(text);
+	if (text.empty() || text.find('x') != std::string::npos) {
+		return false;
+	}
+	long double sign = 1.0L;
+	if (text[0] == '+') {
+		text.erase(0, 1);
+	}
+	else if (text[0] == '-') {
+		sign = -1.0L;
+		text.erase(0, 1);
+	}
+	size_t powerPosition = text.rfind("^");
+	if (powerPosition != std::string::npos) {
+		char* end = nullptr;
+		long exponent = std::strtol(text.c_str() + powerPosition + 1, &end, 10);
+		if (end != text.c_str() + powerPosition + 1 && *end == '\0' && exponent >= 0 && exponent <= 32) {
+			std::complex<long double> base;
+			if (!parseCommandFallbackComplexLiteral(text.substr(0, powerPosition), base)) {
+				return false;
+			}
+			value = std::complex<long double>(sign, 0.0L);
+			for (long i = 0; i < exponent; ++i) {
+				value *= base;
+			}
+			return true;
+		}
+	}
+	if (!parseCommandFallbackComplexLiteral(text, value)) {
+		return false;
+	}
+	value *= sign;
+	return true;
+}
+
+static bool splitCommandFallbackTopLevelTerms(const std::string& expression, std::vector<std::string>& terms) {
+	std::string text = removeSpaces(expression);
+	int level = 0;
+	size_t start = 0;
+	for (size_t i = 0; i < text.size(); ++i) {
+		if (text[i] == '(' || text[i] == '[' || text[i] == '{') {
+			level++;
+		}
+		else if (text[i] == ')' || text[i] == ']' || text[i] == '}') {
+			level--;
+			if (level < 0) {
+				return false;
+			}
+		}
+		else if (i > 0 && level == 0 && (text[i] == '+' || text[i] == '-')) {
+			terms.push_back(text.substr(start, i - start));
+			start = i;
+		}
+	}
+	if (level != 0) {
+		return false;
+	}
+	terms.push_back(text.substr(start));
+	return terms.size() == 2;
+}
+
+static bool parseCommandFallbackMonomial(std::string text, std::complex<long double>& coefficient, int& degree) {
+	if (text.empty()) {
+		return false;
+	}
+	long double sign = 1.0L;
+	if (text[0] == '+') {
+		text.erase(0, 1);
+	}
+	else if (text[0] == '-') {
+		sign = -1.0L;
+		text.erase(0, 1);
+	}
+	size_t xPosition = text.find('x');
+	if (xPosition == std::string::npos || text.find('x', xPosition + 1) != std::string::npos) {
+		return false;
+	}
+	std::string prefix = text.substr(0, xPosition);
+	if (!prefix.empty() && prefix[prefix.size() - 1] == '*') {
+		prefix.erase(prefix.size() - 1);
+	}
+	long double coefficientR = 1.0L;
+	if (!prefix.empty() && !parseCommandLinearNumber(prefix, coefficientR)) {
+		return false;
+	}
+	degree = 1;
+	if (xPosition + 1 < text.size()) {
+		if (text[xPosition + 1] != '^') {
+			return false;
+		}
+		char* end = nullptr;
+		long parsedDegree = std::strtol(text.c_str() + xPosition + 2, &end, 10);
+		if (end == text.c_str() + xPosition + 2 || *end != '\0' || parsedDegree < 1 || parsedDegree > 256) {
+			return false;
+		}
+		degree = (int)parsedDegree;
+	}
+	coefficient = std::complex<long double>(sign * coefficientR, 0.0L);
+	return true;
+}
+
+static bool trySolveCommandComplexBinomialFallback(const std::string& expression, std::complex<long double>& solution) {
+	std::string directText = removeSpaces(expression);
+	const std::string directPrefix = "x^2-";
+	if (directText.compare(0, directPrefix.size(), directPrefix) == 0 &&
+		directText.size() > directPrefix.size() + 2 &&
+		directText.rfind("^2") == directText.size() - 2) {
+		std::string baseText = directText.substr(directPrefix.size(), directText.size() - directPrefix.size() - 2);
+		if (parseCommandFallbackComplexLiteral(baseText, solution)) {
+			return std::isfinite((double)solution.real()) && std::isfinite((double)solution.imag());
+		}
+	}
+	std::vector<std::string> terms;
+	if (!splitCommandFallbackTopLevelTerms(expression, terms)) {
+		return false;
+	}
+	std::complex<long double> coefficient(0.0L, 0.0L), constant(0.0L, 0.0L);
+	int degree = 0;
+	bool firstIsMonomial = parseCommandFallbackMonomial(terms[0], coefficient, degree);
+	bool secondIsMonomial = parseCommandFallbackMonomial(terms[1], coefficient, degree);
+	std::string constantTerm;
+	if (firstIsMonomial && !secondIsMonomial) {
+		constantTerm = terms[1];
+	}
+	else if (!firstIsMonomial && secondIsMonomial) {
+		constantTerm = terms[0];
+	}
+	else {
+		return false;
+	}
+	if (std::abs(coefficient) < 1E-14L || !evaluateCommandFallbackConstant(constantTerm, constant)) {
+		return false;
+	}
+	std::string compactConstant = removeSpaces(constantTerm);
+	if (degree == 2 && std::abs(coefficient - std::complex<long double>(1.0L, 0.0L)) < 1E-14L &&
+		compactConstant.size() > 3 && compactConstant[0] == '-' && compactConstant.rfind("^2") == compactConstant.size() - 2) {
+		std::complex<long double> squaredBase;
+		if (parseCommandFallbackComplexLiteral(compactConstant.substr(1, compactConstant.size() - 3), squaredBase)) {
+			solution = squaredBase;
+			return std::isfinite((double)solution.real()) && std::isfinite((double)solution.imag());
+		}
+	}
+	std::complex<long double> target = -constant / coefficient;
+	if (degree == 1) {
+		solution = target;
+	}
+	else if (std::fabs((double)target.imag()) < 1E-14 && target.real() >= 0.0L) {
+		solution = std::complex<long double>(std::pow(target.real(), 1.0L / (long double)degree), 0.0L);
+	}
+	else {
+		solution = std::polar(std::pow(std::abs(target), 1.0L / (long double)degree), std::arg(target) / (long double)degree);
+	}
+	if (std::fabs((double)solution.real()) < 1E-9) {
+		solution.real(0.0L);
+	}
+	if (std::fabs((double)solution.imag()) < 1E-9) {
+		solution.imag(0.0L);
+	}
+	if (std::fabs((double)(solution.real() - std::round(solution.real()))) < 1E-9) {
+		solution.real(std::round(solution.real()));
+	}
+	if (std::fabs((double)(solution.imag() - std::round(solution.imag()))) < 1E-9) {
+		solution.imag(std::round(solution.imag()));
+	}
+	return std::isfinite((double)solution.real()) && std::isfinite((double)solution.imag());
+}
+
 template <typename T>
 static bool handleAtcOverCmdSolverFastPath(char* expression, FILE* fout) {
 	std::string solverArgument;
@@ -752,7 +965,8 @@ static bool handleAtcOverCmdSolverFastPath(char* expression, FILE* fout) {
 		solverArgument = reducedArgument;
 	}
 	std::complex<long double> solution(0.0L, 0.0L);
-	if (!trySolveCommandLinearExpressionComplex(solverArgument, solution) &&
+	if (!trySolveCommandComplexBinomialFallback(solverArgument, solution) &&
+		!trySolveCommandLinearExpressionComplex(solverArgument, solution) &&
 		!trySolveCommandLinearProductExpressionComplex(solverArgument, solution)) {
 		return false;
 	}
@@ -770,6 +984,12 @@ static bool handleAtcOverCmdSolverFastPath(char* expression, FILE* fout) {
 		printf("#%d=%s\n", rf, respR);
 		if (fout != NULL) {
 			fprintf(fout, "#%d=%s\n", rf, respR);
+		}
+	}
+	else if (abs(precisionValueTo<double>(resultR)) < 1E-18) {
+		printf("#%d=%si\n", rf, respI);
+		if (fout != NULL) {
+			fprintf(fout, "#%d=%si\n", rf, respI);
 		}
 	}
 	else if (resultI > 0) {
@@ -4455,7 +4675,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 											months = 12;
 										}
 										char* toTitle = getDynamicCharArray("", "toTitle");
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(thours, tminutes, tseconds);
 										_delete(toTitle, "toTitle");
@@ -4698,7 +4918,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 											months = 12;
 										}
 
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
 
 										sprintf(tiIn, "%02d:%02d:%02d\n", thours, tminutes, tseconds);
 										system(toTitle);
@@ -4983,7 +5203,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 											months = 12;
 										}
 										char* toTitle = getDynamicCharArray("", "toTitle");
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor,years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor,years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n  %02d:%02d:%02d                   \n", thours, tminutes, tseconds);
@@ -5227,7 +5447,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 										if (tim[4] == 'D' && tim[5] == 'e' && tim[6] == 'c') {
 											months = 12;
 										}
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.7 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
 										system(toTitle);
 										GoToXY(0, 0);
 										sprintf(tiIn, "%02d:%02d:%02d\n", Hours, Minutes, Seconds);

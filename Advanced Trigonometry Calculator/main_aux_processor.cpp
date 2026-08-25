@@ -284,6 +284,296 @@ static bool selectFirstLinearSolverFactor(const std::string& expression, std::st
 	return false;
 }
 
+
+
+template <typename T>
+class MainComplexArithmeticParser {
+public:
+	MainComplexArithmeticParser(const std::string& expression, bool& sawComplexSignal)
+		: text(expression), index(0), complexSignal(sawComplexSignal) {
+	}
+
+	bool parse(std::complex<long double>& value) {
+		value = parseExpression();
+		skipSpaces();
+		return ok && index == text.size();
+	}
+
+private:
+	const std::string& text;
+	size_t index;
+	bool& complexSignal;
+	bool ok = true;
+
+	void skipSpaces() {
+		while (index < text.size() && std::isspace((unsigned char)text[index])) {
+			index++;
+		}
+	}
+
+	bool startsPrimary() {
+		skipSpaces();
+		if (index >= text.size()) {
+			return false;
+		}
+		char current = text[index];
+		return current == '(' || current == '#' || current == '.' || current == 'i' ||
+			std::isdigit((unsigned char)current) || std::isalpha((unsigned char)current);
+	}
+
+	std::complex<long double> parseExpression() {
+		std::complex<long double> value = parseTerm();
+		while (ok) {
+			skipSpaces();
+			if (index >= text.size() || (text[index] != '+' && text[index] != '-')) {
+				break;
+			}
+			char op = text[index++];
+			std::complex<long double> rhs = parseTerm();
+			value = op == '+' ? value + rhs : value - rhs;
+		}
+		return value;
+	}
+
+	std::complex<long double> parseTerm() {
+		std::complex<long double> value = parsePower();
+		while (ok) {
+			skipSpaces();
+			if (index < text.size() && (text[index] == '*' || text[index] == '/')) {
+				char op = text[index++];
+				std::complex<long double> rhs = parsePower();
+				value = op == '*' ? value * rhs : value / rhs;
+				continue;
+			}
+			if (startsPrimary()) {
+				value *= parsePower();
+				continue;
+			}
+			break;
+		}
+		return value;
+	}
+
+	std::complex<long double> parsePower() {
+		std::complex<long double> value = parseUnary();
+		skipSpaces();
+		if (ok && index < text.size() && text[index] == '^') {
+			index++;
+			std::complex<long double> exponent = parsePower();
+			value = std::pow(value, exponent);
+		}
+		return value;
+	}
+
+	std::complex<long double> parseUnary() {
+		skipSpaces();
+		if (index < text.size() && (text[index] == '+' || text[index] == '-' || text[index] == '_')) {
+			char op = text[index++];
+			std::complex<long double> value = parseUnary();
+			return op == '+' ? value : -value;
+		}
+		return parsePrimary();
+	}
+
+	std::complex<long double> parsePrimary() {
+		skipSpaces();
+		if (index >= text.size()) {
+			ok = false;
+			return 0.0L;
+		}
+		if (text[index] == '(') {
+			index++;
+			std::complex<long double> value = parseExpression();
+			skipSpaces();
+			if (index >= text.size() || text[index] != ')') {
+				ok = false;
+				return 0.0L;
+			}
+			index++;
+			return value;
+		}
+		if (text[index] == '#') {
+			return parseAnswerReference();
+		}
+		if (std::isdigit((unsigned char)text[index]) || text[index] == '.') {
+			return parseNumber();
+		}
+		if (std::isalpha((unsigned char)text[index])) {
+			return parseName();
+		}
+		ok = false;
+		return 0.0L;
+	}
+
+	std::complex<long double> parseAnswerReference() {
+		index++;
+		size_t start = index;
+		while (index < text.size() && std::isdigit((unsigned char)text[index])) {
+			index++;
+		}
+		if (start == index) {
+			ok = false;
+			return 0.0L;
+		}
+		int answerIndex = atoi(text.substr(start, index - start).c_str());
+		if (answerIndex < 0 || answerIndex >= DIM) {
+			ok = false;
+			return 0.0L;
+		}
+		long double realValue = (long double)precisionValueTo<double>(ans[answerIndex]);
+		long double imagValue = (long double)precisionValueTo<double>(ansI[answerIndex]);
+		if (fabsl(imagValue) > 1E-18L) {
+			complexSignal = true;
+		}
+		return std::complex<long double>(realValue, imagValue);
+	}
+
+	std::complex<long double> parseNumber() {
+		size_t start = index;
+		bool sawDigit = false;
+		while (index < text.size() && (std::isdigit((unsigned char)text[index]) || text[index] == '.')) {
+			if (std::isdigit((unsigned char)text[index])) {
+				sawDigit = true;
+			}
+			index++;
+		}
+		if (index < text.size() && text[index] == 'E') {
+			size_t exponentMarker = index++;
+			if (index < text.size() && (text[index] == '+' || text[index] == '-' || text[index] == '_')) {
+				index++;
+			}
+			size_t exponentStart = index;
+			while (index < text.size() && std::isdigit((unsigned char)text[index])) {
+				index++;
+			}
+			if (exponentStart == index) {
+				index = exponentMarker;
+			}
+		}
+		if (!sawDigit) {
+			ok = false;
+			return 0.0L;
+		}
+		std::string numeric = text.substr(start, index - start);
+		for (size_t i = 0; i < numeric.size(); i++) {
+			if (numeric[i] == '_') {
+				numeric[i] = '-';
+			}
+		}
+		char* end = nullptr;
+		long double value = strtold(numeric.c_str(), &end);
+		if (end == numeric.c_str() || *end != '\0') {
+			ok = false;
+			return 0.0L;
+		}
+		if (index < text.size() && text[index] == 'i') {
+			index++;
+			complexSignal = true;
+			return std::complex<long double>(0.0L, value);
+		}
+		return std::complex<long double>(value, 0.0L);
+	}
+
+	std::complex<long double> parseName() {
+		size_t start = index;
+		while (index < text.size() && std::isalpha((unsigned char)text[index])) {
+			index++;
+		}
+		std::string name = text.substr(start, index - start);
+		if (name == "i") {
+			complexSignal = true;
+			return std::complex<long double>(0.0L, 1.0L);
+		}
+		if (name == "pi") {
+			return std::complex<long double>(acosl(-1.0L), 0.0L);
+		}
+		if (name == "pii") {
+			complexSignal = true;
+			return std::complex<long double>(0.0L, acosl(-1.0L));
+		}
+		if (name == "e") {
+			return std::complex<long double>(expl(1.0L), 0.0L);
+		}
+		skipSpaces();
+		if (index < text.size() && text[index] == '(') {
+			ok = false;
+			return 0.0L;
+		}
+		if (name.size() >= DIM) {
+			ok = false;
+			return 0.0L;
+		}
+		char* variableName = getDynamicCharArray("", "mainComplexVariableName");
+		sprintf(variableName, "%s", name.c_str());
+		PrecisionValue savedResultR = resultR;
+		PrecisionValue savedResultI = resultI;
+		int savedValidVar = validVar;
+		processVariable<T>(variableName);
+		if (validVar != 1) {
+			resultR = savedResultR;
+			resultI = savedResultI;
+			validVar = savedValidVar;
+			_delete(variableName, "mainComplexVariableName");
+			variableName = nullptr;
+			ok = false;
+			return 0.0L;
+		}
+		long double realValue = (long double)precisionValueTo<double>(resultR);
+		long double imagValue = (long double)precisionValueTo<double>(resultI);
+		resultR = savedResultR;
+		resultI = savedResultI;
+		validVar = savedValidVar;
+		_delete(variableName, "mainComplexVariableName");
+		variableName = nullptr;
+		if (fabsl(imagValue) > 1E-18L) {
+			complexSignal = true;
+		}
+		return std::complex<long double>(realValue, imagValue);
+	}
+};
+
+template<typename T>
+static bool tryEvaluateMainComplexArithmeticFastPath(char* expression, T& value) {
+	if (expression == nullptr || abs((int)strlen(expression)) == 0) {
+		return false;
+	}
+	std::string source(expression);
+	if (source.find('=') != std::string::npos || source.find('\\') != std::string::npos ||
+		source.find(';') != std::string::npos || source.find('"') != std::string::npos) {
+		return false;
+	}
+	bool hasCandidateToken = source.find('i') != std::string::npos || source.find('#') != std::string::npos || source.find('^') != std::string::npos;
+	if (!hasCandidateToken) {
+		return false;
+	}
+	bool sawComplexSignal = false;
+	PrecisionValue savedResultR = resultR;
+	PrecisionValue savedResultI = resultI;
+	int savedValidVar = validVar;
+	MainComplexArithmeticParser<T> parser(source, sawComplexSignal);
+	std::complex<long double> parsedValue(0.0L, 0.0L);
+	if (!parser.parse(parsedValue) || !sawComplexSignal || !std::isfinite((double)parsedValue.real()) || !std::isfinite((double)parsedValue.imag())) {
+		resultR = savedResultR;
+		resultI = savedResultI;
+		validVar = savedValidVar;
+		return false;
+	}
+	long double realPart = parsedValue.real();
+	long double imagPart = parsedValue.imag();
+	if (fabsl(realPart) < 1E-10L) {
+		realPart = 0.0L;
+	}
+	if (fabsl(imagPart) < 1E-10L) {
+		imagPart = 0.0L;
+	}
+	value = (T)realPart;
+	resultR = value;
+	resultI = (T)imagPart;
+	validVar = savedValidVar;
+	verified = 1;
+	return true;
+}
+
 template<typename T>
 T main_core(char* arithTrig, char* fTrig, FILE* fout, char* path, T result1, T result2, int isFromMain) {
 	if (rf > 0) {
@@ -317,7 +607,48 @@ T main_core(char* arithTrig, char* fTrig, FILE* fout, char* path, T result1, T r
 	}
 	T solverFastPathResult = 0;
 	if (!solverRunning && !equationSolverRunning && tryEvaluateSolverFastPath(withoutSpaces, solverFastPathResult)) {
+		bool directSolverCommand = std::string(withoutSpaces).compare(0, 7, "solver(") == 0;
 		convertComplex2Exponential(resultR, resultI);
+		if (directSolverCommand && isFromMain == 1) {
+			ans[rf] = resultR;
+			ansI[rf] = resultI;
+			ansRV = resultR;
+			ansIV = resultI;
+			previousAnsType = 0;
+			sprintf(saveMatrixAns, "");
+			sprintf(ansMatrices[rf], "");
+			if (abs(precisionValueTo<double>(resultI)) < 1E-18) {
+				printf("#%d=%s\n", rf, respR);
+				if (fout != NULL) {
+					fprintf(fout, "#%d=%s\n", rf, respR);
+				}
+			}
+			else if (abs(precisionValueTo<double>(resultR)) < 1E-18) {
+				printf("#%d=%si\n", rf, respI);
+				if (fout != NULL) {
+					fprintf(fout, "#%d=%si\n", rf, respI);
+				}
+			}
+			else if (resultI > 0) {
+				printf("#%d=%s+%si\n", rf, respR, respI);
+				if (fout != NULL) {
+					fprintf(fout, "#%d=%s+%si\n", rf, respR, respI);
+				}
+			}
+			else {
+				printf("#%d=%s%si\n", rf, respR, respI);
+				if (fout != NULL) {
+					fprintf(fout, "#%d=%s%si\n", rf, respR, respI);
+				}
+			}
+			rf++;
+			verified = 1;
+			_delete(variable, "variable");
+			_delete(getVar, "getVar");
+			_delete(savefTrig, "savefTrig");
+			_delete(withoutSpaces, "withoutSpaces");
+			return precisionValueTo<T>(resultR);
+		}
 		if (abs(precisionValueTo<double>(resultI)) < 1E-18) {
 			sprintf(arithTrig, "%s", respR);
 		}
@@ -330,6 +661,51 @@ T main_core(char* arithTrig, char* fTrig, FILE* fout, char* path, T result1, T r
 		sprintf(fTrig, "%s", arithTrig);
 		sprintf(withoutSpaces, "%s", arithTrig);
 	}
+
+	T complexArithmeticFastPathResult = 0;
+	if (!solverRunning && !equationSolverRunning && tryEvaluateMainComplexArithmeticFastPath(withoutSpaces, complexArithmeticFastPathResult)) {
+		ans[rf] = resultR;
+		ansI[rf] = resultI;
+		ansRV = resultR;
+		ansIV = resultI;
+		previousAnsType = 0;
+		sprintf(saveMatrixAns, "");
+		sprintf(ansMatrices[rf], "");
+		convertComplex2Exponential(resultR, resultI);
+		if (isFromMain == 1) {
+			if (abs(precisionValueTo<double>(resultI)) < 1E-18) {
+				printf("#%d=%s\n", rf, respR);
+				if (fout != NULL) {
+					fprintf(fout, "#%d=%s\n", rf, respR);
+				}
+			}
+			else if (abs(precisionValueTo<double>(resultR)) < 1E-18) {
+				printf("#%d=%si\n", rf, respI);
+				if (fout != NULL) {
+					fprintf(fout, "#%d=%si\n", rf, respI);
+				}
+			}
+			else if (resultI > 0) {
+				printf("#%d=%s+%si\n", rf, respR, respI);
+				if (fout != NULL) {
+					fprintf(fout, "#%d=%s+%si\n", rf, respR, respI);
+				}
+			}
+			else {
+				printf("#%d=%s%si\n", rf, respR, respI);
+				if (fout != NULL) {
+					fprintf(fout, "#%d=%s%si\n", rf, respR, respI);
+				}
+			}
+			rf++;
+		}
+		_delete(variable, "variable");
+		_delete(getVar, "getVar");
+		_delete(savefTrig, "savefTrig");
+		_delete(withoutSpaces, "withoutSpaces");
+		return precisionValueTo<T>(resultR);
+	}
+
 	std::string solverArgumentForFastPath;
 	if (extractSolverArgumentForFastPath(withoutSpaces, solverArgumentForFastPath)) {
 		std::string reducedSolverArgument;
