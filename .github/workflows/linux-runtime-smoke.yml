@@ -1,6 +1,11 @@
 name: Linux runtime smoke
 
 on:
+  push:
+    branches:
+      - codex/atc-2.1.9-boost-tu-diagnostic
+    paths:
+      - ".github/workflows/linux-runtime-smoke.yml"
   workflow_dispatch:
     inputs:
       artifact_run_id:
