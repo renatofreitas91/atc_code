@@ -39,3 +39,87 @@ jobs:
           path: build-diagnostic/boost-tu-logs
           if-no-files-found: error
           retention-days: 7
+
+      - name: Upload independent preprocessed reducer inputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: boost-1.74-creduce-inputs
+          path: build-diagnostic/trigger-*.ii
+          if-no-files-found: error
+          retention-days: 7
+
+  reduce:
+    needs: diagnose
+    runs-on: ubuntu-22.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        trigger:
+          - toSolve
+          - isContainedInUserFunction
+
+    steps:
+      - name: Check out diagnostic tooling
+        uses: actions/checkout@v4
+
+      - name: Install C-Reduce
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes creduce g++
+
+      - name: Download independent reducer inputs
+        uses: actions/download-artifact@v4
+        with:
+          name: boost-1.74-creduce-inputs
+          path: reducer-inputs
+
+      - name: Prepare reducer workspace and verify baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="diagnostic/creduce/${{ matrix.trigger }}"
+          mkdir -p "$target/work"
+          cp "reducer-inputs/trigger-${{ matrix.trigger }}.ii" "$target/input.ii"
+          cp .github/scripts/boost_trait_interesting.sh "$target/interesting.sh"
+          chmod +x "$target/interesting.sh"
+          lines="$(wc -l < "$target/input.ii")"
+          bytes="$(wc -c < "$target/input.ii")"
+          "$target/interesting.sh" "$target/input.ii"
+          printf 'initial_lines=%s\ninitial_bytes=%s\nbaseline=PASS\n' \
+            "$lines" "$bytes" | tee "$target/summary.txt"
+
+      - name: Reduce independent trigger
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="diagnostic/creduce/${{ matrix.trigger }}"
+          creduce "$target/interesting.sh" "$target/input.ii" \
+            2>&1 | tee "$target/creduce.log"
+          cp "$target/input.ii" "$target/final.ii"
+
+      - name: Verify final reducer result
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="diagnostic/creduce/${{ matrix.trigger }}"
+          "$target/interesting.sh" "$target/final.ii"
+          lines="$(wc -l < "$target/final.ii")"
+          bytes="$(wc -c < "$target/final.ii")"
+          printf 'final_lines=%s\nfinal_bytes=%s\nfinal_interesting=PASS\n' \
+            "$lines" "$bytes" | tee -a "$target/summary.txt"
+          if g++ -x c++ -std=c++17 -c "$target/final.ii" -o /tmp/final.o \
+              >"$target/final-compile.log" 2>&1; then
+            echo 'unexpected successful final compile' >&2
+            exit 1
+          fi
+          test "$(grep -c 'error:' "$target/final-compile.log")" -eq 4
+
+      - name: Upload reduced reproducer
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: boost-1.74-creduce-${{ matrix.trigger }}
+          path: diagnostic/creduce/${{ matrix.trigger }}
+          if-no-files-found: error
+          retention-days: 7
