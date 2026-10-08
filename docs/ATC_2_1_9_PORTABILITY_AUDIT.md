@@ -737,3 +737,17 @@ formatting, precision, and Windows/MSVC/`v141_xp` behavior. Isolated C++17
 syntax probes for `data_processing_core.cpp` and `commands.cpp` pass, as does
 `git diff --check`. The workflow did not reach link, artifact upload, startup,
 or smoke tests; another authorized push/run is required for those validations.
+
+Workflow run `37738182961` tested that exact correction at commit `c0a3783`.
+CMake Release and `commands.cpp` passed; `data_processing_core.cpp` nevertheless
+retained the same four fatal Boost 1.74 unnamed-enum linkage diagnostics. Three
+later `gmake` errors are cascades and every other diagnostic in the complete
+7,436-line compile log is a warning. Link and artifact upload were not reached.
+
+The local compiled object contains symbols for the `double` and `mp_float`
+template instances plus the non-template `PrecisionValue` overload, and no
+symbol for `convert2Exponential<PrecisionValue>`. This proves that overload
+selection and dispatch are working as designed, while the CI result disproves
+that the removed generic instantiation caused the remaining Boost/GCC error.
+No new permissive flag, installed Boost-header change, MSVC/`v141_xp` change,
+or further source workaround has been introduced.

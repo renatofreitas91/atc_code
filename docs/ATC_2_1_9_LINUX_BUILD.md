@@ -453,3 +453,23 @@ parser, solver, or mathematical algorithm changes. Isolated C++17 syntax
 probes pass for both `data_processing_core.cpp` and `commands.cpp`, and
 `git diff --check` passes. A new Ubuntu run is still required to validate the
 full GCC compile and link; runtime remains unvalidated.
+
+### Third Ubuntu 22.04 GCC run
+
+GitHub Actions run `37738182961` checked out commit `c0a3783`, which contains
+the non-template `PrecisionValue` overload and no explicit
+`convert2Exponential<PrecisionValue>` instantiation. CMake Release configuration
+and `commands.cpp` compilation passed, but `data_processing_core.cpp` still
+failed with the same four Boost 1.74 unnamed-enum linkage diagnostics in
+`is_unsigned.hpp` and `is_signed.hpp`; the three following `gmake` errors are
+cascades. The remaining diagnostics in the complete 7,436-line log are
+warnings. Link and artifact upload were not reached.
+
+A local object-symbol inspection independently confirms that overload
+resolution emits `convert2Exponential(double)`, `convert2Exponential(mp_float)`,
+and the non-template `convert2Exponential(PrecisionValue)` only. It does not
+emit `convert2Exponential<PrecisionValue>`. The rigorous dispatch correction is
+therefore active, but the Ubuntu result disproves the earlier hypothesis that
+this generic instantiation was the cause of the remaining Boost/GCC failure.
+No additional `-fpermissive`, Boost-header modification, or speculative source
+change was made. Runtime remains unvalidated.
