@@ -335,6 +335,16 @@ def main():
                    [item for item in non_templates if item["body_start"] not in keep_ids])
         variants.append((f"isolated_non_template_q{index}", set(),
                          stub_functions(original, to_stub)))
+    causal_candidates = quarters[2] + non_template_quarters[3]
+    for function in causal_candidates:
+        to_stub = [item for item in inventory
+                   if item["body_start"] != function["body_start"]]
+        safe_name = re.sub(r"\W+", "_", function["name"]).strip("_") or "unknown"
+        variants.append((
+            f"isolated_function_{function['line']}_{safe_name}",
+            set(),
+            stub_functions(original, to_stub),
+        ))
     entry = compile_entry()
     any_unexpected = False
 
@@ -377,6 +387,7 @@ def main():
         )
         if (label.startswith(("stub_template_", "only_template_"))
                 or label.startswith(("isolated_template_", "isolated_non_template_"))
+                or label.startswith("isolated_function_")
                 or label in ("all_templates_stubbed", "all_non_templates_stubbed")):
             print(
                 f"CASE_RESULT {label}\texit={completed.returncode}"
