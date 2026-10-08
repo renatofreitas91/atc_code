@@ -225,10 +225,7 @@ def main():
     diagnostic_source.write_text(typed_all_mixed, encoding="cp1252")
     output = BUILD / "permissive-symbol-probe.o"
     args = command_for(entry, diagnostic_source, output)
-    args = [arg for arg in args if arg not in ("-O1", "-O2", "-O3", "-Os")]
-    args.insert(args.index("-c"), "-O0")
     args.insert(args.index("-c"), "-g")
-    args.insert(args.index("-c"), "-fno-inline")
     args.insert(args.index("-c"), "-fpermissive")
     completed = subprocess.run(
         args,
