@@ -45,6 +45,34 @@ def without(source, names):
     return "".join(result), removed
 
 
+def replace_implicit(source, initial=False, exponential=False, calc=False):
+    if initial:
+        old = ("if (higherPrecision == 1) initialProcessor<mp_float>(values, "
+               "(mp_float)0); else initialProcessor<double>(values, 0.0);")
+        if source.count(old) != 2:
+            raise RuntimeError("expected two implicit initialProcessor sites")
+        source = source.replace(old, "initialProcessor<double>(values, 0.0);")
+    if exponential:
+        old = "return convert2Exponential<mp_float>(boost::get<mp_float>(value));"
+        if source.count(old) != 1:
+            raise RuntimeError("expected one implicit convert2Exponential site")
+        source = source.replace(
+            old,
+            "return convert2Exponential<double>(precisionValueTo<double>(value));",
+        )
+    if calc:
+        old = ("return calcNow<mp_float>(toCalc, precisionValueTo<mp_float>(result1), "
+               "precisionValueTo<mp_float>(result2));")
+        if source.count(old) != 1:
+            raise RuntimeError("expected one implicit calcNow site")
+        source = source.replace(
+            old,
+            "return calcNow<double>(toCalc, precisionValueTo<double>(result1), "
+            "precisionValueTo<double>(result2));",
+        )
+    return source
+
+
 def compile_entry():
     entries = json.loads((BUILD / "compile_commands.json").read_text())
     for entry in entries:
@@ -75,6 +103,13 @@ def main():
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     original = SOURCE.read_text(encoding="cp1252")
     all_names = {name for line in original.splitlines() if (name := explicit_name(line))}
+    without_initial = replace_implicit(original, initial=True)
+    without_exponential = replace_implicit(original, exponential=True)
+    without_calc = replace_implicit(original, calc=True)
+    without_implicit = replace_implicit(
+        original, initial=True, exponential=True, calc=True
+    )
+    without_all, _ = without(without_implicit, all_names)
     variants = [
         ("boost_headers_only", set(),
          "#include <boost/math/special_functions/erf.hpp>\n"
@@ -88,6 +123,11 @@ def main():
         ("without_group_b", GROUP_B, None),
         ("without_group_c", GROUP_C, None),
         ("without_all_explicit_mp", all_names, None),
+        ("without_implicit_initial_processor", set(), without_initial),
+        ("without_implicit_convert2_exponential", set(), without_exponential),
+        ("without_implicit_calcnow", set(), without_calc),
+        ("without_all_implicit_mp", set(), without_implicit),
+        ("without_all_explicit_and_implicit_mp", set(), without_all),
     ]
     entry = compile_entry()
     any_unexpected = False
