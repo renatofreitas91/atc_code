@@ -25,6 +25,113 @@ GROUP_C = {
 }
 
 
+def masked_cpp(source):
+    result = list(source)
+    state = "code"
+    quote = ""
+    index = 0
+    while index < len(source):
+        char = source[index]
+        next_char = source[index + 1] if index + 1 < len(source) else ""
+        if state == "code":
+            if char == "/" and next_char == "/":
+                result[index] = result[index + 1] = " "
+                state = "line_comment"
+                index += 2
+                continue
+            if char == "/" and next_char == "*":
+                result[index] = result[index + 1] = " "
+                state = "block_comment"
+                index += 2
+                continue
+            if char in ('"', "'"):
+                quote = char
+                result[index] = " "
+                state = "string"
+        elif state == "line_comment":
+            if char == "\n":
+                state = "code"
+            else:
+                result[index] = " "
+        elif state == "block_comment":
+            if char == "*" and next_char == "/":
+                result[index] = result[index + 1] = " "
+                state = "code"
+                index += 2
+                continue
+            if char != "\n":
+                result[index] = " "
+        elif state == "string":
+            if char == "\\":
+                result[index] = " "
+                if index + 1 < len(source):
+                    result[index + 1] = " "
+                index += 2
+                continue
+            if char == quote:
+                state = "code"
+            result[index] = " " if char != "\n" else "\n"
+        index += 1
+    return "".join(result)
+
+
+def inventory_functions(source):
+    masked = masked_cpp(source)
+    functions = []
+    boundary = 0
+    index = 0
+    while index < len(masked):
+        char = masked[index]
+        if char == ";":
+            boundary = index + 1
+        elif char == "{":
+            prefix = masked[boundary:index]
+            if ")" not in prefix:
+                depth = 1
+                end = index + 1
+                while end < len(masked) and depth:
+                    depth += (masked[end] == "{") - (masked[end] == "}")
+                    end += 1
+                boundary = end
+                index = end
+                continue
+            depth = 1
+            end = index + 1
+            while end < len(masked) and depth:
+                depth += (masked[end] == "{") - (masked[end] == "}")
+                end += 1
+            if depth:
+                raise RuntimeError("unbalanced function body")
+            signature = source[boundary:index].strip()
+            calls = re.findall(r"([A-Za-z_]\w*)\s*\(", masked[boundary:index])
+            name = calls[-1] if calls else "<unknown>"
+            is_template = bool(re.search(r"template\s*<", signature))
+            specialization = bool(re.search(r"template\s*<>", signature))
+            functions.append({
+                "name": name,
+                "signature": " ".join(signature.split()),
+                "body_start": index,
+                "body_end": end,
+                "line": source.count("\n", 0, boundary) + 1,
+                "category": ("explicit_specialization" if specialization else
+                             "template" if is_template else "non_template"),
+                "mp_path": bool(is_template and ("T" in signature or
+                                name in (EARLY | GROUP_A | GROUP_B | GROUP_C))),
+            })
+            boundary = end
+            index = end
+            continue
+        index += 1
+    return functions
+
+
+def stub_functions(source, functions):
+    for function in sorted(functions, key=lambda item: item["body_start"], reverse=True):
+        source = (source[:function["body_start"]] + "{ throw 0; }" +
+                  source[function["body_end"]:])
+    return source
+
+
 def explicit_name(line):
     if not re.match(r"^\s*template\s+.*<mp_float>.*;\s*$", line):
         return None
@@ -102,6 +209,22 @@ def command_for(entry, diagnostic_source, output):
 def main():
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     original = SOURCE.read_text(encoding="cp1252")
+    inventory = inventory_functions(original)
+    templates = [item for item in inventory if item["category"] != "non_template"]
+    inventory_lines = ["category\tline\tname\tmp_path\tsignature"]
+    for item in inventory:
+        inventory_lines.append(
+            f'{item["category"]}\t{item["line"]}\t{item["name"]}\t'
+            f'{int(item["mp_path"])}\t{item["signature"]}'
+        )
+    (LOG_DIR / "function-inventory.tsv").write_text(
+        "\n".join(inventory_lines) + "\n", encoding="utf-8"
+    )
+    quarters = []
+    for quarter in range(4):
+        start = len(templates) * quarter // 4
+        end = len(templates) * (quarter + 1) // 4
+        quarters.append(templates[start:end])
     all_names = {name for line in original.splitlines() if (name := explicit_name(line))}
     without_initial = replace_implicit(original, initial=True)
     without_exponential = replace_implicit(original, exponential=True)
@@ -182,6 +305,14 @@ def main():
         ("typed_character_thresholds_full_tu", set(), typed_character_full),
         ("typed_all_mixed_comparisons_full_tu", set(), typed_all_mixed),
     ]
+    for index, quarter in enumerate(quarters, 1):
+        variants.append((f"stub_template_q{index}", set(),
+                         stub_functions(original, quarter)))
+    for index, quarter in enumerate(quarters, 1):
+        keep_ids = {item["body_start"] for item in quarter}
+        to_stub = [item for item in templates if item["body_start"] not in keep_ids]
+        variants.append((f"only_template_q{index}", set(),
+                         stub_functions(original, to_stub)))
     entry = compile_entry()
     any_unexpected = False
 
@@ -212,10 +343,23 @@ def main():
             "is_signed_values<<unnamed enum>",
         ))
         errors = len(re.findall(r"(?:fatal )?error:", log))
+        error_lines = [line for line in log.splitlines() if "error:" in line]
+        unsigned_hits = sum("is_unsigned_values" in line for line in error_lines)
+        signed_hits = sum("is_signed_values" in line for line in error_lines)
+        other_errors = [line for line in error_lines
+                        if "is_unsigned_values" not in line
+                        and "is_signed_values" not in line]
         print(
             f"RESULT {label}: exit={completed.returncode} errors={errors} "
             f"trait_hits={trait_hits} removed={','.join(removed) or '-'}"
         )
+        if label.startswith(("stub_template_", "only_template_")):
+            print(
+                f"CASE_RESULT {label}\texit={completed.returncode}"
+                f"\tunsigned={unsigned_hits}\tsigned={signed_hits}"
+                f"\ttotal={unsigned_hits + signed_hits}"
+                f"\tfirst_other={other_errors[0] if other_errors else '-'}"
+            )
         if label == "baseline" and trait_hits == 0:
             any_unexpected = True
 
