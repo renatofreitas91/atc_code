@@ -1,0 +1,42 @@
+name: Linux GCC portability build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "CMakeLists.txt"
+      - "Advanced Trigonometry Calculator/**"
+      - ".github/workflows/linux-gcc.yml"
+  pull_request:
+    paths:
+      - "CMakeLists.txt"
+      - "Advanced Trigonometry Calculator/**"
+      - ".github/workflows/linux-gcc.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install GCC, CMake, and Boost headers
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential cmake libboost-all-dev
+
+      - name: Configure Release build
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Compile with GCC
+        run: cmake --build build -j2
+
+      - name: Upload experimental Linux executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: atc-2.1.9-linux-experimental
+          path: build/atc
+          if-no-files-found: error
+          retention-days: 7

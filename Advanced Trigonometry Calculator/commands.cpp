@@ -3059,17 +3059,17 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 	if (isCommand(arithTrig, "donate")) {
 		command = true;
 		puts(" ");
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/p/advantrigoncalc/donate/?source=navbar\""), NULL, SW_SHOW);
+		atcOpenUrl("https://sourceforge.net/p/advantrigoncalc/donate/?source=navbar");
 	}
 	if (isCommand(arithTrig, "atcfacebook")) {
 		command = true;
 		puts(" ");
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://www.facebook.com/advantrigoncalc/\""), NULL, SW_SHOW);
+		atcOpenUrl("https://www.facebook.com/advantrigoncalc/");
 	}
 	if (isCommand(arithTrig, "atcsourceforge")) {
 		command = true;
 		puts(" ");
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/projects/advantrigoncalc/\""), NULL, SW_SHOW);
+		atcOpenUrl("https://sourceforge.net/projects/advantrigoncalc/");
 	}
 	if (isCommand(arithTrig, "trianglesrectanglessolver")) {
 		command = true;
@@ -3095,13 +3095,19 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			recordExternalOpen("atcFromCmd", comm);
 		}
 		else {
+#ifdef _WIN32
 			using namespace std;
 			std::string s = string(comm);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
 			LPCWSTR sw = stemp.c_str();
 			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+#else
+			puts("\n==> The atcfromcmd command is available only on Windows. <==\n");
+#endif
 		}
+#ifdef _WIN32
 		puts("\n==> You can now run cmd.exe and enter e.g. \"atc time\" <==\n");
+#endif
 		puts("");
 		_delete(comm, "comm");
 		comm = nullptr;
@@ -3630,14 +3636,18 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		vaString = nullptr;
 	}
 	if (isCommand(arithTrig, "logoff")) {
-		continu = 0;
 		command = true;
+#ifdef _WIN32
+		continu = 0;
 		if (IsPreviousToWindowsVista()) {
 			system("C:\\WINDOWS\\System32\\shutdown -l");
 		}
 		else {
 			system("C:\\WINDOWS\\System32\\shutdown /l");
 		}
+#else
+		puts("\n==> The logoff command is available only on Windows. <==\n");
+#endif
 	}
 	if (isCommand(arithTrig, "enabletxtdetector")) {
 		command = true;
@@ -3650,8 +3660,10 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			toOpen = nullptr;
 		}
 		else {
-			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"del disable_txt_detector.txt\""), NULL, SW_SHOW);
-			Sleep(200);
+			std::vector<char> detectorPath((size_t)DIM);
+			if (atcJoinPath(detectorPath.data(), detectorPath.size(), atcPath, "disable_txt_detector.txt")) {
+				remove(detectorPath.data());
+			}
 		}
 		puts(" ");
 	}
@@ -3675,8 +3687,9 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		printf("\n==> Close the history to continue. <==\n\n");
 		char* path4ATC = getDynamicCharArray("", "path4ATC");
 		sprintf(path4ATC, "");
-		sprintf(path4ATC, "notepad.exe %s\\history.txt", atcPath);
-		system(path4ATC);
+		if (atcJoinPath(path4ATC, (size_t)DIM, atcPath, "history.txt")) {
+			atcOpenFile(path4ATC);
+		}
 		_delete(path4ATC, "path4ATC");
 		path4ATC = nullptr;
 	}
@@ -3705,12 +3718,8 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		fprintf(start, "resetall");
 		fclose(start);
 		continu = 0;
-		sprintf(path4ATC, "%s\\atc.exe", atcPath);
-		using namespace std;
-		std::string s = string(path4ATC);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
+		atcJoinPath(path4ATC, (size_t)DIM, atcPath, atcExecutableFileName());
+		atcLaunchExecutable(path4ATC);
 		_delete(path4ATC, "path4ATC");
 		path4ATC = nullptr;
 	}
@@ -3739,84 +3748,47 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		fprintf(start, "resetsettings");
 		fclose(start);
 		continu = 0;
-		sprintf(path4ATC, "%s\\atc.exe", atcPath);
-		using namespace std;
-		std::string s = string(path4ATC);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
+		atcJoinPath(path4ATC, (size_t)DIM, atcPath, atcExecutableFileName());
+		atcLaunchExecutable(path4ATC);
 		_delete(path4ATC, "path4ATC");
 		path4ATC = nullptr;
 	}
 	if (isCommand(arithTrig, "atcfolder")) {
 		command = true;
-		char* comm = getDynamicCharArray("", "comm");
-		sprintf(comm, "");
-		sprintf(comm, "/C \"explorer %s\"", atcPath);
-		using namespace std;
-		std::string s = string(comm);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+		atcOpenDirectory(atcPath);
 		puts("");
-		_delete(comm, "comm");
-		comm = nullptr;
 	}
 	if (isCommand(arithTrig, "sourcecode")) {
 		command = true;
-		char* comm = getDynamicCharArray("", "comm");
-		sprintf(comm, "");
-		sprintf(comm, "/C \"explorer %s\\Source code\\\"", atcPath);
-		using namespace std;
-		std::string s = string(comm);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+		std::vector<char> directory((size_t)DIM);
+		if (atcJoinPath(directory.data(), directory.size(), atcPath, "Source code")) {
+			atcOpenDirectory(directory.data());
+		}
 		puts("");
-		_delete(comm, "comm");
-		comm = nullptr;
 	}
 	if (isCommand(arithTrig, "scriptsexamples")) {
 		command = true;
-		char* comm = getDynamicCharArray("", "comm");
-		sprintf(comm, "");
-		sprintf(comm, "/C \"explorer %s\\Scripts examples\\\"", atcPath);
-		using namespace std;
-		std::string s = string(comm);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+		std::vector<char> directory((size_t)DIM);
+		if (atcJoinPath(directory.data(), directory.size(), atcPath, "Scripts examples")) {
+			atcOpenDirectory(directory.data());
+		}
 		puts("");
-		_delete(comm, "comm");
-		comm = nullptr;
 	}
 	if (isCommand(arithTrig, "strings")) {
 		command = true;
-		char* comm = getDynamicCharArray("", "comm");
-		sprintf(comm, "");
-		sprintf(comm, "/C \"explorer %s\\Strings\\\"", atcPath);
-		using namespace std;
-		std::string s = string(comm);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+		std::vector<char> directory((size_t)DIM);
+		if (atcJoinPath(directory.data(), directory.size(), atcPath, "Strings")) {
+			atcOpenDirectory(directory.data());
+		}
 		puts("");
-		_delete(comm, "comm");
-		comm = nullptr;
 	}
 	if (isCommand(arithTrig, "userfunctions")) {
 		command = true;
-		char* comm = getDynamicCharArray("", "comm");
-		sprintf(comm, "");
-		sprintf(comm, "/C \"explorer %s\\User functions\\\"", atcPath);
-		using namespace std;
-		std::string s = string(comm);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+		std::vector<char> directory((size_t)DIM);
+		if (atcJoinPath(directory.data(), directory.size(), atcPath, "User functions")) {
+			atcOpenDirectory(directory.data());
+		}
 		puts("");
-		_delete(comm, "comm");
-		comm = nullptr;
 	}
 	if (isCommand(arithTrig, "checkforupdates")) {
 		command = true;
@@ -3832,11 +3804,10 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			recordExternalOpen("toSolve", comm);
 		}
 		else {
-			using namespace std;
-			std::string s = string(comm);
-			std::wstring stemp = std::wstring(s.begin(), s.end());
-			LPCWSTR sw = stemp.c_str();
-			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+			std::vector<char> directory((size_t)DIM);
+			if (atcJoinPath(directory.data(), directory.size(), atcPath, "To solve")) {
+				atcOpenDirectory(directory.data());
+			}
 		}
 		puts("");
 		_delete(comm, "comm");
@@ -3847,107 +3818,127 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		continu = 0;
 		char* path4ATC = getDynamicCharArray("", "path4ATC");
 		sprintf(path4ATC, "");
-		sprintf(path4ATC, "%s\\atc.exe", atcPath);
-		using namespace std;
-		std::string s = string(path4ATC);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
+		atcJoinPath(path4ATC, (size_t)DIM, atcPath, atcExecutableFileName());
+		atcLaunchExecutable(path4ATC);
 		_delete(path4ATC, "path4ATC");
 		path4ATC = nullptr;
-		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 	}
 	if (isCommand(arithTrig, "runatc")) {
 		command = true;
 		puts(" ");
 		char* path4ATC = getDynamicCharArray("", "path4ATC");
 		sprintf(path4ATC, "");
-		sprintf(path4ATC, "%s\\atc.exe", atcPath);
-		using namespace std;
-		std::string s = string(path4ATC);
-		std::wstring stemp = std::wstring(s.begin(), s.end());
-		LPCWSTR sw = stemp.c_str();
-		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
+		atcJoinPath(path4ATC, (size_t)DIM, atcPath, atcExecutableFileName());
+		atcLaunchExecutable(path4ATC);
 		_delete(path4ATC, "path4ATC");
 		path4ATC = nullptr;
 	}
 	if (isCommand(arithTrig, "updateportable")) {
 		command = true;
 		puts(" ");
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start http://sourceforge.net/projects/advantrigoncalc/files/Advanced%20Trigonometry%20Calculator.zip/download\""), NULL, SW_SHOW);
+		atcOpenUrl("http://sourceforge.net/projects/advantrigoncalc/files/Advanced%20Trigonometry%20Calculator.zip/download");
 	}
 	if (isCommand(arithTrig, "update")) {
 		command = true;
 		puts(" ");
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator%20x86.exe/download\""), NULL, SW_SHOW);
+		atcOpenUrl("https://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator%20x86.exe/download");
 	}
 	if (isCommand(arithTrig, "updatex64")) {
 		command = true;
 		puts(" ");
-		ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"start https://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator%20x64.exe/download\""), NULL, SW_SHOW);
+		atcOpenUrl("https://sourceforge.net/projects/advantrigoncalc/files/Setup%20Advanced%20Trigonometry%20Calculator%20x64.exe/download");
 	}
 	if (isCommand(arithTrig, "userguide")) {
 		command = true;
 		puts(" ");
-		ShellExecute(NULL, _T("open"), _T("Advanced Trigonometry Calculator - User Guide.pdf"), NULL, NULL, SW_SHOW);
+		atcOpenFile("Advanced Trigonometry Calculator - User Guide.pdf");
 	}
 	if (isCommand(arithTrig, "sleep")) {
 		command = true;
 		puts(" ");
+#ifdef _WIN32
 		ShellExecute(NULL, _T("runas"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"powercfg -hibernate off\""), NULL, SW_SHOW);
 		Sleep(5000);
 		system("C:\\WINDOWS\\System32\\Rundll32.exe powrprof.dll,SetSuspendState Sleep");
+#else
+		puts("\n==> The sleep command is available only on Windows. <==\n");
+#endif
 	}
 	if (isCommand(arithTrig, "lock")) {
 		command = true;
 		puts(" ");
+#ifdef _WIN32
 		system("C:\\WINDOWS\\System32\\Rundll32.exe User32.dll,LockWorkStation");
+#else
+		puts("\n==> The lock command is available only on Windows. <==\n");
+#endif
 	}
 	if (isCommand(arithTrig, "hibernate")) {
 		command = true;
 		puts(" ");
+#ifdef _WIN32
 		ShellExecute(NULL, _T("runas"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"powercfg -hibernate on\""), NULL, SW_SHOW);
 		Sleep(5000);
 		system("C:\\WINDOWS\\System32\\rundll32.exe PowrProf.dll,SetSuspendState Hibernate");
+#else
+		puts("\n==> The hibernate command is available only on Windows. <==\n");
+#endif
 	}
 	if (isCommand(arithTrig, "shutdown")) {
-		continu = 0;
 		command = true;
+#ifdef _WIN32
+		continu = 0;
 		if (IsPreviousToWindowsVista()) {
 			system("C:\\WINDOWS\\System32\\shutdown -s");
 		}
 		else {
 			system("C:\\WINDOWS\\System32\\shutdown /s");
 		}
+#else
+		puts("\n==> The shutdown command is available only on Windows. <==\n");
+#endif
 	}
 	if (isCommand(arithTrig, "shutdownnow")) {
-		continu = 0;
 		command = true;
+#ifdef _WIN32
+		continu = 0;
 		if (IsPreviousToWindowsVista()) {
 			system("C:\\WINDOWS\\System32\\shutdown -s -t 0");
 		}
 		else {
 			system("C:\\WINDOWS\\System32\\shutdown /s /t 0");
 		}
+#else
+		puts("\n==> The shutdownnow command is available only on Windows. <==\n");
+#endif
 	}
 	if (isCommand(arithTrig, "restartpc")) {
-		continu = 0;
 		command = true;
+#ifdef _WIN32
+		continu = 0;
 		if (IsPreviousToWindowsVista()) {
 			system("C:\\WINDOWS\\System32\\shutdown -r");
 		}
 		else {
 			system("C:\\WINDOWS\\System32\\shutdown /r");
 		}
+#else
+		puts("\n==> The restartpc command is available only on Windows. <==\n");
+#endif
 	}
 	if (isCommand(arithTrig, "restartpcnow")) {
-		continu = 0;
 		command = true;
+#ifdef _WIN32
+		continu = 0;
 		if (IsPreviousToWindowsVista()) {
 			system("C:\\WINDOWS\\System32\\shutdown -r -t 0");
 		}
 		else {
 			system("C:\\WINDOWS\\System32\\shutdown /r /t 0");
 		}
+#else
+		puts("\n==> The restartpcnow command is available only on Windows. <==\n");
+#endif
 	}
 	if (isCommand(arithTrig, "exit")) {
 		continu = 0;
@@ -4122,14 +4113,22 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 					}
 					closedir(directory);
 				}
-				CreateDirectoryA(stringsPath, NULL);
+				atcCreateOneDirectory(stringsPath);
 				recordExternalOpen("eliminateStrings", stringsPath);
 				_delete(stringsPath, "stringsPath");
 				stringsPath = nullptr;
 			}
 			else {
+#ifdef _WIN32
 				ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"rmdir /Q /S Strings\""), NULL, SW_SHOW);
 				ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), _T("/C \"mkdir Strings\""), NULL, SW_SHOW);
+#else
+				std::vector<char> stringsPath((size_t)DIM);
+				if (atcJoinPath(stringsPath.data(), stringsPath.size(), atcPath, "Strings")) {
+					atcRemoveRegularFiles(stringsPath.data());
+					atcCreateOneDirectory(stringsPath.data());
+				}
+#endif
 			}
 			printf("\n==> The strings were eliminated sucessfully. <==\n\n");
 			fprintf(fout, "\n==> The strings were eliminated sucessfully. <==\n\n");
@@ -4149,11 +4148,15 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			replace("+0", "", commandToExecute);
 			sprintf(commandToExecute, "%s", expressionF);
 			sprintf(comm, "/C \"pause&\"%s\\atc.exe\" \"%s\"&pause&exit\"", atcPath, commandToExecute);
+#ifdef _WIN32
 			using namespace std;
 			std::string s = string(comm);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
 			LPCWSTR sw = stemp.c_str();
 			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+#else
+			puts("\n==> runstopwatch is available only on Windows. <==\n");
+#endif
 			puts("");
 			_delete(comm, "comm");
 			comm = nullptr;
@@ -4514,11 +4517,15 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			replace("+0", "", commandToExecute);
 			sprintf(commandToExecute, "%s", expressionF);
 			sprintf(comm, "/C \"MODE con cols=69 lines=13&\"%s\\atc.exe\" \"%s\"&exit\"", atcPath, commandToExecute);
+#ifdef _WIN32
 			using namespace std;
 			std::string s = string(comm);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
 			LPCWSTR sw = stemp.c_str();
 			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+#else
+			puts("\n==> runtimer is available only on Windows. <==\n");
+#endif
 			puts("");
 			_delete(comm, "comm");
 			comm = nullptr;
@@ -4675,8 +4682,8 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 											months = 12;
 										}
 										char* toTitle = getDynamicCharArray("", "toTitle");
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
-										system(toTitle);
+										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
+										atcSetConsoleTitle(toTitle);
 										printTimer(thours, tminutes, tseconds);
 										_delete(toTitle, "toTitle");
 										toTitle = nullptr;
@@ -4687,7 +4694,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 								i = 0;
 								Sleep(400);
 								while (i < 25) {
-									Beep(777, 400);
+									atcBeep(777, 400);
 									Sleep(400);
 									i++;
 								}
@@ -4728,11 +4735,15 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			replace("+0", "", commandToExecute);
 			sprintf(commandToExecute, "%s", expressionF);
 			sprintf(comm, "/C \"MODE con cols=124 lines=28&\"%s\\atc.exe\" \"%s\"&exit\"", atcPath, commandToExecute);
+#ifdef _WIN32
 			using namespace std;
 			std::string s = string(comm);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
 			LPCWSTR sw = stemp.c_str();
 			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+#else
+			puts("\n==> runbigtimer is available only on Windows. <==\n");
+#endif
 			puts("");
 			_delete(comm, "comm");
 			comm = nullptr;
@@ -4918,10 +4929,10 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 											months = 12;
 										}
 
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
 
 										sprintf(tiIn, "%02d:%02d:%02d\n", thours, tminutes, tseconds);
-										system(toTitle);
+										atcSetConsoleTitle(toTitle);
 										GoToXY(0, 0);
 										printBigTimer(thours, tminutes, tseconds, tiIn, text, display);
 
@@ -4932,7 +4943,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 								i = 0;
 								Sleep(400);
 								while (i < 25) {
-									Beep(777, 400);
+									atcBeep(777, 400);
 									Sleep(400);
 									i++;
 								}
@@ -5025,11 +5036,15 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			replace("+0", "", commandToExecute);
 			sprintf(commandToExecute, "%s", expressionF);
 			sprintf(comm, "/C \"MODE con cols=69 lines=15&\"%s\\atc.exe\" \"%s\"&exit\"", atcPath, commandToExecute);
+#ifdef _WIN32
 			using namespace std;
 			std::string s = string(comm);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
 			LPCWSTR sw = stemp.c_str();
 			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+#else
+			puts("\n==> runclock is available only on Windows. <==\n");
+#endif
 			puts("");
 			_delete(comm, "comm");
 			comm = nullptr;
@@ -5203,8 +5218,8 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 											months = 12;
 										}
 										char* toTitle = getDynamicCharArray("", "toTitle");
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor,years, months, days, Hours, Minutes, Seconds);
-										system(toTitle);
+										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor,years, months, days, Hours, Minutes, Seconds);
+										atcSetConsoleTitle(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n  %02d:%02d:%02d                   \n", thours, tminutes, tseconds);
 										_delete(toTitle, "toTitle");
@@ -5251,11 +5266,15 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			replace("+0", "", commandToExecute);
 			sprintf(commandToExecute, "%s", expressionF);
 			sprintf(comm, "/C \"MODE con cols=124 lines=32&\"%s\\atc.exe\" \"%s\"&exit\"", atcPath, commandToExecute);
+#ifdef _WIN32
 			using namespace std;
 			std::string s = string(comm);
 			std::wstring stemp = std::wstring(s.begin(), s.end());
 			LPCWSTR sw = stemp.c_str();
 			ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
+#else
+			puts("\n==> runbigclock is available only on Windows. <==\n");
+#endif
 			puts("");
 			_delete(comm, "comm");
 			comm = nullptr;
@@ -5447,8 +5466,8 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 										if (tim[4] == 'D' && tim[5] == 'e' && tim[6] == 'c') {
 											months = 12;
 										}
-										sprintf(toTitle, "title Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
-										system(toTitle);
+										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
+										atcSetConsoleTitle(toTitle);
 										GoToXY(0, 0);
 										sprintf(tiIn, "%02d:%02d:%02d\n", Hours, Minutes, Seconds);
 										printBigTimer(thours, tminutes, tseconds, tiIn, text, display);

@@ -2045,7 +2045,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 	}
 	char* toOpen = getDynamicCharArray("", "toOpen");
 	if (continu == 1) {
-		_flushall();
+		atcFlushOutputStreams();
 		if (cleanhistory == 0) {
 			if (0 < abs((int)strlen(arithTrig)) && verify == 1) {
 				sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);

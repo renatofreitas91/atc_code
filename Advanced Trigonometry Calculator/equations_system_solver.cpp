@@ -109,7 +109,7 @@ void solveSystem(T** values, T** valuesI) {
 }
 template <typename T>
 
-void rearrangeValues<T>(T** valInd, T** values, T** valuesI, T** valuesF, T** valuesFI) {
+void rearrangeValues(T** valInd, T** values, T** valuesI, T** valuesF, T** valuesFI) {
 	int i = 0, j = 0, * weight = getDynamicIntArray();
 	for (i = 0; i < count - 1; i++) {
 		for (j = 0; j < count - 1; j++) {
@@ -174,7 +174,7 @@ void rearrangeValues<T>(T** valInd, T** values, T** valuesI, T** valuesF, T** va
 	if (equa != nullptr) _delete(equa, "equa");
 }
 template<typename T>
-void showSolutions<T>(FILE* fout, int correct, T** valInd, T** valuesS, T** valuesSI, T** values, T** valuesI, T** valuesF, T** valuesFI) {
+void showSolutions(FILE* fout, int correct, T** valInd, T** valuesS, T** valuesSI, T** values, T** valuesI, T** valuesF, T** valuesFI) {
 
 	int q = 0;
 	T solutionR = 0, solutionI = 0;
@@ -298,7 +298,7 @@ void showSolutions<T>(FILE* fout, int correct, T** valInd, T** valuesS, T** valu
 	}
 }
 template <typename T>
-void getSolutions<T>(T** values, T** valuesI) {
+void getSolutions(T** values, T** valuesI) {
 	int j = 0, i = 0, jS = 0, iS = 0;
 	j = count - 1;
 	i = count - 2;

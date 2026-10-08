@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 template <typename T>
-void complex_cosh<T>(T x, T y) {
+void complex_cosh(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		exponentiation<T>(M_E, 0.0, x, y, 1);
@@ -28,7 +28,7 @@ void complex_cosh<T>(T x, T y) {
 }
 template <typename T>
 
-void complex_sinh<T>(T x, T y) {
+void complex_sinh(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		exponentiation<T>(M_E, 0.0, x, y, 1);
@@ -51,7 +51,7 @@ void complex_sinh<T>(T x, T y) {
 	}
 }
 template <typename T>
-void complex_tanh<T>(T x, T y) {
+void complex_tanh(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_sinh<T>(x, y);
@@ -124,7 +124,7 @@ void cosech(T x, T y) {
 }
 template <typename T>
 
-void arsinh<T>(T x, T y) {
+void arsinh(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		T radicandR = pot<T>(x, 2.0, 1) - pot<T>(y, 2.0, 1) + 1;
@@ -148,7 +148,7 @@ void arsinh<T>(T x, T y) {
 }
 template <typename T>
 
-void arcosh<T>(T x, T y) {
+void arcosh(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		T radicandR = pot<T>(x, 2.0, 1) - pot<T>(y, 2.0, 1) - 1;
@@ -171,7 +171,7 @@ void arcosh<T>(T x, T y) {
 	}
 }
 template <typename T>
-void artanh<T>(T x, T y) {
+void artanh(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		T numR = 1 + x, numI = y;

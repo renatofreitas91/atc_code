@@ -2586,7 +2586,7 @@ T equationSolver(char* equation) {
 
 
 template<typename T>
-void simpleSimplifyPolynomial<T>(char* expression) {
+void simpleSimplifyPolynomial(char* expression) {
 	isDivisible = true;
 	replaceTimes = 0;
 	int countLeft = countOccurrences("(", expression);

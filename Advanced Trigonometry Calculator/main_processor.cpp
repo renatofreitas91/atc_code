@@ -219,7 +219,7 @@ void main_processor(char* math_expression) {
 		}
 		arithTrig[i] = '\0';
 		if (abs((int)strlen(arithTrig)) > 0) {
-			math_processor(arithTrig);
+			math_processor<T>(arithTrig);
 			char* newBuf = getDynamicCharArray("", "newBuf");
 			sprintf(newBuf, "%s%s", buf, bufText);
 			sprintf(buf, "%s", newBuf);
@@ -271,7 +271,7 @@ T math_processor(char* expression) {
 			}
 			variable[i] = '\0';
 			i = 0;
-			int hk = variableValidator(variable);
+			int hk = variableValidator<T>(variable);
 			if (hk == 1) {
 				processVariable<T>(revariable);
 			}
@@ -513,7 +513,7 @@ T math_processor(char* expression) {
 				ansRV = resultR;
 				ansIV = resultI;
 				if (var == 1) {
-					variableController(revariable, resultR);
+					variableController(revariable);
 				}
 				sprintf(bufText, "%s%s", variableFeedback, bufText);
 				char* numSysText = getDynamicCharArray("", "numSysText");

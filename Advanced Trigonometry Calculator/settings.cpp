@@ -24,16 +24,18 @@ void colors() {
 	char* express = getDynamicCharArray("color 73", "express");
 	printf("\n Symbol -> Color corresponding to\n\n 0 -> black\n 1 -> blue\n 2 -> green\n 3 -> aqua\n 4 -> red\n 5 -> purple\n 6 -> yellow\n 7 -> white\n 8 -> gray\n 9 -> light blue\n a -> light green\n b -> light aqua\n c -> light red\n d -> light purple\n e -> light yellow\n f -> bright white\n\n");
 	printf("Background color: ");
-	bGround = _getch();
+	bGround = (char)atcGetChar();
 	printf("%c\n", bGround);
 	printf("Text color: ");
-	cTxt = _getch();
+	cTxt = (char)atcGetChar();
 	printf("%c\n", cTxt);
 	express[6] = bGround;
 	express[7] = cTxt;
 	printf("\n");
 	applyConsoleColorSafe(express);
+	#ifdef _WIN32
 	system(express);
+	#endif
 	char* toOpen = getDynamicCharArray("", "toOpen");
 	sprintf(toOpen, "%s\\colors.txt", atcPath);
 	open = fopen(toOpen, "w");
@@ -73,8 +75,6 @@ void window() {
 	FILE* open;
 	int x = 601, y = 601, width = 2001, height = 2001;
 	char* value = getDynamicCharArray("", "value");
-	HWND w;
-	w = GetConsoleWindow();
 	while (x > 600 || x < 0) {
 		printf("X-axis value -> [0, 600]: ");
 		x = (int)getValue<T>();
@@ -93,7 +93,10 @@ void window() {
 	}
 	printf("\n");
 	if (shouldUseLegacyConsoleWindowManagement() && !applyConsoleWindowSafe(x, y, width, height)) {
+	#ifdef _WIN32
+		HWND w = GetConsoleWindow();
 		MoveWindow(w, x, y, width, height, FALSE);
+	#endif
 	}
 	char* toOpen = getDynamicCharArray("", "toOpen");
 	sprintf(toOpen, "%s\\window.txt", atcPath);
@@ -347,14 +350,18 @@ void graphSettings() {
 		open = fopen(toOpen, "r");
 		if (open == NULL) {
 			applyConsoleColorSafe("color 73");
+		#ifdef _WIN32
 			system("color 73");
+		#endif
 		}
 		else {
 			fgets(setting, 9, open);
 			fclose(open);
 			open = NULL;
 			applyConsoleColorSafe(setting);
+		#ifdef _WIN32
 			system(setting);
+		#endif
 		}
 		if (toOpen != nullptr) {
 			_delete(toOpen, "toOpen"); toOpen = nullptr;
@@ -382,6 +389,7 @@ void graphSettings() {
 				sprintf(forsprintf, "%s", setting);
 				sprintf(dimensionsTxt, "%s", forsprintf);
 				getDimensions();
+			#ifdef _WIN32
 				HWND hwnd = GetConsoleWindow();
 				RECT rect;
 				if (GetWindowRect(hwnd, &rect))
@@ -399,12 +407,11 @@ void graphSettings() {
 						puts("\nATC was unable to update the window settings file.\n");
 					}
 				}
+			#endif
 			}
 		}
-		HWND b;
-		b = GetConsoleWindow();
 		if (shouldUseLegacyConsoleWindowManagement()) {
-			ShowWindow(b, SW_SHOWMAXIMIZED);
+			maximizeConsoleWindowSafe();
 		}
 		if (setting != nullptr) {
 			_delete(setting, "setting"); setting = nullptr;
@@ -425,12 +432,11 @@ void graphSettings() {
 		if (fopen(toOpen, "r") == NULL) {
 			applyConsoleDimensionsSafe(160, 2000);
 			int x = 0, y = 0, maxX = 0, maxY = 0;
-			HWND b;
-			b = GetConsoleWindow();
 			if (shouldUseLegacyConsoleWindowManagement()) {
-			ShowWindow(b, SW_SHOWMAXIMIZED);
-		}
-			int width, height;
+				maximizeConsoleWindowSafe();
+			}
+			int width = widthATC, height = heightATC;
+		#ifdef _WIN32
 			HWND hwnd = GetConsoleWindow();
 			RECT rect;
 			if (GetWindowRect(hwnd, &rect))
@@ -438,6 +444,7 @@ void graphSettings() {
 				width = rect.right - rect.left;
 				height = rect.bottom - rect.top;
 			}
+		#endif
 			sprintf(toOpen, "%s\\window.txt", atcPath);
 			FILE* open = NULL;
 			int k = 0;
@@ -457,13 +464,16 @@ void graphSettings() {
 				fclose(open1);
 			}
 			sprintf(windowTxt, "%d\n%d\n%d\n%d\n", 0, 0, width, height);
+			int columns = colsATC > 0 ? colsATC : 160;
+			int rows;
+		#ifdef _WIN32
 			CONSOLE_SCREEN_BUFFER_INFO csbi;
-			int columns, rows;
 			GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
 			columns = (int)((csbi.srWindow.Right - csbi.srWindow.Left));
 			if (columns < 0) {
 				columns = (int)((csbi.srWindow.Left + csbi.srWindow.Right));
 			}
+		#endif
 			rows = 2000;
 			sprintf(toOpen, "%s\\dimensions.txt", atcPath);
 			sprintf(setting, "");
@@ -479,10 +489,9 @@ void graphSettings() {
 			sprintf(dimensionsTxt, "%s", setting);
 			fputs(setting, open);
 			fclose(open);
-			b = GetConsoleWindow();
 			if (shouldUseLegacyConsoleWindowManagement()) {
-			ShowWindow(b, SW_SHOWMAXIMIZED);
-		}
+				maximizeConsoleWindowSafe();
+			}
 		}
 		else {
 			open = NULL;
@@ -518,18 +527,17 @@ void graphSettings() {
 					}
 				}
 				setting[i] = '\0';
-				HWND w;
-				w = GetConsoleWindow();
 				if (shouldUseLegacyConsoleWindowManagement() && !applyConsoleWindowSafe((int)x, (int)y, (int)width, (int)height)) {
+				#ifdef _WIN32
+					HWND w = GetConsoleWindow();
 					MoveWindow(w, (int)x, (int)y, (int)width, (int)height, FALSE);
+				#endif
 				}
 				sprintf(windowTxt, "%s", setting);
 			}
 		}
-		HWND b;
-		b = GetConsoleWindow();
 		if (shouldUseLegacyConsoleWindowManagement()) {
-			ShowWindow(b, SW_SHOWMAXIMIZED);
+			maximizeConsoleWindowSafe();
 		}
 		_delete(toOpen, "toOpen"); toOpen = nullptr;
 		_delete(value, "value"); value = nullptr;
@@ -569,16 +577,17 @@ bool about() {
 	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)", memFactor);
 	applyConsoleTitleSafe(forsprintf);
 
-	HWND a;
-	a = GetConsoleWindow();
 	if (shouldUseLegacyConsoleWindowManagement() && !applyConsoleWindowSafe(0, 0, 760, 760)) {
+	#ifdef _WIN32
+		HWND a = GetConsoleWindow();
 		MoveWindow(a, 0, 0, 760, 760, FALSE);
+	#endif
 	}
 	if (!applyConsoleDimensionsSafe(84, 37)) {
 		system("MODE con cols=84 lines=37");
 	}
 	repaintConsoleViewportSafe();
-	_flushall();
+	atcFlushOutputStreams();
 	bool continu = true;
 	puts("\n\n\n");
 	printf("                   %c%c%c  %c%c%c%c  %c   %c  %c%c%c  %c   %c  %c%c%c  %c%c%c%c%c %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
@@ -621,7 +630,7 @@ bool about() {
 		second = (end - start) / CLOCKS_PER_SEC;
 		Sleep(100);
 		end = clock();
-		if (GetKeyState(VK_RETURN) < 0) {
+		if (atcEnterKeyPressed()) {
 			gets_s(getEnter, 20);
 			break;
 		}

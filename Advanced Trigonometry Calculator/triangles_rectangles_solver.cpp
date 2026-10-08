@@ -9,11 +9,11 @@ void trianglesRectanglesSolver() {
 	puts("If you don't know how to answer to a request, please enter '_1' and hit 'Enter';\nIf you know how to answer, enter the answer and hit 'Enter';\n\nYou must enter angles in degrees because, if not, you will get wrong results.");
 	puts("\nLet's start!\n");
 	do {
-		_flushall();
+		atcFlushOutputStreams();
 		T hypotenuse, opposite, angleH, adjacent, angleH1, slopeH, allcorrect = 0, perslope;
 		printf("Enter the hypotenuse value: ");
 		hypotenuse = getValue<T>();
-		_flushall();
+		atcFlushOutputStreams();
 		if (hypotenuse > 0) {
 			printf("Enter the angle formed by the hypotenuse with the adjacent: ");
 			angleH = getValue<T>();

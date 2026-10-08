@@ -197,6 +197,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 
 	getATCPath();
 	if (argc < 2) {
+#ifdef _WIN32
 		HANDLE ProcSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 		bool foundATClauncher = false;
 		PROCESSENTRY32W pe = { 0 };
@@ -220,6 +221,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 			ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
 
 		}
+#endif
 		on_start();
 		applySettings(Colors);
 		sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)", memFactor);
@@ -792,30 +794,26 @@ bool processTxt(char* path, int re) {
 			}
 			sprintf(customFolderPath, "%s", folder);
 			char* hasFolder = getDynamicCharArray("", "hasFolder");
-			sprintf(hasFolder, "%s\\hasFolder.txt", folder);
+			char* stringsFolder = getDynamicCharArray("", "stringsFolder");
+			atcJoinPath(hasFolder, DIM, folder, "hasFolder.txt");
+			atcJoinPath(stringsFolder, DIM, folder, "Strings");
 
 			check = fopen(hasFolder, "r");
 			if (check == NULL) {
-				char* toOpen = getDynamicCharArray("", "toOpen");
-				sprintf(toOpen, "/C mkdir \"%s\"&mkdir \"%s\\Strings\"", folder, folder);
-				using namespace std;
-				std::string s = string(toOpen);
-				std::wstring stemp = std::wstring(s.begin(), s.end());
-				LPCWSTR sw = stemp.c_str();
-				ShellExecute(NULL, _T("open"), _T("C:\\WINDOWS\\system32\\cmd.exe"), sw, NULL, SW_SHOW);
-				Sleep(333);
-				check = fopen(hasFolder, "w");
-				if (check != NULL) {
-					fclose(check);
+				if (atcCreateDirectories(folder) && atcCreateDirectories(stringsFolder)) {
+					check = fopen(hasFolder, "w");
+					if (check != NULL) {
+						fclose(check);
+					}
 				}
-				_delete(toOpen, "toOpen");
-				toOpen = nullptr;
 			}
 			else {
 				fclose(check);
 			}
 			_delete(hasFolder, "hasFolder");
 			hasFolder = nullptr;
+			_delete(stringsFolder, "stringsFolder");
+			stringsFolder = nullptr;
 		}
 	}
 	else {

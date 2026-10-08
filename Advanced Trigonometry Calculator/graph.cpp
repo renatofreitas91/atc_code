@@ -5,9 +5,9 @@
 #include <string.h>
 #include <math.h>
 #include <float.h>
-#include <io.h>
 
 #ifdef _WIN32
+#include <io.h>
 #include <windows.h>
 
 static bool hasInteractiveGraphConsole() {
@@ -29,9 +29,10 @@ template <typename T>
 void designGraph(char* functionF) {
     FILE* open;
     int numberCols = 0;
-#ifdef _WIN32
-    bool graphInteractiveConsole = hasInteractiveGraphConsole();
+    bool graphInteractiveConsole = false;
     const char* graphNavigationTest = getenv("ATC_GRAPH_NAVIGATION_TEST");
+#ifdef _WIN32
+    graphInteractiveConsole = hasInteractiveGraphConsole();
 #endif
     char* toOpen = getDynamicCharArray("", "toOpen");
     char* setting = getDynamicCharArray("", "setting");
@@ -698,13 +699,18 @@ void designGraph(char* functionF) {
 
 void GoToXY(int column, int line)
 {
+#ifdef _WIN32
 	COORD coord;
 	coord.X = column;
 	coord.Y = line;
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleCursorPosition(hConsole, coord);
+#else
+	printf("\x1b[%d;%dH", line + 1, column + 1);
+#endif
 }
 
+#ifdef _WIN32
 COORD GetConsoleCursorPosition(HANDLE hConsoleOutput)
 {
 	CONSOLE_SCREEN_BUFFER_INFO cbsi;
@@ -718,5 +724,6 @@ COORD GetConsoleCursorPosition(HANDLE hConsoleOutput)
 		return invalid;
 	}
 }
+#endif
 
 template void designGraph<double>(char*);

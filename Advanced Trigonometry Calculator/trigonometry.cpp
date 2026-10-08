@@ -98,7 +98,7 @@ void arcotg(T x, T y) {
 	}
 }
 template <typename T>
-void complex_cos<T>(T x, T y) {
+void complex_cos(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		exponentiation<T>(M_E, 0.0, -1 * y, x, 1);
@@ -118,7 +118,7 @@ void complex_cos<T>(T x, T y) {
 	}
 }
 template <typename T>
-void complex_sin<T>(T x, T y) {
+void complex_sin(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		exponentiation<T>(M_E, 0.0, -1 * y, x, 1);
@@ -138,7 +138,7 @@ void complex_sin<T>(T x, T y) {
 	}
 }
 template <typename T>
-void complex_tan<T>(T x, T y) {
+void complex_tan(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		complex_sin<T>(x, y);
@@ -156,7 +156,7 @@ void complex_tan<T>(T x, T y) {
 	}
 }
 template <typename T>
-void complex_asin<T>(T x, T y) {
+void complex_asin(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		T radicandR = 1 - pot<T>(x, 2.0, 1) + pot<T>(y, 2.0, 1);
@@ -177,7 +177,7 @@ void complex_asin<T>(T x, T y) {
 	}
 }
 template <typename T>
-void complex_acos<T>(T x, T y) {
+void complex_acos(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		T radicandR = -1 * pot<T>(x, 2.0, 1) + pot<T>(y, 2.0, 1) + 1;
@@ -199,7 +199,7 @@ void complex_acos<T>(T x, T y) {
 	}
 }
 template <typename T>
-void complex_atan<T>(T x, T y) {
+void complex_atan(T x, T y) {
 	resultR = 0; resultI = 0;
 	if (x >= mINF && x <= INF && y >= mINF && y <= INF) {
 		T numR = 1 + y, numI = -1 * x;

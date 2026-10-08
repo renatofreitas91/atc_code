@@ -6,7 +6,7 @@ PrecisionValue LastDividerR = 0, LastDividerI = 0;
 bool isDivisible = true;
 
 template <typename T>
-void sum_polynomial<T>(char* polynomial_1, char* polynomial_2) {
+void sum_polynomial(char* polynomial_1, char* polynomial_2) {
 	sprintf(roots, "");
 	if (isContained("((", polynomial_1) && isContained("))", polynomial_1)) {
 		replace("((", "(", polynomial_1);
@@ -82,7 +82,7 @@ void sum_polynomial<T>(char* polynomial_1, char* polynomial_2) {
 	_delete(polynomial_sum, "polynomial_sum"); polynomial_sum = nullptr;
 }
 template <typename T>	
-void sub_polynomial<T>(char* polynomial_1, char* polynomial_2) {
+void sub_polynomial(char* polynomial_1, char* polynomial_2) {
 	sprintf(roots, "");
 	removeDuplPars(polynomial_1);
 	sprintf(polynomial_1, "%s", expressionF);
@@ -104,7 +104,7 @@ void sub_polynomial<T>(char* polynomial_1, char* polynomial_2) {
 	replaceTimes = 0;
 }
 template <typename T>
-void multi_polynomial<T>(char* polynomial_1, char* polynomial_2) {
+void multi_polynomial(char* polynomial_1, char* polynomial_2) {
 	sprintf(roots, "");
 	if (isEqual(polynomial_2, "(0+0i)") || isEqual(polynomial_1, "(0+0i)")) {
 		sprintf(expressionF, "(0+0i)");
@@ -185,7 +185,7 @@ void multi_polynomial<T>(char* polynomial_1, char* polynomial_2) {
 	}
 }
 template <typename T>
-void div_polynomial<T>(char* polynomial_1, char* polynomial_2) {
+void div_polynomial(char* polynomial_1, char* polynomial_2) {
 	isDivisible = true;
 	if ((!isEqual(polynomial_2, "((0+0i)x^1+(0+0i))") && isEqual(polynomial_1, "((0+0i)x^1+(0+0i))")) || (!isEqual(polynomial_2, "((0+0i))") && isEqual(polynomial_1, "((0+0i))"))) {
 		sprintf(expressionF, "(0+0i)");

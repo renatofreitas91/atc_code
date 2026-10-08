@@ -539,17 +539,17 @@ void print(char* text, T result1, T result2) {
 						value = 0;
 					}
 					if (specifier == 'e' || specifier == 'E') {
-						T value = calcNow(varValue, result1, result2);
+						double value = precisionValueTo<double>(calcNow(varValue, result1, result2));
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'G' || specifier == 'g') {
-						T value = calcNow(varValue, result1, result2);
+						double value = precisionValueTo<double>(calcNow(varValue, result1, result2));
 						printf(printing, value);
 						value = 0;
 					}
 					if (specifier == 'a' || specifier == 'A') {
-						T value = calcNow(varValue, result1, result2);
+						double value = precisionValueTo<double>(calcNow(varValue, result1, result2));
 						printf(printing, value);
 						value = 0;
 					}
@@ -623,9 +623,13 @@ void print(char* text, T result1, T result2) {
 					}
 					if (specifier == 'n') {
 						signed int value = (int)calcNow(varValue, result1, result2);
+					#ifdef _WIN32
 						_set_printf_count_output(1);
+					#endif
 						printf(printing, &value);
+					#ifdef _WIN32
 						_set_printf_count_output(0);
+					#endif
 						value = 0;
 					}
 					i--;
@@ -870,19 +874,19 @@ void sprint(char* text, T result1, T result2) {
 						value = 0;
 					}
 					if (specifier == 'e' || specifier == 'E') {
-						T value = calcNow(varValue, result1, result2);
+						double value = precisionValueTo<double>(calcNow(varValue, result1, result2));
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
 					}
 					if (specifier == 'G' || specifier == 'g') {
-						T value = calcNow(varValue, result1, result2);
+						double value = precisionValueTo<double>(calcNow(varValue, result1, result2));
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
 					}
 					if (specifier == 'a' || specifier == 'A') {
-						T value = calcNow(varValue, result1, result2);
+						double value = precisionValueTo<double>(calcNow(varValue, result1, result2));
 						sprintf(String, printing, value);
 						sprintf(finalString, "%s%s", finalString, String);
 						value = 0;
@@ -963,10 +967,14 @@ void sprint(char* text, T result1, T result2) {
 					}
 					if (specifier == 'n') {
 						int value = (int)calcNow(varValue, result1, result2);
+					#ifdef _WIN32
 						_set_printf_count_output(1);
+					#endif
 						sprintf(String, printing, &value);
 						sprintf(finalString, "%s%s", finalString, String);
+					#ifdef _WIN32
 						_set_printf_count_output(0);
+					#endif
 						value = 0;
 					}
 					i--;
@@ -1118,8 +1126,8 @@ template <typename T>
 T getValue() {
 	if (I_O) {
 		char decision = '\0';
-		if (_isatty(_fileno(stdin))) {
-			decision = _getch();
+		if (atcIsInteractiveInput()) {
+			decision = (char)atcGetChar();
 		}
 		else {
 			decision = (char)getchar();
@@ -1164,7 +1172,7 @@ T getValue() {
 	}
 }
 template <typename T>
-int atcProgramming<T>(char* script) {
+int atcProgramming(char* script) {
 	sprintf(context, "script");
 	runningScript = true;
 	char* nativeCommands = getDynamicCharArray(",print,sprint,get,composecommand,if,else,while,for,break,return,switch,case,cls,", "nativeCommands");

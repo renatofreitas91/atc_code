@@ -242,28 +242,20 @@ static void appendUserFunctionSuggestions(std::vector<std::string>& suggestions)
 		return;
 	}
 
-	char searchPath[MAX_PATH];
-	snprintf(searchPath, sizeof(searchPath), "%s\\User functions\\*.txt", atcPath);
-
-	WIN32_FIND_DATAA findData;
-	HANDLE findHandle = FindFirstFileA(searchPath, &findData);
-	if (findHandle == INVALID_HANDLE_VALUE) {
+	std::vector<char> userFunctionsPath((size_t)DIM);
+	if (!atcJoinPath(userFunctionsPath.data(), userFunctionsPath.size(), atcPath, "User functions")) {
 		return;
 	}
 
-	do {
-		if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
-			std::string fileName = findData.cFileName;
-			if (fileName.length() > 4 && toLowerAscii(fileName.substr(fileName.length() - 4)) == ".txt") {
-				std::string functionName = fileName.substr(0, fileName.length() - 4);
-				if (!functionName.empty()) {
-					addSuggestion(suggestions, "atc_" + functionName + "(");
-				}
+	const std::vector<std::string> files = atcListRegularFileNames(userFunctionsPath.data());
+	for (const std::string& fileName : files) {
+		if (fileName.length() > 4 && toLowerAscii(fileName.substr(fileName.length() - 4)) == ".txt") {
+			std::string functionName = fileName.substr(0, fileName.length() - 4);
+			if (!functionName.empty()) {
+				addSuggestion(suggestions, "atc_" + functionName + "(");
 			}
 		}
-	} while (FindNextFileA(findHandle, &findData));
-
-	FindClose(findHandle);
+	}
 }
 
 static std::vector<std::string> loadInputHistory()
@@ -273,11 +265,12 @@ static std::vector<std::string> loadInputHistory()
 		return history;
 	}
 
-	char historyPath[MAX_PATH];
-	snprintf(historyPath, sizeof(historyPath), "%s\\history.txt", atcPath);
+	std::vector<char> historyPath((size_t)DIM);
+	if (!atcJoinPath(historyPath.data(), historyPath.size(), atcPath, "history.txt")) {
+		return history;
+	}
 
-	FILE* file = nullptr;
-	fopen_s(&file, historyPath, "r");
+	FILE* file = fopen(historyPath.data(), "r");
 	if (file == nullptr) {
 		return history;
 	}
@@ -355,7 +348,7 @@ static void copyEditorLineToBuffer(char* line, int capacity, const std::string& 
 		return;
 	}
 
-	strncpy_s(line, capacity, value.c_str(), _TRUNCATE);
+	atcCopyString(line, (size_t)capacity, value.c_str());
 }
 
 static void redrawConsoleInputLine(const std::string& value, size_t cursor, size_t previousLength)
@@ -483,10 +476,10 @@ void readConsoleInputWithTabCompletion(char* line, int capacity)
 	size_t completionCycleStart = 0;
 
 	while (true) {
-		int key = _getch();
+		int key = atcGetChar();
 
 		if (key == 0 || key == 224) {
-			int specialKey = _getch();
+			int specialKey = atcGetChar();
 			if (specialKey == 75) {
 				resetCompletionCycle(completionCyclePrefix, completionCycleMatches, completionCycleIndex, completionCycleStart);
 				if (cursor > 0) {

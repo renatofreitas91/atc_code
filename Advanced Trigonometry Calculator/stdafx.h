@@ -1,9 +1,11 @@
 #pragma once
+#ifdef _WIN32
 #define _WINSOCKAPI_ // Prevent inclusion of winsock.h
 // Windows-specific headers
 #include "targetver.h"    // Include project specific version info
 #define NOMINMAX
 #include <windows.h>
+#endif
 #include <algorithm>
 
 // Standard C++ libraries
@@ -26,11 +28,17 @@
 #if ATC_ENABLE_MATRIX_PARALLELISM != 0
 #include <thread>        // Internal computation workers
 #endif
+#ifdef _WIN32
 #include <conio.h>       // Console I/O
 #include <io.h>          // Console redirection checks
 #include <tchar.h>       // Generic text mapping
 #include <shellapi.h>    // Shell API
 #include <tlhelp32.h>    // Tool Help Library
+#else
+#include <dirent.h>
+#include <strings.h>
+#include <unistd.h>
+#endif
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <list>
@@ -43,8 +51,10 @@
 
 
 
+#ifdef _WIN32
 #include "resource.h"
 #include "dirent.h"
+#endif
 
 // É obrigatório incluir os cabeçalhos da Boost que definem o cpp_dec_float and number
 #include <boost/multiprecision/cpp_dec_float.hpp>
@@ -63,6 +73,7 @@ using PrecisionValue = boost::variant<double, mp_float>;
 #include <algorithm>
 #include "atc_functions.h"
 #include <unordered_map>
+#include "platform/atc_platform.h"
 
 #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
 #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
@@ -92,7 +103,9 @@ extern int DIMDOUBLE;
 
 
 // Link the necessary libraries
+#ifdef _WIN32
 #pragma comment(lib,"Wininet.lib")    // Link Wininet library
+#endif
 extern char** splitResult;
 
 
@@ -257,9 +270,12 @@ int atcProgramming(char* script);
 int strlength(char* stringV);
 int countOccurrences(char* to_find, char* expression);
 int deleteXOccurrences(char* to_find, char* expression, int x);
+template<typename T>
 int getCorrectExponent(char* expression, char* maxExp, int maxExponent);
 int linesNumber(char* values);
 int colsNumber(char* values);
+template<typename T>
+char* convert2Exponential(T value);
 template<typename T>
 void convertComplex2Exponential(T valueR, T valueI) {
     sprintf(respR, ""); sprintf(respI, "");
@@ -433,11 +449,11 @@ char* getDerivative(char* expression);
 char* convertToString(char* string);
 char* convertToString(char* string);
 void GoToXY(int column, int line);
+#ifdef _WIN32
 COORD GetConsoleCursorPosition(HANDLE hConsoleOutput);
+#endif
 template <typename T>
 char* convertVector2String(T** vectorR, T** vectorI, int numLines, int numCols);
-template<typename T>
-char* convert2Exponential(T value);
 void check4Updates();
 int* getDynamicIntArray();
 void replaceLong(char* toReplace, char* replacement, char* string);

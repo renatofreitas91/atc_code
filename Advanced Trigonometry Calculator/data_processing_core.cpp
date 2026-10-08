@@ -1,6 +1,8 @@
 #include "stdafx.h"
+#ifdef _WIN32
 HANDLE hStdin;
 DWORD fdwSaveOldMode;
+#endif
 int strStart = 0, strEnd = 0, Pressed = 0;
 char* dimensionsTxt = getDynamicCharArray("", "dimensionsTxt"), * windowTxt = getDynamicCharArray("", "windowTxt");
 // Usamos dois asteriscos (**) porque getDynamic2DDoubleArray() aloca uma matriz 2D
@@ -33,7 +35,7 @@ void putsAndPause(char* text) {
 
 bool atcTestDisableExternalOpen() {
 	const char* value = getenv("ATC_TEST_DISABLE_EXTERNAL_OPEN");
-	return value != nullptr && (strcmp(value, "1") == 0 || _stricmp(value, "true") == 0);
+	return value != nullptr && (strcmp(value, "1") == 0 || atcStringsEqualIgnoreCase(value, "true"));
 }
 
 void recordExternalOpen(const char* action, const char* target) {
@@ -64,8 +66,6 @@ void restoreWindowPosition() {
 		return;
 	}
 	fclose(file);
-
-	HWND hwnd = GetConsoleWindow();
 
 	applyConsoleDimensionsSafe(width / 8, 2000);
 	applyConsoleWindowSafe(x, y, width, height);
@@ -140,25 +140,22 @@ void numSystemsController() {
 	_delete(toOpen, "toOpen");
 	toOpen = nullptr;
 	char* path4ATC = getDynamicCharArray("", "path4ATC");
-	sprintf(path4ATC, "");
-	sprintf(path4ATC, "%s\\atc.exe", atcPath);
-	using namespace std;
-	std::string s = string(path4ATC);
-	std::wstring stemp = std::wstring(s.begin(), s.end());
-	LPCWSTR sw = stemp.c_str();
-	_delete(path4ATC, "path4ATC");
-	path4ATC = nullptr;
+	atcJoinPath(path4ATC, (size_t)DIM, atcPath, atcExecutableFileName());
 	int decision = -1;
 	do {
 		printf("\nATC needs to be restarted to apply the new memory factory.\nDo you want do it right now? (Yes-> 1 \\ No -> 0)\n");
 		scanf("%d", &decision);
 	} while (decision != 0 && decision != 1);
 	if (decision == 1) {
-		ShellExecute(NULL, _T("open"), sw, NULL, NULL, SW_SHOW);
+		atcLaunchExecutable(path4ATC);
+		_delete(path4ATC, "path4ATC");
+		path4ATC = nullptr;
 		exit(0);
 	}
 	else {
 		puts("\nThe new memory factor will be applied when ATC has been restarted.\n");
+		_delete(path4ATC, "path4ATC");
+		path4ATC = nullptr;
 	}
 }
  float getMemFactor1() {
@@ -3666,8 +3663,7 @@ void openTxt() {
 			openFile = nullptr;
 			return;
 		}
-		sprintf(openFile, "notepad.exe %s", expressionF);
-		system(openFile);
+		atcOpenFile(expressionF);
 	}
 	_delete(openFile, "openFile");
 	openFile = nullptr;
@@ -3693,6 +3689,7 @@ bool isVariable(char* variable) {
 
 void leftClick()
 {
+#ifdef _WIN32
 	INPUT    Input = { 0 };
 	Input.type = INPUT_MOUSE;
 	Input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
@@ -3701,9 +3698,11 @@ void leftClick()
 	Input.type = INPUT_MOUSE;
 	Input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
 	::SendInput(1, &Input, sizeof(INPUT));
+#endif
 }
 void cls()
 {
+#ifdef _WIN32
 	HANDLE hConsole;
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD coordScreen = { 0, 0 };
@@ -3736,9 +3735,14 @@ void cls()
 		return;
 	}
 	SetConsoleCursorPosition(hConsole, coordScreen);
+#else
+	printf("\x1b[2J\x1b[H");
+	fflush(stdout);
+#endif
 }
 
 void addATCPath() {
+#ifdef _WIN32
 	FILE* open = NULL, * pathReader = NULL;
 	char* contents = getDynamicCharArray("", "contents");
 	char* atcName = getDynamicCharArray("\\Advanced Trigonometry Calculator", "atcName");
@@ -3806,6 +3810,15 @@ void addATCPath() {
 	_delete(atcName, "atcName"); atcName = nullptr;
 	_delete(atcPAth, "atcPAth"); atcPAth = nullptr;
 	_delete(testPath, "testPath"); testPath = nullptr;
+#else
+	if (atcGetCurrentDirectory(atcPath, (size_t)DIM)) {
+		FILE* pathFile = fopen("atc_path.txt", "w");
+		if (pathFile != nullptr) {
+			fprintf(pathFile, "%s", atcPath);
+			fclose(pathFile);
+		}
+	}
+#endif
 }
 
 void getATCPath() {
@@ -3816,9 +3829,10 @@ void getATCPath() {
 	aPath = fopen("atc_path.txt", "r");
 	if (aPath == NULL) {
 		aPath = fopen("atc_path.txt", "w");
-		TCHAR NPath[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, NPath);
-		wcstombs(atcPath, NPath, wcslen(NPath) + 1);
+		char NPath[DIM];
+		if (atcGetCurrentDirectory(NPath, sizeof(NPath))) {
+			sprintf(atcPath, "%s", NPath);
+		}
 		fprintf(aPath, "%s", atcPath);
 		sprintf(forsprintf, "%s", atcPath);
 		sprintf(saveATCPath, "%s", forsprintf);
@@ -3839,9 +3853,10 @@ void getATCPath() {
 		test = fopen(testPath, "r");
 		if (test == NULL) {
 			test = fopen("atc_path.txt", "w");
-			TCHAR NPath[MAX_PATH];
-			GetCurrentDirectory(MAX_PATH, NPath);
-			wcstombs(atcPath, NPath, wcslen(NPath) + 1);
+			char NPath[DIM];
+			if (atcGetCurrentDirectory(NPath, sizeof(NPath))) {
+				sprintf(atcPath, "%s", NPath);
+			}
 			fprintf(test, "%s", atcPath);
 			sprintf(saveATCPath, "%s", atcPath);
 			fclose(test);
@@ -4309,6 +4324,42 @@ void currentSettings() {
 
 
 
+static void removeAtcDataFiles(const char* const* names, size_t count) {
+	for (size_t index = 0; index < count; ++index) {
+		atcRemoveFileInDirectory(atcPath, names[index]);
+	}
+}
+
+static void enableAtcIntroFiles() {
+	const char* const names[] = { "aboutDisabled.txt", "onStart.txt" };
+	removeAtcDataFiles(names, sizeof(names) / sizeof(names[0]));
+}
+
+static void resetAllAtcFiles() {
+	const char* const names[] = {
+		"history.txt", "graph.txt", "variables.txt", "higherPrecision.txt",
+		"renamedVar.txt", "pathName.txt", "predefinedTxt.txt", "calendar.txt",
+		"numSystems.txt", "siPrefixes.txt", "actualTime.txt", "colors.txt",
+		"dimensions.txt", "verboseResolution.txt", "window.txt", "mode.txt",
+		"onStart.txt", "disable_txt_detector.txt", "stringVariable.txt",
+		"atc_path.txt", "aboutDisabled.txt"
+	};
+	removeAtcDataFiles(names, sizeof(names) / sizeof(names[0]));
+	char stringsPath[DIM];
+	if (atcJoinPath(stringsPath, sizeof(stringsPath), atcPath, "Strings")) {
+		atcRemoveRegularFiles(stringsPath);
+		atcCreateOneDirectory(stringsPath);
+	}
+}
+
+static void resetAtcSettingsFiles() {
+	const char* const names[] = {
+		"numSystems.txt", "graph.txt", "siPrefixes.txt", "higherPrecision.txt",
+		"actualTime.txt", "colors.txt", "dimensions.txt", "window.txt",
+		"mode.txt", "verboseResolution.txt", "onStart.txt"
+	};
+	removeAtcDataFiles(names, sizeof(names) / sizeof(names[0]));
+}
 void on_start() {
 	char* Path = getDynamicCharArray("", "Path");
 	sprintf(Path, "%s\\temp.txt", atcPath);
@@ -4316,21 +4367,13 @@ void on_start() {
 	Try = fopen(Path, "r");
 	if (Try != NULL) {
 		fclose(Try);
-		char* toOpen = getDynamicCharArray("", "toOpen");
-		sprintf(toOpen, "del \"%s\"", Path);
-		system(toOpen);
-		_delete(toOpen, "toOpen");
-		toOpen = nullptr;
+		remove(Path);
 	}
 	sprintf(Path, "%s\\temp_answers.txt", atcPath);
 	Try = fopen(Path, "r");
 	if (Try != NULL) {
 		fclose(Try);
-		char* toOpen = getDynamicCharArray("", "toOpen");
-		sprintf(toOpen, "del \"%s\"", Path);
-		system(toOpen);
-		_delete(toOpen, "toOpen");
-		toOpen = nullptr;
+		remove(Path);
 	}
 	FILE* open = NULL;
 	char* onStart = getDynamicCharArray("", "onStart");
@@ -4342,6 +4385,7 @@ void on_start() {
 		fgets(onStart, 100, open);
 		fclose(open);
 		if (isContained("enableatcintro", onStart)) {
+#ifdef _WIN32
 			char* toOpen = getDynamicCharArray("", "toOpen");
 			sprintf(toOpen, "/C \"del \"%s\\aboutDisabled.txt\" &del \"%s\\onStart.txt\"", atcPath, atcPath);
 			using namespace std;
@@ -4352,9 +4396,13 @@ void on_start() {
 			Sleep(1000);
 			_delete(toOpen, "toOpen");
 			toOpen = nullptr;
+#else
+			enableAtcIntroFiles();
+#endif
 
 		}
 		if (onStart[0] == 'r' && onStart[1] == 'e' && onStart[2] == 's' && onStart[3] == 'e' && onStart[4] == 't' && onStart[5] == 'a' && onStart[6] == 'l' && onStart[7] == 'l' && onStart[8] == '\0') {
+#ifdef _WIN32
 			char* toOpen = getDynamicCharArray("", "toOpen");
 			sprintf(toOpen, "/C \"del \"%s\\history.txt\"&del \"%s\\graph.txt\"&del \"%s\\variables.txt\"&del \"%s\\higherPrecision.txt\"&del \"%s\\renamedVar.txt\"&del \"%s\\pathName.txt\"&del \"%s\\predefinedTxt.txt\"&del \"%s\\calendar.txt\"&del \"%s\\numSystems.txt\"&del \"%s\\siPrefixes.txt\"&rmdir /Q /S \"%s\\Strings\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"& del \"%s\\verboseResolution.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\onStart.txt\"&del \"%s\\disable_txt_detector.txt\"&del \"%s\\stringVariable.txt\"&mkdir \"%s\\Strings\"&del \"%s\\atc_path.txt\"&del \"%s\\aboutDisabled.txt\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
 			using namespace std;
@@ -4368,8 +4416,15 @@ void on_start() {
 			applySettings(Dimensions);
 			_delete(toOpen, "toOpen");
 			toOpen = nullptr;
+#else
+			resetAllAtcFiles();
+			applySettings(Colors);
+			applySettings(Window);
+			applySettings(Dimensions);
+#endif
 		}
 		if (onStart[0] == 'r' && onStart[1] == 'e' && onStart[2] == 's' && onStart[3] == 'e' && onStart[4] == 't' && onStart[5] == 's' && onStart[6] == 'e' && onStart[7] == 't' && onStart[8] == 't' && onStart[9] == 'i' && onStart[10] == 'n' && onStart[11] == 'g' && onStart[12] == 's' && onStart[13] == '\0') {
+#ifdef _WIN32
 			char* toOpen = getDynamicCharArray("", "toOpen");
 			sprintf(toOpen, "/C \"del \"%s\\numSystems.txt\"&del \"%s\\graph.txt\"&del \"%s\\siPrefixes.txt\"&del \"%s\\higherPrecision.txt\"&del \"%s\\actualTime.txt\"&del \"%s\\colors.txt\"&del \"%s\\dimensions.txt\"&del \"%s\\window.txt\"&del \"%s\\mode.txt\"&del \"%s\\verboseResolution.txt\"&del \"%s\\onStart.txt\"\"", atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath, atcPath);
 			using namespace std;
@@ -4383,6 +4438,12 @@ void on_start() {
 			applySettings(Dimensions);
 			_delete(toOpen, "toOpen");
 			toOpen = nullptr;
+#else
+			resetAtcSettingsFiles();
+			applySettings(Colors);
+			applySettings(Window);
+			applySettings(Dimensions);
+#endif
 		}
 	}
 	_delete(Path, "Path");
@@ -4446,8 +4507,9 @@ void idColorToName(char color) {
 	}
 }
 
-void ShowConsoleCursor(BOOL bShow)
+void ShowConsoleCursor(bool bShow)
 {
+#ifdef _WIN32
 	static HANDLE hOut;
 	static BOOL firstTime = TRUE;
 	CONSOLE_CURSOR_INFO cursorInfo;
@@ -4459,6 +4521,10 @@ void ShowConsoleCursor(BOOL bShow)
 	cursorInfo.dwSize = 10;
 	cursorInfo.bVisible = bShow;
 	SetConsoleCursorInfo(hOut, &cursorInfo);
+#else
+	printf(bShow ? "\x1b[?25h" : "\x1b[?25l");
+	fflush(stdout);
+#endif
 }
 
 template <typename T>
@@ -4515,6 +4581,7 @@ void complexNumber(T a, T b) {
 
 bool IsPreviousToWindowsVista()
 {
+#ifdef _WIN32
 	bool previousToVista = false;
 
 	OSVERSIONINFOEX osversion;
@@ -4529,9 +4596,13 @@ bool IsPreviousToWindowsVista()
 		}
 	}
 	return previousToVista;
+#else
+	return false;
+#endif
 }
 bool IsWindows11OrGreater()
 {
+#ifdef _WIN32
 	typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 	HMODULE ntdll = GetModuleHandleA("ntdll.dll");
 	if (ntdll == NULL) {
@@ -4549,6 +4620,9 @@ bool IsWindows11OrGreater()
 	}
 	return versionInfo.dwMajorVersion > 10 ||
 		(versionInfo.dwMajorVersion == 10 && versionInfo.dwBuildNumber >= 22000);
+#else
+	return false;
+#endif
 }
 
 bool shouldDisableATCIntroByDefault()
@@ -5954,11 +6028,13 @@ bool isEqual(char* to_find, char* string) {
 }
 
 int trackMouse() {
+#ifdef _WIN32
 	POINT p;
 	GetCursorPos(&p);
 	MouseMove(100, 100);
 	leftClick();
 	MouseMove(p.x, p.y);
+#endif
 	return 0;
 }
 
@@ -5972,6 +6048,7 @@ static int clampConsoleValue(int value, int minimum, int maximum) {
 	return value;
 }
 
+#ifdef _WIN32
 static bool hasConsoleHandle(HANDLE handle) {
 	DWORD mode = 0;
 	return handle != INVALID_HANDLE_VALUE && handle != NULL && GetConsoleMode(handle, &mode);
@@ -6253,8 +6330,60 @@ void force_legacy_console_mode() {
 	}
 	applyConsoleDimensionsSafe(84, 37);
 }
+#else
+void repaintConsoleViewportSafe() {
+	printf("\x1b[2J\x1b[H");
+	fflush(stdout);
+}
 
+bool applyConsoleDimensionsSafe(int columns, int lines) {
+	colsATC = columns;
+	linesATC = lines;
+	return true;
+}
 
+bool applyConsoleCommandDimensions(const char* setting) {
+	if (setting == nullptr) return false;
+	double parsedColumns = 0.0, parsedLines = 0.0;
+	if (sscanf(setting, "MODE con cols=%lf lines=%lf", &parsedColumns, &parsedLines) != 2) return false;
+	return applyConsoleDimensionsSafe((int)parsedColumns, (int)parsedLines);
+}
+
+bool applyConsoleWindowSafe(int, int, int, int) { return false; }
+void maximizeConsoleWindowSafe() {}
+void applyStartupConsoleLayoutSafe() { repaintConsoleViewportSafe(); }
+bool shouldUseLegacyConsoleWindowManagement() { return false; }
+void applyConsoleTitleSafe(const char* title) { atcSetConsoleTitle(title); }
+
+void applyConsoleColorSafe(const char* colorCommand) {
+	if (colorCommand == nullptr || strlen(colorCommand) < 8) return;
+	const char background = colorCommand[6];
+	const char foreground = colorCommand[7];
+	const int bg = isdigit((unsigned char)background) ? background - '0' : 10 + tolower((unsigned char)background) - 'a';
+	const int fg = isdigit((unsigned char)foreground) ? foreground - '0' : 10 + tolower((unsigned char)foreground) - 'a';
+	if (bg < 0 || bg > 15 || fg < 0 || fg > 15) return;
+	static const int ansiOrder[8] = { 0, 4, 2, 6, 1, 5, 3, 7 };
+	const int ansiBg = (bg >= 8 ? 100 : 40) + ansiOrder[bg & 7];
+	const int ansiFg = (fg >= 8 ? 90 : 30) + ansiOrder[fg & 7];
+	printf("\x1b[%d;%dm", ansiFg, ansiBg);
+	fflush(stdout);
+}
+
+void openNewATCInstance() {
+	char executablePath[4096];
+	if (atcJoinPath(executablePath, sizeof(executablePath), atcPath, atcExecutableFileName()) &&
+		atcLaunchExecutable(executablePath)) {
+		printf("\n==> New ATC instance opened. <==\n");
+	}
+	else {
+		printf("\nError: Unable to open a new ATC instance.\n");
+	}
+}
+
+void force_legacy_console_mode() {}
+#endif
+
+#ifdef _WIN32
 int getReady() {
 	int x = 0, y = 0, maxX = 0, maxY = 0, saveX, saveY = 0, minX = -1, minY = -1, columns = 0, rows = 0, saveColumns = -1, saveRows = -1;
 	Pressed = 0;
@@ -6368,6 +6497,9 @@ int getReady() {
 	} while (Pressed == 0);
 	return 0;
 }
+#else
+int getReady() { return 0; }
+#endif
 
 void setWindow(int x, int y) {
 	FILE* open;
@@ -6396,6 +6528,7 @@ void setDimensions(int cols, int lines) {
 }
 
 void GetWindowPos(int* x, int* y, int* maxX, int* maxY) {
+#ifdef _WIN32
 	RECT rect = { NULL };
 	if (GetWindowRect(GetConsoleWindow(), &rect)) {
 		*x = rect.left;
@@ -6403,9 +6536,13 @@ void GetWindowPos(int* x, int* y, int* maxX, int* maxY) {
 		*maxX = rect.right;
 		*maxY = rect.bottom;
 	}
+#else
+	*x = 0; *y = 0; *maxX = 0; *maxY = 0;
+#endif
 }
 void MouseMove(int x, int y)
 {
+#ifdef _WIN32
 	double fScreenWidth = ::GetSystemMetrics(SM_CXSCREEN) - 1;
 	double fScreenHeight = ::GetSystemMetrics(SM_CYSCREEN) - 1;
 	double fx = x * (65535.0f / fScreenWidth);
@@ -6416,6 +6553,9 @@ void MouseMove(int x, int y)
 	Input.mi.dx = (long)fx;
 	Input.mi.dy = (long)fy;
 	::SendInput(1, &Input, sizeof(INPUT));
+#else
+	(void)x; (void)y;
+#endif
 }
 
 
@@ -6451,23 +6591,15 @@ void split(char* splitter, char* data) {
 
 void clearKeyboardBuffer()
 {
-	while (_kbhit())
-	{
-		_getche();
-	}
+	atcClearKeyboardInput();
 }
 
 void ClearConsoleInputBuffer()
 {
-	PINPUT_RECORD ClearingVar1 = new INPUT_RECORD[256] {};
-	RegisterDynamicArray(ClearingVar1, 256);
-	DWORD ClearingVar2;
-	ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE), ClearingVar1, 256, &ClearingVar2);
-	ZeroMemory(ClearingVar1, sizeof(INPUT_RECORD) * 256);
-	UnregisterDynamicArray(ClearingVar1);
-	delete[] ClearingVar1; ClearingVar1 = nullptr;
+	atcClearKeyboardInput();
 }
 
+#ifdef _WIN32
 void show(HWND hwnd)
 {
 	WINDOWPLACEMENT place = { sizeof(WINDOWPLACEMENT) };
@@ -6487,11 +6619,13 @@ void show(HWND hwnd)
 	SetWindowPos(0, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOMOVE);
 	SetForegroundWindow(hwnd);
 }
+#endif
 
 
 
 
 void autoAdjustWindow() {
+#ifdef _WIN32
 	char* toOpen = getDynamicCharArray("", "toOpen");
 	int Window = 3, Dimensions = 2;
 	applyConsoleDimensionsSafe(160, 2000);
@@ -6542,6 +6676,10 @@ void autoAdjustWindow() {
 	toOpen = nullptr;
 	_delete(setting, "setting");
 	setting = nullptr;
+#else
+	applyConsoleDimensionsSafe(160, 2000);
+	setDimensions(160, 2000);
+#endif
 }
 
 bool isContainedInUserFunction(char* variable) {
