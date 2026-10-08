@@ -398,6 +398,56 @@ def main():
         if label == "baseline" and trait_hits == 0:
             any_unexpected = True
 
+    # Confirm that each independently causal reduced source survives
+    # preprocessing and still reaches all four Boost trait diagnostics.
+    for culprit_line, culprit_name in (
+            (3955, "toSolve"), (6695, "isContainedInUserFunction")):
+        matches = [item for item in inventory
+                   if item["line"] == culprit_line and item["name"] == culprit_name]
+        if len(matches) != 1:
+            raise RuntimeError(f"culprit inventory mismatch: {culprit_line} {culprit_name}")
+        culprit = matches[0]
+        reduced = stub_functions(
+            original,
+            [item for item in inventory if item["body_start"] != culprit["body_start"]],
+        )
+        diagnostic_source.write_text(reduced, encoding="cp1252")
+        ii_path = BUILD / f"trigger-{culprit_name}.ii"
+        preprocess_args = command_for(
+            entry, diagnostic_source, BUILD / f"trigger-{culprit_name}.unused"
+        )
+        preprocess_args[preprocess_args.index("-c")] = "-E"
+        preprocess_args[preprocess_args.index(str(diagnostic_source))] = str(diagnostic_source)
+        preprocess_args[preprocess_args.index("-o") + 1] = str(ii_path)
+        preprocessed = subprocess.run(
+            preprocess_args, cwd=entry["directory"],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, errors="replace",
+        )
+        compile_args = list(preprocess_args)
+        compile_args[compile_args.index("-E")] = "-c"
+        compile_args[compile_args.index(str(diagnostic_source))] = str(ii_path)
+        compile_args[compile_args.index("-o") + 1] = str(
+            BUILD / f"trigger-{culprit_name}.o"
+        )
+        compiled = subprocess.run(
+            compile_args, cwd=entry["directory"],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, errors="replace",
+        ) if preprocessed.returncode == 0 else None
+        ii_log = compiled.stdout if compiled else preprocessed.stdout
+        (LOG_DIR / f"trigger-{culprit_name}-ii.log").write_text(
+            ii_log, encoding="utf-8"
+        )
+        error_lines = [line for line in ii_log.splitlines() if "error:" in line]
+        unsigned = sum("is_unsigned_values" in line for line in error_lines)
+        signed = sum("is_signed_values" in line for line in error_lines)
+        print(
+            f"II_RESULT {culprit_name}: preprocess_exit={preprocessed.returncode} "
+            f"compile_exit={compiled.returncode if compiled else 'NA'} "
+            f"unsigned={unsigned} signed={signed} total={unsigned + signed}"
+        )
+
     # Diagnostic only: allow GCC to emit the object so the exact undefined
     # trait symbols can be identified. This flag is never used for a product
     # build and the resulting object is not linked.
