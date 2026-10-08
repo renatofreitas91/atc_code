@@ -3792,7 +3792,11 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 	}
 	if (isCommand(arithTrig, "checkforupdates")) {
 		command = true;
+#ifdef _WIN32
 		check4Updates();
+#else
+		puts("\n==> The checkforupdates command is available only on Windows. <==\n");
+#endif
 		puts("");
 	}
 	if (isCommand(arithTrig, "tosolve")) {

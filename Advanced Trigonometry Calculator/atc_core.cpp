@@ -20,7 +20,9 @@ PrecisionValue **saveResultR = nullptr, **saveResultI = nullptr;
 DynamicAllocation dynamicAllocation;
 bool manageDynamicAllocations = false, processingTxtFile = false;
 float memFactor = 1.0f;
+#ifdef _WIN32
 extern char* appVersion;
+#endif
 extern char* polyNo;
 extern char* stringHelper;
 
@@ -46,7 +48,9 @@ static void cleanupSessionDynamicAllocations() {
 static void cleanupStaticDynamicAllocations() {
 	cleanupSessionDynamicAllocations();
 	if (parentPol != nullptr) _delete(parentPol, "parentPol");
+#ifdef _WIN32
 	if (appVersion != nullptr) _delete(appVersion, "appVersion");
+#endif
 	if (calendarStr != nullptr) _deleteLong(calendarStr, "calendarStr");
 	if (charMaster != nullptr) _deleteShort(charMaster, "charMaster");
 	if (roots != nullptr) _deleteShort(roots, "roots");

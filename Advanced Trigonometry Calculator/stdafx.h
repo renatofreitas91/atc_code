@@ -455,7 +455,9 @@ COORD GetConsoleCursorPosition(HANDLE hConsoleOutput);
 #endif
 template <typename T>
 char* convertVector2String(T** vectorR, T** vectorI, int numLines, int numCols);
+#ifdef _WIN32
 void check4Updates();
+#endif
 int* getDynamicIntArray();
 void replaceLong(char* toReplace, char* replacement, char* string);
 char* getDynamicCharArray(char* source, const char* variable);
