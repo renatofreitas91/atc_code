@@ -1,0 +1,92 @@
+name: Linux runtime smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_run_id:
+        description: Run containing the experimental Linux executable
+        required: true
+        default: "37827746702"
+      phase:
+        description: Runtime phase to execute
+        required: true
+        type: choice
+        options:
+          - startup
+          - smoke
+        default: startup
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  runtime:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository resources
+        uses: actions/checkout@v4
+
+      - name: Download exact linked executable
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p build runtime-logs
+          gh run download "${{ inputs.artifact_run_id }}" \
+            --repo "${{ github.repository }}" \
+            --name atc-2.1.9-linux-experimental \
+            --dir build
+          chmod +x build/atc
+
+      - name: Inspect ELF and dependencies
+        run: |
+          pwd | tee runtime-logs/pwd.txt
+          ls -l build/atc | tee runtime-logs/ls.txt
+          file build/atc | tee runtime-logs/file.txt
+          ldd build/atc | tee runtime-logs/ldd.txt
+          if grep -q "not found" runtime-logs/ldd.txt; then
+            exit 1
+          fi
+
+      - name: Observe startup with closed stdin
+        if: inputs.phase == 'startup'
+        shell: bash
+        run: |
+          set +e
+          timeout 10s ./build/atc </dev/null \
+            >runtime-logs/startup.stdout \
+            2>runtime-logs/startup.stderr
+          status=$?
+          set -e
+          printf '%s\n' "$status" | tee runtime-logs/startup.exit-code
+
+      - name: Run controlled basic smoke
+        if: inputs.phase == 'smoke'
+        shell: bash
+        run: |
+          set +e
+          printf '1+1\n2*3\n10/2\n2^3\nsqrt(4)\nsin(0)\nexit\n' | \
+            timeout 15s ./build/atc \
+              >runtime-logs/smoke.stdout \
+              2>runtime-logs/smoke.stderr
+          status=${PIPESTATUS[1]}
+          set -e
+          printf '%s\n' "$status" | tee runtime-logs/smoke.exit-code
+
+      - name: Show captured runtime output
+        if: always()
+        run: |
+          for path in runtime-logs/*; do
+            echo "===== $path ====="
+            cat "$path"
+          done
+
+      - name: Upload runtime diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atc-2.1.9-linux-${{ inputs.phase }}-diagnostics
+          path: runtime-logs
+          retention-days: 7
