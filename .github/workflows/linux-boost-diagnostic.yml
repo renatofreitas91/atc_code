@@ -95,7 +95,8 @@ jobs:
         run: |
           set -euo pipefail
           target="diagnostic/creduce/${{ matrix.trigger }}"
-          creduce "$target/interesting.sh" "$target/input.ii" \
+          creduce --remove-pass pass_line_markers \
+            "$target/interesting.sh" "$target/input.ii" \
             2>&1 | tee "$target/creduce.log"
           cp "$target/input.ii" "$target/final.ii"
 
