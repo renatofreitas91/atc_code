@@ -76,13 +76,18 @@ def main():
     original = SOURCE.read_text(encoding="cp1252")
     all_names = {name for line in original.splitlines() if (name := explicit_name(line))}
     variants = [
-        ("baseline", set()),
-        ("without_complex_mp", {"complexNumber"}),
-        ("without_early", EARLY),
-        ("without_group_a", GROUP_A),
-        ("without_group_b", GROUP_B),
-        ("without_group_c", GROUP_C),
-        ("without_all_explicit_mp", all_names),
+        ("boost_headers_only", set(),
+         "#include <boost/math/special_functions/erf.hpp>\n"
+         "#include <boost/multiprecision/cpp_dec_float.hpp>\n"),
+        ("precision_types_only", set(), '#include "precision_types.h"\n'),
+        ("stdafx_only", set(), '#include "stdafx.h"\n'),
+        ("baseline", set(), None),
+        ("without_complex_mp", {"complexNumber"}, None),
+        ("without_early", EARLY, None),
+        ("without_group_a", GROUP_A, None),
+        ("without_group_b", GROUP_B, None),
+        ("without_group_c", GROUP_C, None),
+        ("without_all_explicit_mp", all_names, None),
     ]
     entry = compile_entry()
     any_unexpected = False
@@ -91,8 +96,10 @@ def main():
     print(entry.get("command") or shlex.join(entry["arguments"]))
     print("Explicit mp_float names:", ", ".join(sorted(all_names)))
 
-    for label, names in variants:
+    for label, names, custom_text in variants:
         text, removed = without(original, names)
+        if custom_text is not None:
+            text = custom_text
         diagnostic_source = SOURCE.with_name("data_processing_core_atc_diagnostic.cpp")
         diagnostic_source.write_text(text, encoding="cp1252")
         output = BUILD / (label + ".o")
