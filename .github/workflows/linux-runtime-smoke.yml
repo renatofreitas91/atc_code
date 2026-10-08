@@ -19,6 +19,7 @@ on:
         options:
           - startup
           - smoke
+          - tty-smoke
         default: startup
 
 permissions:
@@ -79,6 +80,19 @@ jobs:
           status=${PIPESTATUS[1]}
           set -e
           printf '%s\n' "$status" | tee runtime-logs/smoke.exit-code
+
+      - name: Run controlled basic smoke in a pseudo-TTY
+        if: inputs.phase == 'tty-smoke'
+        shell: bash
+        run: |
+          set +e
+          printf '\n1+1\n2*3\n10/2\n2^3\nsqrt(4)\nsin(0)\nexit\n' | \
+            timeout 20s script -qefc './build/atc' /dev/null \
+              >runtime-logs/tty-smoke.stdout \
+              2>runtime-logs/tty-smoke.stderr
+          status=${PIPESTATUS[1]}
+          set -e
+          printf '%s\n' "$status" | tee runtime-logs/tty-smoke.exit-code
 
       - name: Show captured runtime output
         if: always()
