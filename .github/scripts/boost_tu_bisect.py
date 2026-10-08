@@ -274,6 +274,13 @@ def main():
             if old not in typed_all_mixed:
                 raise RuntimeError(f"missing variableValidator comparison: {old}")
             typed_all_mixed = typed_all_mixed.replace(old, new)
+    dirent_compare = "dir->d_type == DT_REG"
+    typed_dirent_compare = (
+        "static_cast<int>(dir->d_type) == static_cast<int>(DT_REG)"
+    )
+    if original.count(dirent_compare) != 2:
+        raise RuntimeError("expected two dirent d_type comparisons")
+    typed_dirent_full = original.replace(dirent_compare, typed_dirent_compare)
     isolated_literal = (
         '#include "stdafx.h"\n'
         "template<typename T> char diagnostic_character(T n) {\n"
@@ -345,12 +352,78 @@ def main():
             set(),
             stub_functions(original, to_stub),
         ))
+    dirent_culprits = ((3955, "toSolve"), (6695, "isContainedInUserFunction"))
+    for culprit_line, culprit_name in dirent_culprits:
+        matches = [item for item in inventory
+                   if item["line"] == culprit_line and item["name"] == culprit_name]
+        if len(matches) != 1:
+            raise RuntimeError(
+                f"dirent culprit inventory mismatch: {culprit_line} {culprit_name}"
+            )
+        culprit = matches[0]
+        reduced = stub_functions(
+            original,
+            [item for item in inventory if item["body_start"] != culprit["body_start"]],
+        )
+        if reduced.count(dirent_compare) != 1:
+            raise RuntimeError(f"expected one isolated dirent comparison: {culprit_name}")
+        variants.append((
+            f"isolated_dirent_original_{culprit_name}", set(), reduced,
+        ))
+        variants.append((
+            f"isolated_dirent_typed_{culprit_name}", set(),
+            reduced.replace(dirent_compare, typed_dirent_compare),
+        ))
+    variants.append(("typed_dirent_full_tu", set(), typed_dirent_full))
     entry = compile_entry()
     any_unexpected = False
 
     print("Real compile command:")
     print(entry.get("command") or shlex.join(entry["arguments"]))
     print("Explicit mp_float names:", ", ".join(sorted(all_names)))
+
+    dirent_probe_source = BUILD / "dirent-type-probe.cpp"
+    dirent_probe_binary = BUILD / "dirent-type-probe"
+    dirent_probe_source.write_text(
+        "#include <dirent.h>\n"
+        "#include <type_traits>\n"
+        "static_assert(std::is_same<decltype(dirent{}.d_type), unsigned char>::value, "
+        "\"unexpected POSIX dirent::d_type\");\n"
+        "static_assert(std::is_enum<decltype(DT_REG)>::value, "
+        "\"DT_REG must expose the anonymous enum trigger\");\n"
+        "int main() {\n"
+        "  const unsigned char values[] = {DT_REG, DT_DIR, DT_UNKNOWN, DT_FIFO};\n"
+        "  for (unsigned char value : values) {\n"
+        "    if ((value == DT_REG) != "
+        "(static_cast<int>(value) == static_cast<int>(DT_REG))) return 1;\n"
+        "  }\n"
+        "  return 0;\n"
+        "}\n",
+        encoding="utf-8",
+    )
+    compiler = (entry.get("arguments") or shlex.split(entry["command"]))[0]
+    dirent_probe_compile = subprocess.run(
+        [compiler, "-std=c++17", str(dirent_probe_source),
+         "-o", str(dirent_probe_binary)],
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        text=True, errors="replace",
+    )
+    dirent_probe_run = subprocess.run(
+        [str(dirent_probe_binary)], stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT, text=True, errors="replace",
+    ) if dirent_probe_compile.returncode == 0 else None
+    (LOG_DIR / "dirent-type-probe.log").write_text(
+        dirent_probe_compile.stdout +
+        (dirent_probe_run.stdout if dirent_probe_run else ""), encoding="utf-8"
+    )
+    print(
+        f"DIRENT_TYPE_RESULT compile_exit={dirent_probe_compile.returncode} "
+        f"run_exit={dirent_probe_run.returncode if dirent_probe_run else 'NA'} "
+        "d_type=unsigned_char DT_REG=enum cast=int"
+    )
+    if (dirent_probe_compile.returncode != 0
+            or not dirent_probe_run or dirent_probe_run.returncode != 0):
+        any_unexpected = True
 
     for label, names, custom_text in variants:
         text, removed = without(original, names)
@@ -388,6 +461,8 @@ def main():
         if (label.startswith(("stub_template_", "only_template_"))
                 or label.startswith(("isolated_template_", "isolated_non_template_"))
                 or label.startswith("isolated_function_")
+                or label.startswith("isolated_dirent_")
+                or label == "typed_dirent_full_tu"
                 or label in ("all_templates_stubbed", "all_non_templates_stubbed")):
             print(
                 f"CASE_RESULT {label}\texit={completed.returncode}"
@@ -397,11 +472,31 @@ def main():
             )
         if label == "baseline" and trait_hits == 0:
             any_unexpected = True
+        causal_expectation = None
+        if label.startswith("isolated_dirent_original_"):
+            causal_expectation = (False, 2, 2)
+        elif label.startswith("isolated_dirent_typed_"):
+            causal_expectation = (True, 0, 0)
+        elif label == "typed_dirent_full_tu":
+            causal_expectation = (True, 0, 0)
+        if causal_expectation is not None:
+            expect_success, expect_unsigned, expect_signed = causal_expectation
+            actual_success = completed.returncode == 0
+            if (actual_success != expect_success
+                    or unsigned_hits != expect_unsigned
+                    or signed_hits != expect_signed
+                    or other_errors):
+                any_unexpected = True
+                print(
+                    f"CAUSAL_EXPECTATION_FAILED {label}: "
+                    f"success={actual_success} unsigned={unsigned_hits} "
+                    f"signed={signed_hits} first_other="
+                    f"{other_errors[0] if other_errors else '-'}"
+                )
 
     # Confirm that each independently causal reduced source survives
     # preprocessing and still reaches all four Boost trait diagnostics.
-    for culprit_line, culprit_name in (
-            (3955, "toSolve"), (6695, "isContainedInUserFunction")):
+    for culprit_line, culprit_name in dirent_culprits:
         matches = [item for item in inventory
                    if item["line"] == culprit_line and item["name"] == culprit_name]
         if len(matches) != 1:

@@ -2,6 +2,12 @@ name: Linux Boost 1.74 TU diagnostic
 
 on:
   workflow_dispatch:
+    inputs:
+      run_reducers:
+        description: "Run the two long C-Reduce jobs"
+        required: false
+        default: false
+        type: boolean
   push:
     branches:
       - codex/atc-2.1.9-boost-tu-diagnostic
@@ -51,6 +57,7 @@ jobs:
 
   reduce:
     needs: diagnose
+    if: github.event_name == 'workflow_dispatch' && inputs.run_reducers
     runs-on: ubuntu-22.04
     timeout-minutes: 180
     strategy:
