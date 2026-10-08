@@ -1,6 +1,7 @@
 name: Linux Boost 1.74 TU diagnostic
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - codex/atc-2.1.9-boost-tu-diagnostic
