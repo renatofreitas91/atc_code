@@ -215,7 +215,7 @@ def main():
     # Diagnostic only: allow GCC to emit the object so the exact undefined
     # trait symbols can be identified. This flag is never used for a product
     # build and the resulting object is not linked.
-    diagnostic_source.write_text(original, encoding="cp1252")
+    diagnostic_source.write_text(typed_all_mixed, encoding="cp1252")
     output = BUILD / "permissive-symbol-probe.o"
     args = command_for(entry, diagnostic_source, output)
     args = [arg for arg in args if arg not in ("-O1", "-O2", "-O3", "-Os")]
@@ -234,7 +234,7 @@ def main():
     (LOG_DIR / "permissive-symbol-probe.log").write_text(
         completed.stdout, encoding="utf-8"
     )
-    print(f"RESULT permissive_symbol_probe: exit={completed.returncode}")
+    print(f"RESULT typed_permissive_symbol_probe: exit={completed.returncode}")
     if completed.returncode == 0:
         symbols = subprocess.run(
             ["nm", "-C", str(output)],
