@@ -791,3 +791,22 @@ libraries remain untracked; no installed Boost header was edited. The tracked
 diff is limited to `precision_types.h`, `data_processing_core.cpp`, and these
 reports, and `git diff --check` passes. Ubuntu compile/link and runtime status
 remain unchanged until an authorized push and workflow run.
+
+Workflow `37765519036` subsequently disproved that local conclusion on the
+official Ubuntu environment. At SHA `9a11b4f2bbd6fabedd5a724ed331aacb51e7d060`,
+CMake and `commands.cpp` passed, while `data_processing_core.cpp` produced the
+same four Boost trait errors. No `required from` chain accompanies the fatal
+global-scope diagnostics; the immediately preceding
+`convertComplex2Exponential<mp_float>` warning chain is adjacency, not proof.
+
+The Ubuntu TU bisection uses the real CMake command serially and changes only
+temporary source copies. Header-only cases pass. The full TU fails unchanged
+without `complexNumber<mp_float>`, without every explicit `mp_float`
+instantiation, and without the known implicit dispatch sites. A
+diagnostic-only permissive object identifies heterogeneous comparisons in
+`character_to_prefDet<mp_float>`, `manageExpression<mp_float>`, and
+`variableValidator<mp_float>`. Typing all operands at those sites together is
+still insufficient: the full Release TU retains four errors. Consequently
+these expressions are confirmed contributors but not yet proven to be the
+complete cause. No product workaround, Boost edit, or permanent permissive flag
+has been introduced.

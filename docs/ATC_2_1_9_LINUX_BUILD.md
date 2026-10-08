@@ -518,3 +518,34 @@ matches for the failing `number_category_type` trait chain. The diagnostic
 checkout and header overlay are untracked and do not modify installed Boost.
 `git diff --check` passes. A real Ubuntu 22.04 workflow remains required to
 confirm compilation and link; no runtime claim is made.
+
+### Official validation of `9a11b4f` and Ubuntu TU bisection
+
+Workflow `37765519036` tested SHA `9a11b4f2bbd6fabedd5a724ed331aacb51e7d060`.
+Dependency installation and CMake Release configuration passed, as did
+`commands.cpp`, but `data_processing_core.cpp` retained the same four anonymous
+enum diagnostics. Link and artifact upload were not reached. This disproves the
+local probe's zero-match result for the official environment and means the
+commit did not meet Level A.
+
+An isolated Ubuntu 22.04/GCC/Boost 1.74 diagnostic branch then reused the exact
+CMake compile command with `-j1`, unlimited template backtrace, template-tree
+display, and caret suppression. Boost headers alone, `precision_types.h` alone,
+and `stdafx.h` alone all compile. Removing only `complexNumber<mp_float>`, each
+explicit-instantiation group, or every explicit `mp_float` instantiation does
+not change the four errors. Removing all identified non-template `mp_float`
+dispatch sites also does not change them. The error is therefore in source
+semantics compiled by the complete TU, not header inclusion or that adjacent
+`complexNumber` log entry.
+
+A diagnostic-only `-fpermissive` object (never linked or used as a product
+result) exposed calls from `character_to_prefDet<mp_float>` to heterogeneous
+`mp_float`/`double` comparisons, from `manageExpression<mp_float>` to
+`mp_float`/`double` equality comparisons, and from
+`variableValidator<mp_float>` to `mp_float`/`int` equality comparisons. These
+are demonstrated contributors. However, typing all those temporary threshold
+operands still leaves the same four Release diagnostics, so they are not yet a
+complete causal set and no source correction has been adopted. The optimized
+typed object emits no remaining `is_valid_mixed_compare` symbol even though GCC
+reports the traits at end of compilation; further source-level bisection is
+required before a permanent fix.
