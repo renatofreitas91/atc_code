@@ -361,7 +361,7 @@ static bool trySolveCoreLinearExpression(const std::string& expression, long dou
 		}
 		start = end;
 	}
-	if (!hasX || std::fabsl(coefficient) < 1E-30L) {
+	if (!hasX || std::fabs(coefficient) < 1E-30L) {
 		return false;
 	}
 	solution = -constant / coefficient;
