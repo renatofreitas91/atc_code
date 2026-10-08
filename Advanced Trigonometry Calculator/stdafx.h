@@ -276,6 +276,7 @@ int linesNumber(char* values);
 int colsNumber(char* values);
 template<typename T>
 char* convert2Exponential(T value);
+char* convert2Exponential(PrecisionValue value);
 template<typename T>
 void convertComplex2Exponential(T valueR, T valueI) {
     sprintf(respR, ""); sprintf(respI, "");

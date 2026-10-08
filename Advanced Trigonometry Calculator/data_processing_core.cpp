@@ -7410,9 +7410,15 @@ const char* createMatrix(char* matrixName, int linsNumber, int colsNumber, char*
 }
 
 
+char* convert2Exponential(PrecisionValue value) {
+	if (const double* number = boost::get<double>(&value)) {
+		return convert2Exponential<double>(*number);
+	}
+	return convert2Exponential<mp_float>(boost::get<mp_float>(value));
+}
+
 template char* convert2Exponential<double>(double);
 template char* convert2Exponential<mp_float>(mp_float);
-template char* convert2Exponential<PrecisionValue>(PrecisionValue);
 template char* convertVector2String<PrecisionValue>(PrecisionValue**, PrecisionValue**, int, int);
 
 void getCols(char* data) {

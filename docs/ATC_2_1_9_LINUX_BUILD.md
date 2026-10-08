@@ -433,3 +433,23 @@ errors in that file used `std::fabsl`, which is not provided in the runner's
 `std` namespace. Both arguments are `long double`; the calls now use the C++17
 `std::fabs(long double)` overload. `<cmath>` was already included through
 `stdafx.h`; both `1E-12L` tolerances and comparison logic are unchanged.
+
+### Second Ubuntu 22.04 GCC run
+
+GitHub Actions run `37737665054` checked out commit `76719d6`, configured the
+Release build successfully, and confirmed that `commands.cpp` now compiles.
+The build then failed in `data_processing_core.cpp`. Inspection of the complete
+GCC log found one fatal group: the explicit generic instantiation of
+`convert2Exponential<PrecisionValue>` forces Boost 1.74 signed/unsigned traits
+to ODR-use the same internal unnamed-enum members. The four Boost diagnostics
+are one root cause; the later `gmake` failures are cascades. All other compiler
+diagnostics in this run are warnings. Link and artifact upload were not reached.
+
+The minimal local correction replaces only that generic `PrecisionValue`
+instantiation with a non-template overload. It inspects the existing
+`boost::variant<double, mp_float>` and delegates to the unchanged `double` or
+`mp_float` `convert2Exponential` implementation. No formatting, precision,
+parser, solver, or mathematical algorithm changes. Isolated C++17 syntax
+probes pass for both `data_processing_core.cpp` and `commands.cpp`, and
+`git diff --check` passes. A new Ubuntu run is still required to validate the
+full GCC compile and link; runtime remains unvalidated.

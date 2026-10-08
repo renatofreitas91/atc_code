@@ -720,3 +720,20 @@ to the standard overloaded `std::fabs` at the complex linear-solution
 imaginary tolerance check and the root-ordering real tolerance check. Both
 operands are `long double`, `<cmath>` is already present, and the `1E-12L`
 tolerances and algorithms are unchanged.
+
+The second Ubuntu 22.04 workflow run (`37737665054`) checked out `76719d6`,
+passed CMake Release configuration, and compiled `commands.cpp`. The complete
+log contains one subsequent fatal group in `data_processing_core.cpp`: the
+explicit generic instantiation `convert2Exponential<PrecisionValue>` makes
+Boost 1.74 signed/unsigned traits ODR-use internal unnamed-enum members. Its
+four Boost errors share this root cause; the later build-system errors are
+cascades, and the remaining compiler diagnostics are warnings.
+
+The local correction declares a non-template `PrecisionValue` overload which
+dispatches the existing `boost::variant<double, mp_float>` to the unchanged
+numeric template specialization, and removes only the invalid/problematic
+generic variant instantiation. This preserves the selected concrete value,
+formatting, precision, and Windows/MSVC/`v141_xp` behavior. Isolated C++17
+syntax probes for `data_processing_core.cpp` and `commands.cpp` pass, as does
+`git diff --check`. The workflow did not reach link, artifact upload, startup,
+or smoke tests; another authorized push/run is required for those validations.
