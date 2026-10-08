@@ -144,6 +144,13 @@ def main():
     typed_all_mixed = typed_manage.replace(
         "if (check != 0.5)", "if (check != (T)0.5)"
     )
+    for name in ("arith", "func", "prefix"):
+        for operator in ("==", "!="):
+            old = f"{name} {operator} 0"
+            new = f"{name} {operator} (T)0"
+            if old not in typed_all_mixed:
+                raise RuntimeError(f"missing variableValidator comparison: {old}")
+            typed_all_mixed = typed_all_mixed.replace(old, new)
     isolated_literal = (
         '#include "stdafx.h"\n'
         "template<typename T> char diagnostic_character(T n) {\n"
