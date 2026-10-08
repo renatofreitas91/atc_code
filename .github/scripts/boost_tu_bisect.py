@@ -318,6 +318,23 @@ def main():
                      stub_functions(original, templates)))
     variants.append(("all_non_templates_stubbed", set(),
                      stub_functions(original, non_templates)))
+    non_template_quarters = []
+    for quarter in range(4):
+        start = len(non_templates) * quarter // 4
+        end = len(non_templates) * (quarter + 1) // 4
+        non_template_quarters.append(non_templates[start:end])
+    for index, quarter in enumerate(quarters, 1):
+        keep_ids = {item["body_start"] for item in quarter}
+        to_stub = (non_templates +
+                   [item for item in templates if item["body_start"] not in keep_ids])
+        variants.append((f"isolated_template_q{index}", set(),
+                         stub_functions(original, to_stub)))
+    for index, quarter in enumerate(non_template_quarters, 1):
+        keep_ids = {item["body_start"] for item in quarter}
+        to_stub = (templates +
+                   [item for item in non_templates if item["body_start"] not in keep_ids])
+        variants.append((f"isolated_non_template_q{index}", set(),
+                         stub_functions(original, to_stub)))
     entry = compile_entry()
     any_unexpected = False
 
@@ -359,6 +376,7 @@ def main():
             f"trait_hits={trait_hits} removed={','.join(removed) or '-'}"
         )
         if (label.startswith(("stub_template_", "only_template_"))
+                or label.startswith(("isolated_template_", "isolated_non_template_"))
                 or label in ("all_templates_stubbed", "all_non_templates_stubbed")):
             print(
                 f"CASE_RESULT {label}\texit={completed.returncode}"
