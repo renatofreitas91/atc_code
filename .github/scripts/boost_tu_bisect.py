@@ -131,6 +131,19 @@ def main():
     if typed_character == character_definition:
         raise RuntimeError("character_to_prefDet thresholds were not typed")
     typed_character_full = original.replace(character_definition, typed_character)
+    typed_manage = typed_character_full
+    manage_func_compare = 'functionProcessor<T>(func, 0, 0, 0, "") == 0.5'
+    if typed_manage.count(manage_func_compare) != 4:
+        raise RuntimeError("expected four manageExpression function comparisons")
+    typed_manage = typed_manage.replace(
+        manage_func_compare,
+        'functionProcessor<T>(func, 0, 0, 0, "") == (T)0.5',
+    )
+    if typed_manage.count("if (check != 0.5)") != 1:
+        raise RuntimeError("expected one manageExpression check comparison")
+    typed_all_mixed = typed_manage.replace(
+        "if (check != 0.5)", "if (check != (T)0.5)"
+    )
     isolated_literal = (
         '#include "stdafx.h"\n'
         "template<typename T> char diagnostic_character(T n) {\n"
@@ -160,6 +173,7 @@ def main():
         ("isolated_character_literal", set(), isolated_literal),
         ("isolated_character_typed", set(), isolated_typed),
         ("typed_character_thresholds_full_tu", set(), typed_character_full),
+        ("typed_all_mixed_comparisons_full_tu", set(), typed_all_mixed),
     ]
     entry = compile_entry()
     any_unexpected = False
