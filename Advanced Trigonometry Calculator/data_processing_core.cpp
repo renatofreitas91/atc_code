@@ -3976,7 +3976,7 @@ int toSolve(int re) {
 		{
 			while ((dir = readdir(d)) != NULL)
 			{
-				if (dir->d_type == DT_REG)
+				if (static_cast<int>(dir->d_type) == static_cast<int>(DT_REG))
 				{
 					sprintf(filename, "%s", dir->d_name);
 					if (searchExtension(filename, ".txt")) {
@@ -6709,7 +6709,7 @@ bool isContainedInUserFunction(char* variable) {
 	{
 		while ((dir = readdir(d)) != NULL)
 		{
-			if (dir->d_type == DT_REG)
+			if (static_cast<int>(dir->d_type) == static_cast<int>(DT_REG))
 			{
 				sprintf(filename, "%s", dir->d_name);
 				if (searchExtension(filename, ".txt")) {
