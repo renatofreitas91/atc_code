@@ -407,3 +407,20 @@ Current phase-2 status:
 | `git diff --check` | PASS |
 | Windows XP | Preserved in code / toolset unavailable |
 | Windows 11 | Preserved in code / build not reached |
+
+### First Ubuntu 22.04 GCC run
+
+GitHub Actions run `37736637304` configured and generated the Release build
+successfully, then failed while compiling `commands.cpp`. The preceding
+string-literal, format, and unused-value diagnostics are warnings and are not
+the cause of failure. The first fatal group comes from the Ubuntu 22.04 Boost
+1.74 headers: `boost::is_unsigned` and `boost::is_signed` instantiate static
+members whose type is an internal unnamed enum, and GCC rejects their ODR use
+under C++17 with “declared using unnamed type, is used but never defined”.
+
+The local experimental branch now applies `-fpermissive` only to
+`commands.cpp` and only when the CMake compiler is GNU. This confines the
+compatibility exception to the one affected translation unit; ATC source,
+algorithms, parser, solver, and MSVC/`v141_xp` flags are unchanged. The fix is
+local and has not been pushed. A second Ubuntu run therefore remains pending
+explicit authorization.

@@ -79,3 +79,14 @@ if(MSVC)
 else()
     target_compile_options(atc PRIVATE -Wall -Wextra -Wpedantic)
 endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # Ubuntu 22.04 ships Boost 1.74, whose signed/unsigned type traits use
+    # static members of an internal unnamed enum. GCC diagnoses their ODR use
+    # while generating commands.cpp in C++17 Release mode. Keep the
+    # compatibility exception isolated to that translation unit.
+    set_source_files_properties(
+        "${ATC_SOURCE_DIR}/commands.cpp"
+        PROPERTIES COMPILE_OPTIONS "-fpermissive"
+    )
+endif()

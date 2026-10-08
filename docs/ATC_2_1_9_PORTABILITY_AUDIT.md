@@ -698,3 +698,16 @@ This host has no WSL distribution, Docker/Podman, or native GCC. Ubuntu CMake,
 GCC, link, startup, and smoke tests are therefore not run. The attempted MSVC
 Release x64 validation stopped before compilation with `MSB8020` because the
 `v141_xp` toolset is unavailable; the project was deliberately not retargeted.
+
+The first official Ubuntu 22.04 workflow run (`37736637304`) passed checkout,
+dependency installation, and CMake Release configuration, then failed during
+GCC compilation of `commands.cpp`. The first real errors are in the distro's
+Boost 1.74 `is_unsigned.hpp`/`is_signed.hpp`: static trait values typed as an
+internal unnamed enum are ODR-used during C++17 Release code generation and
+GCC rejects their lack of linkage. Earlier diagnostics are non-fatal warnings.
+
+A minimal local CMake correction adds `-fpermissive` only to `commands.cpp`
+when the compiler ID is GNU. It does not alter ATC source behavior or any
+Windows/MSVC setting, and avoids weakening diagnostics for the other 37 Linux
+translation units. This correction has not been pushed; a confirming Ubuntu
+run awaits explicit authorization.
