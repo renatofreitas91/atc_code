@@ -1,6 +1,7 @@
 
 
 #include "stdafx.h"
+#include <cstdarg>
 
 bool runningScript = false, I_O = false;
 int Break = 0, countUseBreak = 0, countUseReturn = 0, countBreak = 0, countReturn = 0, countEnters = 0, countUseEnters = 0, countSplits = 0;
