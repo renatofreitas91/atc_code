@@ -549,3 +549,36 @@ complete causal set and no source correction has been adopted. The optimized
 typed object emits no remaining `is_valid_mixed_compare` symbol even though GCC
 reports the traits at end of compilation; further source-level bisection is
 required before a permanent fix.
+
+### Function-body quarter bisection
+
+The diagnostic harness inventories 151 global bodies: 118 non-templates, 32
+primary templates, and one explicit specialization. It replaces selected
+bodies with signature-preserving `{ throw 0; }` stubs and records compile exit,
+unsigned/signed fatal counts, and the first unrelated error. No case below
+produced an unrelated error.
+
+Population controls proved independent template and non-template triggers.
+The truly isolated matrix was:
+
+```text
+isolated template Q1      PASS 0
+isolated template Q2      PASS 0
+isolated template Q3      FAIL 4
+isolated template Q4      PASS 0
+isolated non-template Q1  PASS 0
+isolated non-template Q2  PASS 0
+isolated non-template Q3  PASS 0
+isolated non-template Q4  FAIL 4
+```
+
+Each of the 38 functions in the two failing quarters was compiled alone, with
+every other body stubbed. Exactly two independently reproduce the four traits:
+template `toSolve<T>` (inventory line 3955) and non-template
+`isContainedInUserFunction` (line 6695). The other 36 isolated bodies pass.
+
+For each trigger the harness generated a reduced source, ran the real CMake
+command with `-E`, and compiled the resulting `.ii`. Both preprocessing steps
+pass and both `.ii` files reproduce unsigned=2 and signed=2 with no prior
+error. The large `.ii` files, objects, and logs remain runner-only. No product
+source correction has been made.

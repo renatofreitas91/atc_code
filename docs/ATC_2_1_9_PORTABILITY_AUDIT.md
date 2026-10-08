@@ -810,3 +810,18 @@ still insufficient: the full Release TU retains four errors. Consequently
 these expressions are confirmed contributors but not yet proven to be the
 complete cause. No product workaround, Boost edit, or permanent permissive flag
 has been introduced.
+
+The body-level harness inventoried 151 definitions and established independent
+template and non-template trigger populations. With all other bodies stubbed,
+only template quarter Q3 and non-template quarter Q4 reproduce the traits; the
+other six isolated quarters compile. Function-by-function isolation inside
+those quarters identified exactly two bodies: `toSolve<T>` and
+`isContainedInUserFunction`. Each body alone produces the four Boost
+diagnostics, while each of the other 36 candidates alone passes. There were no
+invalid bisection cases or unrelated fatal errors.
+
+Reduced sources retaining only one trigger body were preprocessed using the
+real CMake GCC command. Both resulting `.ii` files reproduce exactly two
+`is_unsigned_values` and two `is_signed_values` fatal diagnostics. Generated
+`.ii`, object, and log artifacts are not tracked. Product code remains
+unchanged pending expression-level reduction.
