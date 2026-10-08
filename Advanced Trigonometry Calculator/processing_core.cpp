@@ -5061,6 +5061,14 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 	return result1;
 }
 
+template double arithSolver<double>(char*, double);
+template mp_float arithSolver<mp_float>(char*, mp_float);
+
+template double functionProcessor<double>(
+	char*, PrecisionValue, PrecisionValue, int, char*);
+template mp_float functionProcessor<mp_float>(
+	char*, PrecisionValue, PrecisionValue, int, char*);
+
 template <>
 PrecisionValue initialProcessor<PrecisionValue>(char* arithTrig, PrecisionValue result) {
     if (higherPrecision == 1) {

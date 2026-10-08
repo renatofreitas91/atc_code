@@ -289,6 +289,8 @@ template double pot<double>(double, double, int);
 template double qu<double>(double, double);
 template double re<double>(double, double);
 template double fact<double>(double);
+template double multi<double>(double);
+template double quo<double>(double);
 
 template void sum<mp_float>(mp_float, mp_float, mp_float, mp_float);
 template void subtraction<mp_float>(mp_float, mp_float, mp_float, mp_float);
@@ -300,6 +302,8 @@ template mp_float pot<mp_float>(mp_float, mp_float, int);
 template mp_float qu<mp_float>(mp_float, mp_float);
 template mp_float re<mp_float>(mp_float, mp_float);
 template mp_float fact<mp_float>(mp_float);
+template mp_float multi<mp_float>(mp_float);
+template mp_float quo<mp_float>(mp_float);
 template void qu_complex<double>(double, double, double, double);
 template void qu_complex<mp_float>(mp_float, mp_float, mp_float, mp_float);
 template void re_complex<double>(double, double, double, double);
