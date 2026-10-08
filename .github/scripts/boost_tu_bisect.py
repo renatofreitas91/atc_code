@@ -313,6 +313,11 @@ def main():
         to_stub = [item for item in templates if item["body_start"] not in keep_ids]
         variants.append((f"only_template_q{index}", set(),
                          stub_functions(original, to_stub)))
+    non_templates = [item for item in inventory if item["category"] == "non_template"]
+    variants.append(("all_templates_stubbed", set(),
+                     stub_functions(original, templates)))
+    variants.append(("all_non_templates_stubbed", set(),
+                     stub_functions(original, non_templates)))
     entry = compile_entry()
     any_unexpected = False
 
@@ -353,7 +358,8 @@ def main():
             f"RESULT {label}: exit={completed.returncode} errors={errors} "
             f"trait_hits={trait_hits} removed={','.join(removed) or '-'}"
         )
-        if label.startswith(("stub_template_", "only_template_")):
+        if (label.startswith(("stub_template_", "only_template_"))
+                or label in ("all_templates_stubbed", "all_non_templates_stubbed")):
             print(
                 f"CASE_RESULT {label}\texit={completed.returncode}"
                 f"\tunsigned={unsigned_hits}\tsigned={signed_hits}"
