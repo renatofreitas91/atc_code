@@ -172,6 +172,10 @@ def main():
     diagnostic_source.write_text(original, encoding="cp1252")
     output = BUILD / "permissive-symbol-probe.o"
     args = command_for(entry, diagnostic_source, output)
+    args = [arg for arg in args if arg not in ("-O1", "-O2", "-O3", "-Os")]
+    args.insert(args.index("-c"), "-O0")
+    args.insert(args.index("-c"), "-g")
+    args.insert(args.index("-c"), "-fno-inline")
     args.insert(args.index("-c"), "-fpermissive")
     completed = subprocess.run(
         args,
@@ -198,6 +202,29 @@ def main():
         for line in symbols.splitlines():
             if "is_unsigned_values" in line or "is_signed_values" in line:
                 print("TRAIT_SYMBOL", line)
+            if "is_valid_mixed_compare" in line and "double" in line:
+                print("MIXED_COMPARE_SYMBOL", line)
+        disassembly = subprocess.run(
+            ["objdump", "-drC", str(output)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            errors="replace",
+            check=False,
+        ).stdout
+        (LOG_DIR / "permissive-disassembly.txt").write_text(
+            disassembly, encoding="utf-8"
+        )
+        current_function = ""
+        callers = set()
+        for line in disassembly.splitlines():
+            if re.match(r"^[0-9a-f]+ <.*>:$", line):
+                current_function = line
+            if ("is_valid_mixed_compare" in line and "double" in line
+                    and "operator<" in line):
+                callers.add(current_function)
+        for caller in sorted(callers):
+            print("MIXED_COMPARE_CALLER", caller)
 
     diagnostic_source.unlink(missing_ok=True)
     return 2 if any_unexpected else 0
