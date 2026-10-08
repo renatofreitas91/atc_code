@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -u
 
-src="${1:?candidate source required}"
+src="${1:-input.ii}"
 log="$(mktemp)"
 obj="$(mktemp --suffix=.o)"
 trap 'rm -f "$log" "$obj"' EXIT
