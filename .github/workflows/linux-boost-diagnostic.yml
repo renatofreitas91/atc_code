@@ -1,0 +1,41 @@
+name: Linux Boost 1.74 TU diagnostic
+
+on:
+  push:
+    branches:
+      - codex/atc-2.1.9-boost-tu-diagnostic
+    paths:
+      - ".github/scripts/boost_tu_bisect.py"
+      - ".github/workflows/linux-boost-diagnostic.yml"
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out diagnostic branch
+        uses: actions/checkout@v4
+
+      - name: Install GCC, CMake, and Boost 1.74
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential cmake libboost-all-dev
+
+      - name: Configure Release compile database
+        run: >-
+          cmake -S . -B build-diagnostic
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Bisect data_processing_core explicit instantiations
+        run: python3 .github/scripts/boost_tu_bisect.py
+
+      - name: Upload diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: boost-1.74-data-processing-tu-logs
+          path: build-diagnostic/boost-tu-logs
+          if-no-files-found: error
+          retention-days: 7
