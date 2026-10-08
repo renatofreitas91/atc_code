@@ -424,3 +424,12 @@ compatibility exception to the one affected translation unit; ATC source,
 algorithms, parser, solver, and MSVC/`v141_xp` flags are unchanged. The fix is
 local and has not been pushed. A second Ubuntu run therefore remains pending
 explicit authorization.
+
+`-fpermissive` can also downgrade unrelated C++ conformance errors in
+`commands.cpp` to warnings. It is therefore an explicitly experimental,
+temporary workaround and should be removed once Boost/GCC compatibility is
+resolved more rigorously. Independently, two genuine GCC library-surface
+errors in that file used `std::fabsl`, which is not provided in the runner's
+`std` namespace. Both arguments are `long double`; the calls now use the C++17
+`std::fabs(long double)` overload. `<cmath>` was already included through
+`stdafx.h`; both `1E-12L` tolerances and comparison logic are unchanged.

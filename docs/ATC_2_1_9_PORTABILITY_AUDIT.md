@@ -711,3 +711,12 @@ when the compiler ID is GNU. It does not alter ATC source behavior or any
 Windows/MSVC setting, and avoids weakening diagnostics for the other 37 Linux
 translation units. This correction has not been pushed; a confirming Ubuntu
 run awaits explicit authorization.
+
+Because `-fpermissive` can convert other conformance failures in
+`commands.cpp` into warnings, it is documented as an experimental workaround
+that must be removed in favor of a stricter solution. Two additional real GCC
+errors in the same unit were corrected independently: `std::fabsl` was changed
+to the standard overloaded `std::fabs` at the complex linear-solution
+imaginary tolerance check and the root-ordering real tolerance check. Both
+operands are `long double`, `<cmath>` is already present, and the `1E-12L`
+tolerances and algorithms are unchanged.

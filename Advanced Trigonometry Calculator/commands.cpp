@@ -575,7 +575,7 @@ static bool trySolveCommandLinearExpressionComplex(const std::string& expression
 
 static bool trySolveCommandLinearExpression(const std::string& expression, long double& solution) {
 	std::complex<long double> complexSolution(0.0L, 0.0L);
-	if (!trySolveCommandLinearExpressionComplex(expression, complexSolution) || std::fabsl(complexSolution.imag()) > 1E-12L) {
+	if (!trySolveCommandLinearExpressionComplex(expression, complexSolution) || std::fabs(complexSolution.imag()) > 1E-12L) {
 		return false;
 	}
 	solution = complexSolution.real();
@@ -2505,7 +2505,7 @@ static bool solveLinearFactorProductEquation(const char* source) {
 		rootsFound.push_back(root);
 	}
 	std::sort(rootsFound.begin(), rootsFound.end(), [](const std::complex<long double>& a, const std::complex<long double>& b) {
-		if (std::fabsl(a.real() - b.real()) > 1E-12L) {
+		if (std::fabs(a.real() - b.real()) > 1E-12L) {
 			return a.real() > b.real();
 		}
 		return a.imag() > b.imag();
