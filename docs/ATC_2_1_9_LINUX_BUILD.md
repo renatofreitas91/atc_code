@@ -473,3 +473,48 @@ therefore active, but the Ubuntu result disproves the earlier hypothesis that
 this generic instantiation was the cause of the remaining Boost/GCC failure.
 No additional `-fpermissive`, Boost-header modification, or speculative source
 change was made. Runtime remains unvalidated.
+
+### Boost 1.74/GCC root-cause investigation
+
+The complete failure was reproduced independently with GCC 11.3 and the
+Boost.Multiprecision 1.74 headers. The relevant instantiation chain is:
+
+```text
+ATC mixed mp_float comparison
+  -> Boost.Multiprecision mixed relational operator enable_if
+  -> number_category<B>::value comparison with number_kind_complex
+  -> number construction/canonical classification of number_category_type
+  -> boost::is_unsigned<number_category_type> / boost::is_signed<...>
+  -> is_unsigned_values / is_signed_values anonymous-enum static members
+```
+
+GCC correctly rejects the required out-of-class definitions because the
+members have the anonymous enum type, which has no linkage. The include route
+from `stdafx.h` through Boost.Math `erf.hpp`, `gamma.hpp`, constants,
+LexicalCast, and Boost.TypeTraits makes the failing traits visible, but does
+not instantiate them and is not the cause.
+
+An instrumented Boost 1.74 probe identified three ATC entry points: the
+`PrecisionValue`/`mp_float` relational adapters in `precision_types.h`, the
+zero comparisons in `complexNumber<mp_float>`, and `n < 0` in
+`prefixDeterminator<mp_float>`. The adapters now use the existing
+`mp_float::compare` member. The two data-processing functions use a small
+sign helper whose `mp_float` overload compares the underlying backends; the
+generic form retains the historical relational operations for other types.
+Only the predicates were changed. Numeric values, transformations, output
+formatting, precision, tolerances, parser, solver, and algorithms are intact.
+
+Two minimal cases distinguish the library mechanism from the ATC call sites.
+A direct `boost::is_signed`/`boost::is_unsigned` query for an anonymous enum
+reproduces all four diagnostics. Constructing a `cpp_dec_float_50` from an
+anonymous enum reproduces the same trait failure with Multiprecision 1.74.
+The equivalent numeric probe compiles and runs with Boost 1.90. Boost commit
+`8bb54d07fd7c` (first released in the 1.76 line) introduced Multiprecision's
+standard integer traits and removed most Boost.TypeTraits use, explaining the
+version difference without requiring an installed-header patch.
+
+After the localized ATC changes, the instrumented 1.74 probe reports zero
+matches for the failing `number_category_type` trait chain. The diagnostic
+checkout and header overlay are untracked and do not modify installed Boost.
+`git diff --check` passes. A real Ubuntu 22.04 workflow remains required to
+confirm compilation and link; no runtime claim is made.

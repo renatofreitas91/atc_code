@@ -66,15 +66,15 @@ inline bool operator<(int lhs, const PrecisionValue& rhs) { return (double)lhs <
 inline bool operator>(int lhs, const PrecisionValue& rhs) { return (double)lhs > rhs; }
 inline bool operator<=(int lhs, const PrecisionValue& rhs) { return (double)lhs <= rhs; }
 inline bool operator>=(int lhs, const PrecisionValue& rhs) { return (double)lhs >= rhs; }
-inline bool operator==(const PrecisionValue& lhs, const mp_float& rhs) { return precisionValueTo<mp_float>(lhs) == rhs; }
+inline bool operator==(const PrecisionValue& lhs, const mp_float& rhs) { return precisionValueTo<mp_float>(lhs).compare(rhs) == 0; }
 inline bool operator!=(const PrecisionValue& lhs, const mp_float& rhs) { return !(lhs == rhs); }
-inline bool operator<(const PrecisionValue& lhs, const mp_float& rhs) { return precisionValueTo<mp_float>(lhs) < rhs; }
-inline bool operator>(const PrecisionValue& lhs, const mp_float& rhs) { return precisionValueTo<mp_float>(lhs) > rhs; }
+inline bool operator<(const PrecisionValue& lhs, const mp_float& rhs) { return precisionValueTo<mp_float>(lhs).compare(rhs) < 0; }
+inline bool operator>(const PrecisionValue& lhs, const mp_float& rhs) { return precisionValueTo<mp_float>(lhs).compare(rhs) > 0; }
 inline bool operator<=(const PrecisionValue& lhs, const mp_float& rhs) { return !(lhs > rhs); }
 inline bool operator>=(const PrecisionValue& lhs, const mp_float& rhs) { return !(lhs < rhs); }
 inline bool operator==(const mp_float& lhs, const PrecisionValue& rhs) { return rhs == lhs; }
 inline bool operator!=(const mp_float& lhs, const PrecisionValue& rhs) { return !(rhs == lhs); }
-inline bool operator<(const mp_float& lhs, const PrecisionValue& rhs) { return lhs < precisionValueTo<mp_float>(rhs); }
-inline bool operator>(const mp_float& lhs, const PrecisionValue& rhs) { return lhs > precisionValueTo<mp_float>(rhs); }
+inline bool operator<(const mp_float& lhs, const PrecisionValue& rhs) { return lhs.compare(precisionValueTo<mp_float>(rhs)) < 0; }
+inline bool operator>(const mp_float& lhs, const PrecisionValue& rhs) { return lhs.compare(precisionValueTo<mp_float>(rhs)) > 0; }
 inline bool operator<=(const mp_float& lhs, const PrecisionValue& rhs) { return !(lhs > rhs); }
 inline bool operator>=(const mp_float& lhs, const PrecisionValue& rhs) { return !(lhs < rhs); }

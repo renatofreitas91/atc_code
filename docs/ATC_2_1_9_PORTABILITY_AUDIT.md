@@ -751,3 +751,43 @@ selection and dispatch are working as designed, while the CI result disproves
 that the removed generic instantiation caused the remaining Boost/GCC error.
 No new permissive flag, installed Boost-header change, MSVC/`v141_xp` change,
 or further source workaround has been introduced.
+
+### Demonstrated Boost 1.74 trait chain
+
+The earlier `convert2Exponential<PrecisionValue>` hypothesis is now excluded,
+not merely weakened. A GCC 11.3 reproducer and diagnostic copies of the Boost
+1.74 traits exposed the complete chain. Boost.Multiprecision's heterogeneous
+relational-operator constraints compare `number_category<B>::value` with its
+`number_category_type` enum. During overload resolution, 1.74's canonical
+classification sends that enum through `boost::is_unsigned` and
+`boost::is_signed`; their `is_unsigned_values` and `is_signed_values` static
+members have an anonymous enum type with no linkage, so GCC cannot emit the
+required definitions. All four fatal diagnostics are manifestations of this
+one chain.
+
+The actual ATC instantiation sites were the `PrecisionValue`/`mp_float`
+comparison adapters, the component-to-zero predicates in
+`complexNumber<mp_float>`, and the sign test in
+`prefixDeterminator<mp_float>`. The correction bypasses only the problematic
+heterogeneous overload set: `mp_float::compare` is used in the adapters and a
+specialized sign helper uses `mp_float` backend comparison in the two
+data-processing paths. The generic sign helper preserves the old relational
+behavior for all other numeric types. No conversion to `double` occurs and no
+precision or mathematical policy changes.
+
+The inclusion chain beginning at `stdafx.h` and passing through Boost.Math's
+`erf.hpp` is factual but incidental: it includes the traits; it does not cause
+their instantiation. A minimal direct anonymous-enum trait program reproduces
+the four GCC errors. A Multiprecision 1.74 enum-conversion program reaches the
+same chain. The equivalent numeric program compiles and runs with Boost 1.90.
+Multiprecision commit `8bb54d07fd7c`, present from Boost 1.76, replaces most
+Boost.TypeTraits classification with standard traits, which accounts for the
+newer-version result.
+
+The instrumented 1.74 diagnostic probe initially reported each of the three
+ATC paths above and now reports zero occurrences of the failing
+`number_category_type` trait instantiation. Diagnostic overlays and downloaded
+libraries remain untracked; no installed Boost header was edited. The tracked
+diff is limited to `precision_types.h`, `data_processing_core.cpp`, and these
+reports, and `git diff --check` passes. Ubuntu compile/link and runtime status
+remain unchanged until an authorized push and workflow run.

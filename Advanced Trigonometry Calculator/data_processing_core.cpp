@@ -461,6 +461,16 @@ void variableController(char* variable) {
 }
 
 template <typename T>
+int atcNumericSign(const T& value) {
+	return (value > 0) - (value < 0);
+}
+
+int atcNumericSign(const mp_float& value) {
+	static const mp_float zero(0);
+	return value.backend().compare(zero.backend());
+}
+
+template <typename T>
 void prefixDeterminator(T n, char* path) {
 	char* toOpen = getDynamicCharArray("", "toOpen");
 	sprintf(toOpen, "%s\\history.txt", atcPath);
@@ -472,7 +482,7 @@ void prefixDeterminator(T n, char* path) {
 		a = 1;
 	}
 	int y = 0;
-	if (n < 0) {
+	if (atcNumericSign(n) < 0) {
 		n = n * -1;
 		y = 1;
 	}
@@ -4529,36 +4539,38 @@ void ShowConsoleCursor(bool bShow)
 
 template <typename T>
 void complexNumber(T a, T b) {
+	const int signA = atcNumericSign(a);
+	const int signB = atcNumericSign(b);
 	if (solverRunning == (bool)false) {
 		processingOK = -1;
 	}
 	verify = 0;
 	convertComplex2Exponential(a, b);
-	if (a > 0 && b > 0) {
+	if (signA > 0 && signB > 0) {
 		printf("%s+%si\n", respR, respI);
 	}
 	else {
-		if (a > 0 && b < 0) {
+		if (signA > 0 && signB < 0) {
 			printf("%s%si\n", respR, respI);
 		}
 		else {
-			if (a < 0 && b > 0) {
+			if (signA < 0 && signB > 0) {
 				printf("%s+%si\n", respR, respI);
 			}
 			else {
-				if (a < 0 && b < 0) {
+				if (signA < 0 && signB < 0) {
 					printf("%s%si\n", respR, respI);
 				}
 				else {
-					if (a == 0 && b == 0) {
+					if (signA == 0 && signB == 0) {
 						printf("%s\n", convert2Exponential(a));
 					}
 					else {
-						if (a == 0 && b != 0) {
+						if (signA == 0 && signB != 0) {
 							printf("%si\n", convert2Exponential(b));
 						}
 						else {
-							if (a != 0 && b == 0) {
+							if (signA != 0 && signB == 0) {
 								printf("%s\n", convert2Exponential(a));
 							}
 							else {
