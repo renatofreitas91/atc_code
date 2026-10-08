@@ -110,6 +110,34 @@ def main():
         original, initial=True, exponential=True, calc=True
     )
     without_all, _ = without(without_implicit, all_names)
+    character_match = re.search(
+        r"template<typename T>\s+char character_to_prefDet\(T n\) \{.*?\n\}",
+        original,
+        flags=re.DOTALL,
+    )
+    if not character_match:
+        raise RuntimeError("character_to_prefDet definition not found")
+    character_definition = character_match.group(0)
+    character_stub = (
+        "template<typename T>\nchar character_to_prefDet(T) {\n"
+        "\treturn 'U';\n}"
+    )
+    without_character = original.replace(character_definition, character_stub)
+    typed_character = re.sub(
+        r"n\s+(<|>=)\s+(1E-?\d+)",
+        r"n \1 (T)\2",
+        character_definition,
+    )
+    if typed_character == character_definition:
+        raise RuntimeError("character_to_prefDet thresholds were not typed")
+    typed_character_full = original.replace(character_definition, typed_character)
+    isolated_literal = (
+        '#include "stdafx.h"\n'
+        "template<typename T> char diagnostic_character(T n) {\n"
+        "    return n < 1E-21 ? 'A' : 'U';\n}\n"
+        "template char diagnostic_character<mp_float>(mp_float);\n"
+    )
+    isolated_typed = isolated_literal.replace("n < 1E-21", "n < (T)1E-21")
     variants = [
         ("boost_headers_only", set(),
          "#include <boost/math/special_functions/erf.hpp>\n"
@@ -128,6 +156,10 @@ def main():
         ("without_implicit_calcnow", set(), without_calc),
         ("without_all_implicit_mp", set(), without_implicit),
         ("without_all_explicit_and_implicit_mp", set(), without_all),
+        ("without_character_to_prefdet", set(), without_character),
+        ("isolated_character_literal", set(), isolated_literal),
+        ("isolated_character_typed", set(), isolated_typed),
+        ("typed_character_thresholds_full_tu", set(), typed_character_full),
     ]
     entry = compile_entry()
     any_unexpected = False
