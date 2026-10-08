@@ -582,3 +582,45 @@ command with `-E`, and compiled the resulting `.ii`. Both preprocessing steps
 pass and both `.ii` files reproduce unsigned=2 and signed=2 with no prior
 error. The large `.ii` files, objects, and logs remain runner-only. No product
 source correction has been made.
+
+### C-Reduce root cause: dirent `d_type` / `DT_REG`
+
+The two independent C-Reduce jobs in workflow `37807689921` validated their
+final reproducers. `toSolve<T>` fell from 185649 lines and 8508390 bytes to 45
+lines and 1236 bytes; `isContainedInUserFunction` fell from 185488 lines and
+8502542 bytes to the same 45-line, 1236-byte mechanism. Each final source keeps
+exactly two `is_unsigned_values` and two `is_signed_values` errors.
+
+Both reductions map to `dir->d_type == DT_REG`, at source lines 3979 and 6712.
+On Ubuntu 22.04, `dirent::d_type` is `unsigned char` and `DT_REG` has the
+anonymous enum type. The ATC global overload set admits a Boost.Multiprecision
+candidate during `operator==` resolution; its conversion constraints classify
+the enum through the broken Boost 1.74 signed/unsigned traits.
+
+Workflow `37823242203` tested a diagnostic-only rewrite to fundamental `int`
+on both operands:
+
+```text
+toSolve original                    FAIL 4 (unsigned=2, signed=2)
+toSolve typed                       PASS 0
+isContainedInUserFunction original  FAIL 4 (unsigned=2, signed=2)
+isContainedInUserFunction typed     PASS 0
+full TU original                    FAIL 4
+full TU with both typed             PASS 0
+```
+
+An executable probe confirmed identical results for `DT_REG`, `DT_DIR`,
+`DT_UNKNOWN`, and `DT_FIFO`. `int` is deliberate: the bundled Windows
+`dirent.h` declares `d_type` as `int` and maps `DT_REG` to `S_IFREG`, so byte
+narrowing would not preserve Windows values. The final product diff changes
+only the two comparisons.
+
+Official workflow `37824236815` confirms that `commands.cpp` and
+`data_processing_core.cpp` compile. Compilation reached 71% and first failed
+at `processing_core.cpp:364`, where GCC does not expose `std::fabsl`. Link and
+artifact upload were not reached; that next blocker remains unmodified.
+
+Visual Studio 2022 selected MSVC 14.16 and `v141_xp`, but the local build then
+stopped before the changed TU because this checkout lacks its configured Boost
+include directory. The expression uses syntax supported by that compiler, but
+a complete Windows build and runtime validation remain pending.

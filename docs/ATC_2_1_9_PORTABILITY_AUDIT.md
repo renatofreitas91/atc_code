@@ -825,3 +825,39 @@ real CMake GCC command. Both resulting `.ii` files reproduce exactly two
 `is_unsigned_values` and two `is_signed_values` fatal diagnostics. Generated
 `.ii`, object, and log artifacts are not tracked. Product code remains
 unchanged pending expression-level reduction.
+
+### C-Reduce root cause: dirent `d_type` / `DT_REG`
+
+Independent reducers for `toSolve<T>` and `isContainedInUserFunction`
+converged from approximately 185k-line preprocessed TUs to the same 45-line,
+1236-byte mechanism. Each final candidate retains exactly two unsigned-trait
+and two signed-trait errors. Both map to `dir->d_type == DT_REG`, at source
+lines 3979 and 6712.
+
+Ubuntu declares `d_type` as `unsigned char` and `DT_REG` as an unnamed enum.
+Global ATC overload resolution considers the Multiprecision equality candidate,
+whose conversion constraints route that enum into Boost 1.74's defective
+signed/unsigned traits. Converting both operands to fundamental `int` excludes
+the user-defined candidate without changing the compared values.
+
+Workflow `37823242203` proved the complete causal matrix: both isolated
+originals fail 4, both isolated typed forms pass 0, the original full TU fails
+4, and the full TU with only the two typed comparisons passes 0. No unrelated
+error occurs. An equivalence executable passed for `DT_REG`, `DT_DIR`,
+`DT_UNKNOWN`, and `DT_FIFO`.
+
+The cross-platform cast is `int`. The Windows compatibility header already
+uses `int` for `d_type` and defines `DT_REG` as `S_IFREG`; `unsigned char` would
+narrow those Windows values. No Boost header, precision policy, parser, solver,
+or algorithm changed.
+
+At product commit `d925fac`, official workflow `37824236815` compiled
+`commands.cpp` and `data_processing_core.cpp`, then reached the next blocker at
+`processing_core.cpp:364`: `std::fabsl` is unavailable in GCC's `std`
+namespace. The build stopped at 71%, before link or artifact creation. The next
+blocker was classified but not changed.
+
+Visual Studio 2022 invoked the installed `v141_xp` toolset (MSVC 14.16), but
+the configured Boost include path was unavailable, so compilation stopped in
+`stdafx.h` before the changed TU. Full Windows and runtime validation remain
+pending.
