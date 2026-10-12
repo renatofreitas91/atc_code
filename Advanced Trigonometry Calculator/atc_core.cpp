@@ -558,6 +558,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 						sprintf(arithTrig, "%s", expressionF);
 					}
 				}
+				char* persistedVariablesBeforeBootstrap = getDynamicCharArray(saveVariablesTextFile, "persistedVariablesBeforeBootstrap");
 				printf(matrixResult, "");
 				resultR = sqrt(DBL_MAX);
 				variableController("INF");
@@ -583,6 +584,11 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 				}
 				processVariable<T>("R");
 				variableController("R");
+				if (strlen(persistedVariablesBeforeBootstrap) > 0) {
+					sprintf(saveVariablesTextFile, "%s", persistedVariablesBeforeBootstrap);
+				}
+				_delete(persistedVariablesBeforeBootstrap, "persistedVariablesBeforeBootstrap");
+				persistedVariablesBeforeBootstrap = nullptr;
 				normalizeSolverCommandExpression(arithTrig);
 				sprintf(fTrig, "%s", arithTrig); verbose = 0;
 				bool handledDirectSolverArgument = false;
