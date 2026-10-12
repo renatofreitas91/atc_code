@@ -4389,7 +4389,7 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 		funcU[hi] = '\0';
 		FILE* open = NULL;
 
-		sprintf(userFunc, "%s\\User functions\\%s.txt", atcPath, atcFunc);
+		atcJoinPathWithExtension(userFunc, DIM, atcPath, "User functions", atcFunc, ".txt");
 		if (open != NULL) {
 			fclose(open);
 			open = NULL;
@@ -4964,17 +4964,10 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 			result1 = precisionValueTo<T>(resultR);
 		result2 = precisionValueTo<T>(resultI);
 		}
-		char* txtSolved = getDynamicCharArray("", "txtSolved");
 		char* txtTryDelete = getDynamicCharArray("", "txtTryDelete");
-		sprintf(userFunc, "%s\\User functions\\%s.txt", atcPath, funcU);
-		sprintf(txtSolved, "del \"%s\\User functions\\%s_answers.txt\"", atcPath, funcU);
-		sprintf(txtTryDelete, "%s\\User functions\\%s_answers.txt", atcPath, funcU);
-		FILE* file = NULL;
-		file = fopen(txtTryDelete, "r");
-		if (file != NULL) {
-			fclose(file);
-			system(txtSolved);
-		}
+		atcJoinPathWithExtension(userFunc, DIM, atcPath, "User functions", funcU, ".txt");
+		atcJoinPathWithSuffixAndExtension(txtTryDelete, DIM, atcPath, "User functions", funcU, "_answers", ".txt");
+		(void)std::remove(txtTryDelete);
 		type = 1;
 		sprintf(function, "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,");
 		runningUserFunction = 0;
@@ -4987,7 +4980,6 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 			_delete(letters, "letters"); letters = nullptr;
 		}
 		_delete(toEnter, "toEnter"); toEnter = nullptr;
-		_delete(txtSolved, "txtSolved"); txtSolved = nullptr;
 		_delete(txtTryDelete, "txtTryDelete"); txtTryDelete = nullptr;
 		_delete(saveArgument, "saveArgument"); saveArgument = nullptr;
 		_delete(saveFunction, "saveFunction"); saveFunction = nullptr;

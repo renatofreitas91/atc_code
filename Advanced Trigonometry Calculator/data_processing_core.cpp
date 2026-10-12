@@ -51,7 +51,7 @@ void recordExternalOpen(const char* action, const char* target) {
 }
 void restoreWindowPosition() {
 	char* path = getDynamicCharArray("", "path");
-	sprintf(path, "%s\\window.txt", atcPath);
+	atcJoinPath(path, DIM, atcPath, "window.txt");
 
 	FILE* file = fopen(path, "r");
 	if (file == nullptr) {
@@ -88,7 +88,7 @@ void higherPrecisionController(int requestedState) {
 		}
 	}
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\higherPrecision.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "higherPrecision.txt");
 	open = fopen(toOpen, "w");
 	if (open != NULL) {
 		fprintf(open, "%d", state);
@@ -121,7 +121,7 @@ void numSystemsController() {
 		}
 	}
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\numSystems.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "numSystems.txt");
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
 	sprintf(numSys, "%d", state);
@@ -133,7 +133,7 @@ void numSystemsController() {
  void setMemFactor1(float memFactor) {
 	FILE* open;
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\memFactor.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "memFactor.txt");
 	open = fopen(toOpen, "w");
 	fprintf(open, "%f", memFactor);
 	fclose(open);
@@ -163,7 +163,7 @@ void numSystemsController() {
 	float memFactor = 1.0;
 	char* toOpen = getDynamicCharArray("", "toOpen");
 	getATCPath();
-	sprintf(toOpen, "%s\\memFactor.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "memFactor.txt");
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
 		fscanf(open, "%f", &memFactor);
@@ -189,7 +189,7 @@ void verboseResolutionController(int requestedState) {
 		}
 	}
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "verboseResolution.txt");
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
 	sprintf(verboseRes, "%d", state);
@@ -212,7 +212,7 @@ void siPrefixController() {
 		}
 	}
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\siPrefixes.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "siPrefixes.txt");
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
 	sprintf(siPref, "%d", state);
@@ -259,7 +259,7 @@ void actualTimeController() {
 		}
 	}
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\actualTime.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "actualTime.txt");
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d", state);
 	sprintf(actualTime, "%d", state);
@@ -322,7 +322,7 @@ void variableController(char* variable) {
 
 		if (!defaultVariable) {
 			char* toOpen = getDynamicCharArray("", "toOpen");
-			sprintf(toOpen, "%s\\variables.txt", atcPath);
+			atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 			open = fopen(toOpen, "r");
 			if (open == NULL) {
 				open = fopen(toOpen, "w");
@@ -398,7 +398,7 @@ void variableController(char* variable) {
 			}
 			if (!defaultVariable) {
 				char* toOpen = getDynamicCharArray("", "toOpen");
-				sprintf(toOpen, "%s\\variables.txt", atcPath);
+				atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 				open = NULL;
 				while (open == NULL) {
 					open = fopen(toOpen, "w");
@@ -473,7 +473,7 @@ int atcNumericSign(const mp_float& value) {
 template <typename T>
 void prefixDeterminator(T n, char* path) {
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\history.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 	T result = 0;
 	FILE* open;
 	int a = 0;
@@ -917,7 +917,7 @@ void variableRenamer(char* variable) {
 	valRenamedVar = 0;
 	sprintf(varRename, "");
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
 
 	char* vari = getDynamicCharArray("", "vari");
 	int i = 0, j = 0;
@@ -1007,7 +1007,7 @@ void pathNameToPath(char* pathName) {
 	pathNAme[0] = '\0';
 	char* data = getDynamicCharArray("", "data");
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\pathName.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "pathName.txt");
 	open = fopen(toOpen, "r");
 	if (open == NULL) {
 		puts("\n==> No path abbreviation created! <==\n");
@@ -1047,7 +1047,7 @@ void pathNameToPath(char* pathName) {
 void pathNameController(char* pathName, char* path) {
 	FILE* save = NULL;
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\pathName.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "pathName.txt");
 	while (save == NULL) {
 		save = fopen(toOpen, "a+");
 	}
@@ -1105,7 +1105,7 @@ void stringVariableToString(char* stringVariable) {
 	int i = 0, j = 0, k = 0;
 	variableSTring[0] = '\0';
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\stringVariable.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "stringVariable.txt");
 	char* data = getDynamicCharArray("", "data");
 
 	open = fopen(toOpen, "r");
@@ -1127,7 +1127,7 @@ void stringVariableToString(char* stringVariable) {
 				if (j == abs((int)strlen(stringVariable))) {
 					validVar = 1;
 					char* directory = getDynamicCharArray("", "directory");
-					sprintf(directory, "%s\\Strings\\%s.txt", atcPath, stringVariable);
+					atcJoinPathWithExtension(directory, DIM, atcPath, "Strings", stringVariable, ".txt");
 					open = fopen(directory, "a+");
 					if (open != NULL) {
 						for (k = 0; (variableSTring[k] = fgetc(open)) != EOF; k++);
@@ -1148,7 +1148,7 @@ void stringVariableToString(char* stringVariable) {
 		}
 	}
 	if (validVar != 1) {
-		sprintf(toOpen, "%s\\stringVariable.txt", saveATCPath);
+		atcJoinPath(toOpen, DIM, saveATCPath, "stringVariable.txt");
 		open = fopen(toOpen, "r");
 		if (open == NULL) {
 			puts("\n==> No string variable created! <==\n");
@@ -1168,7 +1168,7 @@ void stringVariableToString(char* stringVariable) {
 					if (j == abs((int)strlen(stringVariable))) {
 						validVar = 1;
 						char* directory = getDynamicCharArray("", "directory");
-						sprintf(directory, "%s\\Strings\\%s.txt", atcPath, stringVariable);
+						atcJoinPathWithExtension(directory, DIM, atcPath, "Strings", stringVariable, ".txt");
 						open = fopen(directory, "a+");
 						if (open != NULL) {
 							for (k = 0; (variableSTring[k] = fgetc(open)) != EOF; k++);
@@ -1201,7 +1201,7 @@ void stringVariableController(char* variable, char* string) {
 	int i = 0, f = 0;
 	int y = 0, h = 0, k = 0, g = 0;
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\stringVariable.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "stringVariable.txt");
 	char* vari = getDynamicCharArray("", "vari");
 
 	open = fopen(toOpen, "r");
@@ -1273,7 +1273,7 @@ void stringVariableController(char* variable, char* string) {
 		fprintf(open, "%s\n", variable);
 		fclose(open);
 		char* directory = getDynamicCharArray("", "directory");
-		sprintf(directory, "%s\\Strings\\%s.txt", atcPath, variable);
+		atcJoinPathWithExtension(directory, DIM, atcPath, "Strings", variable, ".txt");
 		open = fopen(directory, "w");
 		if (open != NULL) {
 			fputs(string, open);
@@ -1530,7 +1530,7 @@ template<typename T>
 void toMultiply(char* expression, T result1, T result2) {
 
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\variables.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 	char* vari = getDynamicCharArray("", "vari");
 	int i = 0, verify = 0, verifys = 0, j = 0;
 
@@ -1546,7 +1546,7 @@ void toMultiply(char* expression, T result1, T result2) {
 				fprintf(open, "%s", saveVariablesTextFile);
 				fclose(open);
 			}
-			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+			atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
 			open = NULL;
 			open = fopen(toOpen, "w");
 			if (open != NULL) {
@@ -1570,7 +1570,7 @@ void toMultiply(char* expression, T result1, T result2) {
 	}
 	if (!defaultVariable) {
 		char* toOpen = getDynamicCharArray("", "toOpen");
-		sprintf(toOpen, "%s\\variables.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 		FILE* open;
 		open = fopen(toOpen, "r");
 		if (open == NULL) {
@@ -2141,7 +2141,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 				toTest[f] = '\0';
 				char* usRFunc = getDynamicCharArray("", "usRFunc");
-				sprintf(usRFunc, "%s\\User functions\\%s.txt", atcPath, toTest);
+				atcJoinPathWithExtension(usRFunc, DIM, atcPath, "User functions", toTest, ".txt");
 				FILE* test = NULL;
 				test = fopen(usRFunc, "r");
 				if (test != NULL && (letterScan[savePosition - 4] == 'a' && letterScan[savePosition - 3] == 't' && letterScan[savePosition - 2] == 'c' && letterScan[savePosition - 1] == ' ') == true) {
@@ -3858,7 +3858,7 @@ void getATCPath() {
 		sprintf(saveATCPath, "%s", forsprintf);
 		FILE* test = NULL;
 		char* testPath = getDynamicCharArray("", "testPath");
-		sprintf(forsprintf, "%s\\License.txt", atcPath);
+		atcJoinPath(forsprintf, DIM, atcPath, "License.txt");
 		sprintf(testPath, "%s", forsprintf);
 		test = fopen(testPath, "r");
 		if (test == NULL) {
@@ -3957,7 +3957,7 @@ template <typename T>
 int toSolve(int re) {
 	FILE* file = NULL;
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "disable_txt_detector.txt");
 	int retry = 0;
 	while (file == NULL && retry < 7) {
 		file = fopen(toOpen, "r");
@@ -3965,7 +3965,7 @@ int toSolve(int re) {
 	}
 	if (file == NULL) {
 		char* option = getDynamicCharArray("", "option"); char* directory = getDynamicCharArray("", "directory");
-		sprintf(directory, "%s\\To solve\\", atcPath);
+		atcJoinPath(directory, DIM, atcPath, "To solve");
 		int k = 0, numFiles = 0, i = 0, numFilesSolved = 0;
 		DIR* d;
 		struct dirent* dir;
@@ -4071,7 +4071,7 @@ int toSolve(int re) {
 					if (disable == 1) {
 						FILE* dis = NULL;
 						char* toOpen = getDynamicCharArray("", "toOpen");
-						sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
+						atcJoinPath(toOpen, DIM, atcPath, "disable_txt_detector.txt");
 						retry = 0;
 						while (dis == NULL && retry < 7) {
 							dis = fopen(toOpen, "w");
@@ -4126,7 +4126,7 @@ void currentSettings() {
 	FILE* open = NULL;
 	puts("");
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\mode.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "mode.txt");
 	open = fopen(toOpen, "r");
 	char* info = getDynamicCharArray("", "info");
 	int state = 0;
@@ -4150,7 +4150,7 @@ void currentSettings() {
 		puts("Mode------------------------------------> Radian DEGREE Gradian | Info: Enter \"mode\" to change.");
 	}
 	open = NULL;
-	sprintf(toOpen, "%s\\numSystems.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "numSystems.txt");
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
 		fgets(info, 200, open);
@@ -4169,7 +4169,7 @@ void currentSettings() {
 		puts("Numerical Systems Response--------------> Enabled DISABLED | Info: Enter \"numerical systems\" to change.");
 	}
 	open = NULL;
-	sprintf(toOpen, "%s\\siPrefixes.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "siPrefixes.txt");
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
 		fgets(info, 200, open);
@@ -4188,7 +4188,7 @@ void currentSettings() {
 		puts("SI Prefixes Response--------------------> Enabled DISABLED | Info: Enter \"si prefixes\" to change.");
 	}
 	open = NULL;
-	sprintf(toOpen, "%s\\actualTime.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "actualTime.txt");
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
 		fgets(info, 200, open);
@@ -4207,7 +4207,7 @@ void currentSettings() {
 		puts("Actual Time Response--------------------> Enabled DISABLED | Info: Enter \"actual time response\" to change.");
 	}
 	open = NULL;
-	sprintf(toOpen, "%s\\higherPrecision.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "higherPrecision.txt");
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
 		fgets(info, 200, open);
@@ -4226,7 +4226,7 @@ void currentSettings() {
 		puts("Higher Precision------------------------> Enabled DISABLED | Info: Enter \"higher precision\" to change.");
 	}
 	open = NULL;
-	sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "verboseResolution.txt");
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
 		fgets(info, 200, open);
@@ -4245,7 +4245,7 @@ void currentSettings() {
 		puts("Verbose Resolution----------------------> Enabled DISABLED | Info: Enter \"verbose resolution\" to change.");
 	}
 	open = NULL;
-	sprintf(toOpen, "%s\\colors.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "colors.txt");
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
 		fgets(info, 200, open);
@@ -4256,7 +4256,7 @@ void currentSettings() {
 		puts("Colors----------------------------------> Text: AQUA - Background: WHITE | Info: Enter \"colors\" to change.");
 	}
 	open = NULL;
-	sprintf(toOpen, "%s\\window.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "window.txt");
 	open = fopen(toOpen, "r");
 	int i = 0, e = 0, x, y, width, height, a = 1;
 	char* value = getDynamicCharArray("", "value");
@@ -4293,7 +4293,7 @@ void currentSettings() {
 		puts("Window----------------------------------> x: 0 - y: 0 - Width: 1000 - Height: 1000 | Info: Enter \"window\" to change.");
 	}
 	open = NULL;
-	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "dimensions.txt");
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
 		int lines = 0, columns = 0;
@@ -4372,14 +4372,14 @@ static void resetAtcSettingsFiles() {
 }
 void on_start() {
 	char* Path = getDynamicCharArray("", "Path");
-	sprintf(Path, "%s\\temp.txt", atcPath);
+	atcJoinPath(Path, DIM, atcPath, "temp.txt");
 	FILE* Try = NULL;
 	Try = fopen(Path, "r");
 	if (Try != NULL) {
 		fclose(Try);
 		remove(Path);
 	}
-	sprintf(Path, "%s\\temp_answers.txt", atcPath);
+	atcJoinPath(Path, DIM, atcPath, "temp_answers.txt");
 	Try = fopen(Path, "r");
 	if (Try != NULL) {
 		fclose(Try);
@@ -4389,7 +4389,7 @@ void on_start() {
 	char* onStart = getDynamicCharArray("", "onStart");
 	int Colors = 1, Dimensions = 2, Window = 3;
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\onStart.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "onStart.txt");
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
 		fgets(onStart, 100, open);
@@ -4752,7 +4752,7 @@ int variableValidator(char* variableFF) {
 	}
 	FILE* user = NULL;
 	char* path_user = getDynamicCharArray("", "path_user");
-	sprintf(path_user, "%s\\User functions\\%s.txt", atcPath, variableG);
+	atcJoinPathWithExtension(path_user, DIM, atcPath, "User functions", variableG, ".txt");
 	user = fopen(path_user, "r");
 	bool variable_inside_user_function;
 	variable_inside_user_function = isContainedInUserFunction(variableG);
@@ -5026,7 +5026,7 @@ T processVariable(char* variable) {
 	}
 	if (!defaultVariable) {
 		char* toOpen = getDynamicCharArray("", "toOpen");
-		sprintf(toOpen, "%s\\variables.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 		open = fopen(toOpen, "r");
 		if (open == NULL) {
 			open = fopen(toOpen, "w");
@@ -6467,7 +6467,7 @@ int getReady() {
 			}
 		}
 		char* toOpen = getDynamicCharArray("", "toOpen");
-		sprintf(toOpen, "%s\\sendCommand.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "sendCommand.txt");
 		char* readCommand = getDynamicCharArray("", "readCommand");
 		int i = 0;
 		open = NULL;
@@ -6516,7 +6516,7 @@ int getReady() { return 0; }
 void setWindow(int x, int y) {
 	FILE* open;
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\window.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "window.txt");
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d\n%d\n%d\n%d\n", x, y, widthATC, heightATC);
 	fclose(open);
@@ -6529,7 +6529,7 @@ void setWindow(int x, int y) {
 void setDimensions(int cols, int lines) {
 	FILE* open = NULL;
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "dimensions.txt");
 	open = fopen(toOpen, "w");
 	fprintf(open, "MODE con cols=%d lines=%d", cols, lines);
 	colsATC = cols;
@@ -6653,7 +6653,7 @@ void autoAdjustWindow() {
 	{
 		widthATC = rect.right - rect.left;
 		heightATC = rect.bottom - rect.top;
-		sprintf(toOpen, "%s\\window.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "window.txt");
 		FILE* open = NULL;
 		while (open == NULL) {
 			open = fopen(toOpen, "w");
@@ -6670,7 +6670,7 @@ void autoAdjustWindow() {
 		columns = (int)ceil((csbi.srWindow.Left + csbi.srWindow.Right));
 	}
 	rows = 2000;
-	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "dimensions.txt");
 	char* setting = getDynamicCharArray("", "setting");
 	FILE* open = NULL;
 	while (open == NULL) {
@@ -6697,7 +6697,7 @@ void autoAdjustWindow() {
 bool isContainedInUserFunction(char* variable) {
 	FILE* file = NULL;
 	char* option = getDynamicCharArray("", "option"); char* directory = getDynamicCharArray("", "directory");
-	sprintf(directory, "%s\\User functions\\", atcPath);
+	atcJoinPath(directory, DIM, atcPath, "User functions");
 	int k = 0, numFiles = 0, i = 0, numFilesSolved = 0;
 	DIR* d;
 	int retry = 0;

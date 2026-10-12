@@ -575,7 +575,7 @@ static bool tryEvaluateMainComplexArithmeticFastPath(char* expression, T& value)
 }
 
 template<typename T>
-T main_core(char* arithTrig, char* fTrig, FILE* fout, char* path, T result1, T result2, int isFromMain) {
+T main_core(char* arithTrig, char* fTrig, FILE*& fout, char* path, T result1, T result2, int isFromMain) {
 	if (rf > 0) {
 		ansRV = ans[rf - 1];
 		ansIV = ansI[rf - 1];
@@ -1372,6 +1372,7 @@ T main_core(char* arithTrig, char* fTrig, FILE* fout, char* path, T result1, T r
 		}
 		if (fout != NULL) {
 			fclose(fout);
+			fout = nullptr;
 		}
 		fout = NULL;
 		while (fout == NULL) {
@@ -1394,6 +1395,7 @@ T main_core(char* arithTrig, char* fTrig, FILE* fout, char* path, T result1, T r
 
 		if (fout != NULL) {
 			fclose(fout);
+			fout = nullptr;
 		}
 	}
 	if (variable != nullptr) {
@@ -1411,7 +1413,7 @@ T main_core(char* arithTrig, char* fTrig, FILE* fout, char* path, T result1, T r
 	return result1;
 }
 template <typename T>
-T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, char* variable, int v, int j, T result1, T result2, int isFromMain, int var, int valGet, int command) {
+T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, char* variable, int v, int j, T result1, T result2, int isFromMain, int var, int valGet, int command) {
 	int vectorType = 0;
 	char* vectorString = getDynamicCharArray("", "vectorString");
 	FILE* open = NULL;
@@ -2039,6 +2041,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 	}
 	if (fout != NULL) {
 		fclose(fout);
+		fout = nullptr;
 	}
 	if (0 < abs((int)strlen(arithTrig)) && isFromMain == 1 && feedbackValidation == 0 && creatingMatrix == 0) {
 		Clock(0);
@@ -2048,7 +2051,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 		atcFlushOutputStreams();
 		if (cleanhistory == 0) {
 			if (0 < abs((int)strlen(arithTrig)) && verify == 1) {
-				sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
+				atcJoinPath(toOpen, DIM, atcPath, "verboseResolution.txt");
 				open = fopen(toOpen, "r");
 				char* verboseRes = getDynamicCharArray("", "verboseRes");
 				if (open != NULL) {
@@ -2390,6 +2393,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 						}
 						if (fout != NULL) {
 							fclose(fout);
+							fout = nullptr;
 						}
 						fout = NULL;
 						while (fout == NULL) {
@@ -2398,6 +2402,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 						if (fout != NULL) {
 							fprintf(fout, "#%d=\n%s", rf, report);
 							fclose(fout);
+							fout = nullptr;
 						}
 						_delete(report, "report"); report = nullptr;
 					}
@@ -2445,6 +2450,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 							}
 							if (fout != NULL) {
 								fclose(fout);
+								fout = nullptr;
 							}
 							fout = NULL;
 							while (fout == NULL) {
@@ -2520,6 +2526,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
                             }
                             if (fout != NULL) {
                                 fclose(fout);
+                                fout = nullptr;
                             }
                             fout = NULL;
                             while (fout == NULL) {
@@ -2527,6 +2534,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
                             }
                             fprintf(fout, "%s", ansFormatted);
                             fclose(fout);
+                            fout = nullptr;
                             _delete(ansFormatted, "ansFormatted"); ansFormatted = nullptr;
                         }
 					}
@@ -2540,7 +2548,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 						numCols = numVectorCols;
 					}
 					char* toOpen = getDynamicCharArray("", "toOpen");
-					sprintf(toOpen, "%s\\numSystems.txt", atcPath);
+					atcJoinPath(toOpen, DIM, atcPath, "numSystems.txt");
 					open = fopen(toOpen, "r");
 					char* numSys = getDynamicCharArray("", "numSys");
 					int numeriSys = 0;
@@ -2666,7 +2674,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 
 					}
 					toOpen[0] = '\0';
-					sprintf(toOpen, "%s\\siPrefixes.txt", atcPath);
+					atcJoinPath(toOpen, DIM, atcPath, "siPrefixes.txt");
 					open = fopen(toOpen, "r");
 					char* siPref = getDynamicCharArray("", "siPref");
 					int niPrefix = 0;
@@ -2786,7 +2794,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 					}
 
 
-					sprintf(toOpen, "%s\\actualTime.txt", atcPath);
+					atcJoinPath(toOpen, DIM, atcPath, "actualTime.txt");
 					open = fopen(toOpen, "r");
 					char* actualTime = getDynamicCharArray("", "actualTime");
 					int nactualTime = 0;
@@ -2809,6 +2817,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 					}
 					fputs("\n", fout);
 					fclose(fout);
+					fout = nullptr;
 					_delete(toOpen, "toOpen"); toOpen = nullptr;
 					_delete(numSys, "numSys"); numSys = nullptr;
 					_delete(siPref, "siPref"); siPref = nullptr;
@@ -2826,6 +2835,7 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 					}
 					fprintf(fout, "\nError in syntax.\n\n");
 					fclose(fout);
+					fout = nullptr;
 				}
 			}
 		}
@@ -2842,8 +2852,8 @@ T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, ch
 
 	return result1;
 }
-template double main_core<double>(char*, char*, FILE*, char*, double, double, int);
-template mp_float main_core<mp_float>(char*, char*, FILE*, char*, mp_float, mp_float, int);
+template double main_core<double>(char*, char*, FILE*&, char*, double, double, int);
+template mp_float main_core<mp_float>(char*, char*, FILE*&, char*, mp_float, mp_float, int);
 
 
 

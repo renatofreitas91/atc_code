@@ -455,10 +455,10 @@ static int appendAutoCompletion(const std::vector<std::string>& suggestions, std
 	return replaceCompletionToken(line, cursor, capacity, prefixStart, prefix, replacement);
 }
 
-void readConsoleInputWithTabCompletion(char* line, int capacity)
+bool readConsoleInputWithTabCompletion(char* line, int capacity)
 {
 	if (line == nullptr || capacity <= 0) {
-		return;
+		return false;
 	}
 
 	line[0] = '\0';
@@ -477,6 +477,12 @@ void readConsoleInputWithTabCompletion(char* line, int capacity)
 
 	while (true) {
 		int key = atcGetChar();
+
+		if (key == EOF) {
+			copyEditorLineToBuffer(line, capacity, editorLine);
+			printf("\n");
+			return !editorLine.empty();
+		}
 
 		if (key == 0 || key == 224) {
 			int specialKey = atcGetChar();
@@ -554,10 +560,10 @@ void readConsoleInputWithTabCompletion(char* line, int capacity)
 			continue;
 		}
 
-		if (key == '\r') {
+		if (key == '\r' || key == '\n') {
 			copyEditorLineToBuffer(line, capacity, editorLine);
 			printf("\n");
-			return;
+			return true;
 		}
 
 		if (key == '\b') {

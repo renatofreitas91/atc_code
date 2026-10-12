@@ -5,6 +5,20 @@ All notable project changes should be documented in this file.
 Current release details are recorded here. Historical release sections retain
 their original dates and validation evidence.
 
+## Unreleased - Linux portability
+
+- Accept Linux LF input and terminate sessions on EOF, including a final
+  expression without a newline.
+- Preserve the first redirected expression by skipping the POSIX intro prompt.
+- Propagate history-stream replacement and closure between processing routines
+  to prevent repeated closes during expression evaluation.
+- Add Linux executable smoke checks for line boundaries, EOF, and pseudo-TTY
+  input to the GCC build workflow.
+- Build session, settings, history, script, and graph paths with the native
+  platform separator so Linux no longer creates backslash-named sibling files.
+- Use native paths for numerical-system history, string storage, and user
+  functions, and remove generated answer files without invoking a shell.
+
 ## 2.1.8 - 2026-08-25
 
 ### Solver correctness

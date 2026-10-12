@@ -47,7 +47,7 @@ void designGraph(char* functionF) {
     }
 
     // Safer bounded formatting replacing raw sprintf
-    snprintf(toOpen, DIM, "%s\\dimensions.txt", atcPath);
+    atcJoinPath(toOpen, DIM, atcPath, "dimensions.txt");
 
     if (fopen(toOpen, "r") == NULL) {
 #ifdef _WIN32
@@ -161,7 +161,7 @@ void designGraph(char* functionF) {
 
     FILE* graph = NULL;
     T Xmin, Xmax, Xscale, Ymin, Ymax, Yscale, auto_y_axis, auto_x_axis;
-    snprintf(toOpen, DIM, "%s\\graph.txt", atcPath);
+    atcJoinPath(toOpen, DIM, atcPath, "graph.txt");
     graph = fopen(toOpen, "r");
     if (x_lower != -77777 && x_higher != -77777 && graph == NULL) {
         Xmin = x_lower;

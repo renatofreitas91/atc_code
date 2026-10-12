@@ -4,11 +4,13 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - "tests/run-atc-linux-input-smoke.py"
       - "CMakeLists.txt"
       - "Advanced Trigonometry Calculator/**"
       - ".github/workflows/linux-gcc.yml"
   pull_request:
     paths:
+      - "tests/run-atc-linux-input-smoke.py"
       - "CMakeLists.txt"
       - "Advanced Trigonometry Calculator/**"
       - ".github/workflows/linux-gcc.yml"
@@ -32,6 +34,9 @@ jobs:
 
       - name: Compile with GCC
         run: cmake --build build -j2
+
+      - name: Validate Linux input and EOF
+        run: python3 tests/run-atc-linux-input-smoke.py ./build/atc
 
       - name: Upload experimental Linux executable
         uses: actions/upload-artifact@v4

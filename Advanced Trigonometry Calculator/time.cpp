@@ -14,7 +14,7 @@ void Clock(int a)
 	tim = ctime(&hour);
 	tim[24] = '\0';
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\history.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 	fout = fopen(toOpen, "a+");
 	minutes = (tim[14] - '0') * 10 + (tim[15] - '0');
 	hours = (tim[11] - '0') * 10 + (tim[12] - '0');

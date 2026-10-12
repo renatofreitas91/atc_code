@@ -624,3 +624,65 @@ Visual Studio 2022 selected MSVC 14.16 and `v141_xp`, but the local build then
 stopped before the changed TU because this checkout lacks its configured Boost
 include directory. The expression uses syntax supported by that compiler, but
 a complete Windows build and runtime validation remain pending.
+
+## Linux input and stream ownership checkpoint (2026-10-12)
+
+The latest pseudo-TTY diagnostic previously concatenated all LF-terminated
+expressions and timed out. The editor now accepts both CR and LF, returns a
+status to the session loop, and accepts a final unterminated expression once
+before reporting EOF. The session exits on closed stdin. POSIX startup skips
+the introductory prompt for redirected input so it cannot consume the first
+expression. Interactive startup and Windows intro selection are unchanged.
+
+Native execution then exposed a double `fclose` on the history stream during
+`1+1`. `main_core` and `main_sub_core` now pass that handle by reference and
+clear it after closing it, allowing their callers to observe replacement and
+closure. Startup and session settings handles are also cleared after closing
+them; a stale settings pointer could otherwise close a newly allocated history
+stream at the same address. The nested command path checks the handle before closing it after an
+exit. This corrects stream lifetime without changing mathematical algorithms.
+
+Run the executable checks with:
+
+```sh
+python3 tests/run-atc-linux-input-smoke.py ./build/atc
+```
+
+The runner uses isolated disposable directories and requires Python 3 and
+util-linux `script`. It checks result values and exit status for LF, CR, CRLF,
+closed stdin, EOF after a complete line, an unterminated final expression, and
+LF input through a pseudo-TTY, plus LF/EOF in persisted high-precision mode.
+The Linux GCC build workflow runs these checks
+before uploading the executable; a timeout or incorrect result fails the job.
+
+Remaining portability work includes legacy backslash paths and terminal editing
+behavior. These smoke checks do not replace the full mathematical regression
+suite or Windows x86/x64 validation.
+
+## Native session-path checkpoint (2026-10-12)
+
+The session bootstrap, settings, history, scripting, graph, and common command
+paths now use the minimal platform path joiner. POSIX runs therefore create
+their persistent files beneath the selected ATC directory instead of creating
+siblings whose names contain a literal backslash. Windows continues to use a
+backslash separator through the same helper.
+
+The helper now also supports a child directory and a filename stem plus
+extension. This covers `Strings` and `User functions` paths without adding a
+`std::filesystem` dependency or changing the historical Windows toolset
+requirement. Windows-only shell command strings remain Windows-formatted.
+
+Numerical-system history and string cleanup now use these native paths as
+well. User-function answer cleanup calls the C runtime file-removal operation
+on the resolved path, replacing the Windows `del` shell command while keeping
+the same missing-file behavior.
+
+The Linux input smoke runner rejects any escaped sibling path after every test.
+The Release build and all eight executable checks pass locally after this
+migration. More deeply nested legacy command paths still need classification
+and migration as their features receive runtime coverage.
+
+Local validation: native GCC 15.2.0, CMake 4.2.3, and Boost 1.90 headers;
+Release compilation and linking succeeded, all eight executable checks passed,
+and `git diff --check` passed. Existing compiler warnings remain. Ubuntu 22.04
+with Boost 1.74 and Windows builds have not been rerun for this checkpoint.

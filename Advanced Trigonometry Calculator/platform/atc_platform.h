@@ -226,6 +226,46 @@ inline bool atcJoinPath(char* output, std::size_t capacity,
     return written >= 0 && static_cast<std::size_t>(written) < capacity;
 }
 
+inline bool atcJoinPath(char* output, std::size_t capacity,
+                        const char* directory, const char* childDirectory,
+                        const char* child) {
+    if (output == nullptr || capacity == 0 || directory == nullptr ||
+        childDirectory == nullptr || child == nullptr) {
+        return false;
+    }
+    std::vector<char> intermediate(
+        std::strlen(directory) + std::strlen(childDirectory) + 2);
+    return atcJoinPath(intermediate.data(), intermediate.size(), directory,
+                       childDirectory) &&
+        atcJoinPath(output, capacity, intermediate.data(), child);
+}
+
+inline bool atcJoinPathWithExtension(char* output, std::size_t capacity,
+                                     const char* directory,
+                                     const char* childDirectory,
+                                     const char* stem,
+                                     const char* extension) {
+    if (stem == nullptr || extension == nullptr) return false;
+    std::vector<char> fileName(std::strlen(stem) + std::strlen(extension) + 1);
+    const int written = std::snprintf(fileName.data(), fileName.size(), "%s%s",
+                                      stem, extension);
+    return written >= 0 && static_cast<std::size_t>(written) < fileName.size() &&
+        atcJoinPath(output, capacity, directory, childDirectory, fileName.data());
+}
+
+inline bool atcJoinPathWithSuffixAndExtension(
+        char* output, std::size_t capacity, const char* directory,
+        const char* childDirectory, const char* stem, const char* suffix,
+        const char* extension) {
+    if (stem == nullptr || suffix == nullptr || extension == nullptr) return false;
+    std::vector<char> fileName(std::strlen(stem) + std::strlen(suffix) +
+                               std::strlen(extension) + 1);
+    const int written = std::snprintf(fileName.data(), fileName.size(), "%s%s%s",
+                                      stem, suffix, extension);
+    return written >= 0 && static_cast<std::size_t>(written) < fileName.size() &&
+        atcJoinPath(output, capacity, directory, childDirectory, fileName.data());
+}
+
 inline bool atcCopyString(char* output, std::size_t capacity, const char* value) {
     if (output == nullptr || capacity == 0 || value == nullptr) {
         return false;

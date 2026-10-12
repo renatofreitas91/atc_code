@@ -37,7 +37,7 @@ void colors() {
 	system(express);
 	#endif
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\colors.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "colors.txt");
 	open = fopen(toOpen, "w");
 	fprintf(open, "%s", express);
 	fclose(open);
@@ -57,7 +57,7 @@ void dimensions() {
 	printf("Number of columns: ");
 	ncols = getValue<T>();
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "dimensions.txt");
 	open = fopen(toOpen, "w");
 	convertComplex2Exponential(ncols, nlins);
 	fprintf(open, "MODE con cols=%s lines=%s", respR, respI);
@@ -99,7 +99,7 @@ void window() {
 	#endif
 	}
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\window.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "window.txt");
 	open = fopen(toOpen, "w");
 	fprintf(open, "%d\n%d\n%d\n%d\n", x, y, width, height);
 	fclose(open);
@@ -120,7 +120,7 @@ void mode() {
 		}
 	}
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\mode.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "mode.txt");
 	while (open == NULL) {
 		open = fopen(toOpen, "w");
 	}
@@ -159,7 +159,7 @@ template<typename T>
 void graphSettings() {
 	FILE* graph = NULL;
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\graph.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "graph.txt");
 	graph = fopen(toOpen, "r");
 	if (graph == NULL) {
 		puts("\nCurrent settings:\n");
@@ -346,7 +346,7 @@ void graphSettings() {
 	char* setting = getDynamicCharArray(" ", "setting");
 	if (toDo == 1) {
 		char* toOpen = getDynamicCharArray("", "toOpen");
-		sprintf(toOpen, "%s\\colors.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "colors.txt");
 		open = fopen(toOpen, "r");
 		if (open == NULL) {
 			applyConsoleColorSafe("color 73");
@@ -370,7 +370,7 @@ void graphSettings() {
 		return 0;
 	}
 	if (toDo == 2) {
-		sprintf(forsprintf, "%s\\dimensions.txt", atcPath);
+		atcJoinPath(forsprintf, DIM, atcPath, "dimensions.txt");
 		char* toOpen = getDynamicCharArray(forsprintf, "toOpen");
 		open = fopen(toOpen, "r");
 		if (open == NULL) {
@@ -396,7 +396,7 @@ void graphSettings() {
 				{
 					widthATC = (rect.right - rect.left);
 					heightATC = (rect.bottom - rect.top);
-					sprintf(toOpen, "%s\\window.txt", atcPath);
+					atcJoinPath(toOpen, DIM, atcPath, "window.txt");
 					open = openSettingsFileWithRetries(toOpen, "w");
 					if (open != NULL) {
 						fprintf(open, "%d\n%d\n%d\n%d\n", xATC, yATC, widthATC, heightATC);
@@ -426,7 +426,7 @@ void graphSettings() {
 		int i = 0, e = 0;
 		int x, y, width, height, a = 1;
 		char* value = getDynamicCharArray("", "value");
-		sprintf(forsprintf, "%s\\window.txt", atcPath);
+		atcJoinPath(forsprintf, DIM, atcPath, "window.txt");
 		char* toOpen = getDynamicCharArray(forsprintf, "toOpen");
 
 		if (fopen(toOpen, "r") == NULL) {
@@ -445,7 +445,7 @@ void graphSettings() {
 				height = rect.bottom - rect.top;
 			}
 		#endif
-			sprintf(toOpen, "%s\\window.txt", atcPath);
+			atcJoinPath(toOpen, DIM, atcPath, "window.txt");
 			FILE* open = NULL;
 			int k = 0;
 			while (open == NULL && k < 20) {
@@ -475,7 +475,7 @@ void graphSettings() {
 			}
 		#endif
 			rows = 2000;
-			sprintf(toOpen, "%s\\dimensions.txt", atcPath);
+			atcJoinPath(toOpen, DIM, atcPath, "dimensions.txt");
 			sprintf(setting, "");
 			open = NULL;
 			while (open == NULL) {
@@ -548,7 +548,7 @@ void graphSettings() {
 		int option = 0;
 		char* opt = getDynamicCharArray("", "opt");
 		char* toOpen = getDynamicCharArray("", "toOpen");
-		sprintf(toOpen, "%s\\mode.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "mode.txt");
 		open = NULL;
 		int g = 0;
 		while (open == NULL && g < 10) {
@@ -667,7 +667,7 @@ bool about() {
 }
 
 void getDimensions() {
-	sprintf(forsprintf, "%s\\dimensions.txt", atcPath);
+	atcJoinPath(forsprintf, DIM, atcPath, "dimensions.txt");
 	char* toOpen = getDynamicCharArray(forsprintf, "toOpen");
 	char* setting = getDynamicCharArray("", "setting");
 	FILE* open = NULL;
@@ -718,7 +718,7 @@ void getDimensions() {
 	int a = 1;
 	char* value = getDynamicCharArray("", "value");
 	sprintf(value, "");
-	sprintf(setting, "%s\\window.txt", atcPath);
+	atcJoinPath(setting, DIM, atcPath, "window.txt");
 	sprintf(toOpen, "%s", setting);
 	open = NULL;
 	int openAttempts = 0;

@@ -2564,7 +2564,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		return true;
 	}
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\sendCommand.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "sendCommand.txt");
 	FILE* fp = fopen(toOpen, "w");
 	if (fp != NULL) {
 		fclose(fp);
@@ -2911,7 +2911,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		FILE* create = NULL;
 		char* toOpen = getDynamicCharArray("", "toOpen");
 		sprintf(toOpen, "");
-		sprintf(toOpen, "%s\\aboutDisabled.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "aboutDisabled.txt");
 		create = fopen(toOpen, "w");
 		if (create != NULL) {
 			fclose(create);
@@ -3133,7 +3133,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			gets_s(trigData, DIM);
 			start_processing = clock();
 			puts("\n==> Processing... <==\n");
-			sprintf(path, "%s\\history.txt", atcPath);
+			atcJoinPath(path, DIM, atcPath, "history.txt");
 			toSolve<T>(rf);
 			for (tD = 0; trigData[tD] != 0; tD++) {
 				if (trigData[tD] == '{') {
@@ -3198,11 +3198,12 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			fTrig = nullptr;
 			_delete(arithTrig, "arithTrig");
 			arithTrig = nullptr;
-			if (continu != 1) {
+			if (continu != 1 && fout != NULL) {
 				fclose(fout);
+				fout = nullptr;
 			}
 			char* Path = getDynamicCharArray("", "Path");
-			sprintf(Path, "%s\\temp.txt", atcPath);
+			atcJoinPath(Path, DIM, atcPath, "temp.txt");
 			FILE* Try = NULL;
 			Try = fopen(Path, "r");
 			if (Try != NULL) {
@@ -3653,7 +3654,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		command = true;
 		if (atcTestDisableExternalOpen()) {
 			char* toOpen = getDynamicCharArray("", "toOpen");
-			sprintf(toOpen, "%s\\disable_txt_detector.txt", atcPath);
+			atcJoinPath(toOpen, DIM, atcPath, "disable_txt_detector.txt");
 			remove(toOpen);
 			recordExternalOpen("enableTxtDetector", toOpen);
 			_delete(toOpen, "toOpen");
@@ -3673,7 +3674,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		FILE* start;
 		char* path4ATC = getDynamicCharArray("", "path4ATC");
 		sprintf(path4ATC, "");
-		sprintf(path4ATC, "%s\\onStart.txt", atcPath);
+		atcJoinPath(path4ATC, DIM, atcPath, "onStart.txt");
 		start = fopen(path4ATC, "w");
 		fprintf(start, "enableatcintro");
 		fclose(start);
@@ -3699,7 +3700,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		FILE* start;
 		char* path4ATC = getDynamicCharArray("", "path4ATC");
 		sprintf(path4ATC, "");
-		sprintf(path4ATC, "%s\\onStart.txt", atcPath);
+		atcJoinPath(path4ATC, DIM, atcPath, "onStart.txt");
 		start = fopen(path4ATC, "w");
 		fprintf(start, "resetall");
 		fclose(start);
@@ -3713,7 +3714,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		FILE* start;
 		char* path4ATC = getDynamicCharArray("", "path4ATC");
 		sprintf(path4ATC, "");
-		sprintf(path4ATC, "%s\\onStart.txt", atcPath);
+		atcJoinPath(path4ATC, DIM, atcPath, "onStart.txt");
 		start = fopen(path4ATC, "w");
 		fprintf(start, "resetall");
 		fclose(start);
@@ -3729,7 +3730,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		FILE* start;
 		char* path4ATC = getDynamicCharArray("", "path4ATC");
 		sprintf(path4ATC, "");
-		sprintf(path4ATC, "%s\\onStart.txt", atcPath);
+		atcJoinPath(path4ATC, DIM, atcPath, "onStart.txt");
 		start = fopen(path4ATC, "w");
 		fprintf(start, "resetsettings");
 		fclose(start);
@@ -3743,7 +3744,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		FILE* start;
 		char* path4ATC = getDynamicCharArray("", "path4ATC");
 		sprintf(path4ATC, "");
-		sprintf(path4ATC, "%s\\onStart.txt", atcPath);
+		atcJoinPath(path4ATC, DIM, atcPath, "onStart.txt");
 		start = fopen(path4ATC, "w");
 		fprintf(start, "resetsettings");
 		fclose(start);
@@ -3950,7 +3951,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		if (Pressed == 1) {
 			char* toOpen = getDynamicCharArray("", "toOpen");
 			sprintf(toOpen, "");
-			sprintf(toOpen, "%s\\exit.txt", atcPath);
+			atcJoinPath(toOpen, DIM, atcPath, "exit.txt");
 			FILE* exit = fopen(toOpen, "w");
 			fclose(exit);
 			_delete(toOpen, "toOpen");
@@ -4050,7 +4051,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		int r = 0;
 		char* toPath = getDynamicCharArray("", "toPath");
 		sprintf(toPath, "");
-		sprintf(toPath, "%s\\variables.txt", atcPath);
+		atcJoinPath(toPath, DIM, atcPath, "variables.txt");
 		while (open == NULL && r < 100) {
 			open = fopen(toPath, "w");
 			r++;
@@ -4063,7 +4064,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			r = 0;
 			char* toPath = getDynamicCharArray("", "toPath");
 			sprintf(toPath, "");
-			sprintf(toPath, "%s\\renamedVar.txt", atcPath);
+			atcJoinPath(toPath, DIM, atcPath, "renamedVar.txt");
 			while (open == NULL && r < 100) {
 				open = fopen(toPath, "w");
 				r++;
@@ -4086,7 +4087,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		int r = 0;
 		char* toPath = getDynamicCharArray("", "toPath");
 		sprintf(toPath, "");
-		sprintf(toPath, "%s\\stringVariable.txt", atcPath);
+		atcJoinPath(toPath, DIM, atcPath, "stringVariable.txt");
 		while (open == NULL && r < 100) {
 			open = fopen(toPath, "w");
 			r++;
@@ -4101,7 +4102,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 					sprintf(stringsPath, "%s", testStringsPath);
 				}
 				else {
-					sprintf(stringsPath, "%s\\Strings", atcPath);
+					atcJoinPath(stringsPath, DIM, atcPath, "Strings");
 				}
 				DIR* directory = opendir(stringsPath);
 				if (directory != NULL) {
@@ -4109,7 +4110,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 					while ((entry = readdir(directory)) != NULL) {
 						if (entry->d_type == DT_REG) {
 							char* filePath = getDynamicCharArray("", "filePath");
-							sprintf(filePath, "%s\\%s", stringsPath, entry->d_name);
+							atcJoinPath(filePath, DIM, stringsPath, entry->d_name);
 							remove(filePath);
 							_delete(filePath, "filePath");
 							filePath = nullptr;
@@ -4280,7 +4281,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		int r = 0;
 		char* toOpen = getDynamicCharArray("", "toOpen");
 		sprintf(toOpen, "");
-		sprintf(toOpen, "%s\\stringVariable.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "stringVariable.txt");
 		while (open == NULL && r < 100) {
 			open = fopen(toOpen, "a+");
 			r++;
@@ -4313,7 +4314,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		int r = 0;
 		char* toOpen = getDynamicCharArray("", "toOpen");
 		sprintf(toOpen, "");
-		sprintf(toOpen, "%s\\variables.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 		while (open == NULL && r < 100) {
 			open = fopen(toOpen, "a+");
 			r++;
@@ -4345,7 +4346,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		FILE* open = NULL;	 command = true;
 		char* toOpen = getDynamicCharArray("", "toOpen");
 		sprintf(toOpen, "");
-		sprintf(toOpen, "%s\\pathName.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "pathName.txt");
 		while (open == NULL) {
 			open = fopen(toOpen, "w");
 		}
@@ -4360,7 +4361,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		FILE* open = NULL;	   command = true;
 		char* toOpen = getDynamicCharArray("", "toOpen");
 		sprintf(toOpen, "");
-		sprintf(toOpen, "%s\\pathName.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "pathName.txt");
 		while (open == NULL) {
 			open = fopen(toOpen, "a+");
 		}
@@ -4455,7 +4456,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		int r = 0;
 		char* toOpen = getDynamicCharArray("", "toOpen");
 		sprintf(toOpen, "");
-		sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
 		while (open == NULL && r < 100) {
 			open = fopen(toOpen, "a+");
 			r++;
@@ -4644,7 +4645,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 										int Minutes = (tim[14] - '0') * 10 + (tim[15] - '0');
 										int Seconds = (tim[17] - '0') * 10 + (tim[18] - '0');
 										char* toOpen = getDynamicCharArray("", "toOpen");
-										sprintf(toOpen, "%s\\history.txt", atcPath);
+										atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 										fout = fopen(toOpen, "a+");
 										int years = (tim[20] - '0') * 1000 + (tim[21] - '0') * 100 + (tim[22] - '0') * 10 + (tim[23] - '0');
 										int days = (tim[8] - '0') * 10 + (tim[9] - '0');
@@ -4780,7 +4781,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 				char* yea = getDynamicCharArray("", "yea");
 				char* da = getDynamicCharArray("", "da");
 				char* toTitle = getDynamicCharArray("", "toTitle");
-				sprintf(toOpen, "%s\\history.txt", atcPath);
+				atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 				char* text = getDynamicCharArray("", "text");
 				char* display = getDynamicCharArray("", "display");
 				char* tiIn = getDynamicCharArray("", "tiIn");
@@ -5180,7 +5181,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 										int Minutes = (tim[14] - '0') * 10 + (tim[15] - '0');
 										int Seconds = (tim[17] - '0') * 10 + (tim[18] - '0');
 										char* toOpen = getDynamicCharArray("  ", "toOpen");
-										sprintf(toOpen, "%s\\history.txt", atcPath);
+										atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 										fout = fopen(toOpen, "a+");
 										int years = (tim[20] - '0') * 1000 + (tim[21] - '0') * 100 + (tim[22] - '0') * 10 + (tim[23] - '0');
 										int days = (tim[8] - '0') * 10 + (tim[9] - '0');
@@ -5384,7 +5385,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 									char* Min = getDynamicCharArray("", "Min");
 
 									char* toOpen = getDynamicCharArray("", "toOpen");
-									sprintf(toOpen, "%s\\history.txt", atcPath);
+									atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 									fout = fopen(toOpen, "a+");
 									char* yea = getDynamicCharArray("", "yea");
 									char* da = getDynamicCharArray("", "da");
@@ -5427,7 +5428,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 										int Minutes = atoi(Min);
 										sprintf(seco, "%c%c%c", tim[17], tim[18], '\0');
 										int Seconds = atoi(seco);
-										sprintf(toOpen, "%s\\history.txt", atcPath);
+										atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 										fout = fopen(toOpen, "a+");
 										sprintf(yea, "%c%c%c%c%c", tim[20], tim[21], tim[22], tim[23], '\0');
 										int years = atoi(yea);
@@ -5982,7 +5983,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		}
 		FILE* pred = NULL;
 		char* toOpen = getDynamicCharArray("", "toOpen");
-		sprintf(toOpen, "%s\\predefinedTxt.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "predefinedTxt.txt");
 		while (pred == NULL) {
 			pred = fopen(toOpen, "w");
 		}
@@ -6001,7 +6002,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		char* readPath = getDynamicCharArray("", "readPath");
 		if (arithTrig[i + 8] != '(' && arithTrig[i + 11] != '(') {
 			char* toOpen = getDynamicCharArray("", "toOpen");
-			sprintf(toOpen, "%s\\predefinedTxt.txt", atcPath);
+			atcJoinPath(toOpen, DIM, atcPath, "predefinedTxt.txt");
 			readPred = fopen(toOpen, "r");
 			if (readPred == NULL) {
 				printf("\n==> The file was not yet predefined! <==\n\n");
@@ -6181,7 +6182,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 			arithTrig[0] = '\0'; command = true;
 			if (year > 1759) {
 				char* toOpen = getDynamicCharArrayLong("");
-				sprintf(toOpen, "%s\\calendar.txt", atcPath);
+				atcJoinPath(toOpen, DIM, atcPath, "calendar.txt");
 				Calendar(toOpen, year);
 				for (s = 0; s < abs((int)strlen(calendarStr)); s++) {
 					calendar[s] = calendarStr[s];

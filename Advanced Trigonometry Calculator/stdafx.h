@@ -235,9 +235,9 @@ T hexadecimalToDecimal(char* hexadecimal);
 template <typename T>
 T convertToNumber(char* number);
 template <typename T>
-T main_core(char* arithTrig, char* fTrig, FILE* fout, char* path, T result1, T result2, int isFromMain);
+T main_core(char* arithTrig, char* fTrig, FILE*& fout, char* path, T result1, T result2, int isFromMain);
 template <typename T>
-T main_sub_core(char* arithTrig, FILE* fout, int verify, char* path, int txt, char* variable, int v, int j, T result1, T result2, int isFromMain, int var, int valGet, int command);
+T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, char* variable, int v, int j, T result1, T result2, int isFromMain, int var, int valGet, int command);
 template <typename T>
 T solveNow(char* toSolveNow, T result1, T result2);
 template <typename T>
@@ -260,7 +260,8 @@ template<typename T>
 bool tryEvaluateSolverFastPath(char* expression, T& solution);
 PrecisionValue** getDynamic2DDoubleArray();
 int autoComplete(char* query);
-void readConsoleInputWithTabCompletion(char* line, int capacity);
+// Returns false when no input remains; a final unterminated line is accepted.
+bool readConsoleInputWithTabCompletion(char* line, int capacity);
 template<typename T>
 int variableValidator(char* variableFF);
 template<typename T>

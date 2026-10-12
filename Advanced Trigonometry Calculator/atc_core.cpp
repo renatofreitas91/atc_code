@@ -79,17 +79,19 @@ int loadHigherPrecisionState() {
 	getATCPath();
 	char* value = getDynamicCharArray("0", "value");
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\higherPrecision.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "higherPrecision.txt");
 	FILE* open = fopen(toOpen, "r");
 	if (open != NULL) {
 		fgets(value, 10, open);
 		fclose(open);
+		open = nullptr;
 	}
 	else {
 		open = fopen(toOpen, "w");
 		if (open != NULL) {
 			fprintf(open, "0");
 			fclose(open);
+			open = nullptr;
 		}
 	}
 	int savedState = atoi(value);
@@ -99,6 +101,7 @@ int loadHigherPrecisionState() {
 		if (open != NULL) {
 			fprintf(open, "%d", higherPrecision);
 			fclose(open);
+			open = nullptr;
 		}
 	}
 	_delete(value, "value");
@@ -118,7 +121,7 @@ void atc_core_main(int argc, char* argv[]) {
 			FILE* open = NULL;
 			int precisionState = loadHigherPrecisionState();
 			sprintf(value, "%d", precisionState);
-			sprintf(toOpen, "%s\\higherPrecision.txt", atcPath);
+			atcJoinPath(toOpen, DIM, atcPath, "higherPrecision.txt");
 			if (precisionState == 1) {
 				mainType<mp_float>(value, toOpen, open, argc, argv);
 			}
@@ -231,13 +234,18 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 		sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)", memFactor);
 		applyConsoleTitleSafe(forsprintf);
 
-		sprintf(commandF, "%s\\aboutDisabled.txt", atcPath);
+		atcJoinPath(commandF, DIM, atcPath, "aboutDisabled.txt");
 		FILE* ab = NULL;
 		ab = fopen(commandF, "r");
 		if (ab != NULL) {
 			fclose(ab);
 		}
-		if (ab == NULL && !shouldDisableATCIntroByDefault()) {
+		bool showIntro = !shouldDisableATCIntroByDefault();
+#ifndef _WIN32
+		// Redirected expressions must not be consumed by the intro prompt.
+		showIntro = showIntro && atcIsInteractiveInput();
+#endif
+		if (ab == NULL && showIntro) {
 			continu = about();
 		}
 		else {
@@ -249,7 +257,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 	if (continu == 1) {
 		sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)        ==) ATC is ready to process data. (==", memFactor);
 		applyConsoleTitleSafe(forsprintf);
-		sprintf(forsprintf, "%s\\temp.txt", atcPath);
+		atcJoinPath(forsprintf, DIM, atcPath, "temp.txt");
 		sprintf(toOpen, "%s", forsprintf);
 
 		if (open != NULL) {
@@ -257,6 +265,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 			for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 			vari[i] = '\0';
 			fclose(open);
+			open = nullptr;
 			saveVariablesTextFile = getRenewDynamicCharArray(vari, &saveVariablesTextFile);
 
 		}
@@ -266,15 +275,17 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 			}
 			if (open != NULL) {
 				fclose(open);
+				open = nullptr;
 			}
 		}
-		sprintf(toOpen, "%s\\variables.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 		open = fopen(toOpen, "r");
 		if (open != NULL) {
 			printf(vari, "");
 			for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 			vari[i] = '\0';
 			fclose(open);
+			open = nullptr;
 			sprintf(saveVariablesTextFile, "%s", vari);
 
 		}
@@ -284,14 +295,16 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 			}
 			if (open != NULL) {
 				fclose(open);
+				open = nullptr;
 			}
 		}
-		sprintf(toOpen, "%s\\verboseResolution.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "verboseResolution.txt");
 		open = fopen(toOpen, "r");
 		if (open != NULL) {
 			fgets(verboseRes, 10, open);
 			verbose = 0;
 			fclose(open);
+			open = nullptr;
 		}
 		else {
 			if (open == NULL) {
@@ -299,41 +312,47 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 			}
 			if (open != NULL) {
 				fclose(open);
+				open = nullptr;
 			}
 		}
-		sprintf(toOpen, "%s\\numSystems.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "numSystems.txt");
 		open = fopen(toOpen, "r");
 		if (open != NULL) {
 			fgets(numSys, 10, open);
 			fclose(open);
+			open = nullptr;
 		}
-		sprintf(toOpen, "%s\\higherPrecision.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "higherPrecision.txt");
 		open = fopen(toOpen, "r");
 		if (open != NULL) {
 			sprintf(value, "");
 			fgets(value, 10, open);
 			higherPrecision = (int)convertToNumber<T>(value);
 			fclose(open);
+			open = nullptr;
 
 		}
-		sprintf(toOpen, "%s\\siPrefixes.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "siPrefixes.txt");
 		open = fopen(toOpen, "r");
 		if (open != NULL) {
 			fgets(siPref, 10, open);
 			fclose(open);
+			open = nullptr;
 		}
-		sprintf(toOpen, "%s\\actualTime.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "actualTime.txt");
 		open = fopen(toOpen, "r");
 		if (open != NULL) {
 			fgets(actualTime, 10, open);
 			fclose(open);
+			open = nullptr;
 		}
-		sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
 		open = fopen(toOpen, "r");
 		if (open != NULL) {
 			for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 			vari[i] = '\0';
 			fclose(open);
+			open = nullptr;
 			sprintf(saveRenamedVariablesTextFile, "%s", vari);
 
 		}
@@ -343,6 +362,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 			}
 			if (open != NULL) {
 				fclose(open);
+				open = nullptr;
 			}
 		}
 
@@ -411,7 +431,10 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 					executedSolver = 0;
 					cls();
 				}
-				readConsoleInputWithTabCompletion(trigData, DIM);
+				if (!readConsoleInputWithTabCompletion(trigData, DIM)) {
+					continu = 0;
+					break;
+				}
 				start_processing = clock();
 				sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)       ==) Processing... (==", memFactor);
 				applyConsoleTitleSafe(forsprintf);
@@ -425,7 +448,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 				}
 				addATCPath();
 			}
-			sprintf(path, "%s\\history.txt", atcPath);
+			atcJoinPath(path, DIM, atcPath, "history.txt");
 			if (fout != NULL) {
 				fclose(fout);
 				fout = NULL;
@@ -503,20 +526,23 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 				}
 
 				if (variableControllersUsed || abs((int)strlen(saveVariablesTextFile)) == 0 || abs((int)strlen(saveRenamedVariablesTextFile)) == 0 || runningUserFunction) {
-					sprintf(toOpen, "%s\\variables.txt", atcPath);
+					atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 					if (open != NULL) {
 						fclose(open);
+						open = nullptr;
 					}
 					open = fopen(toOpen, "w");
 					if (open != NULL) {
 						fprintf(open, "%s", saveVariablesTextFile);
 						fclose(open);
+						open = nullptr;
 					}
-					sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+					atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
 					open = fopen(toOpen, "w");
 					if (open != NULL) {
 						fprintf(open, "%s", saveRenamedVariablesTextFile);
 						fclose(open);
+						open = nullptr;
 					}
 					variableControllersUsed = false;
 				}
@@ -638,7 +664,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 				break;
 			}
 
-			sprintf(Path, "%s\\temp.txt", atcPath);
+			atcJoinPath(Path, DIM, atcPath, "temp.txt");
 			FILE* Try = NULL;
 			Try = fopen(Path, "r");
 			if (Try != NULL) {
@@ -663,7 +689,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 			sprintf(sec, "%c%c%c", tim[17], tim[18], '\0');
 			int Seconds = atoi(sec);
 			sprintf(toOpen, "");
-			sprintf(toOpen, "%s\\history.txt", atcPath);
+			atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 			fout = NULL;
 			while (fout == NULL) {
 				fout = fopen(toOpen, "a+");
@@ -829,7 +855,7 @@ bool processTxt(char* path, int re) {
 	if (isContained("User functions", path) && isEqual(context, "script")) {
 		sprintf(context, "main");
 	}
-	sprintf(toOpen, "%s\\variables.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
 		char* vari = getDynamicCharArray("", "vari");
@@ -837,6 +863,7 @@ bool processTxt(char* path, int re) {
 		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 		vari[i] = '\0';
 		fclose(open);
+		open = nullptr;
 		sprintf(saveTxtVariablesTextFile, "%s", vari);
 		_delete(vari, "vari"); vari = nullptr;
 	}
@@ -846,9 +873,10 @@ bool processTxt(char* path, int re) {
 		}
 		if (open != NULL) {
 			fclose(open);
+			open = nullptr;
 		}
 	}
-	sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
 	open = fopen(toOpen, "r");
 	if (open != NULL) {
 		char* vari = getDynamicCharArray("", "vari");
@@ -856,6 +884,7 @@ bool processTxt(char* path, int re) {
 		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 		vari[i] = '\0';
 		fclose(open);
+		open = nullptr;
 		sprintf(saveRenamedTxtVariablesTextFile, "%s", vari);
 		_delete(vari, "vari"); vari = nullptr;
 
@@ -866,6 +895,7 @@ bool processTxt(char* path, int re) {
 		}
 		if (open != NULL) {
 			fclose(open);
+			open = nullptr;
 		}
 	}
 	 PrecisionValue result1 = 0, result2 = 0, *anstxt = getDynamicDoubleArray(), *anstxtI = getDynamicDoubleArray();
@@ -950,7 +980,7 @@ bool processTxt(char* path, int re) {
 		sprintf(saveSendFunc, sendFunc);
 		if (isContained("script", sendFunc) && strStart == 0) {
 			sprintf(toOpen, "");
-			sprintf(toOpen, "%s\\variables.txt", atcPath);
+			atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 			FILE* open = fopen(toOpen, "r");
 			if (open != NULL) {
 				char* vari = getDynamicCharArray("", "vari");
@@ -958,6 +988,7 @@ bool processTxt(char* path, int re) {
 				for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 				vari[i] = '\0';
 				fclose(open);
+				open = nullptr;
 				sprintf(saveScriptVariablesTextFile, "%s", vari);
 				_delete(vari, "vari");
 				vari = nullptr;
@@ -968,9 +999,10 @@ bool processTxt(char* path, int re) {
 				}
 				if (open != NULL) {
 					fclose(open);
+					open = nullptr;
 				}
 			}
-			sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+			atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
 			open = fopen(toOpen, "r");
 			if (open != NULL) {
 				char* vari = getDynamicCharArray("", "vari");
@@ -978,6 +1010,7 @@ bool processTxt(char* path, int re) {
 				for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 				vari[i] = '\0';
 				fclose(open);
+				open = nullptr;
 				sprintf(saveScriptRenamedVariablesTextFile, "%s", vari);
 				_delete(vari, "vari");
 				vari = nullptr;
@@ -988,6 +1021,7 @@ bool processTxt(char* path, int re) {
 				}
 				if (open != NULL) {
 					fclose(open);
+					open = nullptr;
 				}
 			}
 			countBreak = countOccurrences("break", sendFunc);
@@ -1136,17 +1170,19 @@ bool processTxt(char* path, int re) {
 					if (variableControllersUsed || abs((int)strlen(saveTxtVariablesTextFile)) == 0 || abs((int)strlen(saveRenamedTxtVariablesTextFile)) == 0) {
 						char* toOpen = getDynamicCharArray("", "toOpen");
 						FILE* open;
-						sprintf(toOpen, "%s\\variables.txt", atcPath);
+						atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 						open = fopen(toOpen, "w");
 						if (open != NULL) {
 							fprintf(open, "%s", saveTxtVariablesTextFile);
 							fclose(open);
+							open = nullptr;
 						}
-						sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+						atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
 						open = fopen(toOpen, "w");
 						if (open != NULL) {
 							fprintf(open, "%s", saveRenamedTxtVariablesTextFile);
 							fclose(open);
+							open = nullptr;
 						}
 						variableControllersUsed = false;
 						_delete(toOpen, "toOpen"); toOpen = nullptr;

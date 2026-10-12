@@ -9,7 +9,7 @@ void decimalToBinary(T decimal, char* path, int bp) {
 	T sN = 0, sN1 = 0, sN2 = 0;
 	char* binary = getDynamicCharArray("", "binary"); char* binary2 = getDynamicCharArray("", "binary2"); char* binaryexp = getDynamicCharArray("", "binaryexp");
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\history.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 	if (decimal >= 0) {
 		sN = log10(decimal) / log10(2.0);
 		sN1 = quo(sN);
@@ -338,7 +338,7 @@ void decimalToOctal(T decimal, char* path, int op) {
 	T quotient, quotient1, decimal1, decimal2 = 0, mult, sN = 0, sN1 = 0, sN2 = 0;
 	int c, j, i, rest, cou, res = 0;
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\history.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 	decimal1 = decimal; i = 0; j = 0; quotient = 8; quotient1 = 8;
 	if (decimal >= 0) {
 		sN = log10(decimal) / log10(8.0);
@@ -666,7 +666,7 @@ void decimalToHexadecimal(T decimal, char* path, int hp) {
 	T decimal1 = decimal, decimal2 = 0, quotient = 16, quotient1 = 16, mult, sN = 0, sN1 = 0, sN2 = 0;
 	int res = 0, cou = 0, c = 0, rest = 0, i = 0, j = 0;
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	sprintf(toOpen, "%s\\history.txt", atcPath);
+	atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 	if (decimal >= 0) {
 		sN = log10(decimal) / log10(16.0);
 		sN1 = quo(sN);

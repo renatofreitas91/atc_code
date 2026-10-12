@@ -1064,7 +1064,7 @@ template <typename T>
 T solveNow(char* toSolveNow, T result1, T result2) {
 	FILE *fsolveN = NULL;
 	char* path = getDynamicCharArray("", "path");
-	sprintf(path, "%s\\temp.txt", atcPath);
+	atcJoinPath(path, DIM, atcPath, "temp.txt");
 	while (fsolveN == NULL) {
 		fsolveN = fopen(path, "w");
 	}
@@ -1113,7 +1113,7 @@ T atcProg(char* exprDev) {
 	fflush(NULL);
 	FILE *atcDev = NULL;
 	char* path = getDynamicCharArray("", "path");
-	sprintf(path, "%s\\temp.txt", atcPath);
+	atcJoinPath(path, DIM, atcPath, "temp.txt");
 	while (atcDev == NULL) {
 		atcDev = fopen(path, "w");
 	}
@@ -1315,13 +1315,13 @@ int atcProgramming(char* script) {
 					if (variableControllersUsed || abs((int)strlen(saveScriptVariablesTextFile)) == 0 || abs((int)strlen(saveScriptRenamedVariablesTextFile)) == 0) {
 						char* toOpen = getDynamicCharArray("", "toOpen");
 						FILE *open;
-						sprintf(toOpen, "%s\\variables.txt", atcPath);
+						atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 						open = fopen(toOpen, "w");
 						if (open != NULL) {
 							fprintf(open, "%s", saveScriptVariablesTextFile);
 							fclose(open);
 						}
-						sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+						atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
 						open = fopen(toOpen, "w");
 						if (open != NULL) {
 							fprintf(open, "%s", saveScriptRenamedVariablesTextFile);
@@ -1645,13 +1645,13 @@ int atcProgramming(char* script) {
 	if (variableControllersUsed || abs((int)strlen(saveScriptVariablesTextFile)) == 0 || abs((int)strlen(saveScriptRenamedVariablesTextFile)) == 0) {
 		FILE *open;
 		char* toOpen = getDynamicCharArray("", "toOpen");
-		sprintf(toOpen, "%s\\variables.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 		open = fopen(toOpen, "w");
 		if (open != NULL) {
 			fprintf(open, "%s", saveScriptVariablesTextFile);
 			fclose(open);
 		}
-		sprintf(toOpen, "%s\\renamedVar.txt", atcPath);
+		atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
 		open = fopen(toOpen, "w");
 		if (open != NULL) {
 			fprintf(open, "%s", saveScriptRenamedVariablesTextFile);
