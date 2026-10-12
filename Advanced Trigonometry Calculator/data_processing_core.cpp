@@ -1331,16 +1331,24 @@ void substituteExistingScalarVariables(char* expression) {
 	char* variable = getDynamicCharArray("", "variable");
 	int i = 0;
 	while (i < abs((int)strlen(expression))) {
-		if (verifyLetter(expression[i]) && (i == 0 || !verifyLetter(expression[i - 1])) && !isInsideDelimitedFunctionHeader(expression, i)) {
+		if (verifyLetter(expression[i]) && (i == 0 || !verifyLetter(expression[i - 1]))) {
 			int start = i;
 			int v = 0;
-			while (verifyLetter(expression[i]) && i < abs((int)strlen(expression)) && !isInsideDelimitedFunctionHeader(expression, i)) {
+			while (verifyLetter(expression[i]) && i < abs((int)strlen(expression))) {
 				variable[v] = expression[i];
 				v++; i++;
 			}
 			variable[v] = '\0';
 			if (expression[i] == '(' || (start == 0 && expression[i] == '=')) {
 				strcat(rebuilt, variable);
+				continue;
+			}
+			if (strcmp(variable, "pi") == 0) {
+				strcat(rebuilt, "(3.141592653589793)");
+				continue;
+			}
+			if (strcmp(variable, "e") == 0) {
+				strcat(rebuilt, "(2.718281828459045)");
 				continue;
 			}
 			sprintf(matrixValue, "");
@@ -3851,8 +3859,8 @@ void getATCPath() {
 	else {
 		fgets(atcPath, DIM, aPath);
 		fclose(aPath);
-		if (atcPath[abs((int)strlen(atcPath)) - 2] == ' ') {
-			atcPath[abs((int)strlen(atcPath)) - 2] = '\0';
+		while (strlen(atcPath) > 0 && (atcPath[strlen(atcPath) - 1] == '\n' || atcPath[strlen(atcPath) - 1] == '\r')) {
+			atcPath[strlen(atcPath) - 1] = '\0';
 		}
 		sprintf(forsprintf, "%s", atcPath);
 		sprintf(saveATCPath, "%s", forsprintf);

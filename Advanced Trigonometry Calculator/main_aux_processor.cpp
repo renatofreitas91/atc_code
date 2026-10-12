@@ -1196,7 +1196,7 @@ T main_core(char* arithTrig, char* fTrig, FILE*& fout, char* path, T result1, T 
 			str = 1;
 		}
 		else {
-			if (i >= 6 && (arithTrig[i - 6] == 'p' && arithTrig[i - 5] == 'r' && arithTrig[i - 4] == 'i' && arithTrig[i - 3] == 'n' && arithTrig[i - 2] == 't' && arithTrig[i - 1] == '(')) == true) {
+			if (i >= 6 && (arithTrig[i - 6] == 'p' && arithTrig[i - 5] == 'r' && arithTrig[i - 4] == 'i' && arithTrig[i - 3] == 'n' && arithTrig[i - 2] == 't' && arithTrig[i - 1] == '(') == true) {
 				run_del_space = 0;
 			}
 		}
