@@ -273,6 +273,14 @@ void descendingOrder(char* values) {
 	_delete(orderI, "orderI"); orderI = nullptr;
 }
 
+static bool appendToExtremumBuffer(char* destination, const std::string& suffix) {
+	size_t capacity = GetDynamicArraySize(destination);
+	size_t length = strlen(destination);
+	if (capacity == 0 || length >= capacity || suffix.size() >= capacity - length) return false;
+	memcpy(destination + length, suffix.c_str(), suffix.size() + 1);
+	return true;
+}
+
 template <typename T>
 
 void extremum(char* values, int findMax) {
@@ -300,14 +308,13 @@ void extremum(char* values, int findMax) {
 				sprintf(matrixExpr, "%s", expressionF);
 			}
 			if (!isContainedByIndex("i", matrixExpr, abs((int)strlen(matrixExpr)) - 1)) {
-				sprintf(matrixExpr, "%si", matrixExpr);
+				appendToExtremumBuffer(matrixExpr, "i");
 			}
 		}
 
 		matrixMode = 1;
 		char* report = getDynamicCharArray("", "report");
 		char* toValue = getDynamicCharArray("", "toValue");
-
 		int number_of_values = 1;
 		for (int i = 0; i < abs((int)strlen(matrixExpr)); i++) {
 			if (matrixExpr[i] == '\\') number_of_values++;
@@ -316,18 +323,62 @@ void extremum(char* values, int findMax) {
 		T* sValues = getDynamicArray<T>(number_of_values);
 		T* sValuesI = getDynamicArray<T>(number_of_values);
 		int i = 0, p = 0;
-
 		while (p < number_of_values) {
 			int b = 0;
-			while (matrixExpr[i] != '\\' && i < abs((int)strlen(matrixExpr))) {
+			while (i < abs((int)strlen(matrixExpr)) && matrixExpr[i] != '\\') {
 				toValue[b++] = matrixExpr[i++];
 			}
 			toValue[b] = '\0';
-			solveMath<T>(toValue);
-			sValues[p] = precisionValueTo<T>(resultR);
-			sValuesI[p] = precisionValueTo<T>(resultI);
+			char* realText = getDynamicCharArray("", "extremumRealText");
+			char* imagText = getDynamicCharArray("", "extremumImagText");
+			size_t componentCapacity = GetDynamicArraySize(toValue);
+			size_t component = 0;
+			while (component < componentCapacity && toValue[component] != '\0' && toValue[component] != '+' && !(toValue[component] == '-' && component > 0)) {
+				if (component + 1 >= GetDynamicArraySize(realText)) break;
+				realText[component] = toValue[component] == '_' ? '-' : toValue[component];
+				component++;
+			}
+			realText[component] = '\0';
+			if (component < componentCapacity && toValue[component] == '+') {
+				component++;
+				size_t imagIndex = 0;
+				while (component < componentCapacity && toValue[component] != '\0' && toValue[component] != 'i') {
+					if (imagIndex + 1 >= GetDynamicArraySize(imagText)) break;
+					imagText[imagIndex] = toValue[component] == '_' ? '-' : toValue[component];
+					imagIndex++; component++;
+				}
+				imagText[imagIndex] = '\0';
+			}
+			std::istringstream realParser(realText);
+			T realValue = 0;
+			bool validReal = static_cast<bool>(realParser >> realValue);
+			realParser >> std::ws;
+			validReal = validReal && realParser.eof();
+			std::istringstream imaginaryParser(imagText);
+			T imaginaryValue = 0;
+			bool validImaginary = imagText[0] == '\0' || static_cast<bool>(imaginaryParser >> imaginaryValue);
+			if (imagText[0] != '\0') {
+				imaginaryParser >> std::ws;
+				validImaginary = validImaginary && imaginaryParser.eof();
+			}
+			if (!validReal || !validImaginary) {
+				puts("Error: invalid matrix element in extremum().");
+				_delete(realText, "extremumRealText");
+				_delete(imagText, "extremumImagText");
+				_delete(report, "report");
+				_delete(toValue, "toValue");
+				_delete(sValues, "sValues");
+				_delete(sValuesI, "sValuesI");
+				_delete(matrixExpr, "matrixExpr");
+				return;
+			}
+			sValues[p] = realValue;
+			sValuesI[p] = imaginaryValue;
+			_delete(realText, "extremumRealText"); realText = nullptr;
+			_delete(imagText, "extremumImagText"); imagText = nullptr;
 			sprintf(toValue, "");
-			i++; p++;
+			if (i < abs((int)strlen(matrixExpr))) i++;
+			p++;
 		}
 
 		T extremumR = findMax ? -DBL_MAX : DBL_MAX;

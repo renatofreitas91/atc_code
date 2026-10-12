@@ -3458,8 +3458,10 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 		sprintf(arithTrig, "");
 		puts("");
 		notUseHigherPrecison = false;
-		ansRV = ans[rf - 1];
-		ansIV = ansI[rf - 1];
+		if (rf > 0) {
+			ansRV = ans[rf - 1];
+			ansIV = ansI[rf - 1];
+		}
 		sprintf(expressionF, "");
 		sprintf(expr, "");
 

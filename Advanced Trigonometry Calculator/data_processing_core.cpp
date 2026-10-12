@@ -1344,7 +1344,15 @@ void substituteExistingScalarVariables(char* expression) {
 				continue;
 			}
 			if (strcmp(variable, "pi") == 0) {
-				strcat(rebuilt, "(3.141592653589793)");
+				std::ostringstream piText;
+				if constexpr (std::is_same<T, mp_float>::value) {
+					piText << std::setprecision(60) << boost::math::constants::pi<mp_float>();
+				}
+				else {
+					piText << std::setprecision(std::numeric_limits<double>::max_digits10) << boost::math::constants::pi<double>();
+				}
+				std::string piLiteral = "(" + piText.str() + ")";
+				strcat(rebuilt, piLiteral.c_str());
 				continue;
 			}
 			if (strcmp(variable, "e") == 0) {
@@ -1666,7 +1674,7 @@ void toMultiply(char* expression, T result1, T result2) {
 		}
 		else {
 			if (verifyNumber(expression[i])) {
-				while (verifyNumber(expression[i]) && i < abs((int)strlen(expression)) || expression[i] == 'i' && expression[i - 1] == '1') {
+				while (i < abs((int)strlen(expression)) && (verifyNumber(expression[i]) || expression[i] == 'i' && i > 0 && expression[i - 1] == '1')) {
 					value[j] = expression[i];
 					value[j + 1] = '+'; value[j + 2] = '0'; value[j + 3] = '\0';
 					j++; i++;
@@ -1685,7 +1693,7 @@ void toMultiply(char* expression, T result1, T result2) {
 					}
 				}
 				else {
-					if (verifyLetter(expression[i - 1]) == 0 && firstLetterFunction(expression[i])) {
+					if ((i == 0 || verifyLetter(expression[i - 1]) == 0) && firstLetterFunction(expression[i])) {
 						while (verifyLetter(expression[i])) {
 							value[j] = expression[i];
 							j++; i++;
@@ -5145,6 +5153,8 @@ T processVariable(char* variable) {
 					y++; gh++;
 				}
 				imag[gh] = '\0';
+				if (real[0] == '_') real[0] = '-';
+				if (imag[0] == '_') imag[0] = '-';
 				resultR = strtod(real, &pointer);
 				resultI = strtod(imag, &pointer);
 				if (!runningScript) {
@@ -5250,6 +5260,8 @@ T processVariable(char* variable) {
 						y++; gh++;
 					}
 					imag[gh] = '\0';
+					if (real[0] == '_') real[0] = '-';
+					if (imag[0] == '_') imag[0] = '-';
 					resultR = strtod(real, &pointer);
 					resultI = strtod(imag, &pointer);
 					if (!runningScript) {
@@ -6746,6 +6758,13 @@ bool isContainedInUserFunction(char* variable) {
 	_delete(txtFiles, "txtFiles"); txtFiles = nullptr;
 	return false;
 }
+static bool appendToDynamicTextBuffer(char* destination, const std::string& suffix) {
+	size_t capacity = GetDynamicArraySize(destination);
+	size_t length = strlen(destination);
+	if (capacity == 0 || length >= capacity || suffix.size() >= capacity - length) return false;
+	memcpy(destination + length, suffix.c_str(), suffix.size() + 1);
+	return true;
+}
 void convert2Vector(char* arithTrig) {
 	if (!checkMatrixIndex && abs((int)strlen(matrixResult)) > 0) {
 		matrixMode = 1;
@@ -6806,16 +6825,18 @@ void convert2Vector(char* arithTrig) {
 				y++; gh++;
 			}
 			imag[gh] = '\0';
+			if (real[0] == '_') real[0] = '-';
+			if (imag[0] == '_') imag[0] = '-';
 			resultR = strtod(real, &pointer);
 			resultI = strtod(imag, &pointer);
 			vectorR[0][i] = resultR; vectorI[0][i] = resultI;
 			if (i < countSplits) {
 				convertComplex2Exponential(vectorR[0][i], vectorI[0][i]);
-				sprintf(vectorString, "%s%s %s:", vectorString, respR, respI);
+				appendToDynamicTextBuffer(vectorString, std::string(respR) + " " + respI + ":");
 			}
 			else {
 				convertComplex2Exponential(vectorR[0][i], vectorI[0][i]);
-				sprintf(vectorString, "%s%s %s", vectorString, respR, respI);
+				appendToDynamicTextBuffer(vectorString, std::string(respR) + " " + respI);
 			}
 			i++;
 		}
@@ -6880,16 +6901,18 @@ void convert2Vector(char* arithTrig) {
 					y++; gh++;
 				}
 				imag[gh] = '\0';
+				if (real[0] == '_') real[0] = '-';
+				if (imag[0] == '_') imag[0] = '-';
 				resultR = strtod(real, &pointer);
 				resultI = strtod(imag, &pointer);
 				vectorR[i][0] = resultR; vectorI[i][0] = resultI;
 				if (i < countSplits) {
 					convertComplex2Exponential(vectorR[i][0], vectorI[i][0]);
-					sprintf(vectorString, "%s%s %s*", vectorString, respR, respI);
+					appendToDynamicTextBuffer(vectorString, std::string(respR) + " " + respI + "*");
 				}
 				else {
 					convertComplex2Exponential(vectorR[i][0], vectorI[i][0]);
-					sprintf(vectorString, "%s%s %s", vectorString, respR, respI);
+					appendToDynamicTextBuffer(vectorString, std::string(respR) + " " + respI);
 				}
 				i++;
 			}
@@ -6988,16 +7011,18 @@ void convert2Vector(char* arithTrig) {
 							y++; gh++;
 						}
 						imag[gh] = '\0';
+						if (real[0] == '_') real[0] = '-';
+						if (imag[0] == '_') imag[0] = '-';
 						resultR = strtod(real, &pointer);
 						resultI = strtod(imag, &pointer);
 						vectorR[l][i] = resultR; vectorI[l][i] = resultI;
 						if (i < countSplits) {
 							convertComplex2Exponential(vectorR[l][i], vectorI[l][i]);
-							sprintf(vectorString, "%s%s %s:", vectorString, respR, respI);
+							appendToDynamicTextBuffer(vectorString, std::string(respR) + " " + respI + ":");
 						}
 						else {
 							convertComplex2Exponential(vectorR[l][i], vectorI[l][i]);
-							sprintf(vectorString, "%s%s %s", vectorString, respR, respI);
+							appendToDynamicTextBuffer(vectorString, std::string(respR) + " " + respI);
 						}
 						i++;
 					}
@@ -7006,7 +7031,7 @@ void convert2Vector(char* arithTrig) {
 					}
 
 					if (l < countLines) {
-						sprintf(vectorString, "%s*", vectorString);
+						appendToDynamicTextBuffer(vectorString, "*");
 					}
 					l++;
 				}
@@ -7034,15 +7059,15 @@ char* convertVector2String(T** vectorR, T** vectorI, int numLines, int numCols) 
 		for (j = 0; j < numCols; j++) {
 			if (j < numCols - 1) {
 				convertComplex2Exponential(vectorR[i][j], vectorI[i][j]);
-				sprintf(string, "%s%s %s:", string, respR, respI);
+				appendToDynamicTextBuffer(string, std::string(respR) + " " + respI + ":");
 			}
 			else {
 				convertComplex2Exponential(vectorR[i][j], vectorI[i][j]);
-				sprintf(string, "%s%s %s", string, respR, respI);
+				appendToDynamicTextBuffer(string, std::string(respR) + " " + respI);
 			}
 		}
 		if (i < numLines - 1) {
-			sprintf(string, "%s*", string);
+			appendToDynamicTextBuffer(string, "*");
 		}
 	}
 	sprintf(returnCharArray, "%s", string);
@@ -7056,6 +7081,9 @@ int colsNumber(char* values) {
 	if (higherPrecision == 1) initialProcessor<mp_float>(values, (mp_float)0); else initialProcessor<double>(values, 0.0);
 	if (abs((int)strlen(matrixResult)) > 0) {
 		sprintf(values, "%s", matrixResult);
+	}
+	else if (isContained(":", matrixValue) || isContained("*", matrixValue)) {
+		sprintf(values, "%s", matrixValue);
 	}
 	matrixMode = 0;
 	int numberCols = 0;
@@ -7095,6 +7123,9 @@ int linesNumber(char* values) {
 	if (higherPrecision == 1) initialProcessor<mp_float>(values, (mp_float)0); else initialProcessor<double>(values, 0.0);
 	if (abs((int)strlen(matrixResult)) > 0) {
 		sprintf(values, "%s", matrixResult);
+	}
+	else if (isContained(":", matrixValue) || isContained("*", matrixValue)) {
+		sprintf(values, "%s", matrixValue);
 	}
 	matrixMode = 0;
 	int numberLines = 0;

@@ -3265,7 +3265,7 @@ T initialProcessor(char* arithTrig, T result) {
 		}
 		if (arTrig[j] == '*') {
 			if (signalVectors[j + 1] != -1 && signalVectors[j] != -1) {
-				convert2Vector(matrixResult);
+				convert2Vector(vectors[signalVectors[j]]);
 				int n = 0;
 				int m = 0;
 				for (n = 0; n < numVectorLines; n++) {
@@ -3374,7 +3374,7 @@ T initialProcessor(char* arithTrig, T result) {
 		}
 		if (arTrig[j] == '-') {
 			if (signalVectors[j + 1] != -1 && signalVectors[j] != -1) {
-				convert2Vector(matrixResult);
+				convert2Vector(vectors[signalVectors[j]]);
 				int n = 0;
 				int m = 0;
 				for (n = 0; n < numVectorLines; n++) {
@@ -3403,7 +3403,7 @@ T initialProcessor(char* arithTrig, T result) {
 		}
 		if (arTrig[j] == '+') {
 			if (signalVectors[j + 1] != -1 && signalVectors[j] != -1) {
-				convert2Vector(matrixResult);
+				convert2Vector(vectors[signalVectors[j]]);
 				int n = 0;
 				int m = 0;
 				for (n = 0; n < numVectorLines; n++) {

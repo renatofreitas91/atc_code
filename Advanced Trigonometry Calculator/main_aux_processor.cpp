@@ -1318,7 +1318,7 @@ T main_core(char* arithTrig, char* fTrig, FILE*& fout, char* path, T result1, T 
 		}
 		verify = 0;
 		for (s = 0; s < abs((int)strlen(arithTrig)); s++) {
-			if (arithTrig[s] == 'B' || arithTrig[s] == 'O' || arithTrig[s] == 'H' || arithTrig[s] == '_' || arithTrig[s] == '{' || arithTrig[s] == '(' || arithTrig[s] == '+' || arithTrig[s] == '-' || arithTrig[s] == '*' || arithTrig[s] == '/' || arithTrig[s] == '^' || arithTrig[s] == '0' || arithTrig[s] == '1' || arithTrig[s] == '2' || arithTrig[s] == '3' || arithTrig[s] == '4' || arithTrig[s] == '5' || arithTrig[s] == '6' || arithTrig[s] == '7' || arithTrig[s] == '8' || arithTrig[s] == '9' || (arithTrig[s] == 'r' && arithTrig[s + 1] == 'e' && arithTrig[s + 2] == 's') || (arithTrig[s] == 'a' && arithTrig[s + 1] == 'n' && arithTrig[s + 2] == 's') || (arithTrig[s] == 'e' && ((arithTrig[s + 1] == 'e' || arithTrig[s + 1] == '\0' && s == 0 || arithTrig[s + 1] == ')' || arithTrig[s + 1] == 'p' || arithTrig[s - 1] == '_') || (arithTrig[s - 1] == 'e' || arithTrig[s - 1] == '(' || arithTrig[s - 1] == 'i' && arithTrig[s - 2] != 't'))) || (arithTrig[s] == 'p' && arithTrig[s + 1] == 'i' && ((arithTrig[s + 2] == 'e' || arithTrig[s + 2] == '\0' && s == 0 || arithTrig[s + 2] == ')' || arithTrig[s + 2] == 'p' || arithTrig[s - 1] == '_') || (arithTrig[s - 1] == 'e' || arithTrig[s - 1] == '(' || arithTrig[s - 1] == 'i')))) {
+			if (arithTrig[s] == 'B' || arithTrig[s] == 'O' || arithTrig[s] == 'H' || arithTrig[s] == '_' || arithTrig[s] == '{' || arithTrig[s] == '(' || arithTrig[s] == '+' || arithTrig[s] == '-' || arithTrig[s] == '*' || arithTrig[s] == '/' || arithTrig[s] == '^' || arithTrig[s] == '0' || arithTrig[s] == '1' || arithTrig[s] == '2' || arithTrig[s] == '3' || arithTrig[s] == '4' || arithTrig[s] == '5' || arithTrig[s] == '6' || arithTrig[s] == '7' || arithTrig[s] == '8' || arithTrig[s] == '9' || (arithTrig[s] == 'r' && s + 2 < (int)strlen(arithTrig) && arithTrig[s + 1] == 'e' && arithTrig[s + 2] == 's') || (arithTrig[s] == 'a' && s + 2 < (int)strlen(arithTrig) && arithTrig[s + 1] == 'n' && arithTrig[s + 2] == 's') || (arithTrig[s] == 'e' && ((arithTrig[s + 1] == 'e' || arithTrig[s + 1] == '\0' && s == 0 || arithTrig[s + 1] == ')' || arithTrig[s + 1] == 'p' || (s > 0 && arithTrig[s - 1] == '_')) || ((s > 0 && arithTrig[s - 1] == 'e') || (s > 0 && arithTrig[s - 1] == '(') || (s > 0 && arithTrig[s - 1] == 'i') && (s < 2 || arithTrig[s - 2] != 't')))) || (arithTrig[s] == 'p' && arithTrig[s + 1] == 'i' && ((arithTrig[s + 2] == 'e' || arithTrig[s + 2] == '\0' && s == 0 || arithTrig[s + 2] == ')' || arithTrig[s + 2] == 'p' || (s > 0 && arithTrig[s - 1] == '_')) || ((s > 0 && arithTrig[s - 1] == 'e') || (s > 0 && arithTrig[s - 1] == '(') || (s > 0 && arithTrig[s - 1] == 'i'))))) {
 				verify = 1;
 			}
 		}
@@ -2314,15 +2314,14 @@ T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, c
 						if (matrixMode == 1) {
 
 							convert2Vector(matrixResult);
-							char* report = getDynamicCharArray("", "report");
+							std::string report;
 							for (i = 0; i < numVectorLines; i++) {
 								for (int k = 0; k < numVectorCols; k++) {
 									convertComplex2Exponential(vectorR[i][k], vectorI[i][k]);
-									sprintf(report, "%s%s+%si ", report, respR, respI);
+									report += std::string(respR) + "+" + respI + "i ";
 								}
-								sprintf(report, "%s\n", report);
+								report += '\n';
 							}
-							_delete(report, "report"); report = nullptr;
 
 						}
 						if (matrixMode == 1) {
@@ -2379,17 +2378,17 @@ T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, c
 					if (matrixMode == 1 && abs((int)strlen(matrixResult) > 0)) {
 
 						convert2Vector(matrixResult);
-						char* report = getDynamicCharArray("", "report");
+						std::string report;
 						for (i = 0; i < numVectorLines; i++) {
 							for (int k = 0; k < numVectorCols; k++) {
 								convertComplex2Exponential(vectorR[i][k], vectorI[i][k]);
-								sprintf(report, "%s%s+%si ", report, respR, respI);
+								report += std::string(respR) + "+" + respI + "i ";
 							}
-							sprintf(report, "%s\n", report);
+							report += '\n';
 						}
 						if (isFromMain == 1) {
 							printf("#%d=\n", rf);
-							puts(report);
+							puts(report.c_str());
 						}
 						if (fout != NULL) {
 							fclose(fout);
@@ -2400,11 +2399,11 @@ T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, c
 							fout = fopen(path, "a+");
 						}
 						if (fout != NULL) {
-							fprintf(fout, "#%d=\n%s", rf, report);
+							fprintf(fout, "#%d=\n%s", rf, report.c_str());
 							fclose(fout);
 							fout = nullptr;
 						}
-						_delete(report, "report"); report = nullptr;
+
 					}
 
 					if (matrixMode == 0 || matrixMode == 2 || abs((int)strlen(matrixResult) == 0)) {
@@ -2493,7 +2492,6 @@ T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, c
 									}
 								}
 							}
-
 
 						}
                         if (dp > -1) {

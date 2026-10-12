@@ -59,8 +59,8 @@
 // É obrigatório incluir os cabeçalhos da Boost que definem o cpp_dec_float and number
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
-// Definição do tipo para alta precisão (50 dígitos decimais)
-typedef boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50>> mp_float;
+// 60 significant digits support a 50-place fractional result.
+typedef boost::multiprecision::number<boost::multiprecision::cpp_dec_float<60>> mp_float;
 
 #include <boost/variant.hpp>
 using PrecisionDoublePointer = boost::variant<double**, mp_float**>;

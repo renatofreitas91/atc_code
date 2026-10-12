@@ -1780,8 +1780,9 @@ bool dataVerifier(char* data, T result1, T result2, int comment, int verify) {
 					}
 				}
 			}
-			w = abs((int)strlen(data)) - 3;
-			if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && isContainedByIndex("+0", data, w - 1) && !isContainedByIndex("+0)", data, w - 1)) {
+			int dataLength = (int)strlen(data);
+			w = dataLength - 3;
+			if (w >= 0 && (data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && isContainedByIndex("+0", data, w - 1) && !isContainedByIndex("+0)", data, w - 1)) {
 				bool detectedDoubleZero = false;
 				if (isContainedByIndex("00", data, abs((int)strlen(data) - 2))) {
 					detectedDoubleZero = true;
@@ -1791,7 +1792,11 @@ bool dataVerifier(char* data, T result1, T result2, int comment, int verify) {
 					if (comment == 1) {
 						puts("\nYour expression is terminating with an arithmetic symbol.\n");
 					}
-					sprintf(data, "%s+0", data);
+				size_t dataCapacity = GetDynamicArraySize(data);
+			size_t currentLength = strlen(data);
+			if (dataCapacity > currentLength + 2) {
+				memmove(data + currentLength, "+0", 3);
+			}
 					decision = false;
 					_delete(function, "function"); function = nullptr;
 					_delete(variable, "variable"); variable = nullptr;
@@ -1807,7 +1812,13 @@ bool dataVerifier(char* data, T result1, T result2, int comment, int verify) {
 
 			}
 			for (w = 0; w < abs((int)strlen(data)); w++) {
-				if ((data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^') && (data[w + 1] == '+' || data[w + 1] == '-' && data[w - 2] != '1' && data[w - 1] != '0' || data[w + 1] == '*' || data[w + 1] == '/' || data[w + 1] == '^' || data[w + 1] == '!')) {
+				bool consecutiveOperator = false;
+				if (w + 1 < (int)strlen(data) && (data[w] == '+' || data[w] == '-' || data[w] == '*' || data[w] == '/' || data[w] == '^')) {
+					char next = data[w + 1];
+					consecutiveOperator = next == '+' || next == '*' || next == '/' || next == '^' || next == '!';
+					if (next == '-' && w > 0 && data[w - 1] != '0' && (w < 2 || data[w - 2] != '1')) consecutiveOperator = true;
+				}
+				if (consecutiveOperator) {
 					verify = 0;
 					if (comment == 1) {
 						puts("\nYour expression has consecutive arithmetic symbols.\n");
@@ -2171,7 +2182,7 @@ bool dataVerifier(char* data, T result1, T result2, int comment, int verify) {
 			}
 		}
 		for (ra = 0; ra < abs((int)strlen(data)); ra++) {
-			if (data[ra] == '_' && data[ra - 1] == '_') {
+			if (data[ra] == '_' && ra > 0 && data[ra - 1] == '_') {
 				decision = false;
 				if (comment == 1) {
 					puts("\nYou don't need to enter \"__\", please use only a symbol \"_\" to represent negative values.\n");

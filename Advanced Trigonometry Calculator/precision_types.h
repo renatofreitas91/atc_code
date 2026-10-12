@@ -4,8 +4,8 @@
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include <boost/variant.hpp>
 
-// High-precision decimal (50 decimal digits)
-using mp_float = boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50>>;
+// 60 significant digits support 50-place fractional output.
+using mp_float = boost::multiprecision::number<boost::multiprecision::cpp_dec_float<60>>;
 
 using PrecisionDoublePointer = boost::variant<double**, mp_float**>;
 using PrecisionPointer = boost::variant<double*, mp_float*>;
