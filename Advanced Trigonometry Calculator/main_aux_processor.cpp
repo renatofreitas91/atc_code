@@ -1176,7 +1176,7 @@ T main_core(char* arithTrig, char* fTrig, FILE*& fout, char* path, T result1, T 
 	variable[0] = '\0';
 	if (!isContained("opentxt", arithTrig) && !isContained("open txt", arithTrig)) {
 		for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-			if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == ':' && arithTrig[i + 1] == '\\') {
+			if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i] == ':' && arithTrig[i + 1] == '\\') {
 				txt = 1;
 			}
 		}
@@ -1196,7 +1196,7 @@ T main_core(char* arithTrig, char* fTrig, FILE*& fout, char* path, T result1, T 
 			str = 1;
 		}
 		else {
-			if ((arithTrig[i - 6] == 'p' && arithTrig[i - 5] == 'r' && arithTrig[i - 4] == 'i' && arithTrig[i - 3] == 'n' && arithTrig[i - 2] == 't' && arithTrig[i - 1] == '(') == true) {
+			if (i >= 6 && (arithTrig[i - 6] == 'p' && arithTrig[i - 5] == 'r' && arithTrig[i - 4] == 'i' && arithTrig[i - 3] == 'n' && arithTrig[i - 2] == 't' && arithTrig[i - 1] == '(')) == true) {
 				run_del_space = 0;
 			}
 		}

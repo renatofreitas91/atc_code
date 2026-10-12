@@ -1339,8 +1339,8 @@ void substituteExistingScalarVariables(char* expression) {
 				v++; i++;
 			}
 			variable[v] = '\0';
-			if (start == 0 && expression[i] == '=') {
-				sprintf(rebuilt, "%s%s", rebuilt, variable);
+			if (expression[i] == '(' || (start == 0 && expression[i] == '=')) {
+				strcat(rebuilt, variable);
 				continue;
 			}
 			sprintf(matrixValue, "");
@@ -1349,19 +1349,19 @@ void substituteExistingScalarVariables(char* expression) {
 				std::string realVariableValue = formatVariableScalarExpressionValue(resultR);
 				std::string imagVariableValue = formatVariableScalarExpressionValue(resultI);
 				if (precisionValueTo<double>(resultI) == 0.0) {
-					sprintf(rebuilt, "%s(%s)", rebuilt, realVariableValue.c_str());
+					strcat(rebuilt, ("(" + realVariableValue + ")").c_str());
 				}
 				else {
 					if (precisionValueTo<double>(resultI) >= 0.0) {
-						sprintf(rebuilt, "%s(%s+%si)", rebuilt, realVariableValue.c_str(), imagVariableValue.c_str());
+						strcat(rebuilt, ("(" + realVariableValue + "+" + imagVariableValue + "i)").c_str());
 					}
 					else {
-						sprintf(rebuilt, "%s(%s%si)", rebuilt, realVariableValue.c_str(), imagVariableValue.c_str());
+						strcat(rebuilt, ("(" + realVariableValue + imagVariableValue + "i)").c_str());
 					}
 				}
 			}
 			else {
-				sprintf(rebuilt, "%s%s", rebuilt, variable);
+				strcat(rebuilt, variable);
 			}
 		}
 		else {
@@ -1453,7 +1453,7 @@ void variableToMultiply(char* expression) {
 					i++;
 				}
 			}
-			if (verifyLetter(expression[i]) && (verifyLetter(expression[i - 1]) == false || i == 0) && !isInsideDelimitedFunctionHeader(expression, i)) {
+			if (verifyLetter(expression[i]) && (i == 0 || verifyLetter(expression[i - 1]) == false) && !isInsideDelimitedFunctionHeader(expression, i)) {
 				j = 0;
 				u = i;
 				validVar = 0;
@@ -1665,7 +1665,7 @@ void toMultiply(char* expression, T result1, T result2) {
 				}
 			}
 			else {
-				if (verifyLetter(expression[i - 1]) == 0 && firstLetterVariable(expression[i]) && !isInsideDelimitedFunctionHeader(expression, i)) {
+				if ((i == 0 || verifyLetter(expression[i - 1]) == 0) && firstLetterVariable(expression[i]) && !isInsideDelimitedFunctionHeader(expression, i)) {
 					while (verifyLetter(expression[i]) && i < abs((int)strlen(expression)) && !isInsideDelimitedFunctionHeader(expression, i)) {
 						value[j] = expression[i];
 						j++; i++;
@@ -2203,7 +2203,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 					while (verifyNumerical(arithTrig[i])) {
 						i++;
 					}
-					if (arithTrig[i - 1] == '1' && arithTrig[i] == 'i') {
+					if (i > 0 && arithTrig[i - 1] == '1' && arithTrig[i] == 'i') {
 						j = i;
 						i = abs((int)strlen(arithTrig)) + 1;
 						while (i > j) {
@@ -2221,7 +2221,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 					while (verifyNumerical(arithTrig[i])) {
 						i++;
 					}
-					if (arithTrig[i - 1] == '1' && arithTrig[i] == 'i') {
+					if (i > 0 && arithTrig[i - 1] == '1' && arithTrig[i] == 'i') {
 						needOne = 1;
 					}
 				}
@@ -2237,7 +2237,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needOne == 1) {
 			needOne = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1' && arithTrig[i - 1] != 'i' && arithTrig[i - 1] != 'p' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == false) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1' && arithTrig[i - 1] != 'i' && arithTrig[i - 1] != 'p' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == false) {
 					j = i;
 					i = abs((int)strlen(arithTrig)) + 1;
 					while (i > j) {
@@ -2249,7 +2249,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1' && arithTrig[i - 1] != 'i' && arithTrig[i - 1] != 'p' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == false) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1' && arithTrig[i - 1] != 'i' && arithTrig[i - 1] != 'p' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == false) {
 					needOne = 1;
 				}
 			}
@@ -2265,7 +2265,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needAst == 1) {
 			needAst = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1])) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1])) {
 					j = i + 1;
 					i = abs((int)strlen(arithTrig));
 					while (i > j) {
@@ -2276,7 +2276,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1])) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1])) {
 					needAst = 1;
 				}
 			}
@@ -2286,7 +2286,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needAst == 1) {
 			needAst = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
 					j = i + 2;
 					i = abs((int)strlen(arithTrig));
 					while (i > j) {
@@ -2297,7 +2297,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
 					needAst = 1;
 				}
 			}
@@ -2307,7 +2307,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needAst == 1) {
 			needAst = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != 'b' && arithTrig[i - 1] != 'D' && arithTrig[i - 2] != 't' && arithTrig[i - 3] != 'r' && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2]) == false) {
+				if (i >= 3 && verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != 'b' && arithTrig[i - 1] != 'D' && arithTrig[i - 2] != 't' && arithTrig[i - 3] != 'r' && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2]) == false) {
 					j = i;
 					i = abs((int)strlen(arithTrig));
 					while (i > j) {
@@ -2319,7 +2319,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != 'b' && arithTrig[i - 1] != 'D' && arithTrig[i - 2] != 't' && arithTrig[i - 3] != 'r' && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2]) == false) {
+				if (i >= 3 && verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != 'b' && arithTrig[i - 1] != 'D' && arithTrig[i - 2] != 't' && arithTrig[i - 3] != 'r' && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2]) == false) {
 					needAst = 1;
 				}
 			}
@@ -2329,7 +2329,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needAst == 1) {
 			needAst = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1]) == false) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1]) == false) {
 					j = i;
 					i = abs((int)strlen(arithTrig));
 					while (i > j) {
@@ -2341,7 +2341,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1]) == false) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1]) == false) {
 					needAst = 1;
 				}
 			}
@@ -2355,7 +2355,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needAst == 1) {
 			needAst = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
 					if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') {
 						while (verifyLetter(arithTrig[i])) {
 							i--;
@@ -2379,7 +2379,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 						func = nullptr;
 					}
 				}
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
 					j = i;
 					i = abs((int)strlen(arithTrig));
 					while (i > j) {
@@ -2397,7 +2397,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
 					if (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') {
 						while (verifyLetter(arithTrig[i])) {
 							i--;
@@ -2421,7 +2421,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 						func = nullptr;
 					}
 				}
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'p' && arithTrig[i + 1] == 'i' && verifyLetter(arithTrig[i + 2])) {
 					needAst = 1;
 				}
 			}
@@ -2435,7 +2435,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needOne == 1) {
 			needOne = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b') {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b') {
 					j = i + 1;
 					i = abs((int)strlen(arithTrig));
 					while (i > j) {
@@ -2447,7 +2447,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b') {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b') {
 					needOne = 1;
 				}
 			}
@@ -2456,7 +2456,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needOne == 1) {
 			needOne = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1' && arithTrig[i - 1] != 'p' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == 0) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1' && arithTrig[i - 1] != 'p' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == 0) {
 					j = i;
 					i = abs((int)strlen(arithTrig));
 					while (i > j) {
@@ -2468,7 +2468,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1' && arithTrig[i - 1] != 'p' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == 0) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != '1' && arithTrig[i - 1] != 'p' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0 && verifyNumber(arithTrig[i + 1]) == 0) {
 					needOne = 1;
 				}
 			}
@@ -2483,7 +2483,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 			valRenamedVar = 0;
 			bool entered = false;
 			for (i = mark1; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1]) && needAst == 1 && (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b')) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1]) && needAst == 1 && (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b')) {
 					int countB = countOccurrences("b", arithTrig);
 					int countD = countOccurrences("D", arithTrig);
 					if (countB >= 2 || countD >= 2) {
@@ -2512,7 +2512,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 						func = nullptr;
 					}
 				}
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1]) && needAst == 1) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i] == 'e' && verifyLetter(arithTrig[i + 1]) && needAst == 1) {
 
 					entered = true;
 					mark1 = i + 1;
@@ -2645,7 +2645,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 			}
 
 			for (i = mark; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != 'r' && arithTrig[i] == 'e' && arithTrig[i + 1] != 's' && verifyLetter(arithTrig[i + 1]) && (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b')) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != 'r' && arithTrig[i] == 'e' && arithTrig[i + 1] != 's' && verifyLetter(arithTrig[i + 1]) && (arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b')) {
 					int countB = countOccurrences("b", arithTrig);
 					int countD = countOccurrences("D", arithTrig);
 					if (countB >= 2 || countD >= 2) {
@@ -2675,7 +2675,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 					}
 				}
 
-				if (verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != 'r' && arithTrig[i] == 'e' && arithTrig[i + 1] != 's' && verifyLetter(arithTrig[i + 1]) && entered) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) && arithTrig[i - 1] != 'r' && arithTrig[i] == 'e' && arithTrig[i + 1] != 's' && verifyLetter(arithTrig[i + 1]) && entered) {
 					mark = i + 1;
 					needAst = 1;
 				}
@@ -2714,7 +2714,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 					u++;
 				}
 			}
-			if (firstLetterVariable(paTrig[u]) && firstLetterVariable(paTrig[u - 1]) == 0 && paTrig[u + 1] != 'i' && !isInsideDelimitedFunctionHeader(paTrig, u)) {
+			if (firstLetterVariable(paTrig[u]) && (u == 0 || firstLetterVariable(paTrig[u - 1]) == 0) && paTrig[u + 1] != 'i' && !isInsideDelimitedFunctionHeader(paTrig, u)) {
 				u++;
 				while (verifyLetter(paTrig[u])) {
 					u++;
@@ -2724,7 +2724,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 					if (verifyLetter(paTrig[u - 1])) {
 						int z = u - 1, v = 0;
 						char* toVal = getDynamicCharArray("", "toVal");
-						while (verifyLetter(paTrig[z])) {
+						while (z > 0 && verifyLetter(paTrig[z])) {
 							z--;
 						}
 						z++;
@@ -2758,7 +2758,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needAst == 1) {
 			needAst = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i - 1] != '(' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b') {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i - 1] != '(' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b') {
 					j = i + 1;
 					i = abs((int)strlen(arithTrig));
 					int comp = 0;
@@ -2783,7 +2783,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i - 1] != '(' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b') {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i - 1] != '(' && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b') {
 					needAst = 1;
 				}
 			}
@@ -2800,7 +2800,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 					i = strEnd;
 				}
 				else {
-					if ((verifyLetter(arithTrig[i - 1]) || verifyNumber(arithTrig[i - 1])) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D' && arithTrig[i - 1] != 'b' && arithTrig[i] == 'i' && arithTrig[i - 1] != '1' && arithTrig[i - 1] != '(' && verifyLetter(arithTrig[i + 1]) == 0) {
+					if (i > 0 && (verifyLetter(arithTrig[i - 1]) || verifyNumber(arithTrig[i - 1])) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D' && arithTrig[i - 1] != 'b' && arithTrig[i] == 'i' && arithTrig[i - 1] != '1' && arithTrig[i - 1] != '(' && verifyLetter(arithTrig[i + 1]) == 0) {
 						j = i;
 						i = abs((int)strlen(arithTrig)) + 1;
 						while (i > j) {
@@ -2813,7 +2813,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if ((verifyLetter(arithTrig[i - 1]) || verifyNumber(arithTrig[i - 1])) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D' && arithTrig[i - 1] != 'b' && arithTrig[i] == 'i' && arithTrig[i - 1] != '1' && arithTrig[i - 1] != '(' && verifyLetter(arithTrig[i + 1]) == 0) {
+				if (i > 0 && (verifyLetter(arithTrig[i - 1]) || verifyNumber(arithTrig[i - 1])) && arithTrig[i - 1] != 'p' && arithTrig[i - 1] != 'D' && arithTrig[i - 1] != 'b' && arithTrig[i] == 'i' && arithTrig[i - 1] != '1' && arithTrig[i - 1] != '(' && verifyLetter(arithTrig[i + 1]) == 0) {
 					needAst = 1;
 				}
 			}
@@ -2823,7 +2823,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needAst == 1) {
 			needAst = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if ((arithTrig[i - 1] == ')' || arithTrig[i - 1] == ']') && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0) {
+				if (i > 0 && (arithTrig[i - 1] == ')' || arithTrig[i - 1] == ']') && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0) {
 					j = i;
 					i = abs((int)strlen(arithTrig)) + 1;
 					while (i > j) {
@@ -2835,7 +2835,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if ((arithTrig[i - 1] == ')' || arithTrig[i - 1] == ']') && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0) {
+				if (i > 0 && (arithTrig[i - 1] == ')' || arithTrig[i - 1] == ']') && arithTrig[i] == 'i' && verifyLetter(arithTrig[i + 1]) == 0) {
 					needAst = 1;
 				}
 			}
@@ -2845,7 +2845,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needAst == 1) {
 			needAst = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && arithTrig[i + 1] == '(') {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && arithTrig[i + 1] == '(') {
 					j = i + 1;
 					i = abs((int)strlen(arithTrig));
 					int comp = 0;
@@ -2870,7 +2870,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && arithTrig[i + 1] == '(') {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && arithTrig[i + 1] == '(') {
 					needAst = 1;
 				}
 			}
@@ -2884,7 +2884,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needAst == 1) {
 			needAst = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) || verifyNumber(arithTrig[i + 1]) || arithTrig[i + 1] == '#')) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) || verifyNumber(arithTrig[i + 1]) || arithTrig[i + 1] == '#')) {
 					j = i;
 					i = abs((int)strlen(arithTrig)) + 1;
 					while (i > j) {
@@ -2896,7 +2896,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 			}
 			needAst = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) || verifyNumber(arithTrig[i + 1]) || arithTrig[i + 1] == '#')) {
+				if (i > 0 && verifyLetter(arithTrig[i - 1]) == 0 && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) || verifyNumber(arithTrig[i + 1]) || arithTrig[i + 1] == '#')) {
 					needAst = 1;
 				}
 			}
@@ -2906,7 +2906,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needOne == 1) {
 			needOne = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if ((verifyLetter(arithTrig[i - 1]) == 0 || arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && verifyNumber(arithTrig[i + 1]) == 0 && (verifyLetter(arithTrig[i + 1]) == 0 || arithTrig[i + 1] == 'D' || arithTrig[i + 1] == 'b')) {
+				if (i > 0 && (verifyLetter(arithTrig[i - 1]) == 0 || arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && verifyNumber(arithTrig[i + 1]) == 0 && (verifyLetter(arithTrig[i + 1]) == 0 || arithTrig[i + 1] == 'D' || arithTrig[i + 1] == 'b')) {
 					j = i;
 					i = abs((int)strlen(arithTrig));
 					while (i > j) {
@@ -2918,14 +2918,14 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if ((verifyLetter(arithTrig[i - 1]) == 0 || arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && verifyNumber(arithTrig[i + 1]) == 0 && (verifyLetter(arithTrig[i + 1]) == 0 || arithTrig[i + 1] == 'D' || arithTrig[i + 1] == 'b')) {
+				if (i > 0 && (verifyLetter(arithTrig[i - 1]) == 0 || arithTrig[i - 1] == 'D' || arithTrig[i - 1] == 'b') && verifyNumber(arithTrig[i - 1]) == 0 && arithTrig[i] == 'i' && verifyNumber(arithTrig[i + 1]) == 0 && (verifyLetter(arithTrig[i + 1]) == 0 || arithTrig[i + 1] == 'D' || arithTrig[i + 1] == 'b')) {
 					needOne = 1;
 				}
 			}
 		}
 		bool imaginary = false;
 		for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-			if (arithTrig[i - 1] == '/' && (verifyLetter(arithTrig[i]) || verifyNumber(arithTrig[i]) || arithTrig[i] == '#' || arithTrig[i] == '1' && arithTrig[i + 1] == 'i')) {
+			if (i > 0 && arithTrig[i - 1] == '/' && (verifyLetter(arithTrig[i]) || verifyNumber(arithTrig[i]) || arithTrig[i] == '#' || arithTrig[i] == '1' && arithTrig[i + 1] == 'i')) {
 				int y = 0;
 				char* express = getDynamicCharArray("", "express");
 				if (arithTrig[i] == '1' && arithTrig[i + 1] == 'i') {
@@ -3057,7 +3057,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		while (needAst == 1) {
 			needAst = 0;
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (arithTrig[i - 1] == '1' && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b' || verifyNumber(arithTrig[i + 1]))) {
+				if (i > 0 && arithTrig[i - 1] == '1' && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b' || verifyNumber(arithTrig[i + 1]))) {
 					j = i + 1;
 					i = abs((int)strlen(arithTrig));
 					while (i > j) {
@@ -3068,7 +3068,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				}
 			}
 			for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-				if (arithTrig[i - 1] == '1' && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b' || verifyNumber(arithTrig[i + 1]))) {
+				if (i > 0 && arithTrig[i - 1] == '1' && arithTrig[i] == 'i' && (verifyLetter(arithTrig[i + 1]) && arithTrig[i + 1] != 'D' && arithTrig[i + 1] != 'b' || verifyNumber(arithTrig[i + 1]))) {
 					needAst = 1;
 				}
 			}
@@ -5284,8 +5284,12 @@ template double convertToNumber<double>(char* number);
 template mp_float convertToNumber<mp_float>(char* number);
 template <typename T>
 T convertToNumber(char* number) {
-	if (number[abs((int)strlen(number)) - 1] == '0' && number[abs((int)strlen(number)) - 2] == '.') {
-		number[abs((int)strlen(number)) - 2] = '\0';
+	int numberLength = abs((int)strlen(number));
+	if (numberLength == 0) {
+		return (T)0;
+	}
+	if (numberLength >= 2 && number[numberLength - 1] == '0' && number[numberLength - 2] == '.') {
+		number[numberLength - 2] = '\0';
 	}
 	char* beforeDot = getDynamicCharArray("", "beforeDot");
 	sprintf(beforeDot, "");

@@ -1965,6 +1965,11 @@ static std::string formatEquationRootPart(double value) {
 	return formatted;
 }
 
+static void appendEquationAnswer(const std::string& line) {
+	std::string updated = std::string(answers) + line;
+	sprintf(answers, "%s", updated.c_str());
+}
+
 static bool solvePureBinomialEquation(const char* source) {
 	std::string normalized = normalizeSimplePolynomialText(source);
 	std::vector<double> coefficients;
@@ -1986,7 +1991,7 @@ static bool solvePureBinomialEquation(const char* source) {
 	if (std::fabs(rhs) < 1E-12) {
 		sprintf(answers, "");
 		for (int i = 1; i <= degree; i++) {
-			sprintf(answers, "%sx%d=0\n", answers, i);
+			appendEquationAnswer("x" + std::to_string(i) + "=0\n");
 		}
 		return true;
 	}
@@ -2000,13 +2005,13 @@ static bool solvePureBinomialEquation(const char* source) {
 		std::string realText = formatEquationRootPart(real);
 		std::string imaginaryText = formatEquationRootPart(std::fabs(imaginary));
 		if (std::fabs(imaginary) < 5E-7) {
-			sprintf(answers, "%sx%d=%s\n", answers, outputIndex, realText.c_str());
+			appendEquationAnswer("x" + std::to_string(outputIndex) + "=" + realText + "\n");
 		}
 		else if (imaginary > 0) {
-			sprintf(answers, "%sx%d=%s+%si\n", answers, outputIndex, realText.c_str(), imaginaryText.c_str());
+			appendEquationAnswer("x" + std::to_string(outputIndex) + "=" + realText + "+" + imaginaryText + "i\n");
 		}
 		else {
-			sprintf(answers, "%sx%d=%s-%si\n", answers, outputIndex, realText.c_str(), imaginaryText.c_str());
+			appendEquationAnswer("x" + std::to_string(outputIndex) + "=" + realText + "-" + imaginaryText + "i\n");
 		}
 		outputIndex++;
 	};
@@ -2117,13 +2122,13 @@ static void appendEquationRoot(int index, const std::complex<double>& root) {
 	std::string realText = formatEquationRootPart(real);
 	std::string imaginaryText = formatEquationRootPart(std::fabs(imaginary));
 	if (imaginary == 0.0) {
-		sprintf(answers, "%sx%d=%s\n", answers, index, realText.c_str());
+		appendEquationAnswer("x" + std::to_string(index) + "=" + realText + "\n");
 	}
 	else if (imaginary > 0.0) {
-		sprintf(answers, "%sx%d=%s+%si\n", answers, index, realText.c_str(), imaginaryText.c_str());
+		appendEquationAnswer("x" + std::to_string(index) + "=" + realText + "+" + imaginaryText + "i\n");
 	}
 	else {
-		sprintf(answers, "%sx%d=%s-%si\n", answers, index, realText.c_str(), imaginaryText.c_str());
+		appendEquationAnswer("x" + std::to_string(index) + "=" + realText + "-" + imaginaryText + "i\n");
 	}
 }
 

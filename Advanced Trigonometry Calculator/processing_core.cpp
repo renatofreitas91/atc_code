@@ -1781,7 +1781,7 @@ T initialProcessor(char* arithTrig, T result) {
 				u++;
 			}
 		}
-		if (firstLetterVariable(paTrig[u]) == 1 && firstLetterVariable(paTrig[u - 1]) == 0 && paTrig[u + 1] != 'i') {
+		if (firstLetterVariable(paTrig[u]) == 1 && (u == 0 || firstLetterVariable(paTrig[u - 1]) == 0) && paTrig[u + 1] != 'i') {
 			u++;
 			while (verifyLetter(paTrig[u]) == 1) {
 				u++;
@@ -1791,11 +1791,11 @@ T initialProcessor(char* arithTrig, T result) {
 				if (verifyLetter(paTrig[u - 1]) == 1) {
 					int z = u - 1, v = 0;
 					char* toVal = getDynamicCharArray(" ", "toVal");
-					while (verifyLetter(paTrig[z]) == 1) {
+					while (z > 0 && verifyLetter(paTrig[z]) == 1) {
 						z--;
 					}
 					z++;
-					while (verifyLetter(paTrig[z]) == 1) {
+					while (z > 0 && verifyLetter(paTrig[z]) == 1) {
 						toVal[v] = paTrig[z];
 						z++; v++;
 					}
@@ -1857,7 +1857,7 @@ T initialProcessor(char* arithTrig, T result) {
 	}
 	s = 0;
 	for (s; s < abs((int)strlen(paTrig)); s++) {
-		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'i' && paTrig[s + 1] != 'e' && paTrig[s - 1] == 'p' || (paTrig[s - 1] == 'v' && paTrig[s - 2] == 'l' && paTrig[s - 3] == 'o' && paTrig[s - 4] == 's' && paTrig[s + 1] == 'r') == false && paTrig[s] == 'e' && paTrig[s - 1] != 'c' && paTrig[s - 1] != 'd' && paTrig[s - 1] != 'r' && paTrig[s - 1] != 's' && paTrig[s - 1] != 'i' && paTrig[s + 2] != 't' || paTrig[s] == ')') && (paTrig[s + 1] == '(' || paTrig[s + 1] == 'a' || paTrig[s + 1] == 's' || paTrig[s + 1] == 'c' || (paTrig[s + 1] == 't' && paTrig[s - 1] != 'g' && paTrig[s] != 'e') || paTrig[s + 1] == 'l' || paTrig[s + 1] == 'p' || paTrig[s + 1] == 'e' || paTrig[s + 1] == 'r' && paTrig[s + 2] != 'r' || paTrig[s + 1] == 'd' || paTrig[s + 1] == 'm' || paTrig[s + 1] == 'q' || paTrig[s + 1] == 'g' && paTrig[s - 1] != 'd')) {
+		if (s > 0 && (paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'i' && paTrig[s + 1] != 'e' && paTrig[s - 1] == 'p' || (paTrig[s - 1] == 'v' && paTrig[s - 2] == 'l' && paTrig[s - 3] == 'o' && paTrig[s - 4] == 's' && paTrig[s + 1] == 'r') == false && paTrig[s] == 'e' && paTrig[s - 1] != 'c' && paTrig[s - 1] != 'd' && paTrig[s - 1] != 'r' && paTrig[s - 1] != 's' && paTrig[s - 1] != 'i' && paTrig[s + 2] != 't' || paTrig[s] == ')') && (paTrig[s + 1] == '(' || paTrig[s + 1] == 'a' || paTrig[s + 1] == 's' || paTrig[s + 1] == 'c' || (paTrig[s + 1] == 't' && paTrig[s - 1] != 'g' && paTrig[s] != 'e') || paTrig[s + 1] == 'l' || paTrig[s + 1] == 'p' || paTrig[s + 1] == 'e' || paTrig[s + 1] == 'r' && paTrig[s + 2] != 'r' || paTrig[s + 1] == 'd' || paTrig[s + 1] == 'm' || paTrig[s + 1] == 'q' || paTrig[s + 1] == 'g' && paTrig[s - 1] != 'd')) {
 			s++;
 			arithTrig[s] = '*';
 			for (s; s < abs((int)strlen(paTrig)); s++) {
@@ -1874,7 +1874,7 @@ T initialProcessor(char* arithTrig, T result) {
 	}
 	s = 0;
 	for (s; s < abs((int)strlen(paTrig)); s++) {
-		if ((paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'p' || paTrig[s] == 'e' || verifyLetter(paTrig[s]) == 1 && paTrig[s] != 'b' && paTrig[s] != 'D') && (paTrig[s - 1] == ')')) {
+		if (s > 0 && (paTrig[s] == '1' || paTrig[s] == '2' || paTrig[s] == '3' || paTrig[s] == '4' || paTrig[s] == '5' || paTrig[s] == '6' || paTrig[s] == '7' || paTrig[s] == '8' || paTrig[s] == '9' || paTrig[s] == '0' || paTrig[s] == 'p' || paTrig[s] == 'e' || verifyLetter(paTrig[s]) == 1 && paTrig[s] != 'b' && paTrig[s] != 'D') && paTrig[s - 1] == ')') {
 			arithTrig[s] = '*';
 			for (s; s < abs((int)strlen(paTrig)); s++) {
 				arithTrig[s + 1] = paTrig[s];
@@ -1890,7 +1890,7 @@ T initialProcessor(char* arithTrig, T result) {
 	}
 	s = 0;
 	for (s; s < abs((int)strlen(paTrig)); s++) {
-		if ((paTrig[s + 1] == '1' || paTrig[s + 1] == '2' || paTrig[s + 1] == '3' || paTrig[s + 1] == '4' || paTrig[s + 1] == '5' || paTrig[s + 1] == '6' || paTrig[s + 1] == '7' || paTrig[s + 1] == '8' || paTrig[s + 1] == '9' || paTrig[s + 1] == '0' || paTrig[s + 1] == 'p' || paTrig[s + 1] == 'e') && (paTrig[s - 1] == 'p' && paTrig[s] == 'i' && paTrig[s + 1] != 'e' || paTrig[s] == 'e' && paTrig[s - 1] != 'i')) {
+		if (s > 0 && (paTrig[s + 1] == '1' || paTrig[s + 1] == '2' || paTrig[s + 1] == '3' || paTrig[s + 1] == '4' || paTrig[s + 1] == '5' || paTrig[s + 1] == '6' || paTrig[s + 1] == '7' || paTrig[s + 1] == '8' || paTrig[s + 1] == '9' || paTrig[s + 1] == '0' || paTrig[s + 1] == 'p' || paTrig[s + 1] == 'e') && (paTrig[s - 1] == 'p' && paTrig[s] == 'i' && paTrig[s + 1] != 'e' || paTrig[s] == 'e' && paTrig[s - 1] != 'i')) {
 			s++;
 			arithTrig[s] = '*';
 			for (s; s < abs((int)strlen(paTrig)); s++) {
@@ -1923,7 +1923,7 @@ T initialProcessor(char* arithTrig, T result) {
 	}
 	s = 0;
 	for (s; s < abs((int)strlen(paTrig)); s++) {
-		if ((paTrig[s - 2] == 'r' && paTrig[s - 1] == 'e' && paTrig[s] == 's' && paTrig[s + 2] != '(' && paTrig[s + 1] != '!' && verifyLetter(paTrig[s + 1]) == 0) && (paTrig[s + 1] != '+' && paTrig[s + 1] != '-' && paTrig[s + 1] != '*' && paTrig[s + 1] != '/' && paTrig[s + 1] != '^' && paTrig[s + 1] != ')' && paTrig[s + 1] != 'b')) {
+		if (s >= 2 && (paTrig[s - 2] == 'r' && paTrig[s - 1] == 'e' && paTrig[s] == 's' && paTrig[s + 2] != '(' && paTrig[s + 1] != '!' && verifyLetter(paTrig[s + 1]) == 0) && (paTrig[s + 1] != '+' && paTrig[s + 1] != '-' && paTrig[s + 1] != '*' && paTrig[s + 1] != '/' && paTrig[s + 1] != '^' && paTrig[s + 1] != ')' && paTrig[s + 1] != 'b')) {
 			s++;
 			arithTrig[s] = '*';
 			for (s; s < abs((int)strlen(paTrig)); s++) {
@@ -1940,7 +1940,7 @@ T initialProcessor(char* arithTrig, T result) {
 	}
 	s = 0;
 	for (s; s < abs((int)strlen(paTrig)); s++) {
-		if ((paTrig[s] == 'e' || paTrig[s - 1] == 'p' && paTrig[s] == 'i') && (paTrig[s + 1] == 'p' && paTrig[s + 2] == 'i' || paTrig[s + 1] == 'e')) {
+		if ((paTrig[s] == 'e' || (s > 0 && paTrig[s - 1] == 'p' && paTrig[s] == 'i')) && (paTrig[s + 1] == 'p' && paTrig[s + 2] == 'i' || paTrig[s + 1] == 'e')) {
 			s++;
 			arithTrig[s] = '*';
 			for (s; s < abs((int)strlen(paTrig)); s++) {
@@ -2103,7 +2103,7 @@ T initialProcessor(char* arithTrig, T result) {
 					if (arithTrig[i] == '_') {
 						thj = 1;
 					}
-					if (arithTrig[i - 1] == '1' || arithTrig[i - 1] == '2' || arithTrig[i - 1] == '3' || arithTrig[i - 1] == '4' || arithTrig[i - 1] == '5' || arithTrig[i - 1] == '6' || arithTrig[i - 1] == '7' || arithTrig[i - 1] == '8' || arithTrig[i - 1] == '9' || arithTrig[i - 1] == '0' || arithTrig[i - 1] == 'i' || arithTrig[i - 1] == 'e' || arithTrig[i - 1] == ')') {
+					if (i > 0 && (arithTrig[i - 1] == '1' || arithTrig[i - 1] == '2' || arithTrig[i - 1] == '3' || arithTrig[i - 1] == '4' || arithTrig[i - 1] == '5' || arithTrig[i - 1] == '6' || arithTrig[i - 1] == '7' || arithTrig[i - 1] == '8' || arithTrig[i - 1] == '9' || arithTrig[i - 1] == '0' || arithTrig[i - 1] == 'i' || arithTrig[i - 1] == 'e' || arithTrig[i - 1] == ')')) {
 						jk = 1;
 					}ju = 0;
 					while (arithTrig[i] != '(' && i < abs((int)strlen(arithTrig))) {
@@ -3686,7 +3686,7 @@ T arithSolver(char* trigon1, T result) {
 					number2[y] = '\0';
 					negImag = 1;
 				}
-				if (number2[abs((int)strlen(number2)) - 4] != 'p' && number2[abs((int)strlen(number2)) - 3] == 'i') {
+				if (strlen(number2) >= 4 && number2[abs((int)strlen(number2)) - 4] != 'p' && number2[abs((int)strlen(number2)) - 3] == 'i') {
 					complex = 1;
 					for (y = abs((int)strlen(number2)) - 3; number2[y + 1] != '\0'; y++) {
 						number2[y] = number2[y + 1];
@@ -4580,7 +4580,7 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 	}
 	i = 0; j = 0;
 	for (s = 0; s < abs((int)strlen(trigon)); s++) {
-		if (((trigon[s - 1] == 'g' && trigon[s] == 'b') && trigon[s - 1] != 'c') || (trigon[s - 1] == 't' && trigon[s] == 'D')) {
+		if (s > 0 && (((trigon[s - 1] == 'g' && trigon[s] == 'b') && trigon[s - 1] != 'c') || (trigon[s - 1] == 't' && trigon[s] == 'D'))) {
 			j = s;
 			s++;
 			while ((trigon[s] == 'b' && trigon[s + 1] == '\0') == false && (trigon[s] == 'D' && trigon[s + 1] == '\0') == false && s < abs((int)strlen(trigon))) {

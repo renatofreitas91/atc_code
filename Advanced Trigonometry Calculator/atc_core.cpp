@@ -485,7 +485,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 				int fl = 1, fr = 0;
 				while (tD < abs((int)strlen(trigData)) && trigData[tD] != ',' && tD < abs((int)strlen(trigData))) {
 
-					if (trigData[tD - 6] == 'p' && trigData[tD - 5] == 'r' && trigData[tD - 4] == 'i' && trigData[tD - 3] == 'n' && trigData[tD - 2] == 't' && trigData[tD - 1] == '(') {
+					if (tD >= 6 && trigData[tD - 6] == 'p' && trigData[tD - 5] == 'r' && trigData[tD - 4] == 'i' && trigData[tD - 3] == 'n' && trigData[tD - 2] == 't' && trigData[tD - 1] == '(') {
 						arithTrig[i] = trigData[tD];
 						i++; tD++;
 						while (fl > fr && tD < abs((int)strlen(trigData))) {
@@ -2219,10 +2219,10 @@ bool dataVerifier(char* data, T result1, T result2, int comment, int verify) {
 			return decision;
 		}
 		for (i = 0; i < abs((int)strlen(data)); i++) {
-			if ((data[i - 1] == 'O' || data[i - 1] == 'H' || data[i - 1] == 'B') && data[i] == '_') {
+			if (i > 0 && (data[i - 1] == 'O' || data[i - 1] == 'H' || data[i - 1] == 'B') && data[i] == '_') {
 				data[i] = '-';
 			}
-			if (data[i] == 'A' || data[i] == 'B' || data[i] == 'C' || (data[i] == 'D' && (data[i - 1] == 't' || data[i + 1] == '(')) || data[i] == 'E' || data[i] == 'F' || data[i] == 'O' || data[i] == 'H' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '0' || data[i] == '.' || data[i] == '_' || data[i] == '!') {
+			if (data[i] == 'A' || data[i] == 'B' || data[i] == 'C' || (data[i] == 'D' && ((i > 0 && data[i - 1] == 't') || data[i + 1] == '(')) || data[i] == 'E' || data[i] == 'F' || data[i] == 'O' || data[i] == 'H' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '0' || data[i] == '.' || data[i] == '_' || data[i] == '!') {
 				v = 1;
 				break;
 			}
@@ -2231,17 +2231,17 @@ bool dataVerifier(char* data, T result1, T result2, int comment, int verify) {
 			v = 0;
 			i = 0;
 			while (i < abs((int)strlen(data))) {
-				if (firstLetterVariable(data[i]) == 1 && (letterVariables(data[i - 1]) == 0 || i == 0)) {
+				if (firstLetterVariable(data[i]) == 1 && (i == 0 || letterVariables(data[i - 1]) == 0)) {
 					while (letterVariables(data[i]) == 1 && i < abs((int)strlen(data))) {
 						text[v] = ' ';
 						v++;
 						i++;
 					}
 				}
-				if ((data[i - 1] == 'O' || data[i - 1] == 'H' || data[i - 1] == 'B') && data[i] == '_') {
+				if (i > 0 && (data[i - 1] == 'O' || data[i - 1] == 'H' || data[i - 1] == 'B') && data[i] == '_') {
 					data[i] = '-';
 				}
-				if (data[i] != '1' && data[i] != '2' && data[i] != '3' && data[i] != '4' && data[i] != '5' && data[i] != '6' && data[i] != '7' && data[i] != '8' && data[i] != '9' && data[i] != '0' && data[i] != '.' && data[i] != '_' && data[i] != '!' && data[i] != 'A' && data[i] != 'B' && data[i] != 'C' && data[i] != 'D' && (data[i - 1] == 't' && data[i + 1] == '(') && data[i] != 'E' && data[i] != 'F' && data[i] != 'O' && data[i] != 'H' && data[i] != '(' && data[i] != ')') {
+				if (data[i] != '1' && data[i] != '2' && data[i] != '3' && data[i] != '4' && data[i] != '5' && data[i] != '6' && data[i] != '7' && data[i] != '8' && data[i] != '9' && data[i] != '0' && data[i] != '.' && data[i] != '_' && data[i] != '!' && data[i] != 'A' && data[i] != 'B' && data[i] != 'C' && data[i] != 'D' && (i > 0 && data[i - 1] == 't' && data[i + 1] == '(') && data[i] != 'E' && data[i] != 'F' && data[i] != 'O' && data[i] != 'H' && data[i] != '(' && data[i] != ')') {
 					text[v] = data[i];
 					v++;
 					i++;
@@ -2349,9 +2349,9 @@ bool dataVerifier(char* data, T result1, T result2, int comment, int verify) {
 				decision = true;
 				i = i + 3;
 			}
-			if (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p' && data[i + 1] == 'i' || data[i - 1] == 'p' && data[i] == 'i') {
+			if (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p' && data[i + 1] == 'i' || (i > 0 && data[i - 1] == 'p' && data[i] == 'i')) {
 				j = 0;
-				while (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p' && data[i + 1] == 'i' || data[i - 1] == 'p' && data[i] == 'i') {
+				while (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p' && data[i + 1] == 'i' || (i > 0 && data[i - 1] == 'p' && data[i] == 'i')) {
 					i++;
 					decision = true;
 					j++;
@@ -2381,7 +2381,7 @@ bool dataVerifier(char* data, T result1, T result2, int comment, int verify) {
 				decision = true;
 				i = i + 5;
 			}
-			if (data[i] == 'a' || data[i] == 's' && data[i - 1] != 'e' && data[i - 2] != 'r' || data[i] == 'c' || data[i] == 't' || data[i] == 'g' || data[i] == 'd' || data[i] == 'l' || data[i] == 'q' || data[i] == 'r' || data[i] == 'm') {
+			if (data[i] == 'a' || data[i] == 's' && (i < 2 || (data[i - 1] != 'e' && data[i - 2] != 'r')) || data[i] == 'c' || data[i] == 't' || data[i] == 'g' || data[i] == 'd' || data[i] == 'l' || data[i] == 'q' || data[i] == 'r' || data[i] == 'm') {
 				decision = true;
 				j = 0;
 				while (data[i] != '(' && i < abs((int)strlen(data)) && i < abs((int)strlen(data))) {
@@ -2613,9 +2613,9 @@ bool dataVerifier(char* data, T result1, T result2, int comment, int verify) {
 					return decision;
 				}
 			}
-			if (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p' && data[i + 1] == 'i' || data[i - 1] == 'p' && data[i] == 'i') {
+			if (data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p' && data[i + 1] == 'i' || (i > 0 && data[i - 1] == 'p' && data[i] == 'i')) {
 				j = 0;
-				while ((data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p' && data[i + 1] == 'i' || data[i - 1] == 'p' && data[i] == 'i') && i < abs((int)strlen(data))) {
+				while ((data[i] == '0' || data[i] == '1' || data[i] == '2' || data[i] == '3' || data[i] == '4' || data[i] == '5' || data[i] == '6' || data[i] == '7' || data[i] == '8' || data[i] == '9' || data[i] == '.' || data[i] == '_' || data[i] == '!' || data[i] == '+' || data[i] == '-' || data[i] == '/' || data[i] == '*' || data[i] == '^' || data[i] == 'e' || data[i] == 'p' && data[i + 1] == 'i' || (i > 0 && data[i - 1] == 'p' && data[i] == 'i')) && i < abs((int)strlen(data))) {
 					i++;
 					decision = true;
 					j++;
