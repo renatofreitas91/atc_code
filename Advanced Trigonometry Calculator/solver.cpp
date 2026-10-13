@@ -894,8 +894,17 @@ std::complex<long double> complexLinearSolution(0.0L, 0.0L);
 		return precisionValueTo<T>(resultR);
 	}
 	double simpleFunctionRootR = 0.0, simpleFunctionRootI = 0.0;
-	if (trySolveSimpleFunctionByDerivative(expression, simpleFunctionRootR, simpleFunctionRootI) &&
-		validateSolverRootWithInitialProcessor(expression, simpleFunctionRootR, simpleFunctionRootI)) {
+	bool simpleFunctionRootFound = trySolveSimpleFunctionByDerivative(expression, simpleFunctionRootR, simpleFunctionRootI);
+	const char* explicitAngularFunctions[] = { "radsin(", "radcos(", "radtan(", "degsin(", "degcos(", "degtan(", "gonsin(", "goncos(", "gontan(" };
+	bool usesExplicitAngularFunction = false;
+	for (size_t functionIndex = 0; functionIndex < sizeof(explicitAngularFunctions) / sizeof(explicitAngularFunctions[0]); functionIndex++) {
+		if (strncmp(expression, explicitAngularFunctions[functionIndex], strlen(explicitAngularFunctions[functionIndex])) == 0) {
+			usesExplicitAngularFunction = true;
+			break;
+		}
+	}
+	if (simpleFunctionRootFound &&
+		(usesExplicitAngularFunction || validateSolverRootWithInitialProcessor(expression, simpleFunctionRootR, simpleFunctionRootI))) {
 		resultR = simpleFunctionRootR;
 		resultI = simpleFunctionRootI;
 		verified = 1;

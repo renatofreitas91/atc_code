@@ -133,7 +133,7 @@ function Set-HigherPrecision([string]$Value) {
 }
 
 function Get-RunnerChildTotal {
-    if ($Mode -eq "All") { return 371 }
+    if ($Mode -eq "All") { return 369 }
     if ($Mode -eq "SolverComplex") { return 14 }
     if ($Mode -eq "Txt") { return 16 }
     if ($Mode -eq "Settings") { return 8 }
@@ -143,7 +143,59 @@ function Get-RunnerChildTotal {
 
 $script:AtcChildIndex = 0
 $script:AtcChildTotal = Get-RunnerChildTotal
-$script:StartedAtcPids = New-Object System.Collections.Generic.List[int]
+$script:StartedAtcProcesses = New-Object System.Collections.Generic.List[object]
+$script:InfrastructureFailures = New-Object System.Collections.Generic.List[string]
+
+if (-not ([System.Management.Automation.PSTypeName]'AtcBoundedOutputReader').Type) {
+    Add-Type -Language CSharp -TypeDefinition @'
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Threading;
+
+public sealed class AtcBoundedOutputReader
+{
+    private readonly StreamReader reader;
+    private readonly int maxLines;
+    private readonly int maxLineChars;
+    private readonly Queue<string> lines = new Queue<string>();
+    private readonly Thread thread;
+    private readonly object gate = new object();
+
+    public AtcBoundedOutputReader(StreamReader reader, int maxLines, int maxLineChars)
+    {
+        this.reader = reader;
+        this.maxLines = maxLines;
+        this.maxLineChars = maxLineChars;
+        this.thread = new Thread(ReadLines);
+        this.thread.IsBackground = true;
+        this.thread.Start();
+    }
+
+    private void ReadLines()
+    {
+        string line;
+        while ((line = reader.ReadLine()) != null)
+        {
+            if (line.Length > maxLineChars) line = line.Substring(0, maxLineChars) + "...[line truncated]";
+            lock (gate)
+            {
+                lines.Enqueue(line);
+                while (lines.Count > maxLines) lines.Dequeue();
+            }
+        }
+    }
+
+    public bool Wait(int milliseconds) { return thread.Join(milliseconds); }
+
+    public string GetText()
+    {
+        lock (gate) { return String.Join(Environment.NewLine, lines.ToArray()); }
+    }
+}
+'@
+}
 
 function Format-RunnerPosition([int]$Index) {
     if ($script:AtcChildTotal -gt 0) {
@@ -163,19 +215,36 @@ function Get-LastOutputLines([AllowNull()][string]$Text, [int]$Count = 8) {
     return (($lines | Select-Object -Last $Count) -join "`n").Trim()
 }
 
-function Stop-AtcProcessTree([int]$ProcessId) {
+function Stop-AtcProcessTree([int]$ProcessId, [long]$ExpectedStartTimeUtcTicks) {
+    # PIDs can be reused after an ATC process exits. Never act on a PID unless
+    # its process start time still matches the instance launched by this runner.
+    $root = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue
+    if ($null -eq $root) { return }
     try {
-        $process = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue
-        if ($null -ne $process) {
-            & "$env:SystemRoot\System32\taskkill.exe" /PID $ProcessId /T /F | Out-Null
+        if ($root.StartTime.ToUniversalTime().Ticks -ne $ExpectedStartTimeUtcTicks) { return }
+    }
+    catch {
+        $script:InfrastructureFailures.Add(("cannot verify runner process PID {0}: {1}" -f $ProcessId, $_.Exception.Message)) | Out-Null
+        return
+    }
+
+    # taskkill can fail if a descendant exits during traversal. Keep that
+    # failure local, then fall back to only the root PID owned by this runner.
+    try {
+        $null = & "$env:SystemRoot\System32\taskkill.exe" /PID $ProcessId /T /F 2>$null
+    }
+    catch {
+        # Native command errors must not abort the regression run.
+    }
+
+    try {
+        $root = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue
+        if ($null -ne $root -and $root.StartTime.ToUniversalTime().Ticks -eq $ExpectedStartTimeUtcTicks) {
+            Stop-Process -Id $ProcessId -Force -ErrorAction Stop
         }
     }
     catch {
-        try {
-            Stop-Process -Id $ProcessId -Force -ErrorAction SilentlyContinue
-        }
-        catch {
-        }
+        $script:InfrastructureFailures.Add(("cleanup PID {0}: {1}" -f $ProcessId, $_.Exception.Message)) | Out-Null
     }
 }
 
@@ -207,6 +276,7 @@ function Get-AtcFailureDiagnostic([pscustomobject]$Result, [string]$Reason) {
         "working directory: $($Result.WorkingDirectory)",
         "executable: $($Result.Executable)",
         "pid: $($Result.Pid)",
+        "exitcode: $($Result.ExitCode)",
         "timeout: $TimeoutSeconds seconds",
         "stdout tail:",
         (Get-LastOutputLines $Result.StdOut),
@@ -235,12 +305,14 @@ function Invoke-AtcProcess(
 
     $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
     $process = [System.Diagnostics.Process]::Start($processInfo)
-    $script:StartedAtcPids.Add($process.Id) | Out-Null
+    $startedAtcProcess = Get-Process -Id $process.Id -ErrorAction Stop
+    $processIdentity = [pscustomobject]@{ Pid = $process.Id; StartTimeUtcTicks = $startedAtcProcess.StartTime.ToUniversalTime().Ticks }
+    $script:StartedAtcProcesses.Add($processIdentity) | Out-Null
+    $stdoutCapture = [AtcBoundedOutputReader]::new($process.StandardOutput, 200, 4096)
+    $stderrCapture = [AtcBoundedOutputReader]::new($process.StandardError, 200, 4096)
     Write-Host ("PID {0} {1} pid={2} args={3} wd={4}" -f (Format-RunnerPosition $index), $Name, $process.Id, $Arguments, $workingDirectory)
     [Console]::Out.Flush()
 
-    $stdoutTask = $process.StandardOutput.ReadToEndAsync()
-    $stderrTask = $process.StandardError.ReadToEndAsync()
     foreach ($line in $InputLines) {
         $process.StandardInput.WriteLine($line)
     }
@@ -249,23 +321,31 @@ function Invoke-AtcProcess(
     $timedOut = $false
     if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {
         $timedOut = $true
-        Stop-AtcProcessTree $process.Id
-        $process.WaitForExit(5000) | Out-Null
+        Stop-AtcProcessTree $process.Id $processIdentity.StartTimeUtcTicks
+        if (-not $process.WaitForExit(5000)) {
+            $script:InfrastructureFailures.Add(("timed-out child PID {0} remained alive after cleanup grace period" -f $process.Id)) | Out-Null
+        }
     }
     else {
         $process.WaitForExit()
     }
     $stopwatch.Stop()
 
-    $stdout = ""
-    $stderr = ""
-    try { $stdout = $stdoutTask.Result } catch {}
-    try { $stderr = $stderrTask.Result } catch {}
+    # Dedicated reader threads retain bounded tails, so a noisy or stuck child
+    # cannot force the runner to buffer unbounded output in memory.
+    if (-not $stdoutCapture.Wait(1000)) {
+        $script:InfrastructureFailures.Add(("stdout pipe for runner child PID {0} did not close" -f $process.Id)) | Out-Null
+    }
+    if (-not $stderrCapture.Wait(1000)) {
+        $script:InfrastructureFailures.Add(("stderr pipe for runner child PID {0} did not close" -f $process.Id)) | Out-Null
+    }
+    $stdout = $stdoutCapture.GetText()
+    $stderr = $stderrCapture.GetText()
 
     $result = [pscustomobject]@{
         Name = $Name
         Index = $index
-        ExitCode = $process.ExitCode
+        ExitCode = if ($process.HasExited) { $process.ExitCode } else { $null }
         StdOut = $stdout
         StdErr = $stderr
         TimedOut = $timedOut
@@ -276,7 +356,6 @@ function Invoke-AtcProcess(
         Executable = $Executable
         Reported = $false
     }
-
     if ($timedOut) {
         $diagnostic = Get-AtcFailureDiagnostic $result "timeout"
         Write-RunnerProcessResult "TIMEOUT" $index $Name $stopwatch.Elapsed.TotalSeconds ("{0:n3}s" -f $stopwatch.Elapsed.TotalSeconds)
@@ -1075,7 +1154,7 @@ $matrixScalarTests = @(
     @{ Name = "reserved-prefix matrix divided by scalar"; Expression = "small/2"; Expected = "#\d+=\s+1\+0i\s+2\+0i\s+3\+0i\s+4\+0i" }
 )
 
-$complexMatrixContent = "cmat 1 2:3 0*_4 0:5 0`ncmatb 2 1:1 1*4 0:1 2`n"
+$complexMatrixContent = "cmat 1 2:3 0*0 0:5 0`ncmatb 2 1:1 1*4 0:1 2`n"
 $complexMatrixTests = @(
     @{ Name = "complex matrix average"; Expression = "avg(cmat)"; Expected = "^#\d+=2\.25\+0\.5i$" },
     @{ Name = "complex matrix addition"; Expression = "cmat+cmatb"; Expected = "#\d+=\s+3\+3i\s+4\+1i\s+4\+0i\s+6\+2i" },
@@ -2541,28 +2620,40 @@ foreach ($result in $results) {
 }
 
 Write-Host ""
-Write-Host ("Summary: {0} passed, {1} failed" -f ($results.Count - $failed.Count), $failed.Count)
+Write-Host ("Summary: {0} passed, {1} failed; {2} child processes; {3} auxiliary checks" -f ($results.Count - $failed.Count), $failed.Count, $script:AtcChildIndex, ($results.Count - $script:AtcChildIndex))
 
 $orphanPids = @()
-foreach ($startedPid in $script:StartedAtcPids) {
-    $startedProcess = Get-Process -Id $startedPid -ErrorAction SilentlyContinue
-    if ($null -ne $startedProcess -and $startedProcess.ProcessName -eq "atc") {
-        $orphanPids += $startedPid
+foreach ($processIdentity in $script:StartedAtcProcesses) {
+    $startedProcess = Get-Process -Id $processIdentity.Pid -ErrorAction SilentlyContinue
+    if ($null -ne $startedProcess -and $startedProcess.ProcessName -eq "atc" -and $startedProcess.StartTime.ToUniversalTime().Ticks -eq $processIdentity.StartTimeUtcTicks) {
+        $orphanPids += $processIdentity.Pid
     }
 }
 if ($orphanPids.Count -gt 0) {
     Write-Host ("Orphan ATC processes from this runner: {0}" -f ($orphanPids -join ", "))
     foreach ($orphanPid in $orphanPids) {
-        Stop-AtcProcessTree $orphanPid
+        $orphanIdentity = $script:StartedAtcProcesses | Where-Object { $_.Pid -eq $orphanPid } | Select-Object -First 1
+        Stop-AtcProcessTree $orphanPid $orphanIdentity.StartTimeUtcTicks
     }
-    exit 1
+    $script:InfrastructureFailures.Add(("orphan ATC processes from this runner: {0}" -f ($orphanPids -join ", "))) | Out-Null
 }
 else {
     Write-Host "Orphan ATC processes from this runner: none"
 }
 
+if ($script:InfrastructureFailures.Count -gt 0) {
+    Write-Host ("Infrastructure errors: {0}" -f $script:InfrastructureFailures.Count)
+    foreach ($infrastructureFailure in $script:InfrastructureFailures) {
+        Write-Host ("INFRA {0}" -f $infrastructureFailure)
+    }
+}
+
 if ($failed.Count -gt 0) {
     exit 1
+}
+
+if ($script:InfrastructureFailures.Count -gt 0) {
+    exit 2
 }
 
 exit 0

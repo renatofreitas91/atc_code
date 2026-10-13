@@ -347,6 +347,13 @@ void variableController(char* variable) {
 
 
 
+			size_t variableLength = strlen(vari);
+			size_t variableCapacity = GetDynamicArraySize(vari);
+			if (variableLength > 0 && vari[variableLength - 1] != '\n' &&
+				variableLength + 1 < variableCapacity) {
+				vari[variableLength++] = '\n';
+				vari[variableLength] = '\0';
+			}
 			sprintf(expressionF, "\n%s ", variable);
 			char* toSearch_1 = getDynamicCharArray(expressionF, "toSearch_1");
 			char* toSearch_2 = getDynamicCharArray(variable, "toSearch_2");
@@ -1322,8 +1329,29 @@ bool isInsideDelimitedFunctionHeader(const char* expression, int index) {
 	}
 	return false;
 }
+bool isSolverUnknownAtPosition(const char* expression, int position) {
+	if (expression == nullptr || position < 0) return false;
+	int length = (int)strlen(expression);
+	for (int start = 0; start + 6 < length; start++) {
+		if (strncmp(&expression[start], "solver", 6) != 0 ||
+			(start > 0 && verifyLetter(expression[start - 1]))) continue;
+		int open = start + 6;
+		while (open < length && expression[open] == ' ') open++;
+		if (open >= length || expression[open] != '(') continue;
+		int depth = 1;
+		for (int cursor = open + 1; cursor < length; cursor++) {
+			if (expression[cursor] == '(') depth++;
+			else if (expression[cursor] == ')' && --depth == 0) {
+				if (position > open && position < cursor) return true;
+				break;
+			}
+		}
+	}
+	return false;
+}
 template<typename T>
 void substituteExistingScalarVariables(char* expression) {
+
 	PrecisionValue savedResultR = resultR;
 	PrecisionValue savedResultI = resultI;
 	char* savedMatrixValue = getDynamicCharArray(matrixValue, "savedMatrixValue");
@@ -1339,6 +1367,10 @@ void substituteExistingScalarVariables(char* expression) {
 				v++; i++;
 			}
 			variable[v] = '\0';
+			if (strcmp(variable, "x") == 0 && (equation_solver || isSolverUnknownAtPosition(expression, start))) {
+				strcat(rebuilt, variable);
+				continue;
+			}
 			if (expression[i] == '(' || (start == 0 && expression[i] == '=')) {
 				strcat(rebuilt, variable);
 				continue;
@@ -1356,7 +1388,15 @@ void substituteExistingScalarVariables(char* expression) {
 				continue;
 			}
 			if (strcmp(variable, "e") == 0) {
-				strcat(rebuilt, "(2.718281828459045)");
+				if constexpr (std::is_same<T, mp_float>::value) {
+					std::ostringstream eText;
+					eText << std::setprecision(60) << boost::math::constants::e<mp_float>();
+					std::string eLiteral = "(" + eText.str() + ")";
+					strcat(rebuilt, eLiteral.c_str());
+				}
+				else {
+					strcat(rebuilt, "(2.718281828459045)");
+				}
 				continue;
 			}
 			sprintf(matrixValue, "");
@@ -1456,6 +1496,30 @@ void expandDelimitedFunctionSyntax(char* expression) {
 	_delete(rebuilt, "rebuilt"); rebuilt = nullptr;
 	_delete(base, "base"); base = nullptr;
 	_delete(argument, "argument"); argument = nullptr;
+}
+void insertImplicitMultiplication(char* expression) {
+	if (expression == nullptr) return;
+	std::string source(expression);
+	std::string normalized;
+	normalized.reserve(source.size() * 2);
+	for (size_t i = 0; i < source.size(); i++) {
+		char current = source[i];
+		char previous = i > 0 ? source[i - 1] : '\0';
+		bool previousEndsFactor = i > 0 && (verifyNumber(previous) || previous == ')' || previous == ']' || previous == 'i');
+		bool startsIdentifier = verifyLetter(current) && (i == 0 || !verifyLetter(previous));
+		bool startsNumberAfterGroup = verifyNumber(current) && (previous == ')' || previous == ']' || previous == 'i');
+		bool followsPiConstant = i >= 2 && source[i - 2] == 'p' && source[i - 1] == 'i' && verifyLetter(current);
+		bool imaginaryUnitSuffix = current == 'i' && i > 0 && verifyNumber(previous);
+		bool scientificExponent = current == 'E' && i > 0 && verifyNumber(previous) &&
+			(i + 1 < source.size() && (verifyNumber(source[i + 1]) ||
+				((source[i + 1] == '+' || source[i + 1] == '-') && i + 2 < source.size() && verifyNumber(source[i + 2]))));
+		if (previousEndsFactor && (current == '(' || startsIdentifier || startsNumberAfterGroup || followsPiConstant) && !imaginaryUnitSuffix && !scientificExponent) {
+			normalized.push_back('*');
+		}
+		normalized.push_back(current);
+	}
+	if (normalized.size() >= GetDynamicArraySize(expression)) return;
+	sprintf(expression, "%s", normalized.c_str());
 }
 template<typename T>
 void variableToMultiply(char* expression) {
@@ -2100,6 +2164,7 @@ void customFuncRenamer(char* variable) {
 template<typename T>
 void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 
+
 	if (abs((int)strlen(arithTrig)) > 0) {
 		if (isContained("[", arithTrig) && isContained("]i", arithTrig)) {
 			replace("]i", "]*1i", arithTrig);
@@ -2116,6 +2181,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		sprintf(arithTrig, expressionF);
 		expandDelimitedFunctionSyntax(arithTrig);
 		sprintf(arithTrig, expressionF);
+		insertImplicitMultiplication(arithTrig);
 
 		int i = 0, j = 0, s = 0, f = 0;
 		variableToMultiply<T>(arithTrig);
@@ -3855,9 +3921,9 @@ void getATCPath() {
 	aPath = fopen("atc_path.txt", "r");
 	if (aPath == NULL) {
 		aPath = fopen("atc_path.txt", "w");
-		char NPath[DIM];
-		if (atcGetCurrentDirectory(NPath, sizeof(NPath))) {
-			sprintf(atcPath, "%s", NPath);
+		std::vector<char> NPath(DIM > 0 ? static_cast<size_t>(DIM) : 0);
+		if (!NPath.empty() && atcGetCurrentDirectory(NPath.data(), NPath.size())) {
+			sprintf(atcPath, "%s", NPath.data());
 		}
 		fprintf(aPath, "%s", atcPath);
 		sprintf(forsprintf, "%s", atcPath);
@@ -3879,9 +3945,9 @@ void getATCPath() {
 		test = fopen(testPath, "r");
 		if (test == NULL) {
 			test = fopen("atc_path.txt", "w");
-			char NPath[DIM];
-			if (atcGetCurrentDirectory(NPath, sizeof(NPath))) {
-				sprintf(atcPath, "%s", NPath);
+			std::vector<char> NPath(DIM > 0 ? static_cast<size_t>(DIM) : 0);
+			if (!NPath.empty() && atcGetCurrentDirectory(NPath.data(), NPath.size())) {
+				sprintf(atcPath, "%s", NPath.data());
 			}
 			fprintf(test, "%s", atcPath);
 			sprintf(saveATCPath, "%s", atcPath);
@@ -4371,10 +4437,10 @@ static void resetAllAtcFiles() {
 		"atc_path.txt", "aboutDisabled.txt"
 	};
 	removeAtcDataFiles(names, sizeof(names) / sizeof(names[0]));
-	char stringsPath[DIM];
-	if (atcJoinPath(stringsPath, sizeof(stringsPath), atcPath, "Strings")) {
-		atcRemoveRegularFiles(stringsPath);
-		atcCreateOneDirectory(stringsPath);
+	std::vector<char> stringsPath(DIM > 0 ? static_cast<size_t>(DIM) : 0);
+	if (!stringsPath.empty() && atcJoinPath(stringsPath.data(), stringsPath.size(), atcPath, "Strings")) {
+		atcRemoveRegularFiles(stringsPath.data());
+		atcCreateOneDirectory(stringsPath.data());
 	}
 }
 
@@ -5103,7 +5169,7 @@ T processVariable(char* variable) {
 			int space = 0;
 			valid = 1; validVar = 1;
 			int gh = l;
-			while (vari[gh] != '\n') {
+			while (gh < lth && vari[gh] != '\n' && vari[gh] != '\0') {
 				gh++;
 			}
 			h = gh;
@@ -5211,7 +5277,7 @@ T processVariable(char* variable) {
 				int space = 0;
 				valid = 1; validVar = 1;
 				int gh = l;
-				while (vari[gh] != '\n') {
+				while (gh < lth && vari[gh] != '\n' && vari[gh] != '\0') {
 					gh++;
 				}
 				h = gh;

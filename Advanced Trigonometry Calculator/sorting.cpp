@@ -287,6 +287,10 @@ void extremum(char* values, int findMax) {
 	char* matrixExpr = getDynamicCharArray("", "matrixExpr");
 	if (abs((int)strlen(values)) > 0) {
 		sprintf(matrixExpr, "%s", values);
+		int matrixExprLength = (int)strlen(matrixExpr);
+		if (matrixExprLength > 0 && matrixExpr[matrixExprLength - 1] == '=') {
+			matrixExpr[matrixExprLength - 1] = '\0';
+		}
 		sprintf(matrixValue, "");
 		replaceTimes = 0;
 
