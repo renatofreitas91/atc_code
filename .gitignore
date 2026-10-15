@@ -49,3 +49,6 @@ tests/icon_corner_preview.png
 
 # Documentation tooling
 .venv-docs/
+
+# Python test runner cache
+/tests/__pycache__/

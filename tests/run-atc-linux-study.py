@@ -23,7 +23,7 @@ CASES = [
         r"^f'\(x\)\t-\tundefined\t-\tundefined\t-",
         r'^f\(x\)\t\\v\tundefined\t\\v\tundefined\t\\v',
         r"^f''\(x\)\t-\tundefined\t\+\t0\t-\tundefined\t\+",
-        r'Inflection point: \(0\.000,-?0\.000\)', r'^Codomain: R$']),
+        r'Inflection point: \(0\.000,-?0\.000\)', r'^Codomain: \]-inf,\+inf\[$']),
     ('x^2-4', [r"^f'\(x\)\t-\t0\t\+", r"^f''\(x\)\t\+",
         r'Codomain: \[-4\.000,\+inf\[', r'^Min: \(0\.000,-4\.000\)$']),
     ('0-x^2+4', [r'Codomain: \]-inf,4\.000\]', r'^Max: \(-?0\.000,4\.000\)$']),

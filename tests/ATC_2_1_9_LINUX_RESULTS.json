@@ -1,0 +1,88 @@
+{
+  "validated_source_commit": "4cfb6a26b74a8296c48674ca0f6830912b9ad0fa",
+  "application_tree": "d071127272e12a1fd3a72678f9d1a3eaa786867c",
+  "validation_date_utc": "2026-10-15",
+  "platform": "Linux",
+  "compiler": "GCC 15.2.0",
+  "language_standard": "C++17",
+  "asan_binary_sha256": "d1895cea3668b10bfe3ce32e1ba45703f892e99d038fce1952de1faa30282f29",
+  "release_optimization": "-O3 -DNDEBUG",
+  "sanitizer_optimization": "-O3 -DNDEBUG",
+  "sanitizers": [
+    "address",
+    "undefined",
+    "leak"
+  ],
+  "suites": [
+    {
+      "name": "functional",
+      "total": 35,
+      "release_passed": 35,
+      "asan_ubsan_passed": 35,
+      "external_lsan_passed": 35
+    },
+    {
+      "name": "input",
+      "total": 8,
+      "release_passed": 8,
+      "asan_ubsan_passed": 8,
+      "external_lsan_passed": 8
+    },
+    {
+      "name": "additional",
+      "total": 40,
+      "release_passed": 40,
+      "asan_ubsan_passed": 40,
+      "external_lsan_passed": 40
+    },
+    {
+      "name": "study",
+      "total": 26,
+      "release_passed": 26,
+      "asan_ubsan_passed": 26,
+      "external_lsan_passed": 26
+    },
+    {
+      "name": "scripts",
+      "total": 7,
+      "release_passed": 7,
+      "asan_ubsan_passed": 7,
+      "external_lsan_passed": 7
+    },
+    {
+      "name": "graph",
+      "total": 2,
+      "release_passed": 2,
+      "asan_ubsan_passed": 2,
+      "external_lsan_passed": 2
+    },
+    {
+      "name": "terminal",
+      "total": 10,
+      "release_passed": 10,
+      "asan_ubsan_passed": 10,
+      "external_lsan_passed": 10
+    }
+  ],
+  "limitations": [
+    "Approval applies only to tested paths.",
+    "Windows x64/Win32 376/376 results are recorded by the source commit; not executed in the Linux session.",
+    "Windows XP runtime validation is a mandatory separate pending gate; target architectures not yet agreed."
+  ],
+  "combined_cases": 128,
+  "reported_sanitizer_errors": 0,
+  "evidence_log_sha256": {
+    "remaining/input.log": "f74a8f781058391a64b52e04a329a0d2f4962868991d5d67578ac2c6d3915964",
+    "remaining/graph.log": "4a6a5566e94be13131362784681fb20b25a5479f2d7f8b8592f014512ed509fb",
+    "remaining/terminal.log": "83e03f73a9405e97c9756de088ba616dfc419bc7c910143e8bab50885918807b",
+    "complete/additional.log": "1d2210838ca9400e28ecab39528181bf6f6609241193204e8f837a311389237a",
+    "complete/study.log": "a58e1721d355a51960ff675c0390af46ee5bf110c895d01e143978e1d9c5fa75",
+    "complete/scripts.log": "aae48efe899f124eb62d3f84df9705911b7c69756861b46c283326eeb4be8c7e",
+    "functional.log": "56a10d536331358119d36b3f85ed37445d9fdc4f16a70678dfa8d34d69b6c99a"
+  },
+  "remaining_suites_lsan_environment": {
+    "ASAN_OPTIONS": "detect_leaks=1:halt_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+    "LSAN_OPTIONS": "verbosity=1:log_threads=1"
+  }
+}
