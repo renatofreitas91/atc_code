@@ -6215,7 +6215,9 @@ void repaintConsoleViewportSafe() {
 bool applyConsoleDimensionsSafe(int columns, int lines) {
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	if (!hasConsoleHandle(hOut)) {
-		return false;
+		colsATC = clampConsoleValue(columns, 40, 160);
+		linesATC = clampConsoleValue(lines, 20, 2000);
+		return true;
 	}
 
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -6753,14 +6755,15 @@ void autoAdjustWindow() {
 		fprintf(open, "%d\n%d\n%d\n%d\n", x, y, widthATC, heightATC);
 		fclose(open);
 	}
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	int columns, rows;
-	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-	columns = (int)ceil((csbi.srWindow.Right - csbi.srWindow.Left));
-	if (columns < 0) {
-		columns = (int)ceil((csbi.srWindow.Left + csbi.srWindow.Right));
+	CONSOLE_SCREEN_BUFFER_INFO csbi = {};
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	int columns = colsATC > 0 ? colsATC : 160, rows = 2000;
+	if (hasConsoleHandle(hOut) && GetConsoleScreenBufferInfo(hOut, &csbi)) {
+		columns = (int)ceil((csbi.srWindow.Right - csbi.srWindow.Left));
+		if (columns < 0) {
+			columns = (int)ceil((csbi.srWindow.Left + csbi.srWindow.Right));
+		}
 	}
-	rows = 2000;
 	atcJoinPath(toOpen, DIM, atcPath, "dimensions.txt");
 	char* setting = getDynamicCharArray("", "setting");
 	FILE* open = NULL;

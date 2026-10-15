@@ -595,16 +595,24 @@ static void solveFunctionStudyPolynomialEquation(char* polynomial) {
 			if (abs(displayedDiscriminant) < 1E-10) discriminant = (T)0;
 			using std::sqrt;
 			const T rootOffset = sqrt(discriminant);
-			appendRoot((-b + rootOffset) / ((T)2 * a));
+			T firstRoot = (-b + rootOffset) / ((T)2 * a);
+			T secondRoot = (-b - rootOffset) / ((T)2 * a);
+			if (precisionDisplayDouble(firstRoot) < precisionDisplayDouble(secondRoot)) {
+				T swapRoot = firstRoot;
+				firstRoot = secondRoot;
+				secondRoot = swapRoot;
+			}
+			appendRoot(firstRoot);
 			if (abs(precisionDisplayDouble(rootOffset)) > 1E-10) {
-				appendRoot((-b - rootOffset) / ((T)2 * a));
+				appendRoot(secondRoot);
 			}
 		}
 	}
 	else if (degree > 2) {
 		std::vector<double> polynomialCoefficients(degree + 1);
 		for (int i = 0; i <= degree; ++i) polynomialCoefficients[i] = precisionDisplayDouble(coefficients[i]);
-		for (double root : studyRealPolynomialRoots(polynomialCoefficients)) appendRoot((T)root);
+		std::vector<double> roots = studyRealPolynomialRoots(polynomialCoefficients);
+		for (auto root = roots.rbegin(); root != roots.rend(); ++root) appendRoot((T)*root);
 	}
 	_delete(coefficients, "functionStudyEquationCoefficients"); coefficients = nullptr;
 }
@@ -1002,8 +1010,8 @@ static void printFunctionStudyGeneralRange(char* numerator, char* denominator) {
 	}
 	puts("");
 	bool extremum = false;
-	if (image.front().lc && std::isfinite(image.front().lo)) { printf("Min: (%.3f,%.3f)\n", image.front().lx, image.front().lo); extremum = true; }
-	if (image.back().hc && std::isfinite(image.back().hi)) { printf("Max: (%.3f,%.3f)\n", image.back().hx, image.back().hi); extremum = true; }
+	if (image.front().lc && std::isfinite(image.front().lo)) { printf("Min: (%.3f,%.3f)\n", normalizeFunctionStudyValue<T>(image.front().lx), normalizeFunctionStudyValue<T>(image.front().lo)); extremum = true; }
+	if (image.back().hc && std::isfinite(image.back().hi)) { printf("Max: (%.3f,%.3f)\n", normalizeFunctionStudyValue<T>(image.back().hx), normalizeFunctionStudyValue<T>(image.back().hi)); extremum = true; }
 	if (!extremum) puts("No absolute minimum or maximum.");
 }
 
@@ -1068,7 +1076,7 @@ static bool printFunctionStudyQuadraticRange(char* numerator, char* denominator)
 		while (i + 1 < cells.size() && cells[i+1]) i++;
 		if (printed) printf("U");
 		printed = true;
-		if (start == 0 && i + 1 == cells.size()) { printf("R"); continue; }
+		if (start == 0 && i + 1 == cells.size()) { printf("]-inf,+inf["); continue; }
 		if (start == i && start % 2 == 1) { printf("{%.3f}", boundaries[start/2]); continue; }
 		if (start == 0) printf("]-inf,");
 		else printf("%c%.3f,", start % 2 == 1 ? '[' : ']', boundaries[(start-1)/2]);
@@ -1079,13 +1087,13 @@ static bool printFunctionStudyQuadraticRange(char* numerator, char* denominator)
 	bool extremum = false;
 	if (!cells.front()) {
 		for (size_t i = 1; i < cells.size(); i++) if (cells[i]) {
-			if (i % 2 == 1 && preimage(boundaries[i/2], &x)) { printf("Min: (%.3f,%.3f)\n", x, boundaries[i/2]); extremum = true; }
+			if (i % 2 == 1 && preimage(boundaries[i/2], &x)) { printf("Min: (%.3f,%.3f)\n", abs(x) < 1E-9 ? 0.0 : x, boundaries[i/2]); extremum = true; }
 			break;
 		}
 	}
 	if (!cells.back()) {
 		for (size_t i = cells.size()-1; i > 0; i--) if (cells[i]) {
-			if (i % 2 == 1 && preimage(boundaries[i/2], &x)) { printf("Max: (%.3f,%.3f)\n", x, boundaries[i/2]); extremum = true; }
+			if (i % 2 == 1 && preimage(boundaries[i/2], &x)) { printf("Max: (%.3f,%.3f)\n", abs(x) < 1E-9 ? 0.0 : x, boundaries[i/2]); extremum = true; }
 			break;
 		}
 	}
@@ -1859,7 +1867,7 @@ void functionStudy(char* function) {
 			pl = 0;
 			sprintf(saveFunctionF, "%s/%s", numerator, denominator);
 			removeTriplPars(saveExpressionF);
-			printf("\nf(x)=%s\n", expressionF);
+			printf("\nf(x)=%s\n", isEqual(denominator, "(1+0i)") ? numerator : expressionF);
 			if (isContained("x-", numerator)) {
 				replace("x-", "x^1-", numerator);
 				sprintf(numerator, "%s", expressionF);
@@ -1872,7 +1880,14 @@ void functionStudy(char* function) {
 				new_denominator[abs((int)strlen(new_denominator)) - 1] = '\0';
 			}
 			sprintf(new_derivate, "(%s)/(%s)", new_numerator, new_denominator);
-			printf("\nf'(x)=%s\n", new_derivate);
+			if (isEqual(denominator, "(1+0i)")) {
+				removeDuplPars(new_numerator);
+				if (isContained("x", new_numerator)) printf("\nf'(x)=(%s)\n", new_numerator);
+				else printf("\nf'(x)=%s\n", new_numerator);
+			}
+			else {
+				printf("\nf'(x)=%s\n", new_derivate);
+			}
 
 			replaceTimes = 0;
 			removeDuplPars(new_numerator);

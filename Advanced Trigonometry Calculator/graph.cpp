@@ -351,9 +351,9 @@ void designGraph(char* functionF) {
                 g++; f++;
             }
             func[g] = '\0';
-            char functionPattern[DIM] = {};
-            snprintf(functionPattern, sizeof(functionPattern), "%s(", func);
-            if (strstr(functionF, functionPattern) != nullptr) {
+            std::string functionPattern = func;
+            functionPattern += '(';
+            if (strstr(functionF, functionPattern.c_str()) != nullptr) {
                 hasFunction = true;
             }
         }
