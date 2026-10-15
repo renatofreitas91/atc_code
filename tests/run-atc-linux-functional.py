@@ -75,6 +75,10 @@ CASES = [
          r"Error in parentheses[\s\S]*Error in syntax"),
     Case("edge", "division by zero", "1/0", r"^#\d+=NAN\+NANi$"),
     Case("edge", "positive infinity", "INF", r"^#\d+=INF$"),
+    Case("function study", "rational quadratic domain, roots and asymptotes",
+         "function study((1-x^2)/(x^2-4))",
+         r"Df=R\\\{2,-2}[\s\S]*\(-1,0\)[\s\S]*\(1,0\)[\s\S]*x=2[\s\S]*x=-2",
+         files={"aboutDisabled.txt": "1\n", "mode.txt": "1\n"}),
 ]
 
 

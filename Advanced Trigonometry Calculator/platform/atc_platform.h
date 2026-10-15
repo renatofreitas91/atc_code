@@ -40,6 +40,19 @@ inline bool atcGetCurrentDirectory(char* output, std::size_t capacity) {
 #endif
 }
 
+inline bool atcGetExecutablePath(char* output, std::size_t capacity) {
+    if (output == nullptr || capacity == 0) return false;
+#ifdef _WIN32
+    const DWORD length = GetModuleFileNameA(nullptr, output, static_cast<DWORD>(capacity));
+    return length > 0 && length < capacity;
+#else
+    const ssize_t length = readlink("/proc/self/exe", output, capacity - 1);
+    if (length <= 0 || static_cast<std::size_t>(length) >= capacity) return false;
+    output[length] = '\0';
+    return true;
+#endif
+}
+
 inline bool atcIsInteractiveInput() {
 #ifdef _WIN32
     return _isatty(_fileno(stdin)) != 0;
@@ -361,19 +374,35 @@ inline int atcGetChar() {
     if (terminal) {
         termios raw = previous;
         raw.c_lflag &= static_cast<tcflag_t>(~(ICANON | ECHO));
+        raw.c_cc[VMIN] = 1;
+        raw.c_cc[VTIME] = 0;
         tcsetattr(STDIN_FILENO, TCSANOW, &raw);
     }
-    const int value = std::getchar();
-    if (terminal) tcsetattr(STDIN_FILENO, TCSANOW, &previous);
 
+    const int value = std::getchar();
+    int specialKey = -1;
     if (value == 27) {
-        const int bracket = std::getchar();
-        const int code = bracket == '[' ? std::getchar() : EOF;
-        if (code == 'D') pendingSpecialKey = 75;
-        else if (code == 'C') pendingSpecialKey = 77;
-        else if (code == 'A') pendingSpecialKey = 72;
-        else if (code == 'B') pendingSpecialKey = 80;
-        if (pendingSpecialKey >= 0) return 224;
+        const int introducer = std::getchar();
+        if (introducer == '[' || introducer == 'O') {
+            const int code = std::getchar();
+            if (code == 'D') specialKey = 75;
+            else if (code == 'C') specialKey = 77;
+            else if (code == 'A') specialKey = 72;
+            else if (code == 'B') specialKey = 80;
+            else if (introducer == '[' && code == '3' && std::getchar() == '~') specialKey = 83;
+            else if (introducer == '[' && (code == 'H' || code == '1')) {
+                if (code == 'H' || std::getchar() == '~') specialKey = 71;
+            }
+            else if (introducer == '[' && (code == 'F' || code == '4')) {
+                if (code == 'F' || std::getchar() == '~') specialKey = 79;
+            }
+        }
+    }
+
+    if (terminal) tcsetattr(STDIN_FILENO, TCSANOW, &previous);
+    if (specialKey >= 0) {
+        pendingSpecialKey = specialKey;
+        return 224;
     }
     return value;
 #endif

@@ -3777,8 +3777,38 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 	if (isCommand(arithTrig, "scriptsexamples")) {
 		command = true;
 		std::vector<char> directory((size_t)DIM);
-		if (atcJoinPath(directory.data(), directory.size(), atcPath, "Scripts examples")) {
-			atcOpenDirectory(directory.data());
+		std::vector<char> executablePath((size_t)DIM);
+		bool openedExamples = false;
+		auto tryExamplesAt = [&](const std::string& root) {
+			const char* relativeExamples[] = {
+				"Scripts examples",
+				"Advanced Trigonometry Calculator/Scripts examples",
+				"atc_code/Advanced Trigonometry Calculator/Scripts examples",
+				"windows-checkpoint/Advanced Trigonometry Calculator/Scripts examples"
+			};
+			for (size_t candidate = 0; candidate < sizeof(relativeExamples) / sizeof(relativeExamples[0]); candidate++) {
+				if (atcJoinPath(directory.data(), directory.size(), root.c_str(), relativeExamples[candidate]) &&
+					atcDirectoryExists(directory.data())) {
+					openedExamples = atcOpenDirectory(directory.data());
+					return openedExamples;
+				}
+			}
+			return false;
+		};
+		tryExamplesAt(atcPath);
+		if (!openedExamples && atcGetExecutablePath(executablePath.data(), executablePath.size())) {
+			std::string root(executablePath.data());
+			const size_t separator = root.find_last_of("/\\");
+			if (separator != std::string::npos) root.resize(separator);
+			for (int level = 0; level < 5 && !openedExamples; level++) {
+				tryExamplesAt(root);
+				const size_t parent = root.find_last_of("/\\");
+				if (parent == std::string::npos || parent == 0) break;
+				root.resize(parent);
+			}
+		}
+		if (!openedExamples) {
+			puts("\nCould not find or open the 'Scripts examples' folder.\n");
 		}
 		puts("");
 	}

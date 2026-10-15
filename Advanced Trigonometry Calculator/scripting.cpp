@@ -337,7 +337,7 @@ void print(char* text, T result1, T result2) {
 	char specifier, clica = 39;
 	for (i = 0; i < abs((int)strlen(text)) && ((text[i] == '\"'&&text[i + 1] == ',') == false || (text[i] == '\"'&&text[i + 1] == '\"') == true && text[i + 2] != ','); i++) {
 		listText[i] = text[i];
-		if (listText[i - 1] == '%'&&listText[i] == 'd') {
+		if (i > 0 && listText[i - 1] == '%'&&listText[i] == 'd') {
 			text[i] = 'i'; listText[i] = 'i';
 		}
 	}
@@ -481,7 +481,7 @@ void print(char* text, T result1, T result2) {
 					}
 					toPrint[j] = '\0';
 					k = 0;
-					while (verify4Printf(listText[i]) && verifySpecifier(varType[k - 1]) == 0 && i < abs((int)strlen(listText))) {
+					while (i < abs((int)strlen(listText)) && verify4Printf(listText[i]) && (k == 0 || verifySpecifier(varType[k - 1]) == 0)) {
 						varType[k] = listText[i];
 						k++; i++;
 					}
@@ -637,7 +637,7 @@ void print(char* text, T result1, T result2) {
 				}
 				if (var2Print == 2) {
 					j = 0;
-					while (!(listText[i - 1] == '%'&&verify4Printf(listText[i]) == 0) && i < abs((int)strlen(listText))) {
+					while (i < abs((int)strlen(listText)) && !(i > 0 && listText[i - 1] == '%'&&verify4Printf(listText[i]) == 0)) {
 						toPrint[j] = listText[i];
 						i++;
 						j++;
@@ -695,7 +695,7 @@ void sprint(char* text, T result1, T result2) {
 	text[i - abs((int)strlen(variable)) - 2] = '\0';
 	for (i = 0; i < abs((int)strlen(text)) && ((text[i] == '\"'&&text[i + 1] == ',') == false || (text[i] == '\"'&&text[i + 1] == '\"') == true && text[i + 2] != ','); i++) {
 		listText[i] = text[i];
-		if (listText[i - 1] == '%'&&listText[i] == 'd') {
+		if (i > 0 && listText[i - 1] == '%'&&listText[i] == 'd') {
 			text[i] = 'i'; listText[i] = 'i';
 		}
 	}
@@ -827,7 +827,7 @@ void sprint(char* text, T result1, T result2) {
 					}
 					toPrint[j] = '\0';
 					k = 0;
-					while (verify4Printf(listText[i]) && verifySpecifier(varType[k - 1]) == 0 && i < abs((int)strlen(listText))) {
+					while (i < abs((int)strlen(listText)) && verify4Printf(listText[i]) && (k == 0 || verifySpecifier(varType[k - 1]) == 0)) {
 						varType[k] = listText[i];
 						k++; i++;
 					}
@@ -982,7 +982,7 @@ void sprint(char* text, T result1, T result2) {
 				}
 				if (var2Print == 2) {
 					j = 0;
-					while (!(listText[i - 1] == '%'&&verify4Printf(listText[i]) == 0) && i < abs((int)strlen(listText))) {
+					while (i < abs((int)strlen(listText)) && !(i > 0 && listText[i - 1] == '%'&&verify4Printf(listText[i]) == 0)) {
 						toPrint[j] = listText[i];
 						i++;
 						j++;
@@ -1532,7 +1532,7 @@ int atcProgramming(char* script) {
 							f++;
 						}
 						initial[p] = '\0';
-						calcNow<T>(initial, (T)0, (T)0);
+						atcProg<T>(initial);
 						char* condition = getDynamicCharArray("", "condition");
 						f++; p = 0;
 						while (getLine[f] != ';'&&f < abs((int)strlen(getLine)) && countUseReturn == 0) {

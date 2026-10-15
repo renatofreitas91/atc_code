@@ -811,9 +811,13 @@ bool processTxt(char* path, int re) {
 	bool previousProcessingTxtFile = processingTxtFile;
 	processingTxtFile = true;
 	char* toOpen = getDynamicCharArray("", "toOpen");
-	FILE* open;
+	FILE* open = nullptr;
 	char* folder = getDynamicCharArray("", "folder");
-	if (!isContained("User functions", path)) {
+	if (!isContained("User functions", path)
+#ifndef _WIN32
+		&& !runningScript
+#endif
+	) {
 		sprintf(folder, "%s", path);
 		if (isContained(".txt", folder) && !isContained("\\temp\\", path)) {
 			rf = 0;
@@ -868,8 +872,7 @@ bool processTxt(char* path, int re) {
 		int i = 0;
 		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 		vari[i] = '\0';
-		fclose(open);
-		open = nullptr;
+		fclose(open); open = nullptr;
 		sprintf(saveTxtVariablesTextFile, "%s", vari);
 		_delete(vari, "vari"); vari = nullptr;
 	}
@@ -878,8 +881,7 @@ bool processTxt(char* path, int re) {
 			open = fopen(toOpen, "w");
 		}
 		if (open != NULL) {
-			fclose(open);
-			open = nullptr;
+			fclose(open); open = nullptr;
 		}
 	}
 	atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
@@ -889,8 +891,7 @@ bool processTxt(char* path, int re) {
 		int i = 0;
 		for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 		vari[i] = '\0';
-		fclose(open);
-		open = nullptr;
+		fclose(open); open = nullptr;
 		sprintf(saveRenamedTxtVariablesTextFile, "%s", vari);
 		_delete(vari, "vari"); vari = nullptr;
 
@@ -900,8 +901,7 @@ bool processTxt(char* path, int re) {
 			open = fopen(toOpen, "w");
 		}
 		if (open != NULL) {
-			fclose(open);
-			open = nullptr;
+			fclose(open); open = nullptr;
 		}
 	}
 	 PrecisionValue result1 = 0, result2 = 0, *anstxt = getDynamicDoubleArray(), *anstxtI = getDynamicDoubleArray();
@@ -960,7 +960,7 @@ bool processTxt(char* path, int re) {
 	path[i] = '\0';
 	i = 0;
 	if (read != NULL) {
-		fclose(read);
+		fclose(read); read = nullptr;
 	}
 	read = NULL;
 	char* saveSendFunc = getDynamicCharArray("", "saveSendFunc");
@@ -976,10 +976,10 @@ bool processTxt(char* path, int re) {
 			}
 		}
 		if (read != NULL) {
-			fclose(read);
+			fclose(read); read = nullptr;
 		}
 		sendFunc[i] = '\0';
-		if (sendFunc[i - 1] != '\n') {
+		if (i == 0 || sendFunc[i - 1] != '\n') {
 			sendFunc[i] = '\n'; sendFunc[i + 1] = '\0';
 			cP++;
 		}
@@ -993,8 +993,7 @@ bool processTxt(char* path, int re) {
 				int i = 0;
 				for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 				vari[i] = '\0';
-				fclose(open);
-				open = nullptr;
+				fclose(open); open = nullptr;
 				sprintf(saveScriptVariablesTextFile, "%s", vari);
 				_delete(vari, "vari");
 				vari = nullptr;
@@ -1004,8 +1003,7 @@ bool processTxt(char* path, int re) {
 					open = fopen(toOpen, "w");
 				}
 				if (open != NULL) {
-					fclose(open);
-					open = nullptr;
+					fclose(open); open = nullptr;
 				}
 			}
 			atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
@@ -1015,8 +1013,7 @@ bool processTxt(char* path, int re) {
 				int i = 0;
 				for (i = 0; (vari[i] = fgetc(open)) != EOF; i++);
 				vari[i] = '\0';
-				fclose(open);
-				open = nullptr;
+				fclose(open); open = nullptr;
 				sprintf(saveScriptRenamedVariablesTextFile, "%s", vari);
 				_delete(vari, "vari");
 				vari = nullptr;
@@ -1026,8 +1023,7 @@ bool processTxt(char* path, int re) {
 					open = fopen(toOpen, "w");
 				}
 				if (open != NULL) {
-					fclose(open);
-					open = nullptr;
+					fclose(open); open = nullptr;
 				}
 			}
 			countBreak = countOccurrences("break", sendFunc);
@@ -1087,7 +1083,7 @@ bool processTxt(char* path, int re) {
 			while (fin == NULL) {
 				fin = fopen(path, "w");
 			}
-			fclose(fin);
+			fclose(fin); fin = nullptr;
 			d = 0;
 			tD = 0;
 			char* variable = getDynamicCharArray("", "variable");
@@ -1152,7 +1148,7 @@ bool processTxt(char* path, int re) {
 					matrixMode = 0;
 					int fl = 1, fr = 0;
 					while (tD < abs((int)strlen(trigData)) && trigData[tD] != ',') {
-						if (trigData[tD - 6] == 'p' && trigData[tD - 5] == 'r' && trigData[tD - 4] == 'i' && trigData[tD - 3] == 'n' && trigData[tD - 2] == 't' && trigData[tD - 1] == '(') {
+						if (tD >= 6 && trigData[tD - 6] == 'p' && trigData[tD - 5] == 'r' && trigData[tD - 4] == 'i' && trigData[tD - 3] == 'n' && trigData[tD - 2] == 't' && trigData[tD - 1] == '(') {
 							arith[i] = trigData[tD];
 							i++; tD++;
 							while (fl > fr && tD < abs((int)strlen(trigData))) {
@@ -1175,20 +1171,18 @@ bool processTxt(char* path, int re) {
 					arith[i] = '\0';
 					if (variableControllersUsed || abs((int)strlen(saveTxtVariablesTextFile)) == 0 || abs((int)strlen(saveRenamedTxtVariablesTextFile)) == 0) {
 						char* toOpen = getDynamicCharArray("", "toOpen");
-						FILE* open;
+						FILE* open = nullptr;
 						atcJoinPath(toOpen, DIM, atcPath, "variables.txt");
 						open = fopen(toOpen, "w");
 						if (open != NULL) {
 							fprintf(open, "%s", saveTxtVariablesTextFile);
-							fclose(open);
-							open = nullptr;
+							fclose(open); open = nullptr;
 						}
 						atcJoinPath(toOpen, DIM, atcPath, "renamedVar.txt");
 						open = fopen(toOpen, "w");
 						if (open != NULL) {
 							fprintf(open, "%s", saveRenamedTxtVariablesTextFile);
-							fclose(open);
-							open = nullptr;
+							fclose(open); open = nullptr;
 						}
 						variableControllersUsed = false;
 						_delete(toOpen, "toOpen"); toOpen = nullptr;
@@ -1219,7 +1213,7 @@ bool processTxt(char* path, int re) {
 					valid = 0;
 					validVar = 1;
 					if (fin != NULL) {
-						fclose(fin);
+						fclose(fin); fin = nullptr;
 					}
 					fin = NULL;
 					while (fin == NULL) {
@@ -1277,13 +1271,13 @@ bool processTxt(char* path, int re) {
 					fflush(NULL);
 					sprintf(arith, "");
 					if (fin != NULL) {
-						fclose(fin);
+						fclose(fin); fin = nullptr;
 					}
 					_delete(arith, "arith");
 					arith = nullptr;
 				}
 				if (fin != NULL) {
-					fclose(fin);
+					fclose(fin); fin = nullptr;
 				}
 				_delete(savePreviousAns, "savePreviousAns");
 				savePreviousAns = nullptr;
@@ -1293,10 +1287,10 @@ bool processTxt(char* path, int re) {
 				trigData = nullptr;
 			}
 			if (fin != NULL) {
-				fclose(fin);
+				fclose(fin); fin = nullptr;
 			}
 			if (read != NULL) {
-				fclose(read);
+				fclose(read); read = nullptr;
 			}
 			i = 0;
 			while (i < re) {
@@ -1316,7 +1310,7 @@ bool processTxt(char* path, int re) {
 		expressionF[h] = path[h];
 	}
 	expressionF[h] = '\0';
-	if (fin != NULL) { fclose(fin); }if (fout != NULL) { fclose(fout); }if (open != NULL) { fclose(open); } if (read != NULL) { fclose(read); }
+	if (fin != NULL) { fclose(fin); fin = nullptr; }if (fout != NULL) { fclose(fout); fout = nullptr; }if (open != NULL) { fclose(open); open = nullptr; } if (read != NULL) { fclose(read); read = nullptr; }
 	rf = save_rf;
 	if (!toWrite) {
 		char* eliminate = getDynamicCharArray("", "eliminate");
@@ -2848,6 +2842,7 @@ bool dataVerifier(char* data, T result1, T result2, int comment, int verify) {
 }
 
 bool atcFunctions(char* functionName) {
+		if (functionName == nullptr || strlen(functionName) < 2) return false;
 	int i = 0, j = 0, funcIndex = 0, g = 0, h = 0;
 	bool isFunction = false;
 	char* namesForFunctions = getDynamicCharArray("initialProcessor,functionProcessor", "namesForFunctions"); char* saveFunction = getDynamicCharArray("", "saveFunction");

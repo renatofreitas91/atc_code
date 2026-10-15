@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 #include "atc_functions.h"
+#include <chrono>
 bool starting = true;
 int x, y, maxX, maxY, saveX, saveY;
 int xATC, yATC, colsATC, linesATC, widthATC, heightATC;
@@ -572,6 +573,22 @@ void graphSettings() {
 	return 0;
 }
 
+static const char* introLogoLightShade() {
+#ifdef _WIN32
+	return "\xB1";
+#else
+	return "\xE2\x96\x92";
+#endif
+}
+
+static const char* introLogoDarkShade() {
+#ifdef _WIN32
+	return "\xB2";
+#else
+	return "\xE2\x96\x93";
+#endif
+}
+
 bool about() {
 	ShowConsoleCursor(FALSE);
 	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)", memFactor);
@@ -590,31 +607,29 @@ bool about() {
 	atcFlushOutputStreams();
 	bool continu = true;
 	puts("\n\n\n");
-	printf("                   %c%c%c  %c%c%c%c  %c   %c  %c%c%c  %c   %c  %c%c%c  %c%c%c%c%c %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                  %c   %c %c   %c %c   %c %c   %c %c%c  %c %c   %c %c     %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                  %c%c%c%c%c %c   %c %c   %c %c%c%c%c%c %c %c %c %c     %c%c%c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                  %c   %c %c   %c  %c %c  %c   %c %c  %c%c %c   %c %c     %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("                  %c   %c %c%c%c%c    %c   %c   %c %c   %c  %c%c%c  %c%c%c%c%c %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("                   %s%s%s  %s%s%s%s  %s   %s  %s%s%s  %s   %s  %s%s%s  %s%s%s%s%s %s%s%s%s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("                  %s   %s %s   %s %s   %s %s   %s %s%s  %s %s   %s %s     %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("                  %s%s%s%s%s %s   %s %s   %s %s%s%s%s%s %s %s %s %s     %s%s%s   %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("                  %s   %s %s   %s  %s %s  %s   %s %s  %s%s %s   %s %s     %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("                  %s   %s %s%s%s%s    %s   %s   %s %s   %s  %s%s%s  %s%s%s%s%s %s%s%s%s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
 	puts("");
-	printf("      %c%c%c%c%c %c%c%c%c  %c%c%c%c%c  %c%c%c%c  %c%c%c  %c   %c  %c%c%c  %c   %c %c%c%c%c%c %c%c%c%c%c %c%c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("        %c   %c   %c   %c   %c     %c   %c %c%c  %c %c   %c %c%c %c%c %c       %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("        %c   %c%c%c%c    %c   %c %c%c%c %c   %c %c %c %c %c   %c %c %c %c %c%c%c     %c   %c%c%c%c   %c %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("        %c   %c   %c   %c   %c   %c %c   %c %c  %c%c %c   %c %c   %c %c       %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("        %c   %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c   %c  %c%c%c  %c   %c %c%c%c%c%c   %c   %c   %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("      %s%s%s%s%s %s%s%s%s  %s%s%s%s%s  %s%s%s%s  %s%s%s  %s   %s  %s%s%s  %s   %s %s%s%s%s%s %s%s%s%s%s %s%s%s%s  %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("        %s   %s   %s   %s   %s     %s   %s %s%s  %s %s   %s %s%s %s%s %s       %s   %s   %s %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("        %s   %s%s%s%s    %s   %s %s%s%s %s   %s %s %s %s %s   %s %s %s %s %s%s%s     %s   %s%s%s%s   %s %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("        %s   %s   %s   %s   %s   %s %s   %s %s  %s%s %s   %s %s   %s %s       %s   %s   %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("        %s   %s   %s %s%s%s%s%s  %s%s%s   %s%s%s  %s   %s  %s%s%s  %s   %s %s%s%s%s%s   %s   %s   %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
 	puts("");
-	printf("             %c%c%c   %c%c%c  %c      %c%c%c  %c   %c %c      %c%c%c  %c%c%c%c%c  %c%c%c  %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("            %c     %c%c%c%c%c %c     %c     %c   %c %c     %c%c%c%c%c   %c   %c   %c %c%c%c%c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("            %c   %c %c   %c %c     %c   %c %c   %c %c     %c   %c   %c   %c   %c %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
-	printf("             %c%c%c  %c   %c %c%c%c%c%c  %c%c%c   %c%c%c  %c%c%c%c%c %c   %c   %c    %c%c%c  %c   %c\n", 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177);
+	printf("             %s%s%s   %s%s%s  %s      %s%s%s  %s   %s %s      %s%s%s  %s%s%s%s%s  %s%s%s  %s%s%s%s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("            %s   %s %s   %s %s     %s   %s %s   %s %s     %s   %s   %s   %s   %s %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("            %s     %s%s%s%s%s %s     %s     %s   %s %s     %s%s%s%s%s   %s   %s   %s %s%s%s%s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("            %s   %s %s   %s %s     %s   %s %s   %s %s     %s   %s   %s   %s   %s %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
+	printf("             %s%s%s  %s   %s %s%s%s%s%s  %s%s%s   %s%s%s  %s%s%s%s%s %s   %s   %s    %s%s%s  %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
 	puts("");
 	puts("                                      v2.1.8");
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n                                    Made in Portugal\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
 	trackMouse();
-	clock_t start, end;
-	start = clock();
-	end = clock();
+	const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	puts("        Keep your ATC application up to date by entering \"check for updates\"\n");
 	puts("Press \"Enter\" to continue or wait 10 seconds . . .\n");
 
@@ -622,14 +637,15 @@ bool about() {
 	char* getEnter = getDynamicCharArray("", "getEnter");
 	printf("\r");
 	while (i < 84 - 4) {
-		printf("%c", 177);
+		printf("%s", introLogoLightShade());
 		i++;
 	}
 	printf("%02ds", 10);
+	fflush(stdout);
 	while (second < 10) {
-		second = (end - start) / CLOCKS_PER_SEC;
+		second = static_cast<int>(std::chrono::duration_cast<std::chrono::seconds>(
+			std::chrono::steady_clock::now() - start).count());
 		Sleep(100);
-		end = clock();
 		if (atcEnterKeyPressed()) {
 			gets_s(getEnter, 20);
 			break;
@@ -638,17 +654,23 @@ bool about() {
 			printf("\r");
 			i = 0;
 			while (i < second * 8) {
-				printf("%c", 178);
+				printf("%s", introLogoDarkShade());
 				i++;
 			}
 			while (i < 84 - 4) {
-				printf("%c", 177);
+				printf("%s", introLogoLightShade());
 				i++;
 			}
 			printf("%02ds", 10 - second);
+			fflush(stdout);
 		}
 		saveSecond = second;
 	}
+#ifdef _WIN32
+	printf("\r%*s\r\n", 84, "");
+#else
+	printf("\r\033[2K\n");
+#endif
 	Sleep(333);
 	ShowConsoleCursor(TRUE);
 	if (continu) {

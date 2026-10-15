@@ -2601,7 +2601,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 					j = i;
 					i = abs((int)strlen(arithTrig));
 					int p = j;
-					while (verifyLetter(arithTrig[p])) {
+					while (p >= 0 && verifyLetter(arithTrig[p])) {
 						p--;
 					}
 					if (j != p) {
@@ -5964,6 +5964,7 @@ bool isContainedVariable(char* to_find, char* string) {
 }
 
 bool isContainedByIndex(char* to_find, char* string, int index) {
+		if (index < 0) index = 0;
 	int i = 0, j = 0;
 	sprintf(charMaster, "");
 	if (abs((int)strlen(charMaster)) == 0) {
@@ -6016,7 +6017,7 @@ bool isContained(char* to_find, char* string) {
 		if (isEqual("nothingL", charMaster)) {
 			for (i = 0; i < abs((int)strlen(string)); i++) {
 				for (j = 0; j < abs((int)strlen(to_find)); j++) {
-					if (to_find[j] == string[i] && j == 0 && verifyLetter(string[i - 1]) == (bool)false && verifyNumber(string[i - 1]) == (bool)false) {
+					if (to_find[j] == string[i] && j == 0 && (i == 0 || (verifyLetter(string[i - 1]) == (bool)false && verifyNumber(string[i - 1]) == (bool)false))) {
 						strStart = i;
 						while (to_find[j] == string[i] && j < abs((int)strlen(to_find)) && i < abs((int)strlen(string))) {
 							j++;

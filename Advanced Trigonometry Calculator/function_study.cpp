@@ -109,6 +109,9 @@ static bool buildCanonicalFromSimplePolynomial(char* expression, char* output) {
 		return false;
 	}
 	T* coefficients = getDynamicArray<T>(DIMDOUBLE);
+	for (int i = 0; i < DIMDOUBLE; i++) {
+		coefficients[i] = (T)0;
+	}
 	char* source = getDynamicCharArray(expression, "functionStudySimplePolynomialSource");
 	while (hasBalancedOuterParentheses(source)) {
 		int len = abs((int)strlen(source));
@@ -141,15 +144,22 @@ static bool buildCanonicalFromSimplePolynomial(char* expression, char* output) {
 			}
 			int exponent = 0;
 			T coefficient = sign == '-' ? (T)-1 : (T)1;
-			if (isContained("x", term)) {
+			char* variable = strchr(term, 'x');
+			if (variable != nullptr) {
 				exponent = 1;
-				if (strStart > 0) {
+				char* exponentMarker = strchr(variable + 1, '^');
+				if (exponentMarker != nullptr) {
+					exponent = atoi(exponentMarker + 1);
+				}
+				if (variable != term) {
 					char* coefficientText = getDynamicCharArray("", "functionStudySimpleCoefficient");
-					for (int k = 0; k < strStart; k++) {
-						if (term[k] != '*') {
-							coefficientText[abs((int)strlen(coefficientText))] = term[k] == '_' ? '-' : term[k];
+					int coefficientIndex = 0;
+					for (char* coefficient = term; coefficient < variable; coefficient++) {
+						if (*coefficient != '*') {
+							coefficientText[coefficientIndex++] = *coefficient == '_' ? '-' : *coefficient;
 						}
 					}
+					coefficientText[coefficientIndex] = '\0';
 					if (abs((int)strlen(coefficientText)) > 0) {
 						if (isEqual(coefficientText, "-")) {
 							coefficient *= (T)-1;
@@ -159,9 +169,6 @@ static bool buildCanonicalFromSimplePolynomial(char* expression, char* output) {
 						}
 					}
 					_delete(coefficientText, "functionStudySimpleCoefficient"); coefficientText = nullptr;
-				}
-				if (term[strEnd] == '^') {
-					exponent = atoi(term + strEnd + 1);
 				}
 			}
 			else {
@@ -222,7 +229,7 @@ static bool evaluateCanonicalPolynomial(char* expression, T xValue, T* value) {
 		return false;
 	}
 	char* polynomial = getDynamicCharArray(expression, "functionStudyCanonicalPolynomial");
-	while (hasBalancedOuterParentheses(polynomial)) {
+	while (hasBalancedOuterParentheses(polynomial) && polynomial[1] == '(') {
 		int len = abs((int)strlen(polynomial));
 		for (int i = 1; i < len - 1; i++) {
 			polynomial[i - 1] = polynomial[i];
@@ -360,7 +367,7 @@ static T leadingPolynomialCoefficient(char* polynomial, int* degree) {
 	*degree = 0;
 	T lead = (T)0;
 	char* source = getDynamicCharArray(polynomial, "functionStudyLeadingPolynomial");
-	while (hasBalancedOuterParentheses(source)) {
+	while (hasBalancedOuterParentheses(source) && source[1] == '(') {
 		int len = abs((int)strlen(source));
 		for (int i = 1; i < len - 1; i++) {
 			source[i - 1] = source[i];
@@ -375,10 +382,15 @@ static T leadingPolynomialCoefficient(char* polynomial, int* degree) {
 			continue;
 		}
 		int start = i + 1;
-		while (source[i] != '\0' && source[i] != ')') {
+		int coefficientDepth = 1;
+		i++;
+		while (source[i] != '\0' && coefficientDepth > 0) {
+			if (source[i] == '(') coefficientDepth++;
+			if (source[i] == ')') coefficientDepth--;
+			if (coefficientDepth == 0) break;
 			i++;
 		}
-		if (source[i] == '\0') {
+		if (source[i] == '\0' || coefficientDepth != 0) {
 			break;
 		}
 		int end = i;
@@ -387,17 +399,8 @@ static T leadingPolynomialCoefficient(char* polynomial, int* degree) {
 		for (int k = start; k < end; k++) {
 			coefficient[c] = source[k] == '_' ? '-' : source[k];
 			c++;
-			if (source[k] == 'i') {
-				break;
-			}
 		}
 		coefficient[c] = '\0';
-		for (int k = 0; k < abs((int)strlen(coefficient)); k++) {
-			if (coefficient[k] == 'i') {
-				coefficient[k] = '\0';
-				break;
-			}
-		}
 		int currentDegree = 0;
 		i++;
 		if (source[i] == 'x') {
@@ -431,7 +434,7 @@ static void parseFunctionStudyPolynomial(char* polynomial, T* coefficients, int*
 		coefficients[i] = (T)0;
 	}
 	char* source = getDynamicCharArray(polynomial, "functionStudyParsePolynomial");
-	while (hasBalancedOuterParentheses(source)) {
+	while (hasBalancedOuterParentheses(source) && source[1] == '(') {
 		int len = abs((int)strlen(source));
 		for (int i = 1; i < len - 1; i++) {
 			source[i - 1] = source[i];
@@ -447,15 +450,20 @@ static void parseFunctionStudyPolynomial(char* polynomial, T* coefficients, int*
 		i++;
 		char* coefficient = getDynamicCharArray("", "functionStudyParseCoefficient");
 		int c = 0;
-		while (source[i] != '\0' && source[i] != ')' && source[i] != '+') {
+		// Canonical coefficients are complex, e.g. (1+0i).  The plus
+		// inside that coefficient is not a polynomial term separator.
+		int coefficientDepth = 1;
+		// Canonical coefficients are complex, e.g. (1+0i). Consume nested
+		// coefficient parentheses before treating ')' as the term boundary.
+		while (source[i] != '\0' && coefficientDepth > 0) {
+			if (source[i] == '(') coefficientDepth++;
+			if (source[i] == ')') coefficientDepth--;
+			if (coefficientDepth == 0) break;
 			coefficient[c] = source[i] == '_' ? '-' : source[i];
 			c++;
 			i++;
 		}
 		coefficient[c] = '\0';
-		while (source[i] != '\0' && source[i] != ')') {
-			i++;
-		}
 		if (source[i] == ')') {
 			i++;
 		}
@@ -482,9 +490,128 @@ static void parseFunctionStudyPolynomial(char* polynomial, T* coefficients, int*
 	_delete(source, "functionStudyParsePolynomial"); source = nullptr;
 }
 
+// Real roots for the function-study coefficient representation. Derivative
+// roots partition the line into monotone intervals, including repeated roots.
+static long double studyPolynomialValue(const std::vector<double>& c, long double x) {
+	long double value = 0;
+	for (size_t i = c.size(); i > 0; --i) value = value * x + c[i - 1];
+	return value;
+}
+
+static std::vector<double> studyPolynomialDerivative(const std::vector<double>& c) {
+	std::vector<double> derivative(c.size() > 1 ? c.size() - 1 : 1, 0);
+	for (size_t i = 1; i < c.size(); ++i) derivative[i - 1] = c[i] * i;
+	return derivative;
+}
+
+static void studyUniqueRoots(std::vector<double>& roots) {
+	std::sort(roots.begin(), roots.end());
+	roots.erase(std::unique(roots.begin(), roots.end(), [](double a, double b) {
+		return std::abs(a - b) < 1E-9 * std::max(1.0, std::max(std::abs(a), std::abs(b)));
+	}), roots.end());
+}
+
+static std::vector<double> studyRealPolynomialRoots(std::vector<double> c) {
+	while (c.size() > 1 && c.back() == 0) c.pop_back();
+	if (c.size() <= 1) return {};
+	if (c.front() == 0) {
+		c.erase(c.begin());
+		std::vector<double> roots = studyRealPolynomialRoots(c);
+		roots.push_back(0);
+		studyUniqueRoots(roots);
+		return roots;
+	}
+	if (c.size() == 2) return { -c[0] / c[1] };
+	double scale = 0;
+	for (double v : c) scale = std::max(scale, std::abs(v));
+	for (double& v : c) v /= scale;
+	double bound = 1;
+	for (size_t i = 0; i + 1 < c.size(); ++i) bound = std::max(bound, 1 + std::abs(c[i] / c.back()));
+	std::vector<double> critical = studyRealPolynomialRoots(studyPolynomialDerivative(c));
+	std::vector<double> points = { -bound }, roots;
+	for (double x : critical) if (x > -bound && x < bound) points.push_back(x);
+	points.push_back(bound);
+	for (double x : critical) {
+		long double magnitude = 0;
+		for (size_t i = c.size(); i > 0; --i) magnitude = magnitude * std::abs(x) + std::abs(c[i - 1]);
+		if (std::abs(studyPolynomialValue(c, x)) <= 1E-12L * magnitude) roots.push_back(x);
+	}
+	for (size_t i = 1; i < points.size(); ++i) {
+		long double left = points[i - 1], right = points[i];
+		long double lv = studyPolynomialValue(c, left), rv = studyPolynomialValue(c, right);
+		if (lv == 0 || rv == 0 || (lv > 0) == (rv > 0)) continue;
+		for (int iteration = 0; iteration < 160; ++iteration) {
+			long double middle = (left + right) / 2;
+			long double mv = studyPolynomialValue(c, middle);
+			if (mv == 0) { left = right = middle; break; }
+			if ((lv > 0) == (mv > 0)) { left = middle; lv = mv; }
+			else right = middle;
+			if (right - left < 1E-13L * std::max(1.0L, std::abs(middle))) break;
+		}
+		roots.push_back((double)((left + right) / 2));
+	}
+	studyUniqueRoots(roots);
+	return roots;
+}
+
+template <typename T>
+static std::vector<double> studyPolynomialCoefficients(char* polynomial) {
+	T* coefficients = getDynamicArray<T>(DIMDOUBLE);
+	int degree = 0;
+	parseFunctionStudyPolynomial<T>(polynomial, coefficients, &degree);
+	std::vector<double> result(degree + 1);
+	for (int i = 0; i <= degree; ++i) result[i] = precisionDisplayDouble(coefficients[i]);
+	_delete(coefficients, "studyCoefficients");
+	while (result.size() > 1 && result.back() == 0) result.pop_back();
+	return result;
+}
+
+template <typename T>
+static void solveFunctionStudyPolynomialEquation(char* polynomial) {
+	T* coefficients = getDynamicArray<T>(DIMDOUBLE);
+	int degree = 0;
+	parseFunctionStudyPolynomial<T>(polynomial, coefficients, &degree);
+	expressionF[0] = '\0';
+	int rootCount = 0;
+	auto appendRoot = [&](T root) {
+		int used = (int)strlen(expressionF);
+		if (used < DIM - 1) {
+			int written = snprintf(expressionF + used, DIM - used, "x%d=%.15g\n",
+				rootCount + 1, precisionDisplayDouble(root));
+			if (written > 0 && used + written < DIM) rootCount++;
+		}
+	};
+
+	if (degree == 1 && abs(precisionDisplayDouble(coefficients[1])) >= 1E-12) {
+		appendRoot(-coefficients[0] / coefficients[1]);
+	}
+	else if (degree == 2 && abs(precisionDisplayDouble(coefficients[2])) >= 1E-12) {
+		const T a = coefficients[2];
+		const T b = coefficients[1];
+		const T c = coefficients[0];
+		T discriminant = b * b - (T)4 * a * c;
+		double displayedDiscriminant = precisionDisplayDouble(discriminant);
+		if (displayedDiscriminant >= -1E-10) {
+			if (abs(displayedDiscriminant) < 1E-10) discriminant = (T)0;
+			using std::sqrt;
+			const T rootOffset = sqrt(discriminant);
+			appendRoot((-b + rootOffset) / ((T)2 * a));
+			if (abs(precisionDisplayDouble(rootOffset)) > 1E-10) {
+				appendRoot((-b - rootOffset) / ((T)2 * a));
+			}
+		}
+	}
+	else if (degree > 2) {
+		std::vector<double> polynomialCoefficients(degree + 1);
+		for (int i = 0; i <= degree; ++i) polynomialCoefficients[i] = precisionDisplayDouble(coefficients[i]);
+		for (double root : studyRealPolynomialRoots(polynomialCoefficients)) appendRoot((T)root);
+	}
+	_delete(coefficients, "functionStudyEquationCoefficients"); coefficients = nullptr;
+}
+
 template <typename T>
 static void writeFunctionStudyPolynomial(T* coefficients, int degree, char* output) {
-	sprintf(output, "");
+	output[0] = '\0';
 	while (degree > 0 && abs(precisionDisplayDouble(coefficients[degree])) < 1E-10) {
 		degree--;
 	}
@@ -500,14 +627,18 @@ static void writeFunctionStudyPolynomial(T* coefficients, int degree, char* outp
 				coefficientText[i] = '_';
 			}
 		}
-		if (exponent > 0) {
-			sprintf(output, "%s(%s+0i)x^%d", output, coefficientText, exponent);
+		int used = (int)strlen(output);
+		if (used > 0 && used < DIM - 1) {
+			output[used++] = '+';
+			output[used] = '\0';
 		}
-		else {
-			sprintf(output, "%s(%s+0i)", output, coefficientText);
-		}
-		if (exponent > 0) {
-			sprintf(output, "%s+", output);
+		if (used < DIM - 1) {
+			if (exponent > 0) {
+				snprintf(output + used, DIM - used, "(%s+0i)x^%d", coefficientText, exponent);
+			}
+			else {
+				snprintf(output + used, DIM - used, "(%s+0i)", coefficientText);
+			}
 		}
 		_delete(coefficientText, "functionStudyCoefficientText"); coefficientText = nullptr;
 	}
@@ -703,6 +834,266 @@ static void buildFunctionStudyRationalDerivative(char* numerator, char* denomina
 }
 
 template <typename T>
+static void printFunctionStudyRationalTable(char* numerator, char* denominator,
+	char* originalNumerator, char* originalDenominator, T* rootsR, T* rootsI,
+	int count, int mode) {
+	std::vector<T> points;
+	for (int i = 0; i < count; i++) {
+		if (abs(precisionDisplayDouble(rootsI[i])) < 1E-7) points.push_back(rootsR[i]);
+	}
+	std::sort(points.begin(), points.end());
+	points.erase(std::unique(points.begin(), points.end(), [](T a, T b) {
+		return sameFunctionStudyValue<T>(a, b);
+	}), points.end());
+	auto polynomialAt = [](char* expression, T x) {
+		T value = (T)0;
+		evaluateCanonicalPolynomial<T>(expression, x, &value);
+		return value;
+	};
+	auto sample = [&](size_t interval) {
+		if (points.empty()) return (T)0;
+		if (interval == 0) return points.front() - (T)(1 + abs(precisionDisplayDouble(points.front())));
+		if (interval == points.size()) return points.back() + (T)(1 + abs(precisionDisplayDouble(points.back())));
+		return (points[interval - 1] + points[interval]) / (T)2;
+	};
+	auto sign = [](T value) { return value > 0 ? "+" : (value < 0 ? "-" : "0"); };
+	printf("\nx\t-inf\t");
+	for (T x : points) printf("%.3f\t\t", precisionDisplayDouble(x));
+	printf("+inf\n");
+	if (mode == 0) {
+		printf("\nNumerator-> %s\nDenominator-> %s\n", numerator, denominator);
+		for (int row = 0; row < 2; row++) {
+			char* polynomial = row == 0 ? numerator : denominator;
+			printf("%s\t", row == 0 ? "Numerator" : "Denominator");
+			for (size_t interval = 0; interval <= points.size(); interval++) {
+				printf("%s\t", sign(polynomialAt(polynomial, sample(interval))));
+				if (interval < points.size()) {
+					T value = polynomialAt(polynomial, points[interval]);
+					printf("%s\t", abs(precisionDisplayDouble(value)) < 1E-8 ? "0" : sign(value));
+				}
+			}
+			puts("");
+		}
+	}
+	printf("%s\t", mode == 0 ? "f(x)" : (mode == 1 ? "f'(x)" : "f''(x)"));
+	for (size_t interval = 0; interval <= points.size(); interval++) {
+		T x = sample(interval);
+		T n = polynomialAt(numerator, x), d = polynomialAt(denominator, x);
+		printf("%s\t", sign(n / d));
+		if (interval < points.size()) {
+			x = points[interval];
+			n = polynomialAt(numerator, x); d = polynomialAt(denominator, x);
+			T originalD = polynomialAt(originalDenominator, x);
+			printf("%s\t", abs(precisionDisplayDouble(originalD)) < 1E-8 ||
+				abs(precisionDisplayDouble(d)) < 1E-8 ? "undefined" :
+				(abs(precisionDisplayDouble(n)) < 1E-8 ? "0" : sign(n / d)));
+		}
+	}
+	puts("");
+	if (mode == 0) return;
+	printf("f(x)\t");
+	for (size_t interval = 0; interval <= points.size(); interval++) {
+		T x = sample(interval);
+		T derivative = polynomialAt(numerator, x) / polynomialAt(denominator, x);
+		printf("%s\t", mode == 1 ? (derivative > 0 ? "/^" : (derivative < 0 ? "\\v" : "constant")) :
+			(derivative > 0 ? "\\_/" : (derivative < 0 ? "/^\\" : "linear")));
+		if (interval < points.size()) {
+			x = points[interval];
+			T d = polynomialAt(originalDenominator, x);
+			if (abs(precisionDisplayDouble(d)) < 1E-8) printf("undefined\t");
+			else printf("%.3f\t", precisionDisplayDouble(normalizeFunctionStudyValue<T>(polynomialAt(originalNumerator, x) / d)));
+		}
+	}
+	puts("");
+	for (size_t i = 0; i < points.size(); i++) {
+		T x = points[i], d = polynomialAt(originalDenominator, x);
+		if (abs(precisionDisplayDouble(d)) < 1E-8 || abs(precisionDisplayDouble(polynomialAt(numerator, x))) > 1E-7) continue;
+		T left = polynomialAt(numerator, sample(i)) / polynomialAt(denominator, sample(i));
+		T right = polynomialAt(numerator, sample(i + 1)) / polynomialAt(denominator, sample(i + 1));
+		if (left * right < 0) {
+			printf("%s: (%.3f,%.3f)\n", mode == 2 ? "Inflection point" : (left < 0 ? "Local min" : "Local max"),
+				precisionDisplayDouble(x), precisionDisplayDouble(normalizeFunctionStudyValue<T>(polynomialAt(originalNumerator, x) / d)));
+		}
+	}
+}
+
+static std::vector<double> studyPolynomialProduct(const std::vector<double>& a, const std::vector<double>& b) {
+	std::vector<double> result(a.size() + b.size() - 1, 0);
+	for (size_t i = 0; i < a.size(); ++i) for (size_t j = 0; j < b.size(); ++j) result[i + j] += a[i] * b[j];
+	return result;
+}
+
+static bool studyPolynomialZeroAt(const std::vector<double>& c, double x) {
+	long double scale = 0;
+	for (size_t i = c.size(); i > 0; --i) scale = scale * std::abs(x) + std::abs(c[i - 1]);
+	return std::abs(studyPolynomialValue(c, x)) <= 1E-10L * scale;
+}
+
+// One-sided limit at a denominator zero, including removable holes and
+// common factors with unequal multiplicities. side is -1 (left) or +1.
+static double studyRationalBoundary(std::vector<double> n, std::vector<double> d, double x, int side) {
+	int no = 0, od = 0;
+	while (n.size() > 1 && studyPolynomialZeroAt(n, x)) { n = studyPolynomialDerivative(n); ++no; }
+	while (d.size() > 1 && studyPolynomialZeroAt(d, x)) { d = studyPolynomialDerivative(d); ++od; }
+	double ratio = (double)(studyPolynomialValue(n, x) / studyPolynomialValue(d, x));
+	if (ratio == 0 || no > od) return 0;
+	if (no == od) return ratio;
+	if (side < 0 && (od - no) % 2) ratio = -ratio;
+	return std::copysign(std::numeric_limits<double>::infinity(), ratio);
+}
+
+static double studyRationalInfinity(const std::vector<double>& n, const std::vector<double>& d, int side) {
+	if (n.size() < d.size() || n.back() == 0) return 0;
+	double ratio = n.back() / d.back();
+	if (n.size() == d.size()) return ratio;
+	if (side < 0 && (n.size() - d.size()) % 2) ratio = -ratio;
+	return std::copysign(std::numeric_limits<double>::infinity(), ratio);
+}
+
+// A rational function is continuous and monotone between denominator zeros
+// and derivative zeros. Its image is the union of these interval images;
+// excluded domain points contribute limits, never attained extrema.
+template <typename T>
+static void printFunctionStudyGeneralRange(char* numerator, char* denominator) {
+	std::vector<double> n = studyPolynomialCoefficients<T>(numerator), d = studyPolynomialCoefficients<T>(denominator);
+	std::vector<double> derivative = studyPolynomialProduct(studyPolynomialDerivative(n), d);
+	std::vector<double> sub = studyPolynomialProduct(n, studyPolynomialDerivative(d));
+	derivative.resize(std::max(derivative.size(), sub.size()), 0);
+	for (size_t i = 0; i < sub.size(); ++i) derivative[i] -= sub[i];
+	std::vector<double> poles = studyRealPolynomialRoots(d);
+	std::vector<double> points = studyRealPolynomialRoots(derivative);
+	points.insert(points.end(), poles.begin(), poles.end());
+	studyUniqueRoots(points);
+	struct Interval { double lo, hi; bool lc, hc; double lx, hx; };
+	std::vector<Interval> intervals;
+	for (size_t i = 0; i <= points.size(); ++i) {
+		double left = i == 0 ? studyRationalInfinity(n, d, -1) : studyRationalBoundary(n, d, points[i - 1], 1);
+		double right = i == points.size() ? studyRationalInfinity(n, d, 1) : studyRationalBoundary(n, d, points[i], -1);
+		bool lc = i > 0 && !studyPolynomialZeroAt(d, points[i - 1]);
+		bool hc = i < points.size() && !studyPolynomialZeroAt(d, points[i]);
+		double lx = i == 0 ? 0 : points[i - 1], hx = i == points.size() ? 0 : points[i];
+		if (left > right) { std::swap(left, right); std::swap(lc, hc); std::swap(lx, hx); }
+		if (left == right) {
+			lc = hc = true;
+			lx = hx = points.empty() ? 0 : (i == 0 ? points.front() - 1 : (i == points.size() ? points.back() + 1 : (points[i - 1] + points[i]) / 2));
+		}
+		intervals.push_back({left, right, lc, hc, lx, hx});
+	}
+	std::sort(intervals.begin(), intervals.end(), [](const Interval& a, const Interval& b) { return a.lo < b.lo; });
+	std::vector<Interval> image;
+	for (const Interval& interval : intervals) {
+		if (image.empty() || interval.lo > image.back().hi ||
+			(interval.lo == image.back().hi && !interval.lc && !image.back().hc)) { image.push_back(interval); continue; }
+		Interval& last = image.back();
+		if (interval.lo == last.lo && interval.lc) { last.lc = true; last.lx = interval.lx; }
+		if (interval.hi > last.hi) { last.hi = interval.hi; last.hc = interval.hc; last.hx = interval.hx; }
+		else if (interval.hi == last.hi && interval.hc) { last.hc = true; last.hx = interval.hx; }
+	}
+	printf("\nCodomain: ");
+	for (size_t i = 0; i < image.size(); ++i) {
+		const Interval& interval = image[i];
+		if (i) printf("U");
+		if (image.size() == 1 && std::isinf(interval.lo) && std::isinf(interval.hi)) { printf("R"); continue; }
+		if (interval.lo == interval.hi) { printf("{%.3f}", interval.lo); continue; }
+		if (std::isinf(interval.lo)) printf("]-inf,");
+		else printf("%c%.3f,", interval.lc ? '[' : ']', interval.lo == 0 ? 0 : interval.lo);
+		if (std::isinf(interval.hi)) printf("+inf[");
+		else printf("%.3f%c", interval.hi == 0 ? 0 : interval.hi, interval.hc ? ']' : '[');
+	}
+	puts("");
+	bool extremum = false;
+	if (image.front().lc && std::isfinite(image.front().lo)) { printf("Min: (%.3f,%.3f)\n", image.front().lx, image.front().lo); extremum = true; }
+	if (image.back().hc && std::isfinite(image.back().hi)) { printf("Max: (%.3f,%.3f)\n", image.back().hx, image.back().hi); extremum = true; }
+	if (!extremum) puts("No absolute minimum or maximum.");
+}
+
+// For real rational polynomials of degree <= 2, y is in the image precisely
+// when N(x)-y*D(x)=0 has a real root at which D(x) is nonzero.
+template <typename T>
+static bool printFunctionStudyQuadraticRange(char* numerator, char* denominator) {
+	T* nc = getDynamicArray<T>(DIMDOUBLE); T* dc = getDynamicArray<T>(DIMDOUBLE);
+	int nd = 0, dd = 0;
+	parseFunctionStudyPolynomial<T>(numerator, nc, &nd);
+	parseFunctionStudyPolynomial<T>(denominator, dc, &dd);
+	if (nd > 2 || dd > 2) {
+		_delete(nc, "rangeNumerator"); _delete(dc, "rangeDenominator");
+		printFunctionStudyGeneralRange<T>(numerator, denominator);
+		return true;
+	}
+	double n[3], d[3];
+	for (int i = 0; i < 3; i++) { n[i] = precisionDisplayDouble(nc[i]); d[i] = precisionDisplayDouble(dc[i]); }
+	_delete(nc, "rangeNumerator"); _delete(dc, "rangeDenominator");
+	auto realRoots = [](double a, double b, double c) {
+		std::vector<double> roots;
+		if (abs(a) < 1E-12) { if (abs(b) >= 1E-12) roots.push_back(-c / b); }
+		else {
+			double delta = b * b - 4 * a * c;
+			if (delta >= -1E-10) {
+				delta = std::max(0.0, delta);
+				roots.push_back((-b + sqrt(delta)) / (2 * a));
+				if (delta > 1E-10) roots.push_back((-b - sqrt(delta)) / (2 * a));
+			}
+		}
+		return roots;
+	};
+	auto preimage = [&](double y, double* x) {
+		double a = n[2] - y * d[2], b = n[1] - y * d[1], c = n[0] - y * d[0];
+		std::vector<double> candidates = realRoots(a, b, c);
+		if (abs(a) < 1E-12 && abs(b) < 1E-12 && abs(c) < 1E-12) candidates = { 0, 1, -1, 2 };
+		for (double root : candidates) {
+			double divisor = (d[2] * root + d[1]) * root + d[0];
+			if (abs(divisor) > 1E-8) { *x = root; return true; }
+		}
+		return false;
+	};
+	std::vector<double> boundaries = realRoots(d[1]*d[1]-4*d[2]*d[0],
+		-2*n[1]*d[1]+4*(n[2]*d[0]+d[2]*n[0]), n[1]*n[1]-4*n[2]*n[0]);
+	if (dd > 0 && abs(d[dd]) > 1E-12) boundaries.push_back(n[dd] / d[dd]);
+	for (double& boundary : boundaries) if (abs(boundary) < 1E-12) boundary = 0.0;
+	std::sort(boundaries.begin(), boundaries.end());
+	boundaries.erase(std::unique(boundaries.begin(), boundaries.end(), [](double a, double b) { return abs(a-b) < 1E-8; }), boundaries.end());
+	std::vector<bool> cells;
+	double x = 0;
+	for (size_t i = 0; i <= boundaries.size(); i++) {
+		double y = boundaries.empty() ? 0 : (i == 0 ? boundaries.front()-1-abs(boundaries.front()) :
+			(i == boundaries.size() ? boundaries.back()+1+abs(boundaries.back()) : (boundaries[i-1]+boundaries[i])/2));
+		cells.push_back(preimage(y, &x));
+		if (i < boundaries.size()) cells.push_back(preimage(boundaries[i], &x));
+	}
+	printf("\nCodomain: ");
+	bool printed = false;
+	for (size_t i = 0; i < cells.size(); i++) {
+		if (!cells[i]) continue;
+		size_t start = i;
+		while (i + 1 < cells.size() && cells[i+1]) i++;
+		if (printed) printf("U");
+		printed = true;
+		if (start == 0 && i + 1 == cells.size()) { printf("R"); continue; }
+		if (start == i && start % 2 == 1) { printf("{%.3f}", boundaries[start/2]); continue; }
+		if (start == 0) printf("]-inf,");
+		else printf("%c%.3f,", start % 2 == 1 ? '[' : ']', boundaries[(start-1)/2]);
+		if (i + 1 == cells.size()) printf("+inf[");
+		else printf("%.3f%c", boundaries[i/2], i % 2 == 1 ? ']' : '[');
+	}
+	puts("");
+	bool extremum = false;
+	if (!cells.front()) {
+		for (size_t i = 1; i < cells.size(); i++) if (cells[i]) {
+			if (i % 2 == 1 && preimage(boundaries[i/2], &x)) { printf("Min: (%.3f,%.3f)\n", x, boundaries[i/2]); extremum = true; }
+			break;
+		}
+	}
+	if (!cells.back()) {
+		for (size_t i = cells.size()-1; i > 0; i--) if (cells[i]) {
+			if (i % 2 == 1 && preimage(boundaries[i/2], &x)) { printf("Max: (%.3f,%.3f)\n", x, boundaries[i/2]); extremum = true; }
+			break;
+		}
+	}
+	if (!extremum) puts("No absolute minimum or maximum.");
+	return true;
+}
+
+template <typename T>
 void functionStudy(char* function) {
 	sprintf(roots, "");
 	ansRV = 0;
@@ -736,7 +1127,7 @@ void functionStudy(char* function) {
 				g++;
 			}
 			numerator[g] = '\0';
-			int h = strStart + 2;
+			int h = strStart + 1;
 			g = 0;
 			while (h < abs((int)strlen(saveFunctionF))) {
 				denominator[g] = saveFunctionF[h];
@@ -803,10 +1194,14 @@ void functionStudy(char* function) {
 			}
 			sprintf(saveFunctionF, "%s", expressionF);
 			sprintf(originalFunction, "%s", saveFunctionF);
+			// Use the canonical coefficient derivative path for every polynomial.
+			snprintf(numerator, DIM, "%s", saveFunctionF);
+			snprintf(denominator, DIM, "(1+0i)");
+			snprintf(originalFunction, DIM, "%s/(1+0i)", saveFunctionF);
 		}
 
 		if (abs((int)strlen(denominator)) > 0) {
-			equationSolver<T>(denominator);
+			solveFunctionStudyPolynomialEquation<T>(denominator);
 			puts("\n==> Domain <==\n");
 			printf("\nDf=R");
 			int i = 0, j = 0, z = 0;
@@ -837,7 +1232,11 @@ void functionStudy(char* function) {
 					zeroR[z] = rootR; zeroI[z] = rootI;
 					poleZerosR[pl] = rootR; poleZerosI[pl] = rootI;
 					pl++;
-					z++;
+					// Zeros of the denominator split the sign chart but are not
+					// zeros of the function itself.
+					if (abs((int)strlen(denominator)) == 0 || !isContained("=", denominator)) {
+						zeroR[z] = rootR; zeroI[z] = rootI; z++;
+					}
 				}
 			}
 			if (printedDomainHeader) {
@@ -865,14 +1264,24 @@ void functionStudy(char* function) {
 		char* saveExpF = getDynamicCharArray("", "saveExpF");
 		T linearRoot = (T)0;
 		if (getSingleLinearRoot<T>(saveFunction, &linearRoot)) {
-			zeroR[z] = linearRoot; zeroI[z] = (T)0;
+			bool isFunctionZero = true;
+			for (int pole = 0; pole < pl; pole++) {
+				if (sameFunctionStudyValue<T>(linearRoot, poleZerosR[pole]) &&
+					abs(precisionDisplayDouble(poleZerosI[pole])) < 1E-7) {
+					isFunctionZero = false;
+					break;
+				}
+			}
+			if (isFunctionZero) {
+				zeroR[z] = linearRoot; zeroI[z] = (T)0;
+				printf("\n(%.3G,0)", precisionDisplayDouble(linearRoot));
+				z++;
+			}
 			poleZerosR[pl] = linearRoot; poleZerosI[pl] = (T)0;
-			printf("\n(%.3G,0)", precisionDisplayDouble(linearRoot));
 			pl++;
-			z++;
 		}
 		else {
-			equationSolver<T>(saveFunction);
+				solveFunctionStudyPolynomialEquation<T>(saveFunction);
 			sprintf(saveExpF, "%s", expressionF);
 		}
 		while (abs((int)strlen(saveExpF)) > 0 && isContained("=", saveExpF)) {
@@ -889,11 +1298,40 @@ void functionStudy(char* function) {
 				sprintf(value, "%s", expressionF);
 			}
 			solveMath<T>(value);
-			zeroR[z] = normalizeFunctionStudyValue<T>(precisionValueTo<T>(resultR)); zeroI[z] = normalizeFunctionStudyValue<T>(precisionValueTo<T>(resultI));
-			printf("\n(%.3G,0)", precisionDisplayDouble(zeroR[z]));
-			poleZerosR[pl] = normalizeFunctionStudyValue<T>(precisionValueTo<T>(resultR)); poleZerosI[pl] = normalizeFunctionStudyValue<T>(precisionValueTo<T>(resultI));
+			T rootR = normalizeFunctionStudyValue<T>(precisionValueTo<T>(resultR));
+			T rootI = normalizeFunctionStudyValue<T>(precisionValueTo<T>(resultI));
+			bool isFunctionZero = true;
+			for (int pole = 0; pole < pl; pole++) {
+				if (sameFunctionStudyValue<T>(rootR, poleZerosR[pole]) &&
+					abs(precisionDisplayDouble(poleZerosI[pole])) < 1E-7) {
+					isFunctionZero = false;
+					break;
+				}
+			}
+			if (isFunctionZero) {
+				zeroR[z] = rootR; zeroI[z] = rootI;
+				printf("\n(%.3G,0)", precisionDisplayDouble(rootR));
+				z++;
+			}
+			poleZerosR[pl] = rootR; poleZerosI[pl] = rootI;
 			pl++;
-			z++;
+		}
+		// Keep the sign chart's breakpoints to real zeros of f and real
+		// denominator roots (vertical asymptotes), without duplicates.
+		for (int pole = 0; pole < pl; pole++) {
+			if (abs(precisionDisplayDouble(poleZerosI[pole])) > 1E-7) continue;
+			bool present = false;
+			for (int root = 0; root < z; root++) {
+				if (sameFunctionStudyValue<T>(zeroR[root], poleZerosR[pole])) {
+					present = true;
+					break;
+				}
+			}
+			if (!present) {
+				zeroR[z] = poleZerosR[pole];
+				zeroI[z] = (T)0;
+				z++;
+			}
 		}
 		T* sortZeroR = getDynamicArray<T>(DIMDOUBLE); T* sortZeroI = getDynamicArray<T>(DIMDOUBLE);
 		T theSmallerR, theSmallerI = 0;
@@ -928,14 +1366,18 @@ void functionStudy(char* function) {
 		solveFunctionStudyExpression<T>(originalFunction);
 		resultR = normalizeFunctionStudyValue<T>(precisionValueTo<T>(resultR));
 		puts("\n\nIt intersects the yy-axis in the point below:\n");
-		printf("\n(0,%.3f)\n", precisionDisplayDouble(resultR));
-		intersectYY = precisionValueTo<T>(resultR);
-		coDomain[u] = intersectYY;
-		u++;
+		T yyDenominator = (T)1;
+		evaluateCanonicalPolynomial<T>(denominator, (T)0, &yyDenominator);
+		if (yyDenominator != 0) {
+			printf("\n(0,%.3f)\n", precisionDisplayDouble(resultR));
+			intersectYY = precisionValueTo<T>(resultR);
+			coDomain[u++] = intersectYY;
+		}
+		else puts("The function does not intersect the yy-axis.");
 		printf("\n==> Asymptotes <==\n");
 		char* verticalAsymptotes = getDynamicCharArray("", "verticalAsymptotes");
 		if (abs((int)strlen(denominator)) > 0) {
-			equationSolver<T>(denominator);
+			solveFunctionStudyPolynomialEquation<T>(denominator);
 			int i = 0, j = 0, z = 0;
 			char* value = getDynamicCharArray("", "value");
 			replaceTimes = 0;
@@ -952,7 +1394,9 @@ void functionStudy(char* function) {
 				}
 				value[j] = '\0';
 				T rootR = (T)0, rootI = (T)0;
-				if (parseFunctionStudyRootValue<T>(value, &rootR, &rootI) && !numeratorIsZeroAtRoot<T>(numerator, rootR)) {
+				if (parseFunctionStudyRootValue<T>(value, &rootR, &rootI) &&
+					std::isinf(studyRationalBoundary(studyPolynomialCoefficients<T>(numerator),
+						studyPolynomialCoefficients<T>(denominator), precisionDisplayDouble(rootR), 1))) {
 					if (!printedVerticalAsymptotes) {
 						puts("\nHas as vertical asymptotes the lines below:");
 						printedVerticalAsymptotes = true;
@@ -1027,75 +1471,31 @@ void functionStudy(char* function) {
 			puts("\nIt does not have a horizontal asymptote when lim x-> -inf");
 		}
 		printf("\n==> Symmetries <==\n");
-		char* saveDenominator = getDynamicCharArray("", "saveDenominator");
-		sprintf(saveDenominator, "%s", denominator);
-		T*  minusfx = getDynamicArray<T>(DIMDOUBLE); T* fxminusx = getDynamicArray<T>(DIMDOUBLE); T* fx = getDynamicArray<T>(DIMDOUBLE);
+		// Compare N(-x)D(x) with +/-N(x)D(-x), and preserve domain symmetry.
+		std::vector<double> symmetryN = studyPolynomialCoefficients<T>(numerator);
+		std::vector<double> symmetryD = studyPolynomialCoefficients<T>(denominator);
+		std::vector<double> reflectedN = symmetryN, reflectedD = symmetryD;
+		for (size_t k = 1; k < reflectedN.size(); k += 2) reflectedN[k] = -reflectedN[k];
+		for (size_t k = 1; k < reflectedD.size(); k += 2) reflectedD[k] = -reflectedD[k];
+		std::vector<double> lhs = studyPolynomialProduct(reflectedN, symmetryD);
+		std::vector<double> rhs = studyPolynomialProduct(symmetryN, reflectedD);
+		bool even = true, odd = true;
+		double symmetryScale = 0;
+		for (size_t k = 0; k < lhs.size(); ++k) symmetryScale = std::max(symmetryScale, std::max(std::abs(lhs[k]), std::abs(rhs[k])));
+		for (size_t k = 0; k < lhs.size(); ++k) {
+			if (std::abs(lhs[k] - rhs[k]) > 1E-12 * symmetryScale) even = false;
+			if (std::abs(lhs[k] + rhs[k]) > 1E-12 * symmetryScale) odd = false;
+		}
+		std::vector<double> domainRoots = studyRealPolynomialRoots(symmetryD);
+		for (double root : domainRoots) {
+			bool reflectedRoot = false;
+			for (double other : domainRoots) if (std::abs(root + other) < 1E-8 * std::max(1.0, std::abs(root))) reflectedRoot = true;
+			if (!reflectedRoot) { even = odd = false; break; }
+		}
+		puts(even ? "\nThe function is even." : "\nThe function is not even.");
+		puts(odd ? "\nThe function is odd." : "\nThe function is not odd.");
+		if (!even && !odd) puts("\nThere is no symmetry of the graph with respect to the yy axis or the origin.");
 		int y = 0, p = 0;
-		while (y < 10000) {
-			T sampleX = (T)(y - 5000);
-			resultR = sampleX;
-			resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			fx[p] = solveFunctionStudyExpression<T>(originalFunction);
-			resultR = -sampleX;
-			resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			fxminusx[p] = solveFunctionStudyExpression<T>(originalFunction);
-			minusfx[p] = fx[p] * -1;
-			y = y + 1000;
-			p++;
-		}
-		y = 0;
-		int yy = 0;
-		p = 0;
-		while (y < 10000) {
-			if (sameFunctionStudyValue<T>(fxminusx[p], fx[p])) {
-				while (sameFunctionStudyValue<T>(fxminusx[p], fx[p]) && y < 10000) {
-					yy = yy + 1000; y = y + 1000;
-					p++;
-				}
-			}
-			else {
-				y = y + 1000;
-				p++;
-			}
-		}
-		int neitherEvenAndOdd = 0;
-		if (yy == 10000) {
-			puts("\nThe function is even.");
-		}
-		else {
-			neitherEvenAndOdd++;
-			puts("\nThe function is not even.");
-		}
-		yy = 0;
-		y = 0;
-		p = 0;
-		while (y < 10000) {
-			if (sameFunctionStudyValue<T>(fxminusx[p], minusfx[p])) {
-				while (sameFunctionStudyValue<T>(fxminusx[p], minusfx[p]) && y < 10000) {
-					yy = yy + 1000; y = y + 1000;
-					p++;
-				}
-			}
-			else {
-				y = y + 1000;
-				p++;
-			}
-		}
-		if (yy == 10000) {
-			puts("\nThe function is odd.");
-		}
-		else {
-			neitherEvenAndOdd++;
-			puts("\nThe function is not odd.");
-		}
-		if (neitherEvenAndOdd == 2) {
-			puts("\nThere is no symmetry of the graph with respect to the yy axis or the origin.");
-		}
-		sprintf(denominator, "%s", saveDenominator);
 		printf("\n==> Function signal <==\n\n");
 		if (abs((int)strlen(numerator)) == 0 && abs((int)strlen(denominator)) == 0) {
 			z = 0;
@@ -1274,200 +1674,8 @@ void functionStudy(char* function) {
 				o++;
 			}
 
-			char* displayNumerator = getDynamicCharArray(numerator, "displayNumerator");
-			char* displayDenominator = getDynamicCharArray(denominator, "displayDenominator");
-			removeTriplPars(displayNumerator);
-			sprintf(displayNumerator, "%s", expressionF);
-			removeDuplPars(displayNumerator);
-			sprintf(displayNumerator, "%s", expressionF);
-			printf("\nNumerator-> %s\n", displayNumerator);
-			printf("\nDenominator-> %s\n", displayDenominator);
-			_delete(displayNumerator, "displayNumerator"); displayNumerator = nullptr;
-			_delete(displayDenominator, "displayDenominator"); displayDenominator = nullptr;
-			printf("\nx\t\t-inf\t");
-			o = 0;
-			while (o < saveZ) {
-				if (o < saveZ - 1) {
-					printf("%.3f\t\t", sortZeroR[o]);
-				}
-				else {
-					printf("%.3f\t", sortZeroR[o]);
-				}
-				o++;
-			}
-			printf("+inf\n");
-			printf("\nNumerator\t");
-			resultR = sortZeroR[0] - 1000; resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			solveFunctionStudyExpression<T>(numerator);
-			if (resultR > 0) {
-				printf("+\t");
-			}
-			else {
-				printf("-\t");
-			}
-			y = 0;
-			o = 0;
-			while (o < saveZ) {
-				resultR = sortZeroR[o]; resultI = 0;
-				sprintf(expressionF, "");
-				variableController("x");
-				solveFunctionStudyExpression<T>(numerator);
-				if (abs(precisionValueTo<T>(resultR)) < 0.1) {
-					printf("0\t");
-				}
-				else {
-					if (resultR > 0) {
-						printf("+\t");
-					}
-					else {
-						printf("-\t");
-					}
-				}
-				o++;
-				y++;
-				if (o < saveZ) {
-					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
-					sprintf(expressionF, "");
-					variableController("x");
-					solveFunctionStudyExpression<T>(numerator);
-					if (resultR > 0) {
-						printf("+\t");
-					}
-					else {
-						printf("-\t");
-					}
-					y++;
-				}
-			}
-			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			solveFunctionStudyExpression<T>(numerator);
-			if (resultR > 0) {
-				printf("+\t");
-			}
-			else {
-				printf("-\t");
-			}
-			printf("\nDenominator\t");
-			resultR = sortZeroR[0] - 1000; resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			solveFunctionStudyExpression<T>(denominator);
-			if (resultR > 0) {
-				printf("+\t");
-			}
-			else {
-				printf("-\t");
-			}
-			y = 0;
-			o = 0;
-			while (o < saveZ) {
-				resultR = sortZeroR[o]; resultI = 0;
-				sprintf(expressionF, "");
-				variableController("x");
-				solveFunctionStudyExpression<T>(denominator);
-				if (abs(precisionValueTo<T>(resultR)) < 0.1) {
-					printf("0\t");
-				}
-				else {
-					if (resultR > 0) {
-						printf("+\t");
-					}
-					else {
-						printf("-\t");
-					}
-				}
-				o++;
-				y++;
-				if (o < saveZ) {
-					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
-					sprintf(expressionF, "");
-					variableController("x");
-					solveFunctionStudyExpression<T>(denominator);
-					if (resultR > 0) {
-						printf("+\t");
-					}
-					else {
-						printf("-\t");
-					}
-					y++;
-				}
-			}
-			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
-			variableController("x");
-			solveFunctionStudyExpression<T>(denominator);
-			if (resultR > 0) {
-				printf("+\t");
-			}
-			else {
-				printf("-\t");
-			}
-			printf("\nf(x)\t\t");
-			resultR = sortZeroR[0] - 1000; resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			resultR = solveFunctionStudyExpression<T>(numerator) / solveFunctionStudyExpression<T>(denominator);
-			if (resultR > 0) {
-				printf("+\t");
-			}
-			else {
-				printf("-\t");
-			}
-			y = 0;
-			o = 0;
-			char* expre = getDynamicCharArray("", "expre");
-			while (o < saveZ) {
-				resultR = sortZeroR[o]; resultI = 0;
-				sprintf(expressionF, "");
-				variableController("x");
-				resultR = solveFunctionStudyExpression<T>(numerator) / solveFunctionStudyExpression<T>(denominator);
-				if (abs(precisionValueTo<T>(resultR)) > 1E4 || abs(precisionValueTo<T>(resultI)) > 1E4) {
-					resultR = pot<T>((T)10, (T)400, 1);
-					printf("%.2f\t", precisionDisplayDouble(resultR));
-				}
-				else {
+			printFunctionStudyRationalTable<T>(numerator, denominator, numerator, denominator, sortZeroR, sortZeroI, o, 0);
 
-					sprintf(expre, "%.2f\t", precisionDisplayDouble(resultR));
-					if (isContained("ind", expre)) {
-						printf("ind\t");
-					}
-					else {
-						printf("%s", expre);
-					}
-
-				}
-
-				o++;
-				y++;
-				if (o < saveZ) {
-					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
-					sprintf(expressionF, "");
-					variableController("x");
-					resultR = solveFunctionStudyExpression<T>(numerator) / solveFunctionStudyExpression<T>(denominator);
-					if (resultR > 0) {
-						printf("+\t");
-					}
-					else {
-						printf("-\t");
-					}
-					y++;
-				}
-			}
-			_delete(expre, "expre");
-			expre = nullptr;
-			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			resultR = solveFunctionStudyExpression<T>(numerator) / solveFunctionStudyExpression<T>(denominator);
-			if (resultR > 0) {
-				printf("+\t");
-			}
-			else {
-				printf("-\t");
-			}
 		}
 		puts(" ");
 		printf("\n==> Monotony interval and relative extremes <==\n");
@@ -1491,7 +1699,7 @@ void functionStudy(char* function) {
 				z++;
 			}
 			else {
-				equationSolver<T>(data);
+				solveFunctionStudyPolynomialEquation<T>(data);
 				sprintf(saveExpF, "%s", expressionF);
 				while (isContained("=", saveExpF)) {
 					j = 0;
@@ -1563,7 +1771,7 @@ void functionStudy(char* function) {
 				o++;
 				y++;
 				if (o < saveZ) {
-					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
+				resultR = (sortZeroR[o - 1] + sortZeroR[o]) / (T)2; resultI = 0;
 					sprintf(expressionF, "");
 					variableController("x");
 					solveFunctionStudyExpression<T>(data);
@@ -1665,7 +1873,7 @@ void functionStudy(char* function) {
 			}
 			sprintf(new_derivate, "(%s)/(%s)", new_numerator, new_denominator);
 			printf("\nf'(x)=%s\n", new_derivate);
-			printf("\nx\t-inf\t");
+
 			replaceTimes = 0;
 			removeDuplPars(new_numerator);
 			sprintf(new_numerator, "%s", expressionF);
@@ -1684,7 +1892,7 @@ void functionStudy(char* function) {
 			}
 			else {
 				sprintf(expressionF, "");
-				equationSolver<T>(new_numerator);
+				solveFunctionStudyPolynomialEquation<T>(new_numerator);
 				sprintf(saveExpF, "%s", expressionF);
 				while (isContained("=", saveExpF)) {
 					j = 0;
@@ -1707,7 +1915,7 @@ void functionStudy(char* function) {
 				}
 			}
 			sprintf(expressionF, "");
-			equationSolver<T>(denominator);
+			solveFunctionStudyPolynomialEquation<T>(denominator);
 			i = 0; j = 0; z = 0;
 			replaceTimes = 0;
 			sprintf(saveExpF, "%s", expressionF);
@@ -1759,138 +1967,7 @@ void functionStudy(char* function) {
 				}
 			}
 			saveZ = o;
-			o = 0;
-			y = 0;
-			while (o < saveZ) {
-				printf("%.3f\t", sortZeroR[o]);
-				o++;
-				y++;
-				if (o < saveZ) {
-					printf("\t");
-					y++;
-				}
-			}
-			printf("+inf\n");
-			printf("\nf'(x)\t");
-			resultR = sortZeroR[0] - 1000; resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			removeDuplPars(new_numerator);
-			sprintf(new_numerator, "%s", expressionF);
-			removeDuplPars(new_denominator);
-			sprintf(new_denominator, "%s", expressionF);
-			resultR = solveFunctionStudyExpression<T>(new_numerator) / solveFunctionStudyExpression<T>(new_denominator);
-			if (resultR >= 0) {
-				printf("+\t");
-			}
-			else {
-				printf("-\t");
-			}
-			y = 0;
-			o = 0;
-			char* expre = getDynamicCharArray("", "expre");
-			while (o < saveZ) {
-				resultR = sortZeroR[o]; resultI = 0;
-				sprintf(expressionF, "");
-				variableController("x");
-				resultR = solveFunctionStudyExpression<T>(new_numerator) / solveFunctionStudyExpression<T>(new_denominator);
-				if (abs(precisionValueTo<T>(resultR)) > 1E4 || abs(precisionValueTo<T>(resultI)) > 1E4) {
-					resultR = pot<T>((T)10, (T)400, 1);
-					printf("%.2f\t", precisionDisplayDouble(resultR));
-				}
-				else {
-
-					sprintf(expre, "%.2f\t", precisionDisplayDouble(resultR));
-					if (isContained("ind", expre)) {
-						printf("ind\t");
-					}
-					else {
-						printf("%s", expre);
-					}
-
-				}
-				o++;
-				y++;
-				if (o < saveZ) {
-					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
-					sprintf(expressionF, "");
-					variableController("x");
-					resultR = solveFunctionStudyExpression<T>(new_numerator) / solveFunctionStudyExpression<T>(new_denominator);
-					if (resultR >= 0) {
-						printf("+\t");
-					}
-					else {
-						printf("-\t");
-					}
-					y++;
-				}
-			}
-			_delete(expre, "expre"); expre = nullptr;
-			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			resultR = solveFunctionStudyExpression<T>(new_numerator) / solveFunctionStudyExpression<T>(new_denominator);
-			if (resultR >= 0) {
-				printf("+\t");
-			}
-			else {
-				printf("-\t");
-			}
-			printf("\nf(x)\t");
-			T slopeHelper = 0;
-			resultR = sortZeroR[0] - 1000; resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			resultR = solveFunctionStudyExpression<T>(originalFunction);
-			if (resultR >= 0) {
-				printf("/^\t");
-			}
-			else {
-				printf("\\v\t");
-			}
-			y = 0;
-			o = 0;
-			while (o < saveZ) {
-				resultR = sortZeroR[o]; resultI = 0;
-				sprintf(expressionF, "");
-				variableController("x");
-				resultR = solveFunctionStudyExpression<T>(originalFunction);
-				if (abs(precisionValueTo<T>(resultR)) > 1E6 || abs(precisionValueTo<T>(resultI)) > 1E6) {
-					resultR = pot<T>((T)10, (T)400, 1);
-				}
-				printf("%.3f\t", precisionDisplayDouble(resultR));
-				o++;
-				y++;
-				if (o < saveZ) {
-					resultR = sortZeroR[o - 1] - 0.25; resultI = 0;
-					slopeHelper = solveFunctionStudyExpression<T>(originalFunction);
-					resultR = sortZeroR[o - 1] + 0.77; resultI = 0;
-					sprintf(expressionF, "");
-					variableController("x");
-					resultR = solveFunctionStudyExpression<T>(originalFunction);
-					if (resultR > slopeHelper) {
-						printf("/^\t");
-					}
-					else {
-						printf("\\v\t");
-					}
-					y++;
-				}
-			}
-			resultR = sortZeroR[o - 1] - 0.25; resultI = 0;
-			slopeHelper = solveFunctionStudyExpression<T>(originalFunction);
-			resultR = sortZeroR[o - 1] + 1000; resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			resultR = solveFunctionStudyExpression<T>(originalFunction);
-			if (resultR > slopeHelper) {
-				printf("/^\t");
-			}
-			else {
-				printf("\\v\t");
-			}
-			o = 0;
-			puts(" ");
+			printFunctionStudyRationalTable<T>(new_numerator, new_denominator, numerator, denominator, sortZeroR, sortZeroI, saveZ, 1);
 			_delete(value, "value");
 			value = nullptr;
 			_delete(saveExpF, "saveExpF");
@@ -2004,10 +2081,10 @@ void functionStudy(char* function) {
 			}
 			sprintf(sec_new_derivate, "%s", expressionF);
 			printf("\nf''(x)=%s\n", sec_new_derivate);
-			printf("\nx\t-inf\t");
+
 			replaceTimes = 0;
 			sprintf(expressionF, "");
-			equationSolver<T>(sec_new_numerator);
+			solveFunctionStudyPolynomialEquation<T>(sec_new_numerator);
 			int i = 0, j = 0, z = 0;
 			char* value = getDynamicCharArray("", "value");
 			replaceTimes = 0;
@@ -2033,11 +2110,10 @@ void functionStudy(char* function) {
 				z++;
 			}
 			sprintf(expressionF, "");
-			equationSolver<T>(denominator);
+			solveFunctionStudyPolynomialEquation<T>(denominator);
 			i = 0; j = 0; z = 0;
 			replaceTimes = 0;
 			sprintf(saveExpF, "%s", expressionF);
-			char* ValueR = getDynamicCharArray("", "ValueR");
 			while (isContained("=", saveExpF)) {
 				j = 0;
 				i = strEnd;
@@ -2053,20 +2129,12 @@ void functionStudy(char* function) {
 				}
 				solveMath<T>(value);
 
-				sprintf(ValueR, convertToString("%.2f"), precisionDisplayDouble(resultR));
-				for (int v = 0; v < abs((int)(abs((int)strlen(ValueR)))); v++) {
-					if (ValueR[v] == '-')
-						ValueR[v] = '_';
-				}
-				solveMath<T>(ValueR);
 				zeroR[z] = normalizeFunctionStudyValue<T>(precisionValueTo<T>(resultR)); zeroI[z] = normalizeFunctionStudyValue<T>(precisionValueTo<T>(resultI));
 				poleZerosR[pl] = normalizeFunctionStudyValue<T>(precisionValueTo<T>(resultR)); poleZerosI[pl] = normalizeFunctionStudyValue<T>(precisionValueTo<T>(resultI));
 				pl++;
 				z++;
 
 			}
-			_delete(ValueR, "ValueR");
-			ValueR = nullptr;
 			T theSmallerR, theSmallerI = 0;
 			int  saveZ = pl;
 			int o = 0, saveIndex = -1;
@@ -2096,135 +2164,13 @@ void functionStudy(char* function) {
 				}
 			}
 			saveZ = o;
-			o = 0;
-			y = 0;
-			while (o < saveZ) {
-				printf("%.3f\t", sortZeroR[o]);
-				o++;
-				y++;
-				if (o < saveZ) {
-					printf("\t");
-					y++;
-				}
-			}
-			printf("+inf\n");
-			printf("\nf''(x)\t");
-			resultR = -1000; resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			resultR = solveFunctionStudyExpression<T>(sec_new_derivate);
-			if (resultR >= 0) {
-				printf("+\t");
-			}
-			else {
-				printf("-\t");
-			}
-			y = 0;
-			o = 0;
-			char* expre = getDynamicCharArray("", "expre");
-			while (o < saveZ) {
-				resultR = sortZeroR[o]; resultI = 0;
-				sprintf(expressionF, "");
-				variableController("x");
-				resultR = solveFunctionStudyExpression<T>(sec_new_derivate);
-				if (abs(precisionValueTo<T>(resultR)) > 1E4 || abs(precisionValueTo<T>(resultI)) > 1E4) {
-					resultR = pot<T>((T)10, (T)400, 1);
-					printf("%.2f\t", precisionDisplayDouble(resultR));
-				}
-				else {
-
-					sprintf(expre, "%.2f\t", precisionDisplayDouble(resultR));
-					if (isContained("ind", expre)) {
-						printf("ind\t");
-					}
-					else {
-						printf("%s", expre);
-					}
-
-				}
-				y++;
-				if (o < saveZ) {
-					if (saveZ - o >= 1) {
-						resultR = sortZeroR[o] + 0.77; resultI = 0;
-					}
-					else {
-						resultR = 1000; resultI = 0;
-					}
-					sprintf(expressionF, "");
-					variableController("x");
-					resultR = solveFunctionStudyExpression<T>(sec_new_derivate);
-					if (resultR >= 0) {
-						printf("+\t");
-					}
-					else {
-						printf("-\t");
-					}
-					y++;
-				}
-				o++;
-			}
-			printf("\nf(x)\t");
-			resultR = -1000; resultI = 0;
-			sprintf(expressionF, "");
-			variableController("x");
-			resultR = solveFunctionStudyExpression<T>(sec_new_derivate);
-			if (resultR < 0) {
-				printf("/^\\\t");
-			}
-			else {
-				printf("\\_/\t");
-			}
-			y = 0;
-			o = 0;
-			while (o < saveZ) {
-				resultR = sortZeroR[o]; resultI = 0;
-				sprintf(expressionF, "");
-				variableController("x");
-				resultR = solveFunctionStudyExpression<T>(originalFunction);
-				if (abs(precisionValueTo<T>(resultR)) > 1E4 || abs(precisionValueTo<T>(resultI)) > 1E4) {
-					resultR = pot<T>((T)10, (T)400, 1);
-					printf("%.2f\t", precisionDisplayDouble(resultR));
-				}
-				else {
-
-					sprintf(expre, "%.2f\t", precisionDisplayDouble(resultR));
-					if (isContained("ind", expre)) {
-						printf("ind\t");
-					}
-					else {
-						printf("%s", expre);
-					}
-
-				}
-				y++;
-				if (o < saveZ) {
-					if (saveZ - o >= 1) {
-						resultR = sortZeroR[o] + 0.77; resultI = 0;
-					}
-					else {
-						resultR = 1000; resultI = 0;
-					}
-					sprintf(expressionF, "");
-					variableController("x");
-					resultR = solveFunctionStudyExpression<T>(sec_new_derivate);
-					if (resultR < 0) {
-						printf("/^\\\t");
-					}
-					else {
-						printf("\\_/\t");
-					}
-					y++;
-				}
-				o++;
-			}
-			_delete(expre, "expre");
-			expre = nullptr;
-			puts(" ");
+			printFunctionStudyRationalTable<T>(sec_new_numerator, sec_new_denominator, numerator, denominator, sortZeroR, sortZeroI, saveZ, 2);
 			resultR = saveResultR;  resultI = saveResultI;
 			sprintf(expressionF, "");
 			variableController("x");
 			printf("\n==> Codomain and absolute extremes <==\n");
 			puts(" ");
+			if (!printFunctionStudyQuadraticRange<T>(numerator, denominator)) {
 			o = 0; saveIndex = -1;
 			saveZ = u;
 			while (o < saveZ) {
@@ -2316,7 +2262,7 @@ void functionStudy(char* function) {
 			}
 			else {
 				sprintf(expressionF, "");
-				equationSolver<T>(new_numerator);
+				solveFunctionStudyPolynomialEquation<T>(new_numerator);
 				sprintf(saveExpF, "%s", expressionF);
 				while (isContained("=", saveExpF)) {
 					j = 0;
@@ -2407,6 +2353,7 @@ void functionStudy(char* function) {
 				printf("\nMin: (%.3f,%.3f)\n", sortZeroR[indexMin], Min);
 			}
 			puts("");
+			}
 			_delete(sec_new_derivate, "sec_new_derivate");
 			sec_new_derivate = nullptr;
 			_delete(sec_new_numerator, "sec_new_numerator");
@@ -2428,7 +2375,7 @@ void functionStudy(char* function) {
 		_delete(saveExpF, "saveExpF");
 		_delete(verticalAsymptotes, "verticalAsymptotes");
 		_delete(valueF, "valueF");
-		_delete(saveDenominator, "saveDenominator");
+
 		_delete(new_derivate, "new_derivate");
 		_delete(new_numerator, "new_numerator");
 		_delete(new_denominator, "new_denominator");
@@ -2441,7 +2388,7 @@ void functionStudy(char* function) {
 		saveExpF = nullptr;
 		verticalAsymptotes = nullptr;
 		valueF = nullptr;
-		saveDenominator = nullptr;
+
 		new_derivate = nullptr;
 		new_numerator = nullptr;
 		new_denominator = nullptr;
@@ -2450,9 +2397,9 @@ void functionStudy(char* function) {
 		_delete(zeroI, "zeroI"); zeroI = nullptr;
 		_delete(sortZeroR, "sortZeroR"); sortZeroR = nullptr;
 		_delete(sortZeroI, "sortZeroI"); sortZeroI = nullptr;
-		_delete(minusfx, "minusfx"); minusfx = nullptr;
-		_delete(fxminusx, "fxminusx"); fxminusx = nullptr;
-		_delete(fx, "fx"); fx = nullptr;
+
+
+
 	}
 	resultR = saveXR; resultI = saveXI;
 	variableController("x");

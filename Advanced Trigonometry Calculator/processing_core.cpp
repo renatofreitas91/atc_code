@@ -4350,7 +4350,7 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 	char* cieNot = getDynamicCharArray("0", "cieNot");
 	char* arg = getDynamicCharArray("0", "arg"); char* amp = getDynamicCharArray("0", "amp"); char* trigon1 = getDynamicCharArray("0", "trigon1"); char* ex = getDynamicCharArray("", "ex");
 	char* trig1 = getDynamicCharArray("", "trig1");
-	char* function = getDynamicCharArray("cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res,pi,e,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,", "function");
+	char* function = getDynamicCharArray("cos,acos,sin,asin,tan,atan,radsin,radcos,radtan,degsin,degcos,degtan,gonsin,goncos,gontan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,i,res,pi,e,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,", "function");
 	T num = 0, exp = 1, result1 = 0, baLog = 0, dgrt = 0, result2 = 0, dgrt2 = 0;
 	PrecisionValue* v = getDynamicDoubleArray(); PrecisionValue* vI = getDynamicDoubleArray(); PrecisionValue* argu = getDynamicDoubleArray(); PrecisionValue* ampl = getDynamicDoubleArray();
 		char* userFunc = getDynamicCharArray("", "userFunc"); char* atcFunc = getDynamicCharArray("", "atcFunc"); char* funcU = getDynamicCharArray("", "funcU");
@@ -4969,7 +4969,7 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 		atcJoinPathWithSuffixAndExtension(txtTryDelete, DIM, atcPath, "User functions", funcU, "_answers", ".txt");
 		(void)std::remove(txtTryDelete);
 		type = 1;
-		sprintf(function, "cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,");
+		sprintf(function, "cos,acos,sin,asin,tan,atan,radsin,radcos,radtan,degsin,degcos,degtan,gonsin,goncos,gontan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det,abs,strlen,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,");
 		runningUserFunction = 0;
 		_delete(comm, "comm"); comm = nullptr;
 		_delete(v, "v"); v = nullptr;

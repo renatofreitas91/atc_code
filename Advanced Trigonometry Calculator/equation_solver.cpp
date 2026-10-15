@@ -785,7 +785,7 @@ T equationSolver(char* equation) {
 				maxExponent = 0;
 				int g = 0, k = 0;
 				for (g = 0; g < abs((int)strlen(equation)); g++) {
-					if (equation[g - 1] == 'x' && equation[g] == '^') {
+					if (g > 0 && equation[g - 1] == 'x' && equation[g] == '^') {
 						int saveG = g - 2;
 						g++;
 						k = 0;
@@ -806,8 +806,8 @@ T equationSolver(char* equation) {
 				sprintf(charMaster, "nothingL");
 				sprintf(maxExpX, "");
 				sprintf(maxExpX, "x^%d", maxExponent);
-				while (isContained(maxExpX, toCalcX) && verifyLetter(toCalcX[strStart - 1]) == false &&
-					verifyNumber(toCalcX[strStart - 1]) == false) {
+				while (isContained(maxExpX, toCalcX) && (strStart == 0 || (verifyLetter(toCalcX[strStart - 1]) == false &&
+					verifyNumber(toCalcX[strStart - 1]) == false))) {
 					sprintf(value, "x^%d", maxExponent);
 					sprintf(valueF, "1*(res)^%d", maxExponent);
 					replace(value, valueF, toCalcX);
@@ -815,38 +815,38 @@ T equationSolver(char* equation) {
 
 				}
 				sprintf(charMaster, "");
-				while (isContained(maxExpX, toCalcX) && verifyNumber(toCalcX[strStart - 1])) {
+				while (isContained(maxExpX, toCalcX) && strStart > 0 && verifyNumber(toCalcX[strStart - 1])) {
 					sprintf(value, "%cx^%d", toCalcX[strStart - 1], maxExponent);
 					sprintf(valueF, "%c*1*(res)^%d", toCalcX[strStart - 1], maxExponent);
 					replace(value, valueF, toCalcX);
 					sprintf(toCalcX, "%s", expressionF);
 				}
-				if (isContained("x+", toCalcX) && verifyNumber(toCalcX[strStart - 1])) {
+				if (isContained("x+", toCalcX) && strStart > 0 && verifyNumber(toCalcX[strStart - 1])) {
 					replace("x+", "*1*(res)^1+", toCalcX);
 					sprintf(toCalcX, "%s", expressionF);
 				}
-				if (isContained("x-", toCalcX) && verifyNumber(toCalcX[strStart - 1])) {
+				if (isContained("x-", toCalcX) && strStart > 0 && verifyNumber(toCalcX[strStart - 1])) {
 					replace("x-", "*1*(res)^1-", toCalcX);
 					sprintf(toCalcX, "%s", expressionF);
 				}
-				if (isContained("x", toCalcX) && verifyNumber(toCalcX[strStart - 1])) {
+				if (isContained("x", toCalcX) && strStart > 0 && verifyNumber(toCalcX[strStart - 1])) {
 					replace("x", "*1*(res)", toCalcX);
 					sprintf(toCalcX, "%s", expressionF);
 				}
 				sprintf(charMaster, "");
-				if (isContained("x+", toCalcX) && verifyNumber(toCalcX[strStart - 1])) {
+				if (isContained("x+", toCalcX) && strStart > 0 && verifyNumber(toCalcX[strStart - 1])) {
 					replace("x+", "*1*(res)^1+", toCalcX);
 					sprintf(toCalcX, "%s", expressionF);
 				}
-				if (isContained("x-", toCalcX) && verifyNumber(toCalcX[strStart - 1])) {
+				if (isContained("x-", toCalcX) && strStart > 0 && verifyNumber(toCalcX[strStart - 1])) {
 					replace("x-", "*1*(res)^1-", toCalcX);
 					sprintf(toCalcX, "%s", expressionF);
 				}
-				if (isContained("x", toCalcX) && verifyNumber(toCalcX[strStart - 1])) {
+				if (isContained("x", toCalcX) && strStart > 0 && verifyNumber(toCalcX[strStart - 1])) {
 					replace("x", "*1*(res)", toCalcX);
 					sprintf(toCalcX, "%s", expressionF);
 				}
-				if (isContained("x", toCalcX) && !verifyNumber(toCalcX[strStart - 1])) {
+				if (isContained("x", toCalcX) && (strStart == 0 || !verifyNumber(toCalcX[strStart - 1]))) {
 					replace("x", "1*(res)", toCalcX);
 					sprintf(toCalcX, "%s", expressionF);
 				}

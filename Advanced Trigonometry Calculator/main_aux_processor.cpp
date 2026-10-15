@@ -1173,6 +1173,40 @@ T main_core(char* arithTrig, char* fTrig, FILE*& fout, char* path, T result1, T 
 		}
 
 	}
+	bool linuxDroppedTxt = false;
+#ifndef _WIN32
+	// Terminals quote dropped filenames using shell syntax. Decode the path
+	// before passing it to the existing TXT/script processing flow.
+	std::string droppedPath(arithTrig);
+	const size_t firstPathChar = droppedPath.find_first_not_of(" \t\r\n");
+	if (firstPathChar != std::string::npos) {
+		droppedPath = droppedPath.substr(firstPathChar,
+			droppedPath.find_last_not_of(" \t\r\n") - firstPathChar + 1);
+		if (droppedPath.size() >= 2 &&
+			(droppedPath.front() == '\'' || droppedPath.front() == '"') &&
+			droppedPath.back() == droppedPath.front()) {
+			droppedPath = droppedPath.substr(1, droppedPath.size() - 2);
+		}
+		else {
+			std::string unescaped;
+			for (size_t pos = 0; pos < droppedPath.size(); pos++) {
+				if (droppedPath[pos] == '\\' && pos + 1 < droppedPath.size()) pos++;
+				unescaped += droppedPath[pos];
+			}
+			droppedPath = unescaped;
+		}
+		if (!droppedPath.empty() && droppedPath.front() == '/' &&
+			droppedPath.size() >= 4 && droppedPath.compare(droppedPath.size() - 4, 4, ".txt") == 0) {
+			FILE* droppedFile = fopen(droppedPath.c_str(), "r");
+			if (droppedFile != nullptr) {
+				fclose(droppedFile);
+				snprintf(arithTrig, DIM, "%s", droppedPath.c_str());
+				txt = 1;
+				linuxDroppedTxt = true;
+			}
+		}
+	}
+#endif
 	variable[0] = '\0';
 	if (!isContained("opentxt", arithTrig) && !isContained("open txt", arithTrig)) {
 		for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
@@ -1185,7 +1219,7 @@ T main_core(char* arithTrig, char* fTrig, FILE*& fout, char* path, T result1, T 
 
 
 	for (i = 0; i < abs((int)strlen(arithTrig)); i++) {
-		if (arithTrig[i] == '=' && arithTrig[i + 1] != '=' && arithTrig[i + 1] != '!') {
+		if (!linuxDroppedTxt && arithTrig[i] == '=' && arithTrig[i + 1] != '=' && arithTrig[i + 1] != '!') {
 			var = 1;
 			if (valGet == 1) {
 				puts(" ");
@@ -2265,6 +2299,8 @@ T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, c
 						}
 
 					}
+					_Delete(res_vectorR, DIMTWOD, DIMDOUBLE, "res_vectorR");
+					_Delete(res_vectorI, DIMTWOD, DIMDOUBLE, "res_vectorI");
 					_Delete(vector1_R, DIMTWOD, DIMDOUBLE, "vector1_R");
 					_Delete(vector1_I, DIMTWOD, DIMDOUBLE, "vector1_I");
 

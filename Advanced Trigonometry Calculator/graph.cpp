@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <string>
 #include <math.h>
 #include <float.h>
 
@@ -24,16 +26,100 @@ static bool hasInteractiveGraphConsole() {
         GetConsoleMode(input, &mode) && GetConsoleMode(output, &mode);
 }
 
+#else
+#include <sys/ioctl.h>
+#include <unistd.h>
+
+static bool hasInteractiveGraphConsole() {
+    return isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
+}
+
+static void getGraphTerminalSize(int& columns, int& rows) {
+    struct winsize size = {};
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &size) == 0) {
+        if (size.ws_col > 0) columns = size.ws_col;
+        if (size.ws_row > 0) rows = size.ws_row;
+    }
+}
+
+static int readGraphKey() {
+    termios previous = {};
+    if (tcgetattr(STDIN_FILENO, &previous) != 0) return -1;
+    termios raw = previous;
+    raw.c_lflag &= static_cast<tcflag_t>(~(ICANON | ECHO));
+    raw.c_cc[VMIN] = 1;
+    raw.c_cc[VTIME] = 0;
+    if (tcsetattr(STDIN_FILENO, TCSANOW, &raw) != 0) return -1;
+
+    unsigned char key = 0;
+    int result = -1;
+    if (read(STDIN_FILENO, &key, 1) == 1) {
+        result = key;
+        if (key == 27) {
+            fd_set input;
+            FD_ZERO(&input);
+            FD_SET(STDIN_FILENO, &input);
+            timeval timeout = { 0, 120000 };
+            if (select(STDIN_FILENO + 1, &input, nullptr, nullptr, &timeout) > 0 &&
+                read(STDIN_FILENO, &key, 1) == 1 && (key == '[' || key == 'O')) {
+                if (read(STDIN_FILENO, &key, 1) == 1) {
+                    if (key == 'D') result = 75;
+                    else if (key == 'C') result = 77;
+                }
+            }
+        }
+    }
+    tcsetattr(STDIN_FILENO, TCSANOW, &previous);
+    return result;
+}
 #endif
+static const char* graphVerticalCharacter() {
+#ifdef _WIN32
+	static const char character[] = { (char)179, '\0' };
+	return character;
+#else
+	return "│";
+#endif
+}
+
+static std::string graphXLiteral(double value) {
+    char buffer[384] = {};
+    snprintf(buffer, sizeof(buffer), "%.15f", value);
+    std::string text(buffer);
+    while (!text.empty() && text.back() == '0') text.pop_back();
+    if (!text.empty() && text.back() == '.') text.pop_back();
+    if (text.empty() || text == "-0") text = "0";
+    if (!text.empty() && text[0] == '-') text[0] = '_';
+    return text;
+}
+
+static void replaceGraphXWithValue(const char* source, const std::string& value, char* destination, size_t capacity) {
+    std::string expanded;
+    for (size_t i = 0; source != nullptr && source[i] != '\0'; i++) {
+        const bool leftBoundary = i == 0 ||
+            !(isalnum(static_cast<unsigned char>(source[i - 1])) || source[i - 1] == '_');
+        const bool rightBoundary = source[i + 1] == '\0' ||
+            !(isalnum(static_cast<unsigned char>(source[i + 1])) || source[i + 1] == '_');
+        if (source[i] == 'x' && leftBoundary && rightBoundary) {
+            expanded += '(';
+            expanded += value;
+            expanded += ')';
+        }
+        else {
+            expanded += source[i];
+        }
+    }
+    if (destination != nullptr && capacity > 0) {
+        snprintf(destination, capacity, "%s", expanded.c_str());
+    }
+}
 template <typename T>
 void designGraph(char* functionF) {
     FILE* open;
     int numberCols = 0;
     bool graphInteractiveConsole = false;
     const char* graphNavigationTest = getenv("ATC_GRAPH_NAVIGATION_TEST");
-#ifdef _WIN32
     graphInteractiveConsole = hasInteractiveGraphConsole();
-#endif
     char* toOpen = getDynamicCharArray("", "toOpen");
     char* setting = getDynamicCharArray("", "setting");
 
@@ -134,10 +220,8 @@ void designGraph(char* functionF) {
     }
 
     char* function = getDynamicCharArray("", "function");
-    if (isContained("x", functionF)) {
-        replace("x", "res", functionF);
-        snprintf(function, DIM, "%s", expressionF);
-    }
+    snprintf(function, DIM, "%s", functionF);
+    char* expressionAtX = getDynamicCharArray("", "expressionAtX");
 
     int t = 0, w = 0, p = 0;
     char** functions;
@@ -257,7 +341,7 @@ void designGraph(char* functionF) {
     char* info = getDynamicCharArray("", "info");
 
     if (auto_x_axis == 1) {
-        char* function_list = getDynamicCharArray("cos,acos,sin,asin,tan,atan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det,abs,strlen,i,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,", "function_list");
+        char* function_list = getDynamicCharArray("cos,acos,sin,asin,tan,atan,radsin,radcos,radtan,degsin,degcos,degtan,gonsin,goncos,gontan,sec,asec,cosec,acosec,cotan,acotan,log,ln,rest,quotient,sqrt,cbrt,afact,cosh,acosh,sinh,asinh,tanh,atanh,sech,asech,cosech,acosech,cotanh,acotanh,sinc,gerror,gerrorinv,gerrorc,gerrorcinv,qfunc,qfuncinv,cbrt,sqrt,atc,solver,det,abs,strlen,i,countoccurrences,iscontained,iscontainedbyindex,iscontainedvariable,isequal,isvariable,istowrite,for,calc,max,min,linsnum,colsnum,getlins,getcols,avg,", "function_list");
         char* func = getDynamicCharArray("", "func");
         bool hasFunction = false;
         for (int f = 0; f < abs((int)strlen(function_list)); f++) {
@@ -267,7 +351,9 @@ void designGraph(char* functionF) {
                 g++; f++;
             }
             func[g] = '\0';
-            if (isContained(func, functionF)) {
+            char functionPattern[DIM] = {};
+            snprintf(functionPattern, sizeof(functionPattern), "%s(", func);
+            if (strstr(functionF, functionPattern) != nullptr) {
                 hasFunction = true;
             }
         }
@@ -284,7 +370,11 @@ void designGraph(char* functionF) {
             snprintf(functionF, DIM, "(%s)", expressionF);
             equationSolver<T>(functionF);
         }
+#ifdef _WIN32
         Xscale = -77777;
+#else
+        Xscale = (Xmax - Xmin) / 20;
+#endif
         if (abs((int)strlen(roots)) > 0 && !hasFunction) {
             if (isContained("1", roots) || isContained("2", roots) || isContained("3", roots) || isContained("4", roots) || isContained("5", roots) || isContained("6", roots) || isContained("7", roots) || isContained("8", roots) || isContained("9", roots) || isContained("0", roots)) {
                 char* Roots = getDynamicCharArray("", "Roots");
@@ -326,7 +416,8 @@ void designGraph(char* functionF) {
             T newYmax = 1E-20, newYmin = -1E-20;
             while (f < 121) {
                 xValuesR = start; xValuesI = 0;
-                solveMath<T>(specFunction);
+                replaceGraphXWithValue(specFunction, graphXLiteral(precisionDisplayDouble(start)), expressionAtX, DIM);
+                solveMath<T>(expressionAtX);
                 yValues[f] = precisionValueTo<T>(resultR);
                 yValuesAll[count][f] = precisionValueTo<T>(resultR);
                 if (yValues[f] < newYmin && yValues[f] > -1E14) {
@@ -424,7 +515,8 @@ void designGraph(char* functionF) {
         // Critical Alignment Fix: Evaluate all 121 items cleanly
         while (f < 121) {
             xValuesR = start; xValuesI = 0;
-            solveMath<T>(specFunction);
+            replaceGraphXWithValue(specFunction, graphXLiteral(precisionDisplayDouble(start)), expressionAtX, DIM);
+            solveMath<T>(expressionAtX);
             yValues[f] = precisionValueTo<T>(resultR);
             yValuesAll[count][f] = precisionValueTo<T>(resultR);
             resultR = 0; resultI = 0;
@@ -433,7 +525,7 @@ void designGraph(char* functionF) {
         }
 
         f = 0;
-        int saveK = 0, saveKK = 0;
+        int previousGraphRow = -1;
         while (f < 120) {
             T yValue = yValues[f];
             int k = 0;
@@ -446,53 +538,52 @@ void designGraph(char* functionF) {
                         break;
                     }
                 }
-                if (saveK != 0) {
-                    if (saveK > k + 1) {
-                        while (saveK > k + 1) {
-                            if (saveK != saveKK) {
-                                Graph[saveK][f - 1] = '|';
-                            }
-                            saveK--;
-                        }
+                const int graphRow = k + 1;
+                if (previousGraphRow >= 0) {
+                    if (previousGraphRow == graphRow) {
+                        Graph[graphRow][f - 1] = '-';
                     }
                     else {
-                        while (saveK < k + 1) {
-                            if (saveK != saveKK) {
-                                Graph[saveK][f - 1] = '|';
-                            }
-                            saveK++;
+                        const int rowStep = graphRow > previousGraphRow ? 1 : -1;
+                        for (int connectorRow = previousGraphRow + rowStep;
+                            connectorRow != graphRow; connectorRow += rowStep) {
+                            Graph[connectorRow][f - 1] = '|';
                         }
                     }
                 }
-                Graph[k + 1][f] = symbols[count];
-                saveK = k + 1;
-                if (saveK == saveKK) {
-                    Graph[k + 1][f] = '-';
-                    Graph[k + 1][f - 1] = '-';
-                }
-                saveKK = k + 1;
+                Graph[graphRow][f] = symbols[count];
+                previousGraphRow = graphRow;
+            }
+            else {
+                // Do not connect across a portion of the function outside the
+                // visible Y range (or a non-finite sample).
+                previousGraphRow = -1;
             }
             f++;
         }
-        if (isContained("res", specFunction)) {
-            replace("res", "x", specFunction);
-            snprintf(specFunction, DIM, "%s", expressionF);
+        int infoLength = (int)strlen(info);
+        if (infoLength < DIM - 1) {
+            snprintf(info + infoLength, DIM - infoLength, "%s%s -> %c",
+                infoLength > 0 ? "   " : "", specFunction, symbols[count]);
+            infoLength = (int)strlen(info);
         }
-        if (count < commas) {
-            snprintf(info, DIM, "%s%s -> %c %c", info, specFunction, symbols[count], 179);
-        }
-        else {
-            snprintf(info, DIM, "%s%s -> %c", info, specFunction, symbols[count]);
+        if (count < commas && infoLength < DIM - 1) {
+            snprintf(info + infoLength, DIM - infoLength, " %s", graphVerticalCharacter());
         }
         count++;
         commas--;
     } while (commas > 0);
 
     if (graphNavigationTest == nullptr) {
+#ifdef _WIN32
         puts("Info: You can navigate with the \"Left\" and \"Right\" arrows. To exit press the \"Escape\" key; Action: Press \"Enter\" to view the graph.");
+#else
+        puts("Use Left/Right arrows to inspect values; press Escape to finish. Press Enter to view the graph.");
+#endif
         char* pause = getDynamicCharArray("", "pause");
         gets_s(pause, DIM);
 
+#ifdef _WIN32
         for (j = 0; j < 121; j++) {
             printf("_");
         }
@@ -502,16 +593,102 @@ void designGraph(char* functionF) {
             for (j = 0; j < 120; j++) {
                 printf("%c", Graph[i][j]);
             }
-            printf("%c", 179);
-            printf("\n");
+            printf("%c\n", 179);
         }
         printf("%c", 179);
-        for (j = 0; j < 120; j++) {
-            printf("_");
+        for (j = 0; j < 120; j++) printf("_");
+        printf("%c\n", 179);
+#else
+        int terminalColumns = 80;
+        int terminalRows = 24;
+        getGraphTerminalSize(terminalColumns, terminalRows);
+        const int graphColumns = terminalColumns > 2 ?
+            (terminalColumns - 2 < 120 ? terminalColumns - 2 : 120) : 20;
+        const int graphRows = terminalRows > 12 ?
+            (terminalRows - 12 < 60 ? terminalRows - 12 : 60) : 12;
+        std::string renderedGraph[60];
+        for (int row = 0; row < graphRows; row++) {
+            renderedGraph[row].assign(graphColumns, ' ');
         }
-        printf("%c", 179);
-        printf("\n");
-        printf(" Current settings: %c Xmin: %G %c Xmax: %G %c Xscale: %G %c Ymin: %G %c Ymax: %G %c Yscale: %G %c", 179, Xmin, 179, Xmax, 179, Xscale, 179, Ymin, 179, Ymax, 179, Yscale, 179);
+
+        // Draw the axes and their scale ticks at the actual terminal
+        // resolution instead of compressing the already-rasterized graph.
+        int axisRow = y * graphRows / 60;
+        int axisColumn = x * graphColumns / 120;
+        if (axisRow >= graphRows) axisRow = graphRows - 1;
+        if (axisColumn >= graphColumns) axisColumn = graphColumns - 1;
+        for (int column = 0; column < graphColumns; column++) {
+            renderedGraph[axisRow][column] = '_';
+        }
+        for (int row = 0; row < graphRows; row++) {
+            renderedGraph[row][axisColumn] = (char)179;
+        }
+        for (int sourceColumn = 0; sourceColumn < 120; sourceColumn++) {
+            if (re<T>(sourceColumn, x_scale) == 0 && axisRow + 1 < graphRows) {
+                const int column = sourceColumn * graphColumns / 120;
+                renderedGraph[axisRow + 1][column] = (char)179;
+            }
+        }
+        for (int sourceRow = 0; sourceRow < 60; sourceRow++) {
+            if (re<T>(sourceRow, y_scale) == 0 && axisColumn + 1 < graphColumns) {
+                const int row = sourceRow * graphRows / 60;
+                renderedGraph[row][axisColumn + 1] = '_';
+            }
+        }
+
+        const double yRange = precisionDisplayDouble(Ymax - Ymin);
+        if (yRange > 0.0) {
+            for (int functionIndex = 0; functionIndex < count; functionIndex++) {
+                int previousRow = -1;
+                for (int column = 0; column < graphColumns; column++) {
+                    const int sample = graphColumns > 1 ? column * 120 / (graphColumns - 1) : 0;
+                    const double value = precisionDisplayDouble(yValuesAll[functionIndex][sample]);
+                    if (!std::isfinite(value) || value < precisionDisplayDouble(Ymin) ||
+                        value > precisionDisplayDouble(Ymax)) {
+                        previousRow = -1;
+                        continue;
+                    }
+
+                    int row = (int)floor((precisionDisplayDouble(Ymax) - value) / yRange *
+                        (graphRows - 1) + 0.5);
+                    if (row < 0) row = 0;
+                    if (row >= graphRows) row = graphRows - 1;
+                    if (previousRow >= 0) {
+                        if (previousRow == row) {
+                            renderedGraph[row][column] = '-';
+                            if (column > 0) renderedGraph[row][column - 1] = '-';
+                        }
+                        else if (column > 0) {
+                            const int rowStep = row > previousRow ? 1 : -1;
+                            for (int connectorRow = previousRow + rowStep;
+                                connectorRow != row; connectorRow += rowStep) {
+                                renderedGraph[connectorRow][column - 1] = '|';
+                            }
+                        }
+                    }
+                    renderedGraph[row][column] = symbols[functionIndex];
+                    previousRow = row;
+                }
+            }
+        }
+
+        for (j = 0; j < graphColumns + 2; j++) putchar('_');
+        putchar('\n');
+        for (i = 0; i < graphRows; i++) {
+            fputs(graphVerticalCharacter(), stdout);
+            for (j = 0; j < graphColumns; j++) {
+                const unsigned char cell = static_cast<unsigned char>(renderedGraph[i][j]);
+                if (cell == 179) fputs(graphVerticalCharacter(), stdout);
+                else putchar(cell);
+            }
+            puts(graphVerticalCharacter());
+        }
+        fputs(graphVerticalCharacter(), stdout);
+        for (j = 0; j < graphColumns; j++) putchar('_');
+        puts(graphVerticalCharacter());
+#endif
+        printf("%s\n", info);
+        printf(" Current settings: | Xmin: %G | Xmax: %G | Xscale: %G | Ymin: %G | Ymax: %G | Yscale: %G |", Xmin, Xmax, Xscale, Ymin, Ymax, Yscale);
         _delete(pause, "pause"); pause = nullptr;
     }
 
@@ -637,6 +814,68 @@ void designGraph(char* functionF) {
     }
 #endif
 
+#ifndef _WIN32
+    if (graphInteractiveConsole && graphNavigationTest == nullptr) {
+        int index = 0;
+        bool navigating = true;
+        char* data = getDynamicCharArray("", "graphCursorData");
+        int terminalColumns = 80;
+        int terminalRows = 24;
+        getGraphTerminalSize(terminalColumns, terminalRows);
+        const int graphColumns = terminalColumns > 2 ?
+            (terminalColumns - 2 < 120 ? terminalColumns - 2 : 120) : 20;
+        std::string bars;
+        bool cursorDrawn = false;
+
+        // Match the Windows graph cursor: a horizontal position bar and a
+        // separate row of function values, both redrawn in place.
+        auto drawCursor = [&]() {
+            data[0] = '\0';
+            for (t = 0; t <= w; t++) {
+                const int used = (int)strlen(data);
+                if (used < DIM - 1) {
+                    snprintf(data + used, DIM - used, "%s [%c]: %f  ", functions[t], symbols[t],
+                        precisionDisplayDouble(yValuesAll[t][index]));
+                }
+            }
+            const int dataLimit = terminalColumns < DIM ? terminalColumns - 1 : DIM - 1;
+            if (dataLimit >= 0 && (int)strlen(data) > dataLimit) data[dataLimit] = '\0';
+
+            char xLabel[64] = { 0 };
+            snprintf(xLabel, sizeof(xLabel), "x = %f ",
+                precisionDisplayDouble(Xmin + index * (T)xDim / 120));
+            const int maxLabelStart = graphColumns > (int)strlen(xLabel) ?
+                graphColumns - (int)strlen(xLabel) : 0;
+            const int cursorColumn = index * (graphColumns - 1) / 120;
+            const int labelStart = cursorColumn < maxLabelStart ? cursorColumn : maxLabelStart;
+            bars.clear();
+            for (int column = 0; column < labelStart; column++) bars += "▓";
+            bars += xLabel;
+            for (int column = labelStart + (int)strlen(xLabel); column < graphColumns; column++) bars += "▒";
+
+            if (cursorDrawn) {
+                printf("\033[1A\r\033[2K%s\r\n\033[2K%s", bars.c_str(), data);
+            }
+            else {
+                printf("\r\033[2K%s\n\033[2K%s", bars.c_str(), data);
+                cursorDrawn = true;
+            }
+            fflush(stdout);
+        };
+
+        putchar('\n');
+        drawCursor();
+        while (navigating) {
+            const int key = readGraphKey();
+            if (key == 75 && index > 0) { index--; drawCursor(); }
+            else if (key == 77 && index < 120) { index++; drawCursor(); }
+            else if (key == 27 || key < 0) navigating = false;
+        }
+        puts("");
+        _delete(data, "graphCursorData"); data = nullptr;
+    }
+#endif
+
     int option_table = -1;
     while (option_table != 1 && option_table != 0) {
         I_O = true;
@@ -648,12 +887,12 @@ void designGraph(char* functionF) {
         char* valueToText = getDynamicCharArray("", "valueToText");
         int k = 0, l = 0;
         puts(" ");
-        printf("%cx", 179);
+        printf("%sx", graphVerticalCharacter());
         int g = 0;
         while (g < 11) { printf(" "); g++; }
         k = 0;
         while (k < count) {
-            printf("%c%c", 179, symbols[k]);
+            printf("%s%c", graphVerticalCharacter(), symbols[k]);
             int g = 0;
             while (g < 11) { printf(" "); g++; }
             k++;
@@ -662,14 +901,14 @@ void designGraph(char* functionF) {
         T start = Xmin;
         while (l < 121) {
             k = 0;
-            printf("%c%s", 179, convert2Exponential(start));
-            snprintf(valueToText, DIM, "%c%s", 179, convert2Exponential(start));
-            g = (int)abs((int)strlen(valueToText));
+            printf("%s%s", graphVerticalCharacter(), convert2Exponential(start));
+            snprintf(valueToText, DIM, "%s%s", graphVerticalCharacter(), convert2Exponential(start));
+            g = (int)abs((int)strlen(valueToText)) - (int)strlen(graphVerticalCharacter()) + 1;
             while (g < 13) { printf(" "); g++; }
             while (k < count) {
-                printf("%c%s", 179, convert2Exponential(yValuesAll[k][l]));
-                snprintf(valueToText, DIM, "%c%s", 179, convert2Exponential(yValuesAll[k][l]));
-                g = (int)abs((int)strlen(valueToText));
+                printf("%s%s", graphVerticalCharacter(), convert2Exponential(yValuesAll[k][l]));
+                snprintf(valueToText, DIM, "%s%s", graphVerticalCharacter(), convert2Exponential(yValuesAll[k][l]));
+                g = (int)abs((int)strlen(valueToText)) - (int)strlen(graphVerticalCharacter()) + 1;
                 while (g < 13) { printf(" "); g++; }
                 k++;
             }
@@ -691,6 +930,7 @@ void designGraph(char* functionF) {
     _delete(setting, "setting"); setting = nullptr;
     _delete(function, "function"); function = nullptr;
     _delete(specFunction, "specFunction"); specFunction = nullptr;
+    _delete(expressionAtX, "expressionAtX"); expressionAtX = nullptr;
     _delete(info, "info"); info = nullptr;
     _delete(symbols, "symbols"); symbols = nullptr;
 }

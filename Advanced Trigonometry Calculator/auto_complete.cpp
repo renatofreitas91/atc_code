@@ -416,6 +416,17 @@ static int appendAutoCompletion(const std::vector<std::string>& suggestions, std
 		cursor = line.length();
 	}
 
+	if (!cycleMatches.empty() && cursor >= cycleStart) {
+		for (size_t i = 0; i < cycleMatches.size(); i++) {
+			const std::string& current = cycleMatches[i];
+			if (cursor == cycleStart + current.length() &&
+				line.compare(cycleStart, current.length(), current) == 0) {
+				cycleIndex = (i + 1) % cycleMatches.size();
+				return replaceCompletionToken(line, cursor, capacity, cycleStart, current, cycleMatches[cycleIndex]);
+			}
+		}
+	}
+
 	size_t prefixStart = getCompletionPrefixStart(line, cursor);
 	std::string prefix = line.substr(prefixStart, cursor - prefixStart);
 	if (prefix.empty()) {
@@ -566,7 +577,7 @@ bool readConsoleInputWithTabCompletion(char* line, int capacity)
 			return true;
 		}
 
-		if (key == '\b') {
+		if (key == '\b' || key == 127) {
 			if (cursor > 0) {
 				resetCompletionCycle(completionCyclePrefix, completionCycleMatches, completionCycleIndex, completionCycleStart);
 				previousLength = editorLine.length();
