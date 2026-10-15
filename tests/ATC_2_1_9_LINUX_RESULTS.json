@@ -67,7 +67,7 @@
   "limitations": [
     "Approval applies only to tested paths.",
     "Windows x64/Win32 376/376 results are recorded by the source commit; not executed in the Linux session.",
-    "Windows XP runtime validation is a mandatory separate pending gate; target architectures not yet agreed."
+    "Windows XP x86 (32-bit) runtime validation is a mandatory separate pending gate."
   ],
   "combined_cases": 128,
   "reported_sanitizer_errors": 0,
@@ -84,5 +84,6 @@
     "ASAN_OPTIONS": "detect_leaks=1:halt_on_error=1",
     "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
     "LSAN_OPTIONS": "verbosity=1:log_threads=1"
-  }
+  },
+  "windows_xp_required_target": "x86 (32-bit)"
 }

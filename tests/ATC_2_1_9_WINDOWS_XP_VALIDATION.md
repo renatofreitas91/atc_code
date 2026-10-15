@@ -1,12 +1,12 @@
 # ATC 2.1.9 — mandatory separate Windows XP validation
 
-Status: **pending; required for final approval**. The user confirmed this requirement on 2026-10-15. The supported XP architectures (x86, x64 or both) must be established before the native run.
+Status: **pending; required for final approval**. The user confirmed this requirement on 2026-10-15. The user selected **Windows XP x86 (32-bit) only** as the mandatory XP target.
 
 ## Identify the exact artifacts and environment
 
-Record the source commit, clean/local source differences, compiler/toolset, C++17 setting, SDK, Release configuration, target architecture, linker subsystem version, executable SHA-256 and runtime dependencies. Transfer and verify the same Windows artifact that was approved by the modern Windows regression run.
+Record the source commit, clean/local source differences, compiler/toolset, C++17 setting, SDK, Release configuration, target architecture, linker subsystem version, executable SHA-256 and runtime dependencies. Transfer and verify the same Win32 artifact that was approved by the modern Windows regression run.
 
-Record the Windows XP edition, service pack, OS architecture, machine/VM, CPU features, console configuration, locale and working/data directory. Record x86 and x64 evidence separately if both are in scope. Use isolated data and preserve existing installations/checkouts.
+Record the Windows XP edition, service pack, OS architecture, machine/VM, CPU features, console configuration, locale and working/data directory. Identify all native runtime evidence as Windows XP x86 (32-bit). Use isolated data and preserve existing installations/checkouts.
 
 ## Native runtime checks
 
@@ -19,7 +19,7 @@ Record the Windows XP edition, service pack, OS architecture, machine/VM, CPU fe
 
 ## Evidence required for approval
 
-- Exact commit and executable hash for each architecture.
+- Exact commit and executable hash of the Win32 artifact executed on XP x86.
 - OS/SP/CPU and build/runtime dependency records.
 - Complete per-case results and overall counts, with no uninvestigated failures.
 - Console, graph and script integration evidence.

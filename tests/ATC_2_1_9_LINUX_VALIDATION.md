@@ -69,7 +69,7 @@ The driver records sanitizer options, executable hash, detailed output and exit 
 
 The latest validated source is `4cfb6a26b74a8296c48674ca0f6830912b9ad0fa`. Its commit records Windows Release x64 and Win32 376/376 passes; those native executions were not performed in the Linux session. Linux test expectations were updated for the descending printed root order and the equivalent `]-inf,+inf[` range notation.
 
-**Windows XP runtime validation is a separate mandatory approval gate.** Target architectures remain to be agreed. See `ATC_2_1_9_WINDOWS_XP_VALIDATION.md`; compiling with v141_xp and passing on newer Windows do not complete this gate.
+**Windows XP runtime validation is a separate mandatory approval gate.** The required XP target is **x86 (32-bit)**, as confirmed by the user. See `ATC_2_1_9_WINDOWS_XP_VALIDATION.md`; compiling with v141_xp and passing on newer Windows do not complete this gate.
 
 Function studies use the existing real double coefficient representation. The numerical tests cover the listed regressions, repeated roots, shifted cubic roots and removable holes; they are not a proof for arbitrarily ill-conditioned polynomials.
 
