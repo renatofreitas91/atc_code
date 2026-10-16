@@ -1781,6 +1781,16 @@ T initialProcessor(char* arithTrig, T result) {
 				u++;
 			}
 		}
+		// Keep the base marker and its digits together in this second pass too.
+		if ((paTrig[u] == 'B' || paTrig[u] == 'O' || paTrig[u] == 'H') &&
+			(u == 0 || !verifyLetter(paTrig[u - 1]))) {
+			u++;
+			if (paTrig[u] == '_' || paTrig[u] == '-') u++;
+			while (paTrig[u] != '\0' && (verifyNumber(paTrig[u]) ||
+				paTrig[u] == '.' || (paTrig[u] >= 'A' && paTrig[u] <= 'F'))) u++;
+			u--;
+			continue;
+		}
 		if (firstLetterVariable(paTrig[u]) == 1 && (u == 0 || firstLetterVariable(paTrig[u - 1]) == 0) && paTrig[u + 1] != 'i') {
 			u++;
 			while (verifyLetter(paTrig[u]) == 1) {
@@ -3898,7 +3908,8 @@ T arithSolver(char* trigon1, T result) {
 					number2[df] = '\0';
 				}
 				T var = 0;
-				if (firstLetterVariable(number2[0])) {
+				if (firstLetterVariable(number2[0]) && number2[0] != 'B' &&
+					number2[0] != 'O' && number2[0] != 'H') {
 					for (j = 0; j < abs((int)strlen(number2)); j++) {
 						if (number2[j] == '.') {
 							number2[j] = '\0';

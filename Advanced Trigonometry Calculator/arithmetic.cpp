@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "calc.h"
+#include <limits>
 #include <cmath> // Garante acesso direto a fabs, floor, ceil, trunc, modf
 template <typename T>
 void sum(T numR, T numI, T denR, T denI) {
@@ -38,7 +39,14 @@ int exponentiation(T a, T b, T c, T d, int sig) {
 		return 0;
 	}
 
-	if (b != 0 || d != 0 || a < 0) {
+	// A real base to a finite integer power remains real, including negative bases.
+	if (b == 0 && d == 0 && a < 0 && a >= -std::numeric_limits<T>::max() &&
+		c >= -std::numeric_limits<T>::max() &&
+		c <= std::numeric_limits<T>::max() && c == floor(c)) {
+		resultR = pot<T>(a, c, 1);
+		resultI = (T)0;
+	}
+	else if (b != 0 || d != 0 || a < 0) {
 		T r = sqrt(a * a + b * b);
 		T arg_ab = atan2(b, a);
 

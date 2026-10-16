@@ -79,6 +79,14 @@ static void normalizeMainCoreScientificNotation(char* expression) {
 	normalized.reserve(source.size());
 	for (size_t i = 0; i < source.size();) {
 		size_t start = i;
+		// E is a hexadecimal digit inside H..., not a decimal exponent.
+		if (source[i] == 'H' && (i == 0 || !std::isalpha((unsigned char)source[i - 1]))) {
+			i++;
+			if (i < source.size() && (source[i] == '_' || source[i] == '-')) i++;
+			while (i < source.size() && (std::isxdigit((unsigned char)source[i]) || source[i] == '.')) i++;
+			normalized.append(source, start, i - start);
+			continue;
+		}
 		bool startsNumber = std::isdigit((unsigned char)source[i]) || source[i] == '.' ||
 			(source[i] == '_' && i + 1 < source.size() && (std::isdigit((unsigned char)source[i + 1]) || source[i + 1] == '.'));
 		if (!startsNumber) {
@@ -2309,7 +2317,7 @@ T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, c
 
 				}
 				verified = 1;
-				roundSolution();
+				// Preserve nonzero expression values; magnitude alone is not round-off evidence.
 				result1 = precisionValueTo<T>(resultR);
 				result2 = precisionValueTo<T>(resultI);
 				resultFI = result2;

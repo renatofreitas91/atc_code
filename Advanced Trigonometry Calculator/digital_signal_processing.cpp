@@ -2,11 +2,17 @@
 
 #include "stdafx.h"
 #include "calc.h"
+#include <limits>
 
 template <typename T>
 void sinc(T x, T y) {
 	if (x == 0.0 && y == 0.0) {
 		resultR = 1.0; resultI = 0;
+	}
+	else if (y == 0 && x >= -std::numeric_limits<T>::max() &&
+		x <= std::numeric_limits<T>::max() && x == floor(x)) {
+		// Normalized sinc has exact zeros at every nonzero real integer.
+		resultR = (T)0; resultI = (T)0;
 	}
 	else {
 		if (x != 0.0 || y != 0.0) {

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <type_traits>
 #ifdef _WIN32
 HANDLE hStdin;
 DWORD fdwSaveOldMode;
@@ -1505,7 +1506,20 @@ void insertImplicitMultiplication(char* expression) {
 	for (size_t i = 0; i < source.size(); i++) {
 		char current = source[i];
 		char previous = i > 0 ? source[i - 1] : '\0';
-		bool previousEndsFactor = i > 0 && (verifyNumber(previous) || previous == ')' || previous == ']' || previous == 'i');
+		bool previousEndsFactor = i > 0 && ((previous >= '0' && previous <= '9') || previous == ')' || previous == ']' || previous == 'i');
+		// Hexadecimal digits A-F and the unary marker belong to this literal.
+		if ((current == 'B' || current == 'O' || current == 'H') &&
+			(i == 0 || !verifyLetter(previous))) {
+			if (previousEndsFactor) normalized.push_back('*');
+			size_t end = i + 1;
+			if (end < source.size() && (source[end] == '_' || source[end] == '-')) end++;
+			while (end < source.size() && ((source[end] >= '0' && source[end] <= '9') ||
+				source[end] == '.' || (current == 'H' &&
+				((source[end] >= 'A' && source[end] <= 'F') || (source[end] >= 'a' && source[end] <= 'f'))))) end++;
+			normalized.append(source, i, end - i);
+			i = end - 1;
+			continue;
+		}
 		bool startsIdentifier = verifyLetter(current) && (i == 0 || !verifyLetter(previous));
 		bool startsNumberAfterGroup = verifyNumber(current) && (previous == ')' || previous == ']' || previous == 'i');
 		bool followsPiConstant = i >= 2 && source[i - 2] == 'p' && source[i - 1] == 'i' && verifyLetter(current);
@@ -2795,6 +2809,16 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				while (verifyLetter(paTrig[u])) {
 					u++;
 				}
+			}
+			// B/O/H introduce a single numeric token, not a variable coefficient.
+			if ((paTrig[u] == 'B' || paTrig[u] == 'O' || paTrig[u] == 'H') &&
+				(u == 0 || !verifyLetter(paTrig[u - 1]))) {
+				u++;
+				if (paTrig[u] == '_' || paTrig[u] == '-') u++;
+				while (paTrig[u] != '\0' && (verifyNumber(paTrig[u]) ||
+					paTrig[u] == '.' || (paTrig[u] >= 'A' && paTrig[u] <= 'F'))) u++;
+				u--;
+				continue;
 			}
 			if (firstLetterVariable(paTrig[u]) && (u == 0 || firstLetterVariable(paTrig[u - 1]) == 0) && paTrig[u + 1] != 'i' && !isInsideDelimitedFunctionHeader(paTrig, u)) {
 				u++;
@@ -4964,88 +4988,97 @@ int variableValidator(char* variableFF) {
 	return h;
 }
 
+// SI factors are small integer powers: avoid logarithmic pow round-off.
+template <typename T>
+static T siPrefixPowerOfTen(int exponent) {
+	T factor = 1;
+	int magnitude = exponent < 0 ? -exponent : exponent;
+	for (int i = 0; i < magnitude; ++i) factor *= 10;
+	return exponent < 0 ? (T)1 / factor : factor;
+}
+
 template <typename T>
 
 T prefToNumber(char prefix) {
 	T result = 0;
 	if (prefix == 'Y') {
-		result = pot(10.0, 24.0, 1);
+		result = siPrefixPowerOfTen<T>(24);
 		return result;
 	}
 	if (prefix == 'Z') {
-		result = pot(10.0, 21.0, 1);
+		result = siPrefixPowerOfTen<T>(21);
 		return result;
 	}
 	if (prefix == 'E') {
-		result = pot(10.0, 18.0, 1);
+		result = siPrefixPowerOfTen<T>(18);
 		return result;
 	}
 	if (prefix == 'P') {
-		result = pot(10.0, 15.0, 1);
+		result = siPrefixPowerOfTen<T>(15);
 		return result;
 	}
 	if (prefix == 'T') {
-		result = pot(10.0, 12.0, 1);
+		result = siPrefixPowerOfTen<T>(12);
 		return result;
 	}
 	if (prefix == 'G') {
-		result = pot(10.0, 9.0, 1);
+		result = siPrefixPowerOfTen<T>(9);
 		return result;
 	}
 	if (prefix == 'M') {
-		result = pot(10.0, 6.0, 1);
+		result = siPrefixPowerOfTen<T>(6);
 		return result;
 	}
 	if (prefix == 'k') {
-		result = pot(10.0, 3.0, 1);
+		result = siPrefixPowerOfTen<T>(3);
 		return result;
 	}
 	if (prefix == 'h') {
-		result = pot(10.0, 2.0, 1);
+		result = siPrefixPowerOfTen<T>(2);
 		return result;
 	}
 	if (prefix == 'D') {
-		result = pot(10.0, 1.0, 1);
+		result = siPrefixPowerOfTen<T>(1);
 		return result;
 	}
 	if (prefix == 'd') {
-		result = pot(10.0, -1.0, 1);
+		result = siPrefixPowerOfTen<T>(-1);
 		return result;
 	}
 	if (prefix == 'c') {
-		result = pot(10.0, -2.0, 1);
+		result = siPrefixPowerOfTen<T>(-2);
 		return result;
 	}
 	if (prefix == 'm') {
-		result = pot(10.0, -3.0, 1);
+		result = siPrefixPowerOfTen<T>(-3);
 		return result;
 	}
 	if (prefix == 'u') {
-		result = pot(10.0, -6.0, 1);
+		result = siPrefixPowerOfTen<T>(-6);
 		return result;
 	}
 	if (prefix == 'n') {
-		result = pot(10.0, -9.0, 1);
+		result = siPrefixPowerOfTen<T>(-9);
 		return result;
 	}
 	if (prefix == 'p') {
-		result = pot(10.0, -12.0, 1);
+		result = siPrefixPowerOfTen<T>(-12);
 		return result;
 	}
 	if (prefix == 'f') {
-		result = pot(10.0, -15.0, 1);
+		result = siPrefixPowerOfTen<T>(-15);
 		return result;
 	}
 	if (prefix == 'a') {
-		result = pot(10.0, -18.0, 1);
+		result = siPrefixPowerOfTen<T>(-18);
 		return result;
 	}
 	if (prefix == 'z') {
-		result = pot(10.0, -21.0, 1);
+		result = siPrefixPowerOfTen<T>(-21);
 		return result;
 	}
 	if (prefix == 'y') {
-		result = pot(10.0, -24.0, 1);
+		result = siPrefixPowerOfTen<T>(-24);
 		return result;
 	}
 	return result;
@@ -7415,7 +7448,18 @@ template<typename T>
 char* convert2Exponential(T value) {
 	sprintf(resp, "%G", precisionDisplayDouble(value));
 	if ((higherPrecision == 1 && !notUseHigherPrecison && solving) || useForVariables && solving) {
+		if constexpr (std::is_same<T, mp_float>::value) {
+			// Keep the active type, with the same 15 fractional mantissa digits.
+			std::ostringstream formatted;
+			formatted << std::uppercase << std::scientific << std::setprecision(15) << value;
+			std::string scientificText = formatted.str();
+			// Boost may emit lowercase e despite the uppercase stream flag.
+			for (char& digit : scientificText) if (digit == 'e') digit = 'E';
+			sprintf(resp, "%s", scientificText.c_str());
+		}
+		else {
 		sprintf(resp, "%.15E", precisionDisplayDouble(value));
+		}
 		if (isContained("E", resp)) {
 			int i = strStart + 1;
 			char* exp = getDynamicCharArray("", "exp");

@@ -1,6 +1,19 @@
 
 
 #include "stdafx.h"
+
+// All displayed bases are powers of two. Scale the original value directly;
+// reconstructing a mantissa from a fractional logarithm loses significant bits.
+template <typename T>
+static T baseOutputMantissa(T value, T exponent, int binaryShift) {
+	if (value == 0) return value;
+	T shift = -exponent * binaryShift;
+	if (shift != shift || shift < (std::numeric_limits<int>::min)() ||
+		shift > (std::numeric_limits<int>::max)()) return value;
+	using std::ldexp;
+	return ldexp(value, (int)shift);
+}
+
 template <typename T>
 void decimalToBinary(T decimal, char* path, int bp) {
 	FILE *open = NULL;
@@ -13,14 +26,14 @@ void decimalToBinary(T decimal, char* path, int bp) {
 	if (decimal >= 0) {
 		sN = log10(decimal) / log10(2.0);
 		sN1 = quo(sN);
-		sN2 = pot<T>(2.0, multi(sN), 1);
+		sN2 = baseOutputMantissa(decimal, sN1, 1);
 	}
 	else {
 		if (decimal < 0) {
 			decimal = decimal * -1;
 			sN = log10(decimal) / log10(2.0);
 			sN1 = quo(sN);
-			sN2 = pot<T>(2.0, multi(sN), 1)*-1;
+			sN2 = -baseOutputMantissa(decimal, sN1, 1);
 			decimal = decimal * -1;
 		}
 	}
@@ -38,7 +51,7 @@ void decimalToBinary(T decimal, char* path, int bp) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pot<T>(2.000, c, 1) + decimal;
+			decimal1 = -decimal;
 		}
 		while (quotient > 1) {
 			quotient = decimal1 / 2;
@@ -144,7 +157,7 @@ void decimalToBinary(T decimal, char* path, int bp) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pot<T>(2.000, c, 1) + decimal;
+			decimal1 = -decimal;
 		}
 		while (quotient > 1) {
 			quotient = decimal1 / 2;
@@ -213,7 +226,7 @@ void decimalToBinary(T decimal, char* path, int bp) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pot<T>(2.000, c, 1) + decimal2;
+			decimal1 = -decimal2;
 		}
 		while (quotient > 1) {
 			quotient = decimal1 / 2;
@@ -343,14 +356,14 @@ void decimalToOctal(T decimal, char* path, int op) {
 	if (decimal >= 0) {
 		sN = log10(decimal) / log10(8.0);
 		sN1 = quo(sN);
-		sN2 = pot<T>(8.0, multi(sN), 1);
+		sN2 = baseOutputMantissa(decimal, sN1, 3);
 	}
 	else {
 		if (decimal < 0) {
 			decimal = decimal * -1;
 			sN = log10(decimal) / log10(8.0);
 			sN1 = quo(sN);
-			sN2 = pot<T>(8.0, multi(sN), 1)*-1;
+			sN2 = -baseOutputMantissa(decimal, sN1, 3);
 			decimal = decimal * -1;
 		}
 	}
@@ -367,7 +380,7 @@ void decimalToOctal(T decimal, char* path, int op) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pot<T>(8.000, c, 1) + decimal;
+			decimal1 = -decimal;
 		}
 		while (quotient > 7) {
 			quotient = decimal1 / 8;
@@ -473,7 +486,7 @@ void decimalToOctal(T decimal, char* path, int op) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pot<T>(8.000, c, 1) + decimal;
+			decimal1 = -decimal;
 		}
 		while (quotient > 7) {
 			quotient = decimal1 / 8;
@@ -542,7 +555,7 @@ void decimalToOctal(T decimal, char* path, int op) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pot<T>(8.000, c, 1) + decimal2;
+			decimal1 = -decimal2;
 		}
 		while (quotient > 7) {
 			quotient = decimal1 / 8;
@@ -670,14 +683,14 @@ void decimalToHexadecimal(T decimal, char* path, int hp) {
 	if (decimal >= 0) {
 		sN = log10(decimal) / log10(16.0);
 		sN1 = quo(sN);
-		sN2 = pot<T>(16.0, multi(sN), 1);
+		sN2 = baseOutputMantissa(decimal, sN1, 4);
 	}
 	else {
 		if (decimal < 0) {
 			decimal = decimal * -1;
 			sN = log10(decimal) / log10(16.0);
 			sN1 = quo(sN);
-			sN2 = pot<T>(16.0, multi(sN), 1)*-1;
+			sN2 = -baseOutputMantissa(decimal, sN1, 4);
 			decimal = decimal * -1;
 		}
 	}
@@ -694,7 +707,7 @@ void decimalToHexadecimal(T decimal, char* path, int hp) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pot<T>(16.000, c, 1) + decimal;
+			decimal1 = -decimal;
 		}
 		while (quotient > 15) {
 			quotient = decimal1 / 16;
@@ -888,7 +901,7 @@ void decimalToHexadecimal(T decimal, char* path, int hp) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pot<T>(16.000, c, 1) + decimal;
+			decimal1 = -decimal;
 		}
 		while (quotient > 15) {
 			quotient = decimal1 / 16;
@@ -1047,7 +1060,7 @@ void decimalToHexadecimal(T decimal, char* path, int hp) {
 			while (c % 8 != 0) {
 				c++;
 			}
-			decimal1 = pot<T>(16.000, c, 1) + decimal2;
+			decimal1 = -decimal2;
 		}
 		while (quotient > 15) {
 			quotient = decimal1 / 16;
@@ -1278,7 +1291,7 @@ T binaryToDecimal(char* binary) {
 	i--;
 	count = i;
 	h = i;
-	while (h < abs((int)strlen(binary))) {
+	while (h + 2 < abs((int)strlen(binary))) {
 		floa[g] = binary[h + 2];
 		g++;
 		h++;
@@ -1291,6 +1304,7 @@ T binaryToDecimal(char* binary) {
 		j++;
 	}
 	binary2[j] = '\0';
+	i = 0;
 	while (i <= count) {
 		if (binary2[i] == '1') {
 			decimal = decimal + pot<T>(2.000, i, 1);
@@ -1344,7 +1358,7 @@ T octalToDecimal(char* octal) {
 	i--;
 	count = i;
 	h = i;
-	while (h < abs((int)strlen(octal))) {
+	while (h + 2 < abs((int)strlen(octal))) {
 		floa[g] = octal[h + 2];
 		g++;
 		h++;
@@ -1357,6 +1371,7 @@ T octalToDecimal(char* octal) {
 		j++;
 	}
 	octal2[j] = '\0';
+	i = 0;
 	while (i <= count) {
 		if (octal2[i] == '1') {
 			decimal = decimal + pot<T>(8.000, i, 1);
@@ -1464,7 +1479,7 @@ T hexadecimalToDecimal(char* hexadecimal) {
 	i--;
 	count = i;
 	h = i;
-	while (h < abs((int)strlen(hexadecimal))) {
+	while (h + 2 < abs((int)strlen(hexadecimal))) {
 		floa[g] = hexadecimal[h + 2];
 		g++;
 		h++;
@@ -1477,6 +1492,7 @@ T hexadecimalToDecimal(char* hexadecimal) {
 		j++;
 	}
 	hexadecimal2[j] = '\0';
+	i = 0;
 	while (i <= count) {
 		if (hexadecimal2[i] == '1') {
 			decimal = decimal + pot<T>(16.000, i, 1);

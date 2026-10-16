@@ -30,6 +30,28 @@ def write_json(path, value):
     path.write_text(json.dumps(value, indent=2) + '\n', encoding='utf-8')
 
 
+def inspect_sanitizers(log, directory, leak_check):
+    """Inspect diagnostics separately; never remove them from the evidence."""
+    files = sorted(directory.glob('sanitizer.*')) if directory else []
+    texts = [path.read_text(encoding='utf-8', errors='replace')
+             for path in [log] + files]
+    diagnostics = any(re.search(
+        r'ERROR: (?:AddressSanitizer|LeakSanitizer)|SUMMARY: .*Sanitizer|'
+        r'runtime error:|LeakSanitizer has encountered|AddressSanitizer:DEADLYSIGNAL',
+        text) for text in texts)
+    restricted = any(re.search(
+        r'LeakSanitizer.*ptrace|Failed to suspend|Could not attach to thread|'
+        r'Unable to get registers', text, re.I) for text in texts)
+    checks = sum(text.count('checking for leaks') for text in texts[1:])
+    threads = sum(len(re.findall(r'Processing thread\b', text)) for text in texts[1:])
+    return {'sanitizer_diagnostics_found': diagnostics,
+            'sanitizer_infrastructure_error': restricted or
+                (leak_check and (checks == 0 or threads == 0)),
+            'sanitizer_logs': [{'path': str(path.relative_to(log.parent)),
+                                'sha256': digest(path)} for path in files],
+            'leak_checks_observed': checks, 'thread_inspections_observed': threads}
+
+
 def verify(root, manifest):
     for relative, expected in manifest['files_sha256'].items():
         path = root / relative
@@ -150,11 +172,15 @@ def main():
                     save()
                     continue
                 env = dict(environment)
+                sanitizer_directory = None
                 if mode != 'release':
-                    env['ASAN_OPTIONS'] = 'detect_leaks={}:halt_on_error=1:abort_on_error=1'.format(int(leak_check))
-                    env['UBSAN_OPTIONS'] = 'halt_on_error=1:print_stacktrace=1'
+                    sanitizer_directory = output / (mode + '-' + suite + '-sanitizer')
+                    sanitizer_directory.mkdir()
+                    log_option = ':log_path=' + str(sanitizer_directory / 'sanitizer')
+                    env['ASAN_OPTIONS'] = 'detect_leaks={}:halt_on_error=1:abort_on_error=1'.format(int(leak_check)) + log_option
+                    env['UBSAN_OPTIONS'] = 'halt_on_error=1:print_stacktrace=1' + log_option
                     if leak_check:
-                        env['LSAN_OPTIONS'] = 'verbosity=1:log_threads=1'
+                        env['LSAN_OPTIONS'] = 'verbosity=1:log_threads=1' + log_option
                 row['sanitizer_environment'] = {key: env[key] for key in
                     ('ASAN_OPTIONS', 'UBSAN_OPTIONS', 'LSAN_OPTIONS') if key in env}
                 argv = [sys.executable, str(root / 'tests' / ('run-atc-linux-' + suite + '.py')),
@@ -168,11 +194,9 @@ def main():
                 text = log.read_text(encoding='utf-8', errors='replace')
                 count = len(re.findall(r'^PASS\b', text, re.M))
                 row['observed_pass_lines'] = count
-                diagnostics = bool(re.search(r'ERROR: (?:AddressSanitizer|LeakSanitizer)|SUMMARY: .*Sanitizer|runtime error:|LeakSanitizer has encountered', text))
-                row['sanitizer_diagnostics_found'] = diagnostics
-                restricted = bool(re.search(r'LeakSanitizer.*ptrace|Failed to suspend threads|Could not attach to thread', text, re.I))
-                row['status'] = ('INFRA_ERROR' if restricted else
-                                 'PASS' if row['exit_code'] == 0 and count == expected and not diagnostics
+                row.update(inspect_sanitizers(log, sanitizer_directory, leak_check))
+                row['status'] = ('INFRA_ERROR' if row['sanitizer_infrastructure_error'] else
+                                 'PASS' if row['exit_code'] == 0 and count == expected and not row['sanitizer_diagnostics_found']
                                  else 'FAIL')
                 print('{} {} / {}: {}/{}'.format(row['status'], mode, suite, count, expected), flush=True)
                 save()
