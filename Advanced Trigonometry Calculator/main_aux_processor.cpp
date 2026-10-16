@@ -1409,8 +1409,11 @@ T main_core(char* arithTrig, char* fTrig, FILE*& fout, char* path, T result1, T 
 			fout = nullptr;
 		}
 		fout = NULL;
-		while (fout == NULL) {
+		int fileOpenAttempts = 0;
+		while (fout == NULL && fileOpenAttempts < 50) {
 			fout = fopen(path, "a+");
+			Sleep(10);
+			fileOpenAttempts++;
 		}
 		fprintf(fout, ">%s\n", savefTrig);
 
@@ -2431,8 +2434,11 @@ T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, c
 							fout = nullptr;
 						}
 						fout = NULL;
-						while (fout == NULL) {
+						int fileOpenAttempts = 0;
+						while (fout == NULL && fileOpenAttempts < 50) {
 							fout = fopen(path, "a+");
+							Sleep(10);
+							fileOpenAttempts++;
 						}
 						if (fout != NULL) {
 							fprintf(fout, "#%d=\n%s", rf, report.c_str());
@@ -2488,8 +2494,11 @@ T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, c
 								fout = nullptr;
 							}
 							fout = NULL;
-							while (fout == NULL) {
+							int fileOpenAttempts = 0;
+							while (fout == NULL && fileOpenAttempts < 50) {
 								fout = fopen(path, "a+");
+								Sleep(10);
+								fileOpenAttempts++;
 							}
 							convertComplex2Exponential(result1, result2);
 							if (result1 > 0 && result2 > 0) {
@@ -2562,10 +2571,13 @@ T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, c
                                 fclose(fout);
                                 fout = nullptr;
                             }
-                            fout = NULL;
-                            while (fout == NULL) {
-                                fout = fopen(path, "a+");
-                            }
+							fout = NULL;
+							int fileOpenAttempts = 0;
+							while (fout == NULL && fileOpenAttempts < 50) {
+								fout = fopen(path, "a+");
+								Sleep(10);
+								fileOpenAttempts++;
+							}
                             fprintf(fout, "%s", ansFormatted);
                             fclose(fout);
                             fout = nullptr;
@@ -2846,8 +2858,12 @@ T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, c
 						printf("\n");
 					}
 					FILE* fout = NULL;
-					while (fout == NULL) {
+					fout = NULL;
+					int fileOpenAttempts = 0;
+					while (fout == NULL && fileOpenAttempts < 50) {
 						fout = fopen(path, "a+");
+						Sleep(10);
+						fileOpenAttempts++;
 					}
 					fputs("\n", fout);
 					fclose(fout);
@@ -2864,8 +2880,12 @@ T main_sub_core(char* arithTrig, FILE*& fout, int verify, char* path, int txt, c
 						printf("\nError in syntax.\n\n");
 					}
 					FILE* fout = NULL;
-					while (fout == NULL) {
+					fout = NULL;
+					int fileOpenAttempts = 0;
+					while (fout == NULL && fileOpenAttempts < 50) {
 						fout = fopen(path, "a+");
+						Sleep(10);
+						fileOpenAttempts++;
 					}
 					fprintf(fout, "\nError in syntax.\n\n");
 					fclose(fout);

@@ -1,6 +1,42 @@
 # ATC 2.1.9 — mandatory separate Windows XP validation
 
-Status: **pending; required for final approval**. The user confirmed this requirement on 2026-10-15. The user selected **Windows XP x86 (32-bit) only** as the mandatory XP target.
+Status: **R2 native automatic catalogue passed; manual checks confirmed by the user**.
+The mandatory target is Windows XP x86 (32-bit). This approval covers the tested
+artifact and paths, not every possible runtime condition or a final release.
+
+## Completed R2 validation
+
+The received `xp-8e47a9692894.zip` records Windows XP 5.1 build 2600 SP3,
+Python 3.4.4 x86 and **376/376 PASS**, with 369 ATC processes and no recorded
+failures, timeouts, crashes or infrastructure errors. The audit verified the
+archive CRC, executable identity, catalogue/runner/source hashes and consistency
+of all 738 stdout/stderr logs. Output and solver-residue assertions were checked
+again from the archived streams. Intermediate file assertions remain supported
+by the recorded native runner evaluation.
+
+The Win32 executable SHA-256 is
+`ab787b1b4d73fd9fa2069cc5bb4db837efd27aa41f5bddb84d0b9150aeb3a198`.
+The evidence ZIP SHA-256 is
+`8db9b7b5566c8805967ad0ba0fcfc92cb2f6a9ac6566d1ba80ff265212b9e2fe`.
+`calendar(2026)` passed in 0.201 seconds under the unchanged official
+20-second process timeout. The previous calendar crashes/timeouts did not recur
+in that complete run. The user subsequently confirmed the manual console,
+startup, graph/TXT checks and repeated interactive calendar calls with normal
+idle CPU. These manual confirmations are user-reported evidence.
+
+The artifact was built with Release Win32, MSVC 14.16/v141_xp, C++17,
+Windows SDK 7.1A targeting components and subsystem version 5.01. Modern Windows
+Win32 and x64 All runs also passed 376/376 for the same application sources.
+
+The tested source was based on `4ba2078303283426a92031d917a85cbe5db1e7da`
+with the local source hashes recorded in `ATC_2_1_9_XP_R2_RESULTS.json`.
+The checkpoint commit normalizes two trailing-whitespace lines. The local IDE
+toolset selection and window dimensions are excluded from the published patch;
+the validation builds explicitly overrode the toolset to v141_xp. Raw archives,
+binaries and logs remain outside Git. Linux revalidation of these newer source
+changes is pending.
+
+The following procedure remains the reproducibility checklist for future builds.
 
 ## Identify the exact artifacts and environment
 

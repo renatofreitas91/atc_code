@@ -46,6 +46,7 @@ if not exist "%SDK71_ROOT%\Lib\Kernel32.Lib" (
 set "INCLUDE=%BOOST_ROOT%;%MSVC_ROOT%\include;%UCRT_ROOT%\Include\%UCRT_VERSION%\ucrt;%VSROOT%\VC\Auxiliary\VS\include;%SDK71_ROOT%\Include"
 set "LIB=%MSVC_ROOT%\lib\x86;%UCRT_ROOT%\Lib\%UCRT_VERSION%\ucrt\x86;%VSROOT%\VC\Auxiliary\VS\lib\x86;%SDK71_ROOT%\Lib"
 set "LIBPATH=%MSVC_ROOT%\lib\x86;%VSROOT%\VC\Auxiliary\VS\lib\x86;%SDK71_ROOT%\Lib"
+set "_CL_=/std:c++17"
 
 "%VSROOT%\MSBuild\Current\Bin\MSBuild.exe" "%SOLUTION%" ^
   /t:Rebuild ^

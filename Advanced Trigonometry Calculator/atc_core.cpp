@@ -454,9 +454,11 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 				fout = NULL;
 			}
 			fout = NULL;
-
-			while (fout == NULL) {
+			int fileOpenAttempts = 0;
+			while (fout == NULL&&fileOpenAttempts<50) {
 				fout = fopen(path, "a+");
+				Sleep(10);
+				fileOpenAttempts++;
 
 			}
 			for (tD = 0; tD < abs((int)strlen(trigData)); tD++) {
@@ -697,8 +699,11 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 			sprintf(toOpen, "");
 			atcJoinPath(toOpen, DIM, atcPath, "history.txt");
 			fout = NULL;
-			while (fout == NULL) {
+			 fileOpenAttempts = 0;
+			while (fout == NULL && fileOpenAttempts < 50) {
 				fout = fopen(toOpen, "a+");
+				Sleep(10);
+				fileOpenAttempts++;
 			}
 			sprintf(forsprintf, "%c%c%c%c%c", tim[20], tim[21], tim[22], tim[23], '\0');
 			sprintf(yea, "%s", forsprintf);

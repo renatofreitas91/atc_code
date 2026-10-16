@@ -2579,8 +2579,11 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 	FILE* fout = NULL, * fclean = NULL;
 	char* stringV = getDynamicCharArray("", "stringV");
 	fout = NULL;
-	while (fout == NULL) {
+	int fileOpenAttempts = 0;
+	while (fout == NULL && fileOpenAttempts < 50) {
 		fout = fopen(path, "a+");
+		Sleep(10);
+		fileOpenAttempts++;
 	}
 	int i = 0, r = 0, year = 0, s = 0;
 	bool command = false;
@@ -3157,8 +3160,11 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 
 				sprintf(arithTrig, "");
 				fout = NULL;
-				while (fout == NULL) {
+				int fileOpenAttempts = 0;
+				while (fout == NULL && fileOpenAttempts < 50) {
 					fout = fopen(path, "a+");
+					Sleep(10);
+					fileOpenAttempts++;
 				}
 				varRename[0] = '\0'; revariable[0] = '\0';
 				validVar = 1;
@@ -6264,20 +6270,17 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 				calendar[yu] = '\0';
 				ca = 0;
 				int saveStartWeekDays = 0;
-				for (s = 0; s < abs((int)strlen(calendar)); s++) {
+				const size_t calendarLength = strlen(calendar);
+				const size_t weekColumnOffsets[] = { 28, 34, 49, 55, 70, 76, 91, 97, 112, 118 };
+				for (s = 0; (size_t)s < calendarLength; s++) {
 					if (calendar[s] == '\n') {
 						ca++;
 						if (ca > 4) {
-							calendar[s + 28] = (char)179;
-							calendar[s + 34] = (char)179;
-							calendar[s + 49] = (char)179;
-							calendar[s + 55] = (char)179;
-							calendar[s + 70] = (char)179;
-							calendar[s + 76] = (char)179;
-							calendar[s + 91] = (char)179;
-							calendar[s + 97] = (char)179;
-							calendar[s + 112] = (char)179;
-							calendar[s + 118] = (char)179;
+							for (size_t offset : weekColumnOffsets) {
+								if (offset < calendarLength - (size_t)s) {
+									calendar[(size_t)s + offset] = (char)179;
+								}
+							}
 						}
 						if (ca == 6) {
 							saveStartWeekDays = s + 1;
@@ -6286,7 +6289,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 				}
 				int y = saveStartWeekDays;
 				int k = 0;
-				while (calendar[y] != '\n') {
+				while (y < (int)calendarLength && calendar[y] != '\n' && calendar[y] != '\0') {
 					lineWeekDays[k] = calendar[y];
 					y++;
 					k++;

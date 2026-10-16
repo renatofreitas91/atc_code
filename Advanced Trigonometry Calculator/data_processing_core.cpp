@@ -1377,7 +1377,7 @@ void substituteExistingScalarVariables(char* expression) {
 			}
 			if (strcmp(variable, "pi") == 0) {
 				std::ostringstream piText;
-				if constexpr (std::is_same<T, mp_float>::value) {
+				if (std::is_same<T, mp_float>::value) {
 					piText << std::setprecision(60) << boost::math::constants::pi<mp_float>();
 				}
 				else {
@@ -1388,7 +1388,7 @@ void substituteExistingScalarVariables(char* expression) {
 				continue;
 			}
 			if (strcmp(variable, "e") == 0) {
-				if constexpr (std::is_same<T, mp_float>::value) {
+				if (std::is_same<T, mp_float>::value) {
 					std::ostringstream eText;
 					eText << std::setprecision(60) << boost::math::constants::e<mp_float>();
 					std::string eLiteral = "(" + eText.str() + ")";
@@ -4681,14 +4681,17 @@ bool IsPreviousToWindowsVista()
 	OSVERSIONINFOEX osversion;
 	ZeroMemory(&osversion, sizeof(OSVERSIONINFOEX));
 	osversion.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	if (GetVersionEx((OSVERSIONINFO*)&osversion))
-	{
+#pragma warning(push)
+#pragma warning(disable: 4996)
+	if (GetVersionEx((OSVERSIONINFO*)&osversion)) {
+
 		const DWORD VistaVersion = 6;
 		if ((osversion.dwPlatformId == VER_PLATFORM_WIN32_NT) && (osversion.dwMajorVersion < VistaVersion))
 		{
 			previousToVista = true;
 		}
 	}
+#pragma warning(pop)
 	return previousToVista;
 #else
 	return false;

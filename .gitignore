@@ -8,6 +8,9 @@ ipch/
 
 # Build outputs
 /build/
+/build-v140xp-x86/
+/build-v141xp-x86/
+/work/
 /Advanced Trigonometry Calculator/build/
 Debug/
 Release/
