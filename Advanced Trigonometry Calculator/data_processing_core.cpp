@@ -7448,6 +7448,8 @@ void getLines(char* data) {
 }
 template<typename T>
 char* convert2Exponential(T value) {
+	// Canonicalize exact zero for display only; preserve nonzero components.
+	if (value == 0) value = T(0);
 	sprintf(resp, "%G", precisionDisplayDouble(value));
 	if ((higherPrecision == 1 && !notUseHigherPrecison && solving) || useForVariables && solving) {
 		if constexpr (std::is_same<T, mp_float>::value) {
