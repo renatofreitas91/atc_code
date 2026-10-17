@@ -1,6 +1,6 @@
 # Testes do Advanced Trigonometry Calculator
 
-Este documento resume a infraestrutura de testes do ATC 2.1.8.
+Este documento resume a infraestrutura de testes do ATC 2.1.9.
 
 ## Suite principal
 
@@ -10,19 +10,19 @@ Executar após compilar o ATC:
 powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe .\x64\Release\atc.exe
 ```
 
-Resultado validado atual em Release x64 e Release x86:
+Resultado histórico em Release x64 e Release x86 (não aprova o candidato 2.1.9):
 
 ```text
 Summary: 377 passed, 0 failed
 ```
 
-Cobertura isolada atual:
+Cobertura isolada histórica:
 
 ```text
 Summary: 68 passed, 0 failed
 ```
 
-Validacao atual do package SourceForge:
+Validação histórica do package SourceForge:
 
 ```text
 Summary: 44 passed, 0 failed

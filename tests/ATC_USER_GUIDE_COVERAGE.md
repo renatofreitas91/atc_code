@@ -6,7 +6,7 @@ Source document:
 %USERPROFILE%\Documents\Advanced Trigonometry Calculator\Advanced Trigonometry Calculator - User Guide.pdf
 ```
 
-This file tracks the documented ATC surface so release 2.1.8 does not forget
+This file tracks the documented ATC surface so release 2.1.9 does not forget
 commands that are described in the user guide. The automated smoke suite covers
 safe, deterministic command-line cases. Interactive, GUI, PC-control and
 external-link commands are intentionally kept as manual coverage.

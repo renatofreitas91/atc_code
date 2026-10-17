@@ -3386,7 +3386,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 		}
 
 		if (isContained("B", arithTrig)) {
-			if (verifyNumerical(arithTrig[strStart - 1]) == (bool)false && verifyLetter(arithTrig[strStart - 1]) == (bool)false) {
+			if (strStart == 0 || (!verifyNumerical(arithTrig[strStart - 1]) && !verifyLetter(arithTrig[strStart - 1]))) {
 				if (isContained("^_B", arithTrig) == (bool)false && isContained("B", arithTrig)) {
 					int i = strStart, v = 0;
 					char* result_name = getDynamicCharArray("", "result_name");
@@ -3604,7 +3604,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				while (verifyLetter(arithTrig[i]) && isContained(toTest, prefixes)) {
 					result_name[v] = arithTrig[i];
 					v++; i++;
-					sprintf(toTest, "%s%c", toTest, arithTrig[i]);
+					sprintf(toTest + strlen(toTest), "%c", arithTrig[i]);
 				}
 				result_name[v] = '\0';
 				char* replacement = getDynamicCharArray("", "replacement");
@@ -3636,7 +3636,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				while (verifyLetter(arithTrig[i]) && isContained(toTest, prefixes)) {
 					result_name[v] = arithTrig[i];
 					v++; i++;
-					sprintf(toTest, "%s%c", toTest, arithTrig[i]);
+					sprintf(toTest + strlen(toTest), "%c", arithTrig[i]);
 				}
 				result_name[v] = '\0';
 				char* replacement = getDynamicCharArray("", "replacement");
@@ -3682,10 +3682,10 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 				variableCheck[s] = '\0';
 				if (arithTrig[i] != '[' && arithTrig[i] != ']' && isVariable(variableCheck) && i != abs((int)strlen(arithTrig))) {
 					if (arithTrig[i - abs((int)strlen(variableCheck)) - 1] != '(' || arithTrig[i] != ')') {
-						sprintf(newArithTrig, "%s(%s)", newArithTrig, variableCheck);
+						sprintf(newArithTrig + strlen(newArithTrig), "(%s)", variableCheck);
 					}
 					else {
-						sprintf(newArithTrig, "%s%s)", newArithTrig, variableCheck);
+						sprintf(newArithTrig + strlen(newArithTrig), "%s)", variableCheck);
 						i++; y++;
 					}
 					y = abs((int)strlen(newArithTrig));
@@ -3699,7 +3699,7 @@ void manageExpression(char* arithTrig, T result1, T result2, int verify) {
 					}
 				}
 				else {
-					sprintf(newArithTrig, "%s%s", newArithTrig, variableCheck);
+					sprintf(newArithTrig + strlen(newArithTrig), "%s", variableCheck);
 					y = abs((int)strlen(newArithTrig));
 					while (firstLetterVariable(arithTrig[i]) == (bool)false && i < abs((int)strlen(arithTrig))) {
 						newArithTrig[y] = arithTrig[i];
@@ -6847,6 +6847,7 @@ bool isContainedInUserFunction(char* variable) {
 					if (isContained(".txt", filename)) {
 						filename[strStart] = '\0';
 						if (isContained(variable, filename) || isEqual(variable, filename)) {
+							closedir(d);
 							_delete(option, "option"); option = nullptr;
 							_delete(directory, "directory"); directory = nullptr;
 							_delete(filename, "filename"); filename = nullptr;
@@ -6857,6 +6858,7 @@ bool isContainedInUserFunction(char* variable) {
 				}
 			}
 		}
+		closedir(d);
 	}
 	_delete(option, "option"); option = nullptr;
 	_delete(directory, "directory"); directory = nullptr;

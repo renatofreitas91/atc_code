@@ -125,7 +125,7 @@ diferentes.
 
 ## Modelo de precisão
 
-O ATC 2.1.7 pode executar o runtime tipado principal com `double` ou Boost
+O ATC 2.1.9 pode executar o runtime tipado principal com `double` ou Boost
 `mp_float`. O arranque lê a setting persistida e encaminha o runtime template.
 Isto mantem o fluxo público de comandos praticamente igual, permitindo maior
 precisão nos caminhos numéricos suportados.

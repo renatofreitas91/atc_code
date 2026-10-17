@@ -1,12 +1,12 @@
 # Advanced Trigonometry Calculator Full User Guide
 
-Version: ATC 2.1.8
+Version: ATC 2.1.9
 Language: English  
 Author: Renato Alexandre dos Santos Freitas
 
 This guide is the expanded repository user guide for Advanced Trigonometry
-Calculator (ATC). It is based on the existing online user guide, the current
-2.1.8 documentation, and the automated regression coverage available in this
+Calculator (ATC). It is based on the existing online user guide, the 2.1.8 documentation and subsequent
+2.1.9 updates, and the automated regression coverage available in this
 repository.
 
 ## 1. What ATC is
@@ -135,7 +135,7 @@ Scientific notation uses uppercase `E`:
 
 ## 5. Interactive prompt
 
-ATC 2.1.8 includes a custom prompt editor:
+ATC 2.1.9 includes a custom prompt editor:
 
 - `Tab` completes documented commands, mathematical functions, aliases and user
   functions;
@@ -174,7 +174,7 @@ Use `sin(pi/2)` in radian mode and `sin(30)` in degree mode.
 
 ## 7. Precision
 
-ATC 2.1.8 supports:
+ATC 2.1.9 supports:
 
 - `double`
 - Boost `mp_float`
@@ -393,7 +393,7 @@ energy=10
 energy+1
 ```
 
-ATC 2.1.8 accepts broader variable names than older parser versions while
+ATC 2.1.9 accepts broader variable names than older parser versions while
 preserving reserved function and constant names.
 
 Useful commands:
@@ -572,7 +572,7 @@ x2=2
 ## 21. Solver
 
 The `solver(...)` command supports numerical solving paths and selected
-fast-path normalizations. ATC 2.1.8 validates each candidate against the
+fast-path normalizations. ATC 2.1.9 validates each candidate against the
 original expression before returning it. A solution may be real or complex.
 If the earlier solver path does not produce a valid root, a general numerical
 fallback is attempted.
@@ -975,7 +975,10 @@ Online project documentation:
 
 - [Testing](https://github.com/renatofreitas91/atc_code/blob/master/docs/Testing.md)
 
-Current validated regression result:
+Historical validation recorded before the final 2.1.9 candidate:
+
+These results do not approve the current candidate. Final validation must
+identify the source snapshot and executable hashes.
 
 ```text
 All: 376 passed, 0 failed
@@ -985,4 +988,4 @@ Settings: 7 passed, 0 failed
 ```
 
 This guide should evolve with the tests and the documented behavior of ATC
-2.1.8.
+2.1.9.

@@ -132,7 +132,7 @@ void mode() {
 }
 
 void about2() {
-	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)", memFactor);
+	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.9 (Mem Factor: %.3f)", memFactor);
 	applyConsoleTitleSafe(forsprintf);
 	if (!applyConsoleDimensionsSafe(90, 15)) {
 		system("MODE con cols=90 lines=15");
@@ -152,7 +152,7 @@ void about2() {
 	int Window = 3, Dimensions = 2;
 	applySettings(Window);
 	applySettings(Dimensions);
-	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)                                                            ==) Enter data (==              ", memFactor);
+	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.9 (Mem Factor: %.3f)                                                            ==) Enter data (==              ", memFactor);
 	applyConsoleTitleSafe(forsprintf);
 	_delete(about, "about"); about = nullptr;
 }
@@ -591,7 +591,7 @@ static const char* introLogoDarkShade() {
 
 bool about() {
 	ShowConsoleCursor(FALSE);
-	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)", memFactor);
+	sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.9 (Mem Factor: %.3f)", memFactor);
 	applyConsoleTitleSafe(forsprintf);
 
 	if (shouldUseLegacyConsoleWindowManagement() && !applyConsoleWindowSafe(0, 0, 760, 760)) {
@@ -625,7 +625,7 @@ bool about() {
 	printf("            %s   %s %s   %s %s     %s   %s %s   %s %s     %s   %s   %s   %s   %s %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
 	printf("             %s%s%s  %s   %s %s%s%s%s%s  %s%s%s   %s%s%s  %s%s%s%s%s %s   %s   %s    %s%s%s  %s   %s\n", introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade(), introLogoLightShade());
 	puts("");
-	puts("                                      v2.1.8");
+	puts("                                      v2.1.9");
 	puts("\n                        by Renato Alexandre dos Santos Freitas\n\n                                    Made in Portugal\n\n            To know how to use this application please enter \"user guide\"\n");
 	printf("                   After this run, ATC is available by \"Ctrl+Alt+K\"\n\n");
 	trackMouse();

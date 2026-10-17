@@ -4666,7 +4666,7 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 		if (dgrt != 0 || dgrt2 != 0) {
 			complex_log(dgrt, dgrt2);
 			T baR = precisionValueTo<T>(resultR), baI = precisionValueTo<T>(resultI);
-			complex_log(precisionValueTo<T>(v[1]), result2);
+			complex_log(precisionValueTo<T>(v[1]), precisionValueTo<T>(vI[1]));
 			division<T>(precisionValueTo<T>(resultR), precisionValueTo<T>(resultI), baR, baI);
 			result1 = precisionValueTo<T>(resultR);
 		result2 = precisionValueTo<T>(resultI);
@@ -4674,7 +4674,7 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 		else {
 			complex_log((T)10.0, (T)0);
 			T baR = precisionValueTo<T>(resultR), baI = precisionValueTo<T>(resultI);
-			complex_log(precisionValueTo<T>(v[1]), result2);
+			complex_log(precisionValueTo<T>(v[1]), precisionValueTo<T>(vI[1]));
 			division<T>(precisionValueTo<T>(resultR), precisionValueTo<T>(resultI), baR, baI);
 			result1 = precisionValueTo<T>(resultR);
 		result2 = precisionValueTo<T>(resultI);
@@ -4682,22 +4682,22 @@ T functionProcessor(char* trigon, PrecisionValue result, PrecisionValue amplitud
 	}
 	if (isEqual("rt", op)) {
 		division<T>((T)1, (T)0, dgrt, dgrt2);
-		exponentiation<T>(precisionValueTo<T>(v[1]), result2, precisionValueTo<T>(resultR), precisionValueTo<T>(resultI), 1);
+		exponentiation<T>(precisionValueTo<T>(v[1]), precisionValueTo<T>(vI[1]), precisionValueTo<T>(resultR), precisionValueTo<T>(resultI), 1);
 		result1 = precisionValueTo<T>(resultR);
 		result2 = precisionValueTo<T>(resultI);
 	}
 	if (isEqual("sqrt", op)) {
-		exponentiation<T>(precisionValueTo<T>(v[1]), result2, (T)(1 / 2.0), (T)0, 1);
+		exponentiation<T>(precisionValueTo<T>(v[1]), precisionValueTo<T>(vI[1]), (T)(1 / 2.0), (T)0, 1);
 		result1 = precisionValueTo<T>(resultR);
 		result2 = precisionValueTo<T>(resultI);
 	}
 	if (isEqual("cbrt", op)) {
-		exponentiation<T>(precisionValueTo<T>(v[1]), result2, (T)(1 / 3.0), (T)0, 1);
+		exponentiation<T>(precisionValueTo<T>(v[1]), precisionValueTo<T>(vI[1]), (T)(1 / 3.0), (T)0, 1);
 		result1 = precisionValueTo<T>(resultR);
 		result2 = precisionValueTo<T>(resultI);
 	}
 	if (isEqual("ln", op)) {
-		complex_log(precisionValueTo<T>(v[1]), result2);
+		complex_log(precisionValueTo<T>(v[1]), precisionValueTo<T>(vI[1]));
 		result1 = precisionValueTo<T>(resultR);
 		result2 = precisionValueTo<T>(resultI);
 	}

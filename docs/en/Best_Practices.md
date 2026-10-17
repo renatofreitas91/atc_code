@@ -1,7 +1,7 @@
 # ATC Best Practices
 
 These practices help users get reliable results from Advanced Trigonometry
-Calculator 2.1.8.
+Calculator 2.1.9.
 
 ## Start Small
 

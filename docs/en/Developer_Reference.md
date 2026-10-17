@@ -1,7 +1,7 @@
 # ATC Developer Reference
 
 This reference complements the Developer Guide. It focuses on practical
-contribution workflows for Advanced Trigonometry Calculator 2.1.8.
+contribution workflows for Advanced Trigonometry Calculator 2.1.9.
 
 ## Main Project Structure
 

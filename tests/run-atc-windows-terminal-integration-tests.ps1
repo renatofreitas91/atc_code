@@ -87,7 +87,7 @@ Add-Result "fragment is UTF-8 without BOM" (-not $hasBom) "length=$($bytes.Lengt
 $json = Get-Content -LiteralPath $fragmentPath -Raw | ConvertFrom-Json
 $profile = @($json.profiles)[0]
 $scheme = @($json.schemes)[0]
-Add-Result "stable profile identity" ($profile.guid -eq "{13f1a9c7-83d4-5f62-9e71-1e91ca4da218}" -and $profile.name -eq "Advanced Trigonometry Calculator 2.1.8" -and $profile.tabTitle -eq "ATC 2.1.8") "$($profile.guid); $($profile.name); $($profile.tabTitle)"
+Add-Result "stable profile identity" ($profile.guid -eq "{13f1a9c7-83d4-5f62-9e71-1e91ca4da218}" -and $profile.name -eq "Advanced Trigonometry Calculator 2.1.9" -and $profile.tabTitle -eq "ATC 2.1.9") "$($profile.guid); $($profile.name); $($profile.tabTitle)"
 Add-Result "command and working directory use real paths" ($profile.commandline -eq ('"' + $atcPath + '"') -and $profile.startingDirectory -eq $packageRoot) "$($profile.commandline); $($profile.startingDirectory)"
 Add-Result "profile does not claim defaults" ($profile.PSObject.Properties.Name -notcontains "defaultProfile") (($profile.PSObject.Properties.Name) -join ",")
 Add-Result "complete color scheme" ((@("black","red","green","yellow","blue","purple","cyan","white","brightBlack","brightRed","brightGreen","brightYellow","brightBlue","brightPurple","brightCyan","brightWhite") | Where-Object { $scheme.PSObject.Properties.Name -notcontains $_ }).Count -eq 0) (($scheme.PSObject.Properties.Name) -join ",")

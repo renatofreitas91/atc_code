@@ -46,6 +46,12 @@ int exponentiation(T a, T b, T c, T d, int sig) {
 		resultR = pot<T>(a, c, 1);
 		resultI = (T)0;
 	}
+	else if (b == 0 && d == 0 && a < 0 && a >= -std::numeric_limits<T>::max() && c == (T)0.5) {
+		// The principal square root of a negative real is exactly imaginary.
+		// Avoid the cos(pi/2) residue without rounding unrelated small values.
+		resultR = (T)0;
+		resultI = sqrt(-a);
+	}
 	else if (b != 0 || d != 0 || a < 0) {
 		T r = sqrt(a * a + b * b);
 		T arg_ab = atan2(b, a);

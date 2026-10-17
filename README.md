@@ -1,12 +1,12 @@
 # Advanced Trigonometry Calculator (ATC)
 
 ![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)
-![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
+![Platform: Windows and Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey.svg)
 ![Language: C++](https://img.shields.io/badge/Language-C%2B%2B-blue.svg)
 ![Status: Open Source](https://img.shields.io/badge/Status-Open%20Source-brightgreen.svg)
 
 Advanced Trigonometry Calculator (ATC) is a free, open-source command-line
-mathematical application for Windows, developed by **Renato Alexandre dos
+mathematical application for Windows and Linux, developed by **Renato Alexandre dos
 Santos Freitas**.
 
 ATC evaluates text-based mathematical expressions and documented ATC commands
@@ -20,10 +20,17 @@ plain-text calculator workflow. It supports direct expression evaluation,
 variables, matrices, polynomial tools, equation solving commands, complex
 numbers, and configurable numerical precision.
 
-Version 2.1.8 focuses on solver correctness, settings robustness,
+The 2.1.9 candidate adds Linux portability and memory-safety corrections to the
+existing solver correctness, settings robustness,
 cross-version x86 compatibility, precision-mode persistence, equation and polynomial
 fixes, broader regression coverage, Windows console behavior, memory
 improvements, command-line editing, and clearer verbose-resolution output.
+
+The candidate is not publicly released. Windows x64, Win32 and native Windows
+XP x86 validation must identify the final source and binaries. Linux sanitizer
+results remain tied to their recorded source snapshots and executable hashes.
+The Windows updater and optional Windows Terminal integration are platform
+specific.
 
 ## What ATC is not
 
@@ -103,7 +110,7 @@ and persisted user configuration.
 
 ## High Precision Mode
 
-ATC 2.1.8 supports persistent switching between:
+ATC 2.1.9 supports persistent switching between:
 
 - `double`
 - Boost `mp_float`
@@ -133,10 +140,13 @@ dp50dpmaxprecpi
 
 ## Automated Testing
 
-ATC 2.1.8 includes an automated regression suite based on documented user-guide
+ATC 2.1.9 includes an automated regression suite based on documented user-guide
 behavior.
 
-Current validated result for both Release x64 and Release x86:
+Historical validation recorded before the final 2.1.9 candidate:
+
+These results do not approve the current candidate. Final validation must
+identify the source snapshot and executable hashes.
 
 ```text
 Summary: 377 passed, 0 failed

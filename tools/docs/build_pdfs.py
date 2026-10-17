@@ -233,7 +233,7 @@ def build_release_guide(target: Path) -> None:
 
     story = [
         Spacer(1, 32 * mm),
-        Paragraph("Advanced Trigonometry Calculator 2.1.8", styles["title"]),
+        Paragraph("Advanced Trigonometry Calculator 2.1.9", styles["title"]),
         Spacer(1, 8 * mm),
         Paragraph("Bilingual User Guide", styles["cover_language"]),
         Paragraph("Guia de Utilizador Bilingue", styles["cover_language"]),
@@ -250,9 +250,9 @@ def build_release_guide(target: Path) -> None:
         story.append(Paragraph(normalize_inline_markdown(heading), styles["contents"]))
 
     story.extend([PageBreak(), Paragraph("English", styles["title"])])
-    story.extend(markdown_to_story(english, "ATC 2.1.8 User Guide"))
+    story.extend(markdown_to_story(english, "ATC 2.1.9 User Guide"))
     story.extend([PageBreak(), Paragraph("Portugues (Portugal)", styles["title"])])
-    story.extend(markdown_to_story(portuguese, "Guia de Utilizador do ATC 2.1.8"))
+    story.extend(markdown_to_story(portuguese, "Guia de Utilizador do ATC 2.1.9"))
 
     target.parent.mkdir(parents=True, exist_ok=True)
     doc = SimpleDocTemplate(
@@ -262,10 +262,10 @@ def build_release_guide(target: Path) -> None:
         leftMargin=16 * mm,
         topMargin=16 * mm,
         bottomMargin=16 * mm,
-        title="Advanced Trigonometry Calculator 2.1.8 - Bilingual User Guide",
+        title="Advanced Trigonometry Calculator 2.1.9 - Bilingual User Guide",
         author="Renato Alexandre dos Santos Freitas",
-        subject="ATC 2.1.8 user documentation in English and Portuguese (Portugal)",
-        keywords="ATC 2.1.8, calculator, user guide, English, Portuguese",
+        subject="ATC 2.1.9 user documentation in English and Portuguese (Portugal)",
+        keywords="ATC 2.1.9, calculator, user guide, English, Portuguese",
     )
     doc.build(story, onFirstPage=add_page_number, onLaterPages=add_page_number)
 
@@ -294,7 +294,7 @@ def main() -> int:
     parser.add_argument(
         "--release-guide",
         type=Path,
-        help=f"Build the bilingual 2.1.8 release guide (recommended name: {RELEASE_GUIDE_NAME}).",
+        help=f"Build the bilingual 2.1.9 release guide (recommended name: {RELEASE_GUIDE_NAME}).",
     )
     args = parser.parse_args()
 

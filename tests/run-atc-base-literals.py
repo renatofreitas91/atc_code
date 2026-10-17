@@ -50,6 +50,7 @@ def main():
         (root / 'Advanced Trigonometry Calculator' / name).read_bytes()).hexdigest()
         for name in ('data_processing_core.cpp', 'processing_core.cpp',
                      'numerical_systems.cpp', 'main_aux_processor.cpp')}
+    binary_sha256 = hashlib.sha256(source.read_bytes()).hexdigest()
     rows = []
     for precision in ('0', '1'):
         for index, (expression, expected) in enumerate(CASES):
@@ -72,16 +73,27 @@ def main():
                 (data / name).write_text(value, encoding='utf-8')
             started = time.monotonic()
             status = 'FAIL'
-            with (data / 'stdout.log').open('wb') as stdout, (data / 'stderr.log').open('wb') as stderr:
-                process = subprocess.Popen([str(executable.resolve()), expression], cwd=data,
-                    stdin=subprocess.PIPE, stdout=stdout, stderr=stderr)
-                try:
-                    process.communicate(b'', timeout=20)
-                except subprocess.TimeoutExpired:
-                    status = 'TIMEOUT'
-                    process.kill()
-                    process.communicate()
+            try:
+                with (data / 'stdout.log').open('wb') as stdout, (data / 'stderr.log').open('wb') as stderr:
+                    process = subprocess.Popen([str(executable.resolve()), expression], cwd=data,
+                        stdin=subprocess.PIPE, stdout=stdout, stderr=stderr)
+                    try:
+                        process.communicate(b'', timeout=20)
+                    except subprocess.TimeoutExpired:
+                        status = 'TIMEOUT'
+                        process.kill()
+                        process.communicate()
+                    except BaseException:
+                        process.kill()
+                        process.communicate()
+                        raise
+            finally:
+                # Preserve logs/fixtures; the source binary and its hash identify this run.
+                executable.unlink()
             output = (data / 'stdout.log').read_bytes().decode('utf-8', errors='replace')
+            # A Linux console-title OSC may precede #0 without a newline.
+            # Keep the raw log and remove only this presentation sequence.
+            output = re.sub(r"\x1b\]0;.*?\x07", "", output)
             match = re.search(r'^#\d+=([^\r\n]+)', output, re.M)
             value = match.group(1) if match else None
             if status != 'TIMEOUT':
@@ -93,7 +105,7 @@ def main():
                          'precision': precision, 'cwd': str(data), 'fixtures': fixtures,
                          'seconds': round(time.monotonic() - started, 3)})
             print(status, precision, expression, repr(value), flush=True)
-            report = {'binary_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+            report = {'binary_sha256': binary_sha256,
                       'source_files_sha256': source_hashes,
                       'results': rows, 'passed': sum(r['status'] == 'PASS' for r in rows),
                       'expected_checks': 2 * len(CASES)}

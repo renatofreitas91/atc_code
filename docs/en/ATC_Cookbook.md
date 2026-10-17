@@ -1,6 +1,6 @@
 # Advanced Trigonometry Calculator Cookbook
 
-Version: ATC 2.1.8
+Version: ATC 2.1.9
 Language: English
 
 This cookbook collects practical ATC workflows. It does not replace the full
@@ -180,7 +180,7 @@ max(2\4\6)
 
 **When to use:** quick statistical summaries.
 
-**Notes / limitations:** ATC 2.1.8 also validates `min`, `max` and `avg` with
+**Notes / limitations:** ATC 2.1.9 also validates `min`, `max` and `avg` with
 matrix variable names.
 
 ## FFT / IFFT

@@ -4730,7 +4730,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 											months = 12;
 										}
 										char* toTitle = getDynamicCharArray("", "toTitle");
-										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.9 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
 										atcSetConsoleTitle(toTitle);
 										printTimer(thours, tminutes, tseconds);
 										_delete(toTitle, "toTitle");
@@ -4977,7 +4977,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 											months = 12;
 										}
 
-										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.9 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
 
 										sprintf(tiIn, "%02d:%02d:%02d\n", thours, tminutes, tseconds);
 										atcSetConsoleTitle(toTitle);
@@ -5266,7 +5266,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 											months = 12;
 										}
 										char* toTitle = getDynamicCharArray("", "toTitle");
-										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor,years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.9 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor,years, months, days, Hours, Minutes, Seconds);
 										atcSetConsoleTitle(toTitle);
 										printTimer(Hours, Minutes, Seconds);
 										printf("\n  %02d:%02d:%02d                   \n", thours, tminutes, tseconds);
@@ -5514,7 +5514,7 @@ bool commands(char* expression, char* path, T result1, T result2, FILE* save) {
 										if (tim[4] == 'D' && tim[5] == 'e' && tim[6] == 'c') {
 											months = 12;
 										}
-										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
+										sprintf(toTitle, "Advanced Trigonometry Calculator v2.1.9 (Mem Factor: %.3f)  ==) %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, years, months, days, Hours, Minutes, Seconds);
 										atcSetConsoleTitle(toTitle);
 										GoToXY(0, 0);
 										sprintf(tiIn, "%02d:%02d:%02d\n", Hours, Minutes, Seconds);

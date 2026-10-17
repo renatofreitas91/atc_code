@@ -6,7 +6,7 @@ from pathlib import Path
 
 from docx import Document
 from docx.enum.text import WD_BREAK
-from docx.shared import Pt
+from docx.shared import Pt, RGBColor
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -42,6 +42,10 @@ def markdown_to_docx(markdown: str, title: str) -> Document:
     styles = document.styles
     styles["Normal"].font.name = "Calibri"
     styles["Normal"].font.size = Pt(10.5)
+    for name in ("Title", "Subtitle", "Heading 1", "Heading 2", "Heading 3", "Heading 4"):
+        styles[name].font.color.rgb = RGBColor(0, 0, 0)
+        for border in styles[name].element.xpath("./w:pPr/w:pBdr"):
+            border.getparent().remove(border)
 
     document.add_heading(title, level=0)
 

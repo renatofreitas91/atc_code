@@ -1,6 +1,6 @@
 ABOUT EXECUTION OF APPLICATION
 
-Advanced Trigonometry Calculator v2.1.8
+Advanced Trigonometry Calculator v2.1.9
 
 Copyright (C) 2011-2026 - Renato Alexandre dos Santos Freitas
 

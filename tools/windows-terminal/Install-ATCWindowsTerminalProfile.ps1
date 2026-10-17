@@ -9,7 +9,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $profileGuid = "{13f1a9c7-83d4-5f62-9e71-1e91ca4da218}"
-$profileName = "Advanced Trigonometry Calculator 2.1.8"
+$profileName = "Advanced Trigonometry Calculator 2.1.9"
 $fragmentFileName = "atc.json"
 $iconFileName = "atc.ico"
 
@@ -96,16 +96,16 @@ $profile = [ordered]@{
     name = $profileName
     commandline = '"' + $atcPath + '"'
     startingDirectory = [System.IO.Path]::GetDirectoryName($atcPath)
-    tabTitle = "ATC 2.1.8"
+    tabTitle = "ATC 2.1.9"
     suppressApplicationTitle = $true
-    colorScheme = "ATC 2.1.8"
+    colorScheme = "ATC 2.1.9"
     icon = $iconFileName
     hidden = $false
     closeOnExit = "graceful"
 }
 
 $scheme = [ordered]@{
-    name = "ATC 2.1.8"
+    name = "ATC 2.1.9"
     background = "#101418"
     foreground = "#E6E9ED"
     black = "#101418"

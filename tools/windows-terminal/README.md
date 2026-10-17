@@ -1,4 +1,4 @@
-# ATC 2.1.8 Windows Terminal integration
+# ATC 2.1.9 Windows Terminal integration
 
 This optional integration adds an ATC profile to Windows Terminal. It does not
 modify `settings.json`, change the default terminal application, or replace the

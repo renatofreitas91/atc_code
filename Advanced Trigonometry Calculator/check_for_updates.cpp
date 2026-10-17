@@ -8,7 +8,7 @@ using std::string;
 HINSTANCE hInst;
 
 
-char* appVersion = getDynamicCharArrayFixedLenght((char*)"v2.1.8 RC1", 100);
+char* appVersion = getDynamicCharArrayFixedLenght((char*)"v2.1.9", 100);
 
 #pragma comment(lib, "winhttp.lib")
 

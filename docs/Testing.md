@@ -23,13 +23,16 @@ For x86 builds:
 powershell -ExecutionPolicy Bypass -File .\tests\run-atc-regression.ps1 -AtcExe .\Release\atc.exe
 ```
 
-Current validated result for both Release x64 and Release x86:
+Historical validation recorded before the final 2.1.9 candidate:
+
+These results do not approve the current candidate. Final validation must
+identify the source snapshot and executable hashes.
 
 ```text
 Summary: 377 passed, 0 failed
 ```
 
-Latest Release x86 and Release x64 builds completed successfully with
+At that historical checkpoint, Release x86 and Release x64 builds completed with
 `0 Warning(s), 0 Error(s)`, and both executables passed the same regression
 suite.
 
@@ -278,7 +281,7 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-atc-script-benchmark.ps1 -A
 ```
 
 The benchmark validates process exit, elapsed time, peak working set and stable
-output content. Latest Release x64 validation:
+output content. Historical Release x64 validation:
 
 ```text
 Summary: 4 passed, 0 failed

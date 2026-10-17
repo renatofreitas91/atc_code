@@ -127,7 +127,7 @@ clearly rather than being treated as solved.
 
 ## Precision Mode Overview
 
-ATC 2.1.8 can run using:
+ATC 2.1.9 can run using:
 
 - `double`
 - Boost `mp_float`
@@ -167,7 +167,10 @@ Main scripts:
 - `run-atc-script-benchmark.ps1`: script throughput and memory benchmark;
 - `run-atc-isolated-coverage.ps1`: helper for isolated coverage scenarios.
 
-Current validated regression result for Release x64 and Release x86:
+Historical validation recorded before the final 2.1.9 candidate:
+
+These results do not approve the current candidate. Final validation must
+identify the source snapshot and executable hashes.
 
 ```text
 Summary: 377 passed, 0 failed

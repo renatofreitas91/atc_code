@@ -5,8 +5,17 @@ All notable project changes should be documented in this file.
 Current release details are recorded here. Historical release sections retain
 their original dates and validation evidence.
 
-## Unreleased - Linux portability
+## 2.1.9 - Unreleased
 
+- Align application titles, startup identification, Windows resources and
+  candidate distribution metadata with version 2.1.9 (PE version 2.1.9.0).
+- Close user-function directory streams on both matching and exhausted searches.
+- Preserve evaluated imaginary arguments in root/logarithm dispatch and small
+  nonzero complex components; calculate exact power axes without blanket clamps.
+- Guard base-prefix lookbehind at the start of an expression and remove
+  overlapping expression-construction appends.
+- Remove per-case executable copies after focused tests while preserving logs,
+  fixtures and binary hashes.
 - Accept Linux LF input and terminate sessions on EOF, including a final
   expression without a newline.
 - Preserve the first redirected expression by skipping the POSIX intro prompt.

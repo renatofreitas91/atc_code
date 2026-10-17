@@ -30,7 +30,7 @@ The repository includes a Python-based PDF generation helper:
 .\.venv-docs\Scripts\python.exe .\tools\docs\build_pdfs.py
 ```
 
-Build the bilingual ATC 2.1.8 release guide expected by the `user guide`
+Build the bilingual ATC 2.1.9 release guide expected by the `user guide`
 command:
 
 ```powershell

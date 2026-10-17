@@ -49,6 +49,9 @@ def main():
     source = args.executable.resolve()
     out = args.output_dir or repo / 'work' / ('signed-bases-' + uuid.uuid4().hex)
     out.mkdir(parents=True, exist_ok=False)
+    binary_sha256 = hashlib.sha256(source.read_bytes()).hexdigest()
+    baseline_sha256 = (hashlib.sha256(args.baseline.read_bytes()).hexdigest()
+                       if args.baseline else None)
     rows = []
     for precision in ('0', '1'):
         for index, (expression, target) in enumerate(CASES):
@@ -77,16 +80,24 @@ def main():
                             'actualTime.txt': '0', 'verboseResolution.txt': '0', 'variables.txt': ''}
                 for name, value in fixtures.items():
                     (data / name).write_text(value, encoding='utf-8')
-                with (data / 'stdout.log').open('wb') as stdout, (data / 'stderr.log').open('wb') as stderr:
-                    process = subprocess.Popen([str(local_exe.resolve()), expression], cwd=data,
-                        stdin=subprocess.PIPE, stdout=stdout, stderr=stderr)
-                    try:
-                        process.communicate(b'', timeout=20)
-                        return_codes[variant] = process.returncode
-                    except subprocess.TimeoutExpired:
-                        process.kill()
-                        process.communicate()
-                        return_codes[variant] = 'TIMEOUT'
+                try:
+                    with (data / 'stdout.log').open('wb') as stdout, (data / 'stderr.log').open('wb') as stderr:
+                        process = subprocess.Popen([str(local_exe.resolve()), expression], cwd=data,
+                            stdin=subprocess.PIPE, stdout=stdout, stderr=stderr)
+                        try:
+                            process.communicate(b'', timeout=20)
+                            return_codes[variant] = process.returncode
+                        except subprocess.TimeoutExpired:
+                            process.kill()
+                            process.communicate()
+                            return_codes[variant] = 'TIMEOUT'
+                        except BaseException:
+                            process.kill()
+                            process.communicate()
+                            raise
+                finally:
+                    # Preserve logs/fixtures; the source binary and its hash identify this run.
+                    local_exe.unlink()
                 text = (data / 'stdout.log').read_bytes().decode('utf-8', errors='replace')
                 outputs[variant] = dict(re.findall(r'In (binary|octal|hexadecimal)=([^\r\n]+)', text))
                 if variant == 'current':
@@ -121,8 +132,8 @@ def main():
                    'outputs': outputs, 'exit_codes': return_codes, 'failures': failures,
                    'status': status}
             rows.append(row)
-            report = {'binary_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
-                      'baseline_sha256': hashlib.sha256(args.baseline.read_bytes()).hexdigest() if args.baseline else None,
+            report = {'binary_sha256': binary_sha256,
+                      'baseline_sha256': baseline_sha256,
                       'results': rows, 'passed': sum(r['status'] == 'PASS' for r in rows),
                       'expected_checks': 2 * len(CASES)}
             (out / 'results.json').write_text(json.dumps(report, indent=2), encoding='utf-8')

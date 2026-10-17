@@ -1,6 +1,7 @@
 
 
 #include "stdafx.h"
+#include <limits>
 
 int rasf = 0, maxLength = 0, vectorType = 0, check4Vector = 0, numVectorLines = 0, numVectorCols = 0, matrixMode = 0, previousAnsType = 0;
 bool solving = true, suppressVerboseResolution = false;
@@ -368,7 +369,20 @@ private:
 		if (ok && index < text.size() && text[index] == '^') {
 			index++;
 			std::complex<long double> exponent = parsePower();
-			value = std::pow(value, exponent);
+			if (exponent.imag() == 0 && exponent.real() == std::floor(exponent.real()) &&
+				exponent.real() >= -std::numeric_limits<int>::max() &&
+				exponent.real() <= std::numeric_limits<int>::max()) {
+				// Integer powers use multiplication, preserving exact complex axes.
+				value = std::pow(value, (int)exponent.real());
+			}
+			else if (exponent.imag() == 0 && exponent.real() == 0.5L &&
+				value.imag() == 0 && value.real() < 0) {
+				// Match the engine's principal root, including unary minus signed zero.
+				value = std::sqrt(std::complex<long double>(value.real(), 0.0L));
+			}
+			else {
+				value = std::pow(value, exponent);
+			}
 		}
 		return value;
 	}
@@ -568,12 +582,7 @@ static bool tryEvaluateMainComplexArithmeticFastPath(char* expression, T& value)
 	}
 	long double realPart = parsedValue.real();
 	long double imagPart = parsedValue.imag();
-	if (fabsl(realPart) < 1E-10L) {
-		realPart = 0.0L;
-	}
-	if (fabsl(imagPart) < 1E-10L) {
-		imagPart = 0.0L;
-	}
+	// Small nonzero components are values, not evidence of round-off.
 	value = (T)realPart;
 	resultR = value;
 	resultI = (T)imagPart;
@@ -681,13 +690,13 @@ T main_core(char* arithTrig, char* fTrig, FILE*& fout, char* path, T result1, T 
 		sprintf(ansMatrices[rf], "");
 		convertComplex2Exponential(resultR, resultI);
 		if (isFromMain == 1) {
-			if (abs(precisionValueTo<double>(resultI)) < 1E-18) {
+			if (resultI == 0) {
 				printf("#%d=%s\n", rf, respR);
 				if (fout != NULL) {
 					fprintf(fout, "#%d=%s\n", rf, respR);
 				}
 			}
-			else if (abs(precisionValueTo<double>(resultR)) < 1E-18) {
+			else if (resultR == 0) {
 				printf("#%d=%si\n", rf, respI);
 				if (fout != NULL) {
 					fprintf(fout, "#%d=%si\n", rf, respI);

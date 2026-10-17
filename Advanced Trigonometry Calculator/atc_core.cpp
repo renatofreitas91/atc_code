@@ -231,7 +231,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 #endif
 		on_start();
 		applySettings(Colors);
-		sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)", memFactor);
+		sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.9 (Mem Factor: %.3f)", memFactor);
 		applyConsoleTitleSafe(forsprintf);
 
 		atcJoinPath(commandF, DIM, atcPath, "aboutDisabled.txt");
@@ -255,7 +255,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 
 	}
 	if (continu == 1) {
-		sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)        ==) ATC is ready to process data. (==", memFactor);
+		sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.9 (Mem Factor: %.3f)        ==) ATC is ready to process data. (==", memFactor);
 		applyConsoleTitleSafe(forsprintf);
 		atcJoinPath(forsprintf, DIM, atcPath, "temp.txt");
 		sprintf(toOpen, "%s", forsprintf);
@@ -436,7 +436,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 					break;
 				}
 				start_processing = clock();
-				sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)       ==) Processing... (==", memFactor);
+				sprintf(forsprintf, "Advanced Trigonometry Calculator v2.1.9 (Mem Factor: %.3f)       ==) Processing... (==", memFactor);
 				applyConsoleTitleSafe(forsprintf);
 			}
 			else {
@@ -750,7 +750,7 @@ void mainType(char* value, char* toOpen, FILE* open,int argc, char* argv[]) {
 			}
 
 			convertComplex2Exponential(time_s, time_ms_final);
-			sprintf(state, "Advanced Trigonometry Calculator v2.1.8 (Mem Factor: %.3f)       ==) Processed in %ss and %sms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, respR, respI, years, months, days, Hours, Minutes, Seconds);
+			sprintf(state, "Advanced Trigonometry Calculator v2.1.9 (Mem Factor: %.3f)       ==) Processed in %ss and %sms. ATC is ready to process more data. Latest ATC response was at %04d/%02d/%02d %02d:%02d:%02d (==", memFactor, respR, respI, years, months, days, Hours, Minutes, Seconds);
 			applyConsoleTitleSafe(state);
 
 			if (fout != NULL) {
